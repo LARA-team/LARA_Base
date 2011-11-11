@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="javadoc_classes">
+	<target name="javadoc_classes" description="generates javadoc and also UML Diagram">
+		<mkdir dir="${basedir}/doc/javadoc"/>
+	        <javadoc sourcepath="src" packagenames="de.cesr.*" destdir="${basedir}/doc/javadoc" classpath="lib/junit-4.4.jar;lib/log4j-1.2.8.jar;lib/collections-generic-4.01.jar;lib/commons-collections-3.2.jar;lib/jscience.jar;lib/jung-api-2.0.jar;lib/jung-graph-impl-2.0-beta1.jar;lib/repast.simphony.bin_and_src.jar;">
+	        	   <doclet name="org.umlgraph.doclet.UmlGraphDoc"
+	        	   	path="lib_tools/UmlGraph.jar">
+	        	   		<param name="-all" />
+	        	        <param name="-inferrel" />
+        	        	<param name="-inferdep" />
+        	   			<param name="-useimports" />
+        	   			<param name="-horizontal" />
+	        	    </doclet>
+	        	  </javadoc>
+		  <apply executable="dot" dest="${basedir}/doc/javadoc}" parallel="false">
+		    <arg value="-Tpng"/>
+		    <arg value="-o"/>
+		     <targetfile/>
+		     <srcfile/>
+		     <fileset dir="${basedir}/doc/javadoc" includes="*.dot"/>
+		     <mapper type="glob" from="*.dot" to="*.png"/>
+		  </apply>
+	</target>
+	<target name="javadoc_package" description="generates javadoc and also UML Diagram">
+		<mkdir dir="${basedir}/doc/javadoc"/>
+	        <javadoc sourcepath="src" packagenames="*" destdir="${basedir}/doc/javadoc" classpath="lib/junit-4.4.jar;lib/log4j-1.2.8.jar;lib/collections-generic-4.01.jar;lib/commons-collections-3.2.jar;lib/jscience.jar;lib/jung-api-2.0.jar;lib/jung-graph-impl-2.0-beta1.jar;lib/repast.simphony.bin_and_src.jar;">
+	        	   <doclet name="org.umlgraph.doclet.UmlGraphDoc"
+	        	   	path="lib_tools/UmlGraph.jar">
+        	   			<param name="-all" />
+        	        	<param name="-inferrel" />
+    	        		<param name="-inferdep" />
+    	   				<param name="-useimports" />
+	        	    </doclet>
+	        	  </javadoc>
+		  <apply executable="dot" dest="${basedir}/doc/javadoc}" parallel="false">
+		    <arg value="-Tpng"/>
+		    <arg value="-o"/>
+		     <targetfile/>
+		     <srcfile/>
+		     <fileset dir="${basedir}/doc/javadoc" includes="*.dot"/>
+		     <mapper type="glob" from="*.dot" to="*.png"/>
+		  </apply>
+	</target>
+</project>
