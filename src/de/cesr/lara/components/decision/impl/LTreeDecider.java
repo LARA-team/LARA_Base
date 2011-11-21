@@ -15,6 +15,8 @@ import de.cesr.lara.components.decision.LaraDecisionConfiguration;
 import de.cesr.lara.components.decision.LaraDecisionTree;
 
 /**
+ * 
+ * TODO why no factory for this decider? 
  * @param <A>
  *            type of agents
  * @param <BO>
