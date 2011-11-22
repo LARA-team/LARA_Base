@@ -25,6 +25,8 @@ import de.cesr.lara.components.container.memory.impl.LDefaultLimitedCapacityMemo
 import de.cesr.lara.components.decision.LaraDecider;
 import de.cesr.lara.components.decision.LaraDecisionConfiguration;
 import de.cesr.lara.components.decision.LaraDecisionData;
+import de.cesr.lara.components.decision.LaraDeliberativeChoiceComponent;
+import de.cesr.lara.components.decision.impl.LDeliberativeChoiceComp_MaxLineTotal;
 import de.cesr.lara.components.environment.LaraEnvironment;
 import de.cesr.lara.components.environment.impl.LAbstractEnvironmentalProperty;
 import de.cesr.lara.components.eventbus.LaraInternalEventSubscriber;
@@ -54,13 +56,36 @@ import de.cesr.lara.components.util.logging.impl.Log4jLogger;
  *            type of agent this agent component belongs to
  * @date 17.12.2009
  */
-public class LDefaultAgentComp<A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<? super A, BO>>
-		implements LaraAgentComponent<A, BO>, LaraInternalEventSubscriber {
+public class LDefaultAgentComp<A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>> implements
+		LaraAgentComponent<A, BO>,  LaraInternalEventSubscriber{
+	
+	/**
+	 * Deliberative choice components according to
+	 * {@link LaraDecisionConfiguration}. Contains default for key NULL.
+	 */
+	protected static Map<LaraDecisionConfiguration, LaraDeliberativeChoiceComponent>
+																defaultDeliberativeChoiceComponents		= null;
+	static {
+		defaultDeliberativeChoiceComponents = new HashMap<LaraDecisionConfiguration, LaraDeliberativeChoiceComponent>();
+		defaultDeliberativeChoiceComponents.put(null, LDeliberativeChoiceComp_MaxLineTotal.getInstance());
+	}
+	
+	/**
+	 * @param dConfiguration
+	 * @param comp
+	 */
+	static public void setDefaultDeliberativeChoiceComp(LaraDecisionConfiguration dConfiguration,
+			LaraDeliberativeChoiceComponent comp) {
+		defaultDeliberativeChoiceComponents.put(dConfiguration, comp);
+	}
+	
+	static public LaraDeliberativeChoiceComponent getDefaultDeliberativeChoiceComp(LaraDecisionConfiguration dConfiguration) {
+		return defaultDeliberativeChoiceComponents.get(dConfiguration);
+	}
 
-	private Logger agentLogger = null;
-	private Logger logger = Log4jLogger.getLogger(LDefaultAgentComp.class);
-
-	private LEventbus eventBus;
+	private Logger												logger				= Log4jLogger
+																							.getLogger(LDefaultAgentComp.class);
+	private Logger												agentLogger			= null;
 
 	/**
 	 * the agent the component belongs to
@@ -68,54 +93,65 @@ public class LDefaultAgentComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 	protected A agent;
 
 	/**
-	 * memory for behavioural options
-	 */
-	protected LaraBOMemory<BO> boMemory;
-
-	/**
 	 * the agents decision module
 	 */
-	protected Map<LaraDecisionConfiguration, LaraDecisionData<A, BO>> decisionData = null;
+	protected Map<LaraDecisionConfiguration, LaraDecisionData<A, BO>>
+																decisionData		= null;
+	
+	/**
+	 * Deliberative choice components according to
+	 * {@link LaraDecisionConfiguration}. Contains default for key NULL.
+	 */
+	protected Map<LaraDecisionConfiguration, LaraDeliberativeChoiceComponent>
+																deliberativeChoiceCompents		= null;
 
 	/**
-	 * 
-	 * DODOC describe this feature properties
+	 * a collection of the agents preferenceWeights
 	 */
-	protected Map<String, Double> doubleProperties;
+	protected Collection<Class<? extends LaraPreference>>		preferences				= null;
+
+	// TODO enable multiple environments!
+	/**
+	 * a collection of the agents preferenceWeights towards preferenceWeights
+	 */
+	protected Map<Class<? extends LaraPreference>, Double>		preferenceWeights			= null;
+
+	/**
+	 * a collection of the agents behavioural options
+	 */
+	protected LaraMemory<LaraProperty<?>>						memory				= null;
+
+	/**
+	 * memory for behavioural options
+	 */
+	protected LaraBOMemory<BO>									boMemory;
+
+	/**
+	 * Since each agent may have different strategies and modes of action selection, each agent is assigned an instance
+	 * of {@link LaraPreprocessor}. (SH)
+	 */
+	protected LaraPreprocessorFactory<A, BO>						preprocessorFactory;
 
 	// TODO enable multiple environments!
 	/**
 	 * environment
 	 */
-	protected LaraEnvironment environment;
-
-	/**
-	 * a collection of the agents behavioural options
-	 */
-	protected LaraMemory<LaraProperty<?>> memory = null;
-
-	/**
-	 * a collection of the agents preferenceWeights
-	 */
-	protected Collection<Class<? extends LaraPreference>> preferences = null;
-
-	/**
-	 * a collection of the agents preferenceWeights towards preferenceWeights
-	 */
-	protected Map<Class<? extends LaraPreference>, Double> preferenceWeights = null;
-
-	/**
-	 * Since each agent may have different strategies and modes of action
-	 * selection, each agent is assigned an instance of {@link LaraPreprocessor}
-	 * . (SH)
-	 */
-	protected LaraPreprocessorFactory<A, BO> preprocessorFactory;
+	protected LaraEnvironment									environment;
+	
+	
+	protected LEventbus 										eventBus;
 
 	// memory property?!
 	/**
 	 * accuracy
 	 */
-	protected LaraBOPreselector.Accuracy preselectingBOaccuracy = LaraBOPreselector.LAccuracy.ACCURATE;
+	protected LaraBOPreselector.Accuracy							preselectingBOaccuracy	= LaraBOPreselector.LAccuracy.ACCURATE;
+
+	/**
+	 * 
+	 * DODOC describe this feature properties
+	 */
+	protected Map<String, Double>								doubleProperties;
 
 	/**
 	 * Simplest Constructor TODO: Agent should have one or more environments!
@@ -146,30 +182,13 @@ public class LDefaultAgentComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 		doubleProperties = new HashMap<String, Double>();
 		preferenceWeights = new LPreferenceWeightMap();
 		decisionData = new HashMap<LaraDecisionConfiguration, LaraDecisionData<A, BO>>();
+		deliberativeChoiceCompents = new HashMap<LaraDecisionConfiguration, LaraDeliberativeChoiceComponent>();
+		
 		eventBus.subscribe(this, LAgentPerceptionEvent.class);
 		eventBus.subscribe(this, LAgentPreprocessEvent.class);
 		eventBus.subscribe(this, LAgentDecideEvent.class);
 		eventBus.subscribe(this, LAgentPostprocessEvent.class);
 		eventBus.subscribe(this, LAgentExecutionEvent.class);
-	}
-
-	/**
-	 * @see de.cesr.lara.components.agents.LaraAgentComponent#addPreferenceWeights(java.util.Map)
-	 */
-	@Override
-	public void addPreferenceWeights(
-			Map<Class<? extends LaraPreference>, Double> preferenceWeights) {
-		if (this.preferenceWeights == null) {
-			this.preferenceWeights = new HashMap<Class<? extends LaraPreference>, Double>();
-		}
-		this.preferenceWeights.putAll(preferenceWeights);
-		// <- LOGGING
-		if (logger.isDebugEnabled()) {
-
-			logger.debug(agent + "> Preferences: " + this.preferenceWeights);
-		}
-		// LOGGING ->
-
 	}
 
 	/**
@@ -226,13 +245,6 @@ public class LDefaultAgentComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 		return decisionData.get(dConfiguration);
 	}
 
-	/**
-	 * @see de.cesr.lara.components.agents.LaraAgentComponent#getDecisionDataIterable()
-	 */
-	@Override
-	public Iterable<LaraDecisionData<A, BO>> getDecisionDataIterable() {
-		return decisionData.values();
-	}
 
 	@Override
 	public double getDoubleProperty(String name) {
@@ -256,13 +268,6 @@ public class LDefaultAgentComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 		return memory;
 	}
 
-	/**
-	 * @see de.cesr.lara.components.agents.LaraAgentComponent#getNumDecisionDataObjects()
-	 */
-	@Override
-	public int getNumDecisionDataObjects() {
-		return decisionData.size();
-	}
 
 	@Override
 	public Double getPreferenceWeight(Class<? extends LaraPreference> preference) {
@@ -305,6 +310,24 @@ public class LDefaultAgentComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 				preselectingBOaccuracy, agent);
 	}
 
+	/**
+	 * @see de.cesr.lara.components.agents.LaraAgentComponent#addPreferenceWeights(java.util.Map)
+	 */
+	@Override
+	public void addPreferenceWeights(Map<Class<? extends LaraPreference>, Double> preferenceWeights) {
+		if (this.preferenceWeights == null) {
+			this.preferenceWeights = new HashMap<Class<? extends LaraPreference>, Double>();
+		}
+		this.preferenceWeights.putAll(preferenceWeights);
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+
+			logger.debug(agent + "> Preferences: " + this.preferenceWeights);
+		}
+		// LOGGING ->
+
+	}
+	
 	/**
 	 * @see de.cesr.lara.components.agents.LaraAgentComponent#removeDecisionData(de.cesr.lara.components.decision.LaraDecisionConfiguration)
 	 */
@@ -367,6 +390,46 @@ public class LDefaultAgentComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 			removeDecisionData(((LAgentExecutionEvent) event)
 					.getDecisionConfiguration());
 		}
+	}
 
+	/**
+	 * @see de.cesr.lara.components.agents.LaraAgentComponent#getNumDecisionDataObjects()
+	 */
+	@Override
+	public int getNumDecisionDataObjects() {
+		return decisionData.size();
+	}
+	
+	/**
+	 * @see de.cesr.lara.components.agents.LaraAgentComponent#getDecisionDataIterable()
+	 */
+	@Override
+	public Iterable<LaraDecisionData<A, BO>> getDecisionDataIterable() {
+		return decisionData.values();
+	}
+
+	/**
+	 * @see de.cesr.lara.components.agents.LaraAgentComponent#getDeliberativeChoiceComp(de.cesr.lara.components.decision.LaraDecisionConfiguration)
+	 */
+	@Override
+	public LaraDeliberativeChoiceComponent getDeliberativeChoiceComp(LaraDecisionConfiguration dConfiguration) {
+		if (deliberativeChoiceCompents.containsKey(dConfiguration)) {
+			return deliberativeChoiceCompents.get(dConfiguration);
+		} else if (defaultDeliberativeChoiceComponents.containsKey(dConfiguration)){
+			return defaultDeliberativeChoiceComponents.get(dConfiguration);
+		} else if (deliberativeChoiceCompents.containsKey(null)) {
+			return deliberativeChoiceCompents.get(null);
+		} else {
+			return defaultDeliberativeChoiceComponents.get(null);
+		}
+	}
+
+	/**
+	 * @see de.cesr.lara.components.agents.LaraAgentComponent#setDeliberativeChoiceComp(de.cesr.lara.components.decision.LaraDecisionConfiguration, de.cesr.lara.components.decision.LaraDeliberativeChoiceComponent)
+	 */
+	@Override
+	public void setDeliberativeChoiceComp(LaraDecisionConfiguration dConfiguration,
+			LaraDeliberativeChoiceComponent comp) {
+		deliberativeChoiceCompents.put(dConfiguration, comp);
 	}
 }

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- 	excludes example models; 
+		excludes java runtime classes from UML;
+		display only operations -->
+
+<project default="javadoc_classes">
+	
+	<tstamp/>
+	<property name="docs.dir" location="${basedir}/../../doc/javadoc" />
+	<property name="project.dir" location="${basedir}/../../" />
+	<property name="image.type" value="svg" />
+	
+	<!-- ================================= 
+          target: Fetch SVN Revision Number        
+              	
+         ================================= -->
+    <target name="svn_infos" description="description">
+    	<typedef resource="org/tigris/subversion/svnant/svnantlib.xml" classpath="" />
+    	<svn javahl="false" username="holzhauer" password="holzhauer">
+    		<info target="${basedir}"/>
+    	</svn>
+    	<echo>"Last Revision: ${svn.info.rev}"</echo>
+    	<property name="release.dir" location="C:/Sascha/Releases/Lara//${svn.info.rev}-${DSTAMP}"/>
+    </target>
+
+
+	<target name="clean">
+		
+		<delete includeemptydirs="true">
+		    <fileset dir="${docs.dir}" />
+		</delete>
+
+		<!--delete dir="${docs.dir}"/-->
+	</target>
+
+	<target name="javadoc_classes" depends="clean" description="generates javadoc and also UML Diagrams, and deletes Map-Files">
+		<echo>"${docs.dir}"</echo>
+		<mkdir dir="${docs.dir}"/>
+		<!-- narrrowing the packagenames more than "de.cesr.lara.components.*" causes invalid links in the map (maybe a link-provision problem...	-->
+	        <javadoc sourcepath="${project.dir}/src" packagenames="de.cesr.lara.*" excludepackagenames="de.cesr.lara.examplemodels.*" destdir="${docs.dir}" classpath="${project.dir}/lib/junit-4.4.jar;${project.dir}/lib/log4j-1.2.8.jar;${project.dir}/lib/collections-generic-4.01.jar;${project.dir}/lib/commons-collections-3.2.jar;${project.dir}/lib/jscience.jar;${project.dir}/lib/jung-api-2.0.jar;${project.dir}/lib/jung-graph-impl-2.0-beta1.jar;${project.dir}/lib/repast.simphony.bin_and_src.jar;${project.dir}/lib/colt.jar">
+	        	<link href="http://projects.hepforge.org/jhepwork/api_extra/"/>
+	        	<link href="http://jung.sourceforge.net/doc/api/"/>
+	        	<link href="http://java.sun.com/javase/6/docs/api/"/>
+	        	<link href="http://logging.apache.org/log4j/1.2/apidocs/index.html"/>
+	        	<link href="http://collections.sourceforge.net/api/"/>
+	        	<link href="http://commons.apache.org/collections/"/>
+	        	<doclet name="de.cesr.tools.umlgraph.UmlGraphDoc"
+	        	   	path="${project.dir}/lib_tools/UmlGraphSvg.jar">
+	        	   		<param name="-enumerations" />
+	        	   		<param name="-visibility" />
+	        	        <param name="-inferrel" />
+        	        	<param name="-inferdep" />
+        	   			<param name="-useimports" />
+        	   			<param name="-hide" value="java.*"/>
+	        	    </doclet>
+	      </javadoc>
+	<delete>
+		<fileset dir="${docs.dir}" includes="**/*.map"/>
+	</delete>
+		 
+	</target>
+	
+	<target name="javadoc_package" depends="clean" description="generates javadoc and also UML Diagram">
+		<mkdir dir="${docs.dir}"/>
+	        <javadoc sourcepath="src" packagenames="de.cesr.lara.*" excludepackagenames="de.cesr.lara.examplemodels.*" destdir="${docs.dir}" classpath="lib/junit-4.4.jar;lib/log4j-1.2.8.jar;lib/collections-generic-4.01.jar;lib/commons-collections-3.2.jar;lib/jscience.jar;lib/jung-api-2.0.jar;lib/jung-graph-impl-2.0-beta1.jar;lib/repast.simphony.bin_and_src.jar;lib/colt.jar">
+	        	   <doclet name="de.cesr.tools.umlgraph.UmlGraphDoc"
+	        	   	path="lib_tools/UmlGraphSvg.jar">
+        	        	<param name="-inferrel" />
+    	        		<param name="-inferdep" />
+    	   				<param name="-useimports" />
+	        	    </doclet>
+	        	  </javadoc>
+		  <apply executable="dot" dest="${docs.dir}" parallel="false">
+		    <arg value="-T${image.type}"/>
+		    <arg value="-o"/>
+		     <targetfile/>
+		     <srcfile/>
+		     <fileset dir="${docs.dir}" includes="**/*.dot"/>
+		     <mapper type="glob" from="*.dot" to="*.${image.type}"/>
+		  </apply>
+	</target>
+	
+	<target name="Make_SVG" depends="javadoc_classes" description="Generates SVG from DOT and deletes DOT">
+		<echo>"Making SVG..."</echo>
+		 <apply executable="dot" dest="${docs.dir}" parallel="false">
+				    <arg value="-T${image.type}"/>
+				    <arg value="-o"/>
+				     <targetfile/>
+				     <srcfile/>
+				     <fileset dir="${docs.dir}" includes="**/*.dot"/>
+				     <mapper type="glob" from="*.dot" to="*.${image.type}"/>
+		</apply>
+		
+		<!-- TODO omit generation of PNG in Doclet -->
+		<delete>
+			<fileset dir="${docs.dir}" includes="**/*.dot"/>
+		</delete>
+		<delete>
+			<fileset dir="${docs.dir}" includes="**/*.png"/>
+		</delete>
+		
+	</target>
+	
+	<!-- ================================= 
+          target: Make_Doc_Zip              
+         ================================= -->
+    <target name="Make_Doc_Zip" depends="Make_SVG, svn_infos" description="Generate a zipr archive containein javadoc, and other documentation for public use.">
+    	<mkdir dir="${release.dir}"/>
+    	<zip destfile="${release.dir}/Lara-${svn.info.rev}_Docs.zip">
+    		<zipfileset dir="${basedir}/doc/javadoc" prefix="Lara-${svn.info.rev}/docs/API"/>
+    	    <zipfileset dir="${basedir}/doc/" includes="*.*" prefix="Lara-${svn.info.rev}/docs/manual"/>
+    	</zip>
+    </target>
+
+</project>

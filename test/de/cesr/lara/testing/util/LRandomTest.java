@@ -16,9 +16,11 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import cern.jet.random.Normal;
+import cern.jet.random.AbstractDistribution;
 import cern.jet.random.Uniform;
+import cern.jet.random.engine.MersenneTwister;
 import de.cesr.lara.components.util.impl.LRandomService;
+import de.cesr.lara.components.util.impl.LUniformController;
 import de.cesr.lara.components.util.logging.impl.Log4jLogger;
 
 
@@ -27,7 +29,7 @@ import de.cesr.lara.components.util.logging.impl.Log4jLogger;
  */
 public class LRandomTest {
 
-	LRandomService					random;
+	LRandomService			random;
 	int						randomSeed	= 0;
 
 	/**
@@ -35,6 +37,8 @@ public class LRandomTest {
 	 */
 	static private Logger	logger		= Log4jLogger.getLogger(LRandomTest.class);
 
+	private static final String RANDOM_STREAM = "Random Stream";
+	
 	/**
 	 * @throws java.lang.Exception
 	 */
@@ -70,14 +74,26 @@ public class LRandomTest {
 	 */
 	@Test
 	public final void testSetSeed() {
-		Normal normal = random.createNormal(1, 1);
+		random.createNormal(1, 1);
 		Uniform uniform = random.getUniform();
 		random.setSeed(10);
+
 		assertNotSame(uniform, random.getUniform());
 		assertNull(random.getNormal());
+
 		logger
 				.warn("If a WARN message (Normal distributions has not been created!) was printed above this is intented");
 
+	}
+
+	/**
+	 * Check whether a registered distribution can be returned
+	 */
+	@Test
+	public final void testDistributionRegistration() {
+		AbstractDistribution dist = new LUniformController(new MersenneTwister(9));
+		random.registerDistribution(dist, RANDOM_STREAM);
+		assertEquals(dist, random.getDistribution(RANDOM_STREAM));
 	}
 
 	/**

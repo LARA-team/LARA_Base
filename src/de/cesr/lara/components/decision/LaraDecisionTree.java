@@ -20,7 +20,7 @@ import de.cesr.lara.components.agents.LaraAgent;
  *            the parameter class type
  * 
  */
-public interface LaraDecisionTree<A extends LaraAgent<A, ? super BO>, BO extends LaraBehaviouralOption<? super A, BO>, P> {
+public interface LaraDecisionTree<A extends LaraAgent<A, ? super BO>, BO extends LaraBehaviouralOption<?, BO>, P> {
 
 	/**
 	 * Processes this node of the decision tree.

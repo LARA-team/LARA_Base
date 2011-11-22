@@ -6,9 +6,11 @@
  */
 package de.cesr.lara.components.decision.impl;
 
+
 import java.util.List;
 
 import de.cesr.lara.components.decision.LaraHeader;
+
 
 /**
  * header (row) of utility matrix
@@ -18,7 +20,7 @@ import de.cesr.lara.components.decision.LaraHeader;
  */
 public class LHeader implements LaraHeader {
 
-	List<String> cells = null;
+	List<String>	cells	= null;
 
 	/**
 	 * constructor - requires a list of cells

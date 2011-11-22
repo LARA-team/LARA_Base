@@ -43,7 +43,7 @@ import de.cesr.lara.testing.TestUtils.TestAgent;
  */
 public class LDecisionHeuristicComponent_MaxLineTotalRandomAtTieTest {
 
-	LDecisionHeuristicComponent_MaxLineTotalRandomAtTie<LGeneralBehaviouralOption<TestAgent>>	heuristic;
+	LDecisionHeuristicComponent_MaxLineTotalRandomAtTie	heuristic;
 	LaraUtilityMatrix<LGeneralBehaviouralOption<TestAgent>>										matrix;
 	LGeneralBehaviouralOption<TestAgent>[]														bos;
 	LaraDecisionConfiguration																			dBuilder;
@@ -54,7 +54,7 @@ public class LDecisionHeuristicComponent_MaxLineTotalRandomAtTieTest {
 	@Before
 	public void setUp() throws Exception {
 		// TODO there is a memory error (no key...)
-		heuristic = new LDecisionHeuristicComponent_MaxLineTotalRandomAtTie<LGeneralBehaviouralOption<TestAgent>>();
+		heuristic = new LDecisionHeuristicComponent_MaxLineTotalRandomAtTie();
 		matrix = new LUtilityMatrix<LGeneralBehaviouralOption<TestAgent>>();
 		dBuilder = new LDecisionConfiguration();
 

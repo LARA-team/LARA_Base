@@ -6,6 +6,7 @@
  */
 package de.cesr.lara.components.decision.impl;
 
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -14,19 +15,20 @@ import de.cesr.lara.components.agents.LaraAgent;
 import de.cesr.lara.components.decision.LaraDecider;
 import de.cesr.lara.components.decision.LaraDecisionConfiguration;
 
+
 /**
  * @param <A>
- *            type of agent
+ *        type of agent
  * @param <BO>
- *            type of behavioural option
+ *        type of behavioural option
  * 
  */
-public class LHabitDecider<A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<? super A, BO>>
-		implements LaraDecider<BO> {
+public class LHabitDecider<A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>> implements
+		LaraDecider<BO> {
 
-	A agent = null;
-	BO bo = null;
-	LaraDecisionConfiguration dConfiguration;
+	A										agent	= null;
+	BO										bo		= null;
+	LaraDecisionConfiguration	dConfiguration;
 
 	/**
 	 * @param agent
@@ -55,12 +57,6 @@ public class LHabitDecider<A extends LaraAgent<A, BO>, BO extends LaraBehavioura
 		return bos;
 	}
 
-	@Override
-	public Set<? extends BO> getKSelectedBosSituational(int k) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	/**
 	 * @see de.cesr.lara.components.decision.LaraDecider#getNumSelectableBOs()
 	 */
@@ -75,12 +71,6 @@ public class LHabitDecider<A extends LaraAgent<A, BO>, BO extends LaraBehavioura
 	@Override
 	public BO getSelectedBo() {
 		return bo;
-	}
-
-	@Override
-	public BO getSelectedBoSituational() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	/**

@@ -14,7 +14,7 @@ import de.cesr.lara.components.LaraBehaviouralOption;
  * 
  * @param <BO>
  */
-public interface LaraRow<BO extends LaraBehaviouralOption<?, BO>> {
+public interface LaraRow<BO extends LaraBehaviouralOption<?, ?>> {
 
 	/**
 	 * @return the behavioural option that belongs to this row
