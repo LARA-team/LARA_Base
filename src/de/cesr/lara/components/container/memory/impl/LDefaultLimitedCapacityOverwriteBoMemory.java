@@ -21,9 +21,8 @@ import de.cesr.lara.components.util.logging.impl.Log4jLogger;
  * @param <BO>
  * 
  */
-public class LDefaultLimitedCapacityOverwriteBoMemory<BO extends LaraBehaviouralOption>
-		extends LDefaultLimitedCapacityOverwriteMemory<BO> implements
-		LaraBOMemory<BO> {
+public class LDefaultLimitedCapacityOverwriteBoMemory<BO extends LaraBehaviouralOption<?, BO>> extends
+		LDefaultLimitedCapacityOverwriteMemory<BO> implements LaraBOMemory<BO> {
 
 	/**
 	 * Logger

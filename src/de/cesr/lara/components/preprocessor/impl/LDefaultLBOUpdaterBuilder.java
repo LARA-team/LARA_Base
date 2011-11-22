@@ -6,18 +6,20 @@
  */
 package de.cesr.lara.components.preprocessor.impl;
 
+
 import de.cesr.lara.components.LaraBehaviouralOption;
 import de.cesr.lara.components.agents.LaraAgent;
 import de.cesr.lara.components.preprocessor.LaraBOUtilityUpdater;
 import de.cesr.lara.components.preprocessor.LaraBOUtilityUpdaterBuilder;
 
+
 /**
  * @param <A>
- *            the type of agents this BO utilityUpdater builder is intended for
+ *        the type of agents this BO utilityUpdater builder is intended for
  * @param <BO>
- *            the type of behavioural options that are checked
+ *        the type of behavioural options that are checked
  */
-public class LDefaultLBOUpdaterBuilder<A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<? super A, BO>>
+public class LDefaultLBOUpdaterBuilder<A extends LaraAgent<? super A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>>
 		implements LaraBOUtilityUpdaterBuilder<A, BO> {
 
 	/**

@@ -6,6 +6,7 @@
  */
 package de.cesr.lara.components.preprocessor.impl;
 
+
 import java.util.Collection;
 
 import de.cesr.lara.components.LaraBehaviouralOption;
@@ -14,40 +15,37 @@ import de.cesr.lara.components.decision.LaraDecisionConfiguration;
 import de.cesr.lara.components.preprocessor.LaraBOUtilityUpdater;
 import de.cesr.lara.components.preprocessor.LaraBOUtilityUpdaterBuilder;
 
+
 /**
  * 
- * Returns a {@link LaraBOUtilityUpdater} that just pipes the given behavioural
- * options.
+ * Returns a {@link LaraBOUtilityUpdater} that just pipes the given behavioural options.
  * 
  * @param <A>
- *            agent type
+ *        agent type
  * @param <BO>
- *            type of behavioural options
+ *        type of behavioural options
  * 
  */
-public class LPseudoBoUpdaterBuilder<A extends LaraAgent<A, ? super BO>, BO extends LaraBehaviouralOption<? super A, BO>>
+public class LPseudoBoUpdaterBuilder<A extends LaraAgent<? super A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>>
 		implements LaraBOUtilityUpdaterBuilder<A, BO> {
 
-	static class LPseudoBoUpdater<A extends LaraAgent<A, ? super BO>, BO extends LaraBehaviouralOption<? super A, BO>>
+	static class LPseudoBoUpdater<A extends LaraAgent<? super A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>>
 			implements LaraBOUtilityUpdater<A, BO> {
 
 		/**
 		 * Just pipes the given behavioural options.
 		 * 
 		 * @see de.cesr.lara.components.preprocessor.LaraBOUtilityUpdater#updateBOUtilities(de.cesr.lara.components.agents.LaraAgent,
-		 *      java.util.Collection,
-		 *      de.cesr.lara.components.decision.LaraDecisionConfiguration)
+		 *      java.util.Collection, de.cesr.lara.components.decision.LaraDecisionConfiguration)
 		 */
 		@Override
-		public Collection<BO> updateBOUtilities(A agent, Collection<BO> bos,
-				LaraDecisionConfiguration<BO> dConfiguration) {
+		public Collection<BO> updateBOUtilities(A agent, Collection<BO> bos, LaraDecisionConfiguration dConfiguration) {
 			return bos;
 		}
 	}
 
 	/**
-	 * Returns a {@link LaraBOUtilityUpdater} that just pipes the given
-	 * behavioural options.
+	 * Returns a {@link LaraBOUtilityUpdater} that just pipes the given behavioural options.
 	 * 
 	 * @see de.cesr.lara.components.preprocessor.LaraBOUtilityUpdaterBuilder#getBOUtilityUpdater()
 	 */

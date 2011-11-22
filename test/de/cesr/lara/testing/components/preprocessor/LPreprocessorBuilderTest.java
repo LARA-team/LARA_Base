@@ -16,11 +16,11 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+
 import de.cesr.lara.components.LaraBehaviouralOption;
 import de.cesr.lara.components.LaraPreference;
 import de.cesr.lara.components.container.memory.LaraBOMemory;
 import de.cesr.lara.components.decision.LaraDecisionConfiguration;
-import de.cesr.lara.components.decision.LaraDeliberativeChoiceComponent;
 import de.cesr.lara.components.impl.LGeneralBehaviouralOption;
 import de.cesr.lara.components.preprocessor.LaraBOCollector;
 import de.cesr.lara.components.preprocessor.LaraBOPreselector;
@@ -71,11 +71,7 @@ public class LPreprocessorBuilderTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		decision1 = new LaraDecisionConfiguration<LGeneralBehaviouralOption<?>>() {
-
-			@Override
-			public void setHeuristic(LaraDeliberativeChoiceComponent<LGeneralBehaviouralOption<?>> heuristic) {
-			}
+		decision1 = new LaraDecisionConfiguration() {
 
 			@Override
 			public Collection<Class<? extends LaraPreference>> getPreferences() {
@@ -91,19 +87,10 @@ public class LPreprocessorBuilderTest {
 			@Override
 			public String getId() {
 				return "TestDecision";
-			}
-
-			@Override
-			public LaraDeliberativeChoiceComponent<LGeneralBehaviouralOption<?>> getHeuristic() {
-				return null;
 			}
 		};
 
-		decision2 = new LaraDecisionConfiguration<LGeneralBehaviouralOption<?>>() {
-
-			@Override
-			public void setHeuristic(LaraDeliberativeChoiceComponent<LGeneralBehaviouralOption<?>> heuristic) {
-			}
+		decision2 = new LaraDecisionConfiguration() {
 
 			@Override
 			public Collection<Class<? extends LaraPreference>> getPreferences() {
@@ -119,11 +106,6 @@ public class LPreprocessorBuilderTest {
 			@Override
 			public String getId() {
 				return "TestDecision";
-			}
-
-			@Override
-			public LaraDeliberativeChoiceComponent getHeuristic() {
-				return null;
 			}
 		};
 

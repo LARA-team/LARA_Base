@@ -6,8 +6,10 @@
  */
 package de.cesr.lara.components.preprocessor;
 
+
 import de.cesr.lara.components.agents.LaraAgent;
 import de.cesr.lara.components.decision.LaraDecisionConfiguration;
+
 
 /**
  * 
@@ -16,19 +18,16 @@ import de.cesr.lara.components.decision.LaraDecisionConfiguration;
  * @date 05.02.2010
  * 
  */
-public interface LaraPreferenceUpdater<A extends LaraAgent<A, ?>> extends
-		LaraPreprocessorComp<A> {
+public interface LaraPreferenceUpdater<A extends LaraAgent<? super A, ?>> extends LaraPreprocessorComp<A> {
 
 	/**
-	 * Updates an agent's preference. NOTE: Normally, preferenceWeights are
-	 * updated at last in the preprocessor's chain.
+	 * Updates an agent's preference. NOTE: Normally, preferenceWeights are updated at last in the preprocessor's chain.
 	 * 
 	 * @param agent
-	 *            the agent whose preferenceWeights are updated
+	 *        the agent whose preferenceWeights are updated
 	 * @param dConfiguration
-	 *            the decision builder for which preferenceWeights are updated
+	 *        the decision builder for which preferenceWeights are updated
 	 */
-	public void updatePreferenceWeights(A agent,
-			LaraDecisionConfiguration dConfiguration);
+	public void updatePreferenceWeights(A agent, LaraDecisionConfiguration dConfiguration);
 
 }

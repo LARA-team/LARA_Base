@@ -6,10 +6,12 @@
  */
 package de.cesr.lara.components.decision.impl;
 
+
 import java.util.List;
 
 import de.cesr.lara.components.LaraBehaviouralOption;
 import de.cesr.lara.components.decision.LaraRow;
+
 
 /**
  * 
@@ -20,9 +22,9 @@ import de.cesr.lara.components.decision.LaraRow;
  */
 public class LRow implements LaraRow {
 
-	private LaraBehaviouralOption bO = null;
+	private LaraBehaviouralOption	bO		= null;
 
-	private List<Double> values = null;
+	private List<Double>			values	= null;
 
 	/**
 	 * constructor - requires a list of cells

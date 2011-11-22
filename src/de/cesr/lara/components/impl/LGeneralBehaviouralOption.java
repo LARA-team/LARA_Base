@@ -6,6 +6,7 @@
  */
 package de.cesr.lara.components.impl;
 
+
 import java.util.Map;
 
 import de.cesr.lara.components.LaraBehaviouralOption;
@@ -14,35 +15,28 @@ import de.cesr.lara.components.agents.LaraAgent;
 import de.cesr.lara.components.decision.LaraDecisionConfiguration;
 import de.cesr.lara.components.util.impl.LPreferenceWeightMap;
 
+
 /**
- * Default implementation of a {@link LaraBehaviouralOption} that assigns a
- * serial id and provides several constructors. NOTE: This implementation does
- * not alter any utility values!
+ * Default implementation of a {@link LaraBehaviouralOption} that assigns a serial id and provides several constructors.
+ * NOTE: This implementation does not alter any utility values!
  * 
- * NOTE: When constructor calls with and without id are mixed, the counter only
- * increases when non-id-parameter-constructors are called!
+ * NOTE: When constructor calls with and without id are mixed, the counter only increases when
+ * non-id-parameter-constructors are called!
+ * 
+ * @deprecated Use LaraBehaviouralOption<A,LaraBehaviouralOption<?,?>> or a more specific version instead.
  * 
  * @author Sascha Holzhauer
  * @param <A>
  * @date 18.12.2009
  * 
  */
-public class LGeneralBehaviouralOption<A extends LaraAgent<A, LGeneralBehaviouralOption<A>>>
-		extends LaraBehaviouralOption<A, LGeneralBehaviouralOption<A>> {
+public class LGeneralBehaviouralOption<A extends LaraAgent<A, LGeneralBehaviouralOption<A>>> extends
+		LaraBehaviouralOption<A, LGeneralBehaviouralOption<A>> {
 
 	/**
 	 * Counter to assign serial ids
 	 */
-	private static int counter = 0;
-
-	/**
-	 * @param agent
-	 * @param utilities
-	 */
-	public LGeneralBehaviouralOption(A agent,
-			Map<Class<? extends LaraPreference>, Double> utilities) {
-		super(new Integer(counter++).toString(), agent, utilities);
-	}
+	private static int	counter	= 0;
 
 	/**
 	 * @param key
@@ -58,9 +52,16 @@ public class LGeneralBehaviouralOption<A extends LaraAgent<A, LGeneralBehavioura
 	 * @param utilities
 	 * 
 	 */
-	public LGeneralBehaviouralOption(String key, A agent,
-			Map<Class<? extends LaraPreference>, Double> utilities) {
+	public LGeneralBehaviouralOption(String key, A agent, Map<Class<? extends LaraPreference>, Double> utilities) {
 		super(key, agent, utilities);
+	}
+
+	/**
+	 * @param agent
+	 * @param utilities
+	 */
+	public LGeneralBehaviouralOption(A agent, Map<Class<? extends LaraPreference>, Double> utilities) {
+		super(new Integer(counter++).toString(), agent, utilities);
 	}
 
 	/**
@@ -68,8 +69,7 @@ public class LGeneralBehaviouralOption<A extends LaraAgent<A, LGeneralBehavioura
 	 *      java.util.Map)
 	 */
 	@Override
-	public LGeneralBehaviouralOption<A> getModifiedBO(A agent,
-			Map<Class<? extends LaraPreference>, Double> utilities) {
+	public LGeneralBehaviouralOption<A> getModifiedBO(A agent, Map<Class<? extends LaraPreference>, Double> utilities) {
 		return new LGeneralBehaviouralOption<A>(this.getKey(), agent, utilities);
 	}
 
@@ -77,8 +77,7 @@ public class LGeneralBehaviouralOption<A extends LaraAgent<A, LGeneralBehavioura
 	 * @see de.cesr.lara.components.LaraBehaviouralOption#getSituationalUtilities(de.cesr.lara.components.decision.LaraDecisionConfiguration)
 	 */
 	@Override
-	public Map<Class<? extends LaraPreference>, Double> getSituationalUtilities(
-			LaraDecisionConfiguration<LGeneralBehaviouralOption<A>> dBuilder) {
+	public Map<Class<? extends LaraPreference>, Double> getSituationalUtilities(LaraDecisionConfiguration dBuilder) {
 		return getValue();
 	}
 }

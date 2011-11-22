@@ -1,5 +1,6 @@
 package de.cesr.lara.components.decision.impl;
 
+
 import java.util.Collection;
 
 import de.cesr.lara.components.LaraBehaviouralOption;
@@ -7,21 +8,21 @@ import de.cesr.lara.components.decision.LaraHeader;
 import de.cesr.lara.components.decision.LaraRow;
 import de.cesr.lara.components.decision.LaraUtilityMatrix;
 
+
 /**
- * the utility matrix attention: when writing decision heuristic care about
- * equal values (set unordered)
+ * the utility matrix attention: when writing decision heuristic care about equal values (set unordered)
  * 
  * @param <BO>
- *            type of behavioural option
+ *        type of behavioural option
  * 
  * @author klemm
  */
 public class LUtilityMatrix<BO extends LaraBehaviouralOption<?, BO>> implements
 		LaraUtilityMatrix<BO> {
 
-	LaraHeader header = null;
+	LaraHeader				header	= null;
 
-	Collection<LaraRow<BO>> rows = null;
+	Collection<LaraRow<BO>>	rows	= null;
 
 	/**
 	 * constructor

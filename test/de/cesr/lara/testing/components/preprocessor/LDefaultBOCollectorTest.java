@@ -20,6 +20,7 @@ import org.junit.Test;
 
 import de.cesr.lara.components.LaraPreference;
 import de.cesr.lara.components.agents.LaraAgent;
+import de.cesr.lara.components.agents.impl.LDefaultAgentComp;
 import de.cesr.lara.components.container.memory.LaraBOMemory;
 import de.cesr.lara.components.container.memory.impl.LDefaultLimitedCapacityBOMemory;
 import de.cesr.lara.components.decision.LaraDecisionConfiguration;
@@ -94,8 +95,8 @@ public class LDefaultBOCollectorTest {
 		memory = new LDefaultLimitedCapacityBOMemory<LGeneralBehaviouralOption<TestAgent>>(LCapacityManagers
 				.<LGeneralBehaviouralOption<TestAgent>> makeNINO());
 
-		dBuilder = new LDecisionConfiguration("TestDecision",
-				new LDecisionHeuristicComponent_MaxLineTotalRandomAtTie());
+		dBuilder = new LDecisionConfiguration("TestDecision");
+		LDefaultAgentComp.setDefaultDeliberativeChoiceComp(dBuilder, new LDecisionHeuristicComponent_MaxLineTotalRandomAtTie());
 		List<Class<? extends LaraPreference>> goals = new ArrayList<Class<? extends LaraPreference>>();
 		goals.add(goal1);
 		goals.add(goal2);

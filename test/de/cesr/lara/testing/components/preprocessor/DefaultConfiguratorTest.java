@@ -49,11 +49,7 @@ public class DefaultConfiguratorTest {
 	@Before
 	public void setUp() throws Exception {
 		configurator1 = LPreprocessorConfigurator.getDefaultPreprocessConfigurator();
-		decision1 = new LaraDecisionConfiguration<LGeneralBehaviouralOption<TestAgent>>() {
-
-			@Override
-			public void setHeuristic(LaraDeliberativeChoiceComponent<LGeneralBehaviouralOption<TestAgent>> heuristic) {
-			}
+		decision1 = new LaraDecisionConfiguration() {
 
 			@Override
 			public Collection<Class<? extends LaraPreference>> getPreferences() {
@@ -69,11 +65,6 @@ public class DefaultConfiguratorTest {
 			@Override
 			public String getId() {
 				return "TestDecision";
-			}
-
-			@Override
-			public LaraDeliberativeChoiceComponent getHeuristic() {
-				return null;
 			}
 		};
 

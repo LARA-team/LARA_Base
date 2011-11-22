@@ -9,7 +9,7 @@ import de.cesr.lara.components.LaraBehaviouralOption;
  * 
  * @param <BO>
  */
-public interface LaraUtilityMatrix<BO extends LaraBehaviouralOption<?, BO>> {
+public interface LaraUtilityMatrix<BO extends LaraBehaviouralOption<?, ?>> {
 
 	/**
 	 * @return Returns the header.

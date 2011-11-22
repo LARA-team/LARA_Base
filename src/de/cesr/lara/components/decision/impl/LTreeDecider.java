@@ -6,6 +6,7 @@
  */
 package de.cesr.lara.components.decision.impl;
 
+
 import java.util.Set;
 
 import de.cesr.lara.components.LaraBehaviouralOption;
@@ -14,24 +15,25 @@ import de.cesr.lara.components.decision.LaraDecider;
 import de.cesr.lara.components.decision.LaraDecisionConfiguration;
 import de.cesr.lara.components.decision.LaraDecisionTree;
 
+
 /**
  * 
  * TODO why no factory for this decider? 
  * @param <A>
- *            type of agents
+ *        type of agents
  * @param <BO>
- *            type of behavioural options
+ *        type of behavioural options
  * @param <P>
- *            type of parameter
+ *        type of parameter
  * 
  */
-public class LTreeDecider<A extends LaraAgent<A, ? super BO>, BO extends LaraBehaviouralOption<? super A, BO>, P>
+public class LTreeDecider<A extends LaraAgent<A, ? super BO>, BO extends LaraBehaviouralOption<?, BO>, P>
 		implements LaraDecider<BO> {
 
-	A agent;
-	Set<BO> bos;
-	LaraDecisionTree<A, BO, P> decisionTree;
-	P parameter;
+	A							agent;
+	Set<BO>						bos;
+	LaraDecisionTree<A, BO, P>	decisionTree;
+	P							parameter;
 
 	/**
 	 * @param decisionTree
@@ -61,12 +63,6 @@ public class LTreeDecider<A extends LaraAgent<A, ? super BO>, BO extends LaraBeh
 	}
 
 	@Override
-	public Set<? extends BO> getKSelectedBosSituational(int k) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public int getNumSelectableBOs() {
 		if (bos == null) {
 			throw new IllegalStateException(
@@ -83,12 +79,6 @@ public class LTreeDecider<A extends LaraAgent<A, ? super BO>, BO extends LaraBeh
 			throw new IllegalStateException(
 					"Number of Bos retrieved from dections tree exeeds 1!");
 		}
-	}
-
-	@Override
-	public BO getSelectedBoSituational() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	/**

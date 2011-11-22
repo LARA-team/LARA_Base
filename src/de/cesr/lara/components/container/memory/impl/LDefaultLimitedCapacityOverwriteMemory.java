@@ -23,7 +23,6 @@ import de.cesr.lara.components.container.exceptions.LContainerFullException;
 import de.cesr.lara.components.container.exceptions.LInvalidTimestampException;
 import de.cesr.lara.components.container.exceptions.LRemoveException;
 import de.cesr.lara.components.container.exceptions.LRetrieveException;
-import de.cesr.lara.components.container.exceptions.LStoreException;
 import de.cesr.lara.components.container.memory.LaraMemoryListener;
 import de.cesr.lara.components.container.memory.LaraMemoryListener.MemoryEvent;
 import de.cesr.lara.components.container.memory.LaraOverwriteMemory;
@@ -249,7 +248,7 @@ public class LDefaultLimitedCapacityOverwriteMemory<PropertyType extends LaraPro
 
 	@Override
 	public void memorize(PropertyType propertyToMemorize)
-			throws LStoreException, LContainerFullException,
+			throws LContainerFullException,
 			LInvalidTimestampException {
 		if (logger.isDebugEnabled()) {
 			logger.debug(getName() + ": Memorize property" + propertyToMemorize);
@@ -266,7 +265,7 @@ public class LDefaultLimitedCapacityOverwriteMemory<PropertyType extends LaraPro
 	 */
 	@Override
 	public void memorize(PropertyType propertyToMemorize, int retentionTime)
-			throws LStoreException, LContainerFullException,
+			throws LContainerFullException,
 			LInvalidTimestampException {
 		storage.store(propertyToMemorize);
 	}
@@ -321,7 +320,7 @@ public class LDefaultLimitedCapacityOverwriteMemory<PropertyType extends LaraPro
 	 */
 	@Override
 	public void refresh(PropertyType propertyToMemorize)
-			throws LStoreException, LContainerFullException,
+			throws LContainerFullException,
 			LInvalidTimestampException {
 
 		if (!contains(propertyToMemorize.getKey())) {

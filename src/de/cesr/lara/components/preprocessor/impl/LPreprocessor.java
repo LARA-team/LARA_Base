@@ -6,6 +6,7 @@
  */
 package de.cesr.lara.components.preprocessor.impl;
 
+
 import java.text.DecimalFormat;
 import java.util.Collection;
 
@@ -23,60 +24,60 @@ import de.cesr.lara.components.preprocessor.LaraPreprocessor;
 import de.cesr.lara.components.util.logging.impl.LAgentLevel;
 import de.cesr.lara.components.util.logging.impl.Log4jLogger;
 
+
 /**
- * Default implementation of {@link LaraPreprocessor}. Supports comprehensive
- * logging.
+ * Default implementation of {@link LaraPreprocessor}. Supports comprehensive logging.
  * 
  * TODO are getters/setters required?? (SH)
  * 
  * @param <A>
- *            agent type
+ *        agent type
  * @param <BO>
- *            the type of behavioural options the preprocessor shall manage
+ *        the type of behavioural options the preprocessor shall manage
  * 
  * @author Sascha Holzhauer
  * @date 25.06.2009
  */
-public class LPreprocessor<A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<? super A, BO>>
-		implements LaraPreprocessor<A, BO> {
+public class LPreprocessor<A extends LaraAgent<? super A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>> implements
+		LaraPreprocessor<A, BO> {
 
-	static private Logger logger = Log4jLogger.getLogger(LPreprocessor.class);
-	private Logger agentLogger = null;
+	static private Logger					logger		= Log4jLogger.getLogger(LPreprocessor.class);
+	private Logger							agentLogger	= null;
 
 	/*
 	 * <------- PROPERTIES ------------>
 	 */
 
 	/**
-	 * @uml.property name="bOScanner"
-	 */
-	protected LaraBOCollector<A, BO> collector;
-
-	/**
-	 * decision builder
-	 */
-	protected LaraDecisionConfiguration dConfiguration;
-
-	/**
 	 * @uml.property name="decisionModeSelector"
 	 */
-	protected LaraDecisionModeSelector<A> decisionModeSelector;
+	protected LaraDecisionModeSelector<A, BO>	decisionModeSelector;
 
 	/**
-	 * preference utilityUpdater
+	 * @uml.property name="bOScanner"
 	 */
-	protected LaraPreferenceUpdater<A> preferenceUpdater;
+	protected LaraBOCollector<A, BO>		collector;
 
 	/**
 	 * @uml.property name="bOChecker"
 	 */
-	protected LaraBOPreselector<A, BO> preselector;
+	protected LaraBOPreselector<A, BO>		preselector;
 
 	/**
 	 * @uml.property name="bOAdapter"
 	 */
 
-	protected LaraBOUtilityUpdater<A, BO> utilityUpdater;
+	protected LaraBOUtilityUpdater<A, BO>	utilityUpdater;
+
+	/**
+	 * preference utilityUpdater
+	 */
+	protected LaraPreferenceUpdater<A>		preferenceUpdater;
+
+	/**
+	 * decision builder
+	 */
+	protected LaraDecisionConfiguration			dConfiguration;
 
 	/*
 	 * <------- CONSTRUCTORS ------------>
@@ -90,20 +91,16 @@ public class LPreprocessor<A extends LaraAgent<A, BO>, BO extends LaraBehavioura
 	 * @param preferenceUpdater
 	 * @param dConfiguration
 	 */
-	public LPreprocessor(LaraDecisionModeSelector<A> selector,
-			LaraBOCollector<A, BO> collector,
-			LaraBOPreselector<A, BO> preselector,
-			LaraBOUtilityUpdater<A, BO> updater,
-			LaraPreferenceUpdater<A> preferenceUpdater,
-			LaraDecisionConfiguration dConfiguration) {
+	public LPreprocessor(LaraDecisionModeSelector<A, BO> selector, LaraBOCollector<A, BO> collector,
+			LaraBOPreselector<A, BO> preselector, LaraBOUtilityUpdater<A, BO> updater,
+			LaraPreferenceUpdater<A> preferenceUpdater, LaraDecisionConfiguration dConfiguration) {
 		this.decisionModeSelector = selector;
 		this.collector = collector;
 		this.preselector = preselector;
 		this.utilityUpdater = updater;
 		this.preferenceUpdater = preferenceUpdater;
 		this.dConfiguration = dConfiguration;
-		logger.debug("Scanner " + collector + " for dConfiguration "
-				+ dConfiguration.getId());
+		logger.debug("Scanner " + collector + " for dConfiguration " + dConfiguration.getId());
 	}
 
 	/*
@@ -115,17 +112,14 @@ public class LPreprocessor<A extends LaraAgent<A, BO>, BO extends LaraBehavioura
 	 * @see de.cesr.lara.components.preprocessor.LaraPreprocessor#preprocess(de.cesr.lara.components.preprocessor.LaraPreprocessor.Accuracy,
 	 *      de.cesr.lara.components.agents.LaraAgent)
 	 */
-	@Override
 	public void preprocess(LaraBOPreselector.Accuracy accuracy, A agent) {
 		Collection<BO> bos;
 
 		// <- LOGGING
 		// init agent specific logger (agent id is first part of logger name):
-		if (Log4jLogger.getLogger(
-				agent.getAgentId() + "." + LPreprocessor.class.getName())
-				.isEnabledFor(LAgentLevel.AGENT)) {
-			agentLogger = Log4jLogger.getLogger(agent.getAgentId() + "."
-					+ LPreprocessor.class.getName());
+		if (Log4jLogger.getLogger(agent.getAgentId() + "." + LPreprocessor.class.getName()).isEnabledFor(
+				LAgentLevel.AGENT)) {
+			agentLogger = Log4jLogger.getLogger(agent.getAgentId() + "." + LPreprocessor.class.getName());
 		}
 
 		if (agentLogger != null) {
@@ -148,33 +142,29 @@ public class LPreprocessor<A extends LaraAgent<A, BO>, BO extends LaraBehavioura
 
 		// BO Scanning:
 		if (collector != null) {
-			bos = collector.collectBOs(agent,
-					agent.getLaraComp().getBOMemory(), dConfiguration);
+			bos = collector.collectBOs(agent, agent.getLaraComp().getBOMemory(), dConfiguration);
 		} else {
 			bos = agent.getLaraComp().getBOMemory().recallAllMostRecent();
 		}
 
-		if (logger.isDebugEnabled() || agentLogger != null) {
+		if (logger.isDebugEnabled() || agentLogger != null)
 			logBOs(bos, "BOs from collector - ", agent);
-		}
 
 		// BO Updating:
 		if (utilityUpdater != null) {
 			bos = utilityUpdater.updateBOUtilities(agent, bos, dConfiguration);
 		}
 
-		if (logger.isDebugEnabled() || agentLogger != null) {
+		if (logger.isDebugEnabled() || agentLogger != null)
 			logBOs(bos, "Updated BOs - ", agent);
-		}
 
 		// BO Checking:
 		if (preselector != null) {
 			bos = preselector.preselectBOs(agent, bos);
 		}
 
-		if (logger.isDebugEnabled() || agentLogger != null) {
+		if (logger.isDebugEnabled() || agentLogger != null)
 			logBOs(bos, "Checked BOs - ", agent);
-		}
 
 		agent.getLaraComp().getDecisionData(dConfiguration).setBos(bos);
 
@@ -185,23 +175,20 @@ public class LPreprocessor<A extends LaraAgent<A, BO>, BO extends LaraBehavioura
 	}
 
 	/**
-	 * Logs BOs to agentLogger if its not null and to logger if debug is enabled
-	 * otherwise.
+	 * Logs BOs to agentLogger if its not null and to logger if debug is enabled otherwise.
 	 * 
 	 * @param bos
-	 *            BOs to log
+	 *        BOs to log
 	 * @param desc
-	 *            description that comments to BOs origin
+	 *        description that comments to BOs origin
 	 * @param agent
 	 */
 	private void logBOs(Collection<BO> bos, String desc, A agent) {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append(desc + "for " + agent + ":"
-				+ System.getProperty("line.separator"));
+		buffer.append(desc + "for " + agent + ":" + System.getProperty("line.separator"));
 		int i = 0;
 		for (BO bo : bos) {
-			buffer.append(new DecimalFormat("00").format(i) + "th BO: " + bo
-					+ System.getProperty("line.separator"));
+			buffer.append(new DecimalFormat("00").format(i) + "th BO: " + bo + System.getProperty("line.separator"));
 			i++;
 		}
 		if (agentLogger != null) {
