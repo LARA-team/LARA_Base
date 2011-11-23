@@ -23,7 +23,8 @@ import de.cesr.lara.components.decision.LaraDecisionTree;
  *        the parameter class type
  * 
  */
-public abstract class LAbstractBinaryDecsionTree<A extends LaraAgent<A, ? super BO>, BO extends LaraBehaviouralOption<? super A, BO>, P>
+public abstract class LAbstractBinaryDecsionTree<A extends LaraAgent<A, ? super BO>, 
+	BO extends LaraBehaviouralOption<?, BO>, P>
 		implements LaraDecisionTree<A, BO, P> {
 
 	/**
