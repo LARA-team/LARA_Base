@@ -385,7 +385,7 @@ public class LDefaultAgentComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 		} else if (event instanceof LAgentDecideEvent) {
 			decide(((LAgentDecideEvent) event).getDecisionConfiguration());
 		} else if (event instanceof LAgentPostprocessEvent) {
-			// TODO do something
+			
 		} else if (event instanceof LAgentExecutionEvent) {
 			removeDecisionData(((LAgentExecutionEvent) event)
 					.getDecisionConfiguration());
