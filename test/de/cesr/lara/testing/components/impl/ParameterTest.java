@@ -133,10 +133,6 @@ public class ParameterTest {
 		// LaraAgent<AbstractEmployee<BO>, BO> {
 
 		@Override
-		public void clean(LaraDecisionConfiguration dBuilder) {
-		}
-
-		@Override
 		public String getAgentId() {
 			return null;
 		}
@@ -147,20 +143,7 @@ public class ParameterTest {
 			return null;
 		}
 
-		@Override
 		public void laraExecute(LaraDecisionConfiguration dBuilder) {
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public void laraPerceive(LaraDecisionConfiguration dBuilder) {
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public void laraPostProcess(LaraDecisionConfiguration ddBuilder) {
 			// TODO Auto-generated method stub
 
 		}

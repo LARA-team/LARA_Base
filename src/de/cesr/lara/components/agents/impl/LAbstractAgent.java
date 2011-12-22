@@ -142,14 +142,6 @@ public abstract class LAbstractAgent<A extends LaraAgent<A, BO>, BO extends Lara
 	}
 
 	/**
-	 * @see de.cesr.lara.components.agents.LaraAgent#laraPostProcess(de.cesr.lara.components.decision.LaraDecisionConfiguration)
-	 */
-	@Override
-	public void laraPostProcess(LaraDecisionConfiguration dConfiguration) {
-		// nothing to do since this is a hook method
-	}
-
-	/**
 	 * Called by {@link LAbstractAgent#clean(LaraDecisionConfiguration)} Created by Sascha Holzhauer on 12.10.2010
 	 * 
 	 * @param dConfiguration

@@ -175,7 +175,7 @@ public interface LaraAgentComponent<A extends LaraAgent<? super A, BO>, BO exten
 	
 	/**
 	 * Sets the {@link LaraDeliberativeChoiceComponent} that shall be used for the given
-	 * decision configuration.
+	 * decision configuration. Note: if possible, use the same instance of the LaraDeliberativeChoiceComponent for all agents to save memory.
 	 * 
 	 * @param dConfiguration
 	 * @param comp

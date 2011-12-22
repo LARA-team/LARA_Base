@@ -147,10 +147,6 @@ public class LSemiParaemterTest {
 		// LaraAgent<AbstractEmployee<BO>, BO> {
 
 		@Override
-		public void clean(LaraDecisionConfiguration dBuilder) {
-		}
-
-		@Override
 		public String getAgentId() {
 			return null;
 		}
@@ -160,16 +156,7 @@ public class LSemiParaemterTest {
 			return null;
 		}
 
-		@Override
 		public void laraExecute(LaraDecisionConfiguration dBuilder) {
-		}
-
-		@Override
-		public void laraPerceive(LaraDecisionConfiguration dBuilder) {
-		}
-
-		@Override
-		public void laraPostProcess(LaraDecisionConfiguration ddBuilder) {
 		}
 
 		@Override
