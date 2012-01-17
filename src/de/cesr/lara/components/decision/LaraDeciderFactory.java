@@ -16,7 +16,7 @@ import de.cesr.lara.components.agents.LaraAgent;
  *        the agent class
  * @param <BO>
  */
-public interface LaraDeciderFactory<A extends LaraAgent<? super A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>> {
+public interface LaraDeciderFactory<A extends LaraAgent<? super A, BO>, BO extends LaraBehaviouralOption<?, ?>> {
 
 	/**
 	 * @param agent

@@ -1,8 +1,21 @@
 /**
- * LARA - Lightweight Architecture for boundedly Rational citizen Agents
- *
- * Center for Environmental Systems Research, Kassel
+ * This file is part of
  * 
+ * LARA - Lightweight Architecture for boundedly Rational citizen Agents
+ * 
+ * Copyright (C) 2012 Center for Environmental Systems Research, Kassel, Germany
+ * 
+ * LARA is free software: You can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * LARA is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package de.cesr.lara.components.container.storage.impl;
 
@@ -44,13 +57,13 @@ public class LDefaultStorage<PropertyType extends LaraProperty<?>> implements
 	 */
 	static private Logger logger = Log4jLogger.getLogger(LDefaultStorage.class);
 
-	private Map<String, Map<Integer, PropertyType>> keywise = new HashMap<String, Map<Integer, PropertyType>>();
+	private final Map<String, Map<Integer, PropertyType>> keywise = new HashMap<String, Map<Integer, PropertyType>>();
 
 	// observer management:
-	private MultiMap<LaraStorageListener.StorageEvent, LaraStorageListener> propertyListeners = new MultiHashMap<LaraStorageListener.StorageEvent, LaraStorageListener>();
+	private final MultiMap<LaraStorageListener.StorageEvent, LaraStorageListener> propertyListeners = new MultiHashMap<LaraStorageListener.StorageEvent, LaraStorageListener>();
 	private int size;
 
-	private Map<Integer, Map<String, PropertyType>> stepwise = new HashMap<Integer, Map<String, PropertyType>>();
+	private final Map<Integer, Map<String, PropertyType>> stepwise = new HashMap<Integer, Map<String, PropertyType>>();
 
 	/**
 	 * 
@@ -69,6 +82,9 @@ public class LDefaultStorage<PropertyType extends LaraProperty<?>> implements
 		propertyListeners.put(eventType, listener);
 	}
 
+	/**
+	 * @see de.cesr.lara.components.container.storage.LaraStorage#clear()
+	 */
 	@Override
 	public void clear() {
 		stepwise.clear();
@@ -115,6 +131,9 @@ public class LDefaultStorage<PropertyType extends LaraProperty<?>> implements
 		return keywise.get(key).containsKey(step);
 	}
 
+	/**
+	 * @see de.cesr.lara.components.container.storage.LaraStorage#fetch(java.lang.String)
+	 */
 	@Override
 	public PropertyType fetch(String key) {
 		if (isEmpty()) {
@@ -141,6 +160,10 @@ public class LDefaultStorage<PropertyType extends LaraProperty<?>> implements
 		return null;
 	}
 
+	/**
+	 * @see de.cesr.lara.components.container.storage.LaraStorage#fetch(java.lang.String,
+	 *      int)
+	 */
 	@Override
 	public PropertyType fetch(String key, int step) {
 		if (isEmpty()) {
@@ -163,6 +186,9 @@ public class LDefaultStorage<PropertyType extends LaraProperty<?>> implements
 		return stepwise.get(step).get(key);
 	}
 
+	/**
+	 * @see de.cesr.lara.components.container.storage.LaraStorage#fetchAll(java.lang.String)
+	 */
 	@Override
 	public Collection<PropertyType> fetchAll(String key) {
 		if (isEmpty()) {
@@ -183,50 +209,67 @@ public class LDefaultStorage<PropertyType extends LaraProperty<?>> implements
 		return keywise.keySet();
 	}
 
+	/**
+	 * @see de.cesr.lara.components.container.LaraContainer#getCapacity()
+	 */
 	@Override
 	public int getCapacity() {
 		return UNLIMITED_CAPACITY;
 	}
 
+	/**
+	 * @see de.cesr.lara.components.container.LaraContainer#getSize()
+	 */
 	@Override
 	public int getSize() {
 		return size;
 	}
 
+	/**
+	 * @see de.cesr.lara.components.container.LaraContainer#isEmpty()
+	 */
 	@Override
 	public boolean isEmpty() {
 		return size == 0;
 	}
 
+	/**
+	 * @see de.cesr.lara.components.container.LaraContainer#isFull()
+	 */
 	@Override
 	public boolean isFull() {
 		return false;
 	}
 
 	/**
-	 * In no particular order. TODO Throw Exception in case empty? (ME)
+	 * Provides an iterator over all properties in no particular order.
 	 * 
 	 * @see java.lang.Iterable#iterator()
 	 */
 	@Override
 	public Iterator<PropertyType> iterator() {
 		Collection<PropertyType> properties = new HashSet<PropertyType>(size);
-
 		for (Map<String, PropertyType> map : stepwise.values()) {
 			for (PropertyType property : map.values()) {
 				properties.add(property);
 			}
 		}
-
 		return properties.iterator();
 	}
 
+	/**
+	 * @see de.cesr.lara.components.container.storage.LaraStorage#remove(de.cesr.lara.components.LaraProperty)
+	 */
 	@Override
 	public PropertyType remove(PropertyType propertyToRemove) {
 		return remove(propertyToRemove.getKey(),
 				propertyToRemove.getTimestamp());
 	}
 
+	/**
+	 * @see de.cesr.lara.components.container.storage.LaraStorage#remove(java.lang.String,
+	 *      int)
+	 */
 	@Override
 	public PropertyType remove(String key, int step) {
 		if (!stepwise.containsKey(step)) {
@@ -258,6 +301,9 @@ public class LDefaultStorage<PropertyType extends LaraProperty<?>> implements
 		return removedProperty;
 	}
 
+	/**
+	 * @see de.cesr.lara.components.container.storage.LaraStorage#removeAll(java.util.Collection)
+	 */
 	@Override
 	public Collection<PropertyType> removeAll(
 			Collection<PropertyType> propertiesToBeRemoved) {
@@ -273,6 +319,9 @@ public class LDefaultStorage<PropertyType extends LaraProperty<?>> implements
 		return removedProperties;
 	}
 
+	/**
+	 * @see de.cesr.lara.components.container.storage.LaraStorage#removeAll(java.lang.String)
+	 */
 	@Override
 	public Collection<PropertyType> removeAll(String key) {
 		if (!keywise.containsKey(key)) {
@@ -292,6 +341,9 @@ public class LDefaultStorage<PropertyType extends LaraProperty<?>> implements
 		propertyListeners.remove(eventType, listener);
 	}
 
+	/**
+	 * @see de.cesr.lara.components.container.storage.LaraStorage#store(de.cesr.lara.components.LaraProperty)
+	 */
 	@Override
 	public void store(PropertyType propertyToStore) {
 		if (propertyToStore.getTimestamp() < 0) {
@@ -325,6 +377,9 @@ public class LDefaultStorage<PropertyType extends LaraProperty<?>> implements
 		}
 	}
 
+	/**
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
 		final String NEWLINE = System.getProperty("line.separator");

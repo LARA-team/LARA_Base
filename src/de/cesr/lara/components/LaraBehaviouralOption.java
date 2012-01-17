@@ -1,8 +1,21 @@
 /**
- * LARA - Lightweight Architecture for boundedly Rational citizen Agents
- *
- * Center for Environmental Systems Research, Kassel
+ * This file is part of
  * 
+ * LARA - Lightweight Architecture for boundedly Rational citizen Agents
+ * 
+ * Copyright (C) 2012 Center for Environmental Systems Research, Kassel, Germany
+ * 
+ * LARA is free software: You can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * LARA is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package de.cesr.lara.components;
 
@@ -11,15 +24,16 @@ import java.text.NumberFormat;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 
 import de.cesr.lara.components.agents.LaraAgent;
 import de.cesr.lara.components.decision.LaraDecisionConfiguration;
 import de.cesr.lara.components.model.impl.LModel;
+import de.cesr.lara.components.preprocessor.LaraBOPreselector;
 import de.cesr.lara.components.util.impl.LPreferenceWeightMap;
 import de.cesr.lara.components.util.logging.impl.LAgentLevel;
 import de.cesr.lara.components.util.logging.impl.Log4jLogger;
@@ -48,10 +62,8 @@ import de.cesr.lara.components.util.logging.impl.Log4jLogger;
  *        the behavioural option type
  * 
  * @date 12.02.2010
- * 
- * TODO is there any reason for ...extends LaraAgent<A,)>>...?
  */
-public abstract class LaraBehaviouralOption<A extends LaraAgent<? super A, ?>, BO extends LaraBehaviouralOption<?,? extends BO>>
+public abstract class LaraBehaviouralOption<A extends LaraAgent<? super A, ?>, BO extends LaraBehaviouralOption<?,?>>
 		extends LaraProperty<Map<Class<? extends LaraPreference>, Double>> implements
 		Comparable<LaraBehaviouralOption<A, BO>> {
 
@@ -67,12 +79,12 @@ public abstract class LaraBehaviouralOption<A extends LaraAgent<? super A, ?>, B
 	 * The agent this BO belongs to.
 	 */
 	private final A											agent;
-	private int												hashCode;
+	private final int												hashCode;
 
 	/**
 	 * The BO's collection of utility values
 	 */
-	private Map<Class<? extends LaraPreference>, Double>	preferenceUtilities;
+	private final Map<Class<? extends LaraPreference>, Double>	preferenceUtilities;
 
 	/**
 	 * constructor
@@ -129,6 +141,16 @@ public abstract class LaraBehaviouralOption<A extends LaraAgent<? super A, ?>, B
 		}
 		result = 31 * result + sum;
 		return result;
+	}
+
+	/**
+	 * This method may be called by {@link LaraBOPreselector} to check whether
+	 * the BO is applicable under current environmental and agent conditions.
+	 * 
+	 * @return true if the BO is applicable
+	 */
+	public boolean isCurrentlyApplicable() {
+		return true;
 	}
 
 	// ////////////////////////////////
@@ -248,6 +270,7 @@ public abstract class LaraBehaviouralOption<A extends LaraAgent<? super A, ?>, B
 	/**
 	 * @see de.cesr.lara.components.LaraProperty#getModifiedProperty(java.lang.Object)
 	 */
+	@Override
 	public BO getModifiedProperty(Map<Class<? extends LaraPreference>, Double> value) {
 		return getModifiedUtilitiesBO(value);
 	}
@@ -279,6 +302,7 @@ public abstract class LaraBehaviouralOption<A extends LaraAgent<? super A, ?>, B
 	 * @param bo1
 	 * @return a negative int if the given BO is larger, a positive int if the given BO is smaller and 0 otherwise
 	 */
+	@Override
 	public int compareTo(LaraBehaviouralOption<A, BO> bo1) {
 		return getKey().compareTo(bo1.getKey());
 	}
@@ -345,7 +369,10 @@ public abstract class LaraBehaviouralOption<A extends LaraAgent<? super A, ?>, B
 				});
 		sortedSet.addAll(preferenceUtilities.entrySet());
 		for (Map.Entry<Class<? extends LaraPreference>, Double> entry : sortedSet) {
-			buffer.append(entry.getKey().getSimpleName() + ": " + format.format(entry.getValue().doubleValue()) + "; ");
+			buffer.append(entry.getKey().getSimpleName()
+					+ ": "
+					+ (entry.getValue() != null ? format.format(entry
+							.getValue().doubleValue()) : "null") + "; ");
 		}
 		buffer.append("TS: " + getTimestamp() + "]");
 		return buffer.toString();

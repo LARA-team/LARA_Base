@@ -11,7 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import de.cesr.lara.components.LaraProperty;
-import de.cesr.lara.components.container.LaraCapacityManageable;
+import de.cesr.lara.components.container.LaraCapacityManageableContainer;
 import de.cesr.lara.components.container.LaraContainer;
 import de.cesr.lara.components.container.memory.LaraMemory;
 import de.cesr.lara.components.container.memory.impl.LDefaultLimitedCapacityMemory;
@@ -89,7 +89,7 @@ public class DefaultLaraLimitedCapacityMemoryImplTest {
 		assertTrue("After inserting several properties memory size should remain 7", memory.getSize() == 7);
 
 		// change capacity to 0:
-		LaraCapacityManageable<MyProperty> cmStorage = (LaraCapacityManageable<MyProperty>) memory;
+		LaraCapacityManageableContainer<MyProperty> cmStorage = (LaraCapacityManageableContainer<MyProperty>) memory;
 		cmStorage.setCapacity(LaraContainer.UNLIMITED_CAPACITY);
 
 		assertTrue(memory.getCapacity() == LaraContainer.UNLIMITED_CAPACITY);

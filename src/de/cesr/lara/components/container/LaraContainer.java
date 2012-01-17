@@ -1,10 +1,29 @@
+/**
+ * This file is part of
+ * 
+ * LARA - Lightweight Architecture for boundedly Rational citizen Agents
+ * 
+ * Copyright (C) 2012 Center for Environmental Systems Research, Kassel, Germany
+ * 
+ * LARA is free software: You can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * LARA is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package de.cesr.lara.components.container;
 
 import de.cesr.lara.components.LaraProperty;
 
 /**
- * TODO could this class be typeless? (ME) this way, one looses the type save
- * characteristic (SH)
+ * Defines methods to retrieve information about a container regarding its
+ * capacity and its degree of capacity utilisation.
  * 
  * @param <PropertyType>
  *            the type of properties this container shall store
@@ -22,10 +41,7 @@ public interface LaraContainer<PropertyType extends LaraProperty<?>> extends
 	 * be stored or {@link #UNLIMITED_CAPACITY} (the default) if it is
 	 * (virtually) unlimited.
 	 * 
-	 * 
 	 * @return the capacity of this storage.
-	 * 
-	 *         Created by Michael Elbers on 22.02.2010
 	 */
 	public int getCapacity();
 
@@ -39,9 +55,7 @@ public interface LaraContainer<PropertyType extends LaraProperty<?>> extends
 	/**
 	 * Returns true, if and only if this container is empty.
 	 * 
-	 * @return true, if and only if this container is empty.
-	 * 
-	 *         Created by Michael Elbers on 22.02.2010
+	 * @return true, if and only if this container is empty.0
 	 */
 	public boolean isEmpty();
 
@@ -50,9 +64,6 @@ public interface LaraContainer<PropertyType extends LaraProperty<?>> extends
 	 * {@link LaraCapacityManager}).
 	 * 
 	 * @return true, if and only if this container is full.
-	 * 
-	 *         Created by Michael Elbers on 22.02.2010
 	 */
 	public boolean isFull();
-
 }

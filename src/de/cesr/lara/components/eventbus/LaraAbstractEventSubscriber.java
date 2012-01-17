@@ -19,20 +19,19 @@
  */
 package de.cesr.lara.components.eventbus;
 
-import de.cesr.lara.components.eventbus.events.LaraEvent;
-
 /**
- * Common interface for subscribers of events.
+ * There are two types of subscribers:
+ * 
+ * 1. the LaraEventSubscriber - components in general 2.
+ * LaraInternalEventSubscriber - used by LARA core base classes.
+ * 
+ * Both are extending this interface. The internal subscriber will be notified
+ * first. This is necessary to give super classes the possibility to react on
+ * the same Events as their subclasses (otherwise they would loose functionality
+ * when the onEvent-method would be overridden).
+ * 
+ * The abstract in the interface declaration should indicate that you should not
+ * directly implement this.
  */
-public interface LaraEventSubscriber extends LaraAbstractEventSubscriber {
-
-	/**
-	 * Will be called with an event as a parameter when an event the subscriber
-	 * subscribed to occurs. Implement this to react on events. Typically you
-	 * would start doing something like <pseudocode> if (event instanceof
-	 * VeryInterestingEvent) { //do something smart } </pseudocode>
-	 * 
-	 * @param event
-	 */
-	public abstract <T extends LaraEvent> void onEvent(T event);
+public abstract interface LaraAbstractEventSubscriber {
 }

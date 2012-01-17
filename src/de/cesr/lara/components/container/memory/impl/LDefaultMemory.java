@@ -1,3 +1,22 @@
+/**
+ * This file is part of
+ * 
+ * LARA - Lightweight Architecture for boundedly Rational citizen Agents
+ * 
+ * Copyright (C) 2012 Center for Environmental Systems Research, Kassel, Germany
+ * 
+ * LARA is free software: You can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * LARA is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package de.cesr.lara.components.container.memory.impl;
 
 
@@ -56,7 +75,7 @@ public class LDefaultMemory<PropertyType extends LaraProperty<?>> implements Lar
 	private Map<PropertyType, Integer>																properties2tod			= new HashMap<PropertyType, Integer>();
 
 	// observer management:
-	private MultiMap<LaraMemoryListener.MemoryEvent, LaraMemoryListener>	propertyListeners		= new MultiHashMap<LaraMemoryListener.MemoryEvent, LaraMemoryListener>();
+	private final MultiMap<LaraMemoryListener.MemoryEvent, LaraMemoryListener>	propertyListeners		= new MultiHashMap<LaraMemoryListener.MemoryEvent, LaraMemoryListener>();
 
 	private static int																				counter					= 0;
 	private String																					name;
@@ -419,8 +438,9 @@ public class LDefaultMemory<PropertyType extends LaraProperty<?>> implements Lar
 	public int getRetentionTime(PropertyType property) {
 		checkIfNewStep();
 		Integer tod = properties2tod.get(property);
-		if (tod == null)
+		if (tod == null) {
 			return 0;
+		}
 		return tod - LModel.getModel().getCurrentStep();
 	}
 

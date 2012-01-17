@@ -1,3 +1,22 @@
+/**
+ * This file is part of
+ * 
+ * LARA - Lightweight Architecture for boundedly Rational citizen Agents
+ * 
+ * Copyright (C) 2012 Center for Environmental Systems Research, Kassel, Germany
+ * 
+ * LARA is free software: You can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * LARA is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package de.cesr.lara.testing.util;
 
 
@@ -9,7 +28,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import de.cesr.lara.components.LaraProperty;
-import de.cesr.lara.components.container.LaraCapacityManageable;
+import de.cesr.lara.components.container.LaraCapacityManageableContainer;
 import de.cesr.lara.components.container.LaraContainer;
 import de.cesr.lara.components.container.storage.LaraStorage;
 import de.cesr.lara.components.container.storage.impl.LDefaultLimitedCapacityStorage;
@@ -62,9 +81,9 @@ public class DefaultLaraLimitedCapacityStorageImplTest {
 		storage.store(new MyProperty("key08", "value08", 2));
 		assertTrue(storage.getSize() == 7);
 
-		MyProperty propertyX = null;
+
 		try {
-			propertyX = storage.fetch("key08");
+			storage.fetch("key08");
 		} catch (Exception e) {
 			fail("This should not have raised an exception.");
 		}
@@ -72,7 +91,8 @@ public class DefaultLaraLimitedCapacityStorageImplTest {
 		storeSomeEntries(6, 2);
 		assertTrue(storage.getSize() == 7);
 
-		LaraCapacityManageable<MyProperty> cmStorage = (LaraCapacityManageable<MyProperty>) storage;
+		@SuppressWarnings("unchecked")
+		LaraCapacityManageableContainer<MyProperty> cmStorage = (LaraCapacityManageableContainer<MyProperty>) storage;
 		cmStorage.setCapacity(LaraContainer.UNLIMITED_CAPACITY);
 
 		storeSomeEntries(100, 2);
@@ -99,7 +119,8 @@ public class DefaultLaraLimitedCapacityStorageImplTest {
 	 */
 	@Test
 	public void testNINO() {
-		LaraCapacityManageable<MyProperty> cmStorage = (LaraCapacityManageable<MyProperty>) storage;
+		@SuppressWarnings("unchecked")
+		LaraCapacityManageableContainer<MyProperty> cmStorage = (LaraCapacityManageableContainer<MyProperty>) storage;
 		cmStorage.setCapacityManager(LCapacityManagers.<MyProperty> makeNINO());
 		cmStorage.setCapacity(2);
 
@@ -111,21 +132,20 @@ public class DefaultLaraLimitedCapacityStorageImplTest {
 		storage.store(property02);
 		storage.store(property03);
 
-		MyProperty propertyX = null;
 		try {
-			propertyX = storage.fetch("key01");
+			storage.fetch("key01");
 		} catch (Exception e) {
 			fail("This should not have raised an exception.");
 		}
 
 		try {
-			propertyX = storage.fetch("key02");
+			storage.fetch("key02");
 		} catch (Exception e) {
 			fail("This should not have raised an exception.");
 		}
 
 		try {
-			propertyX = storage.fetch("key03");
+			storage.fetch("key03");
 			fail("This should have raised an exception.");
 		} catch (Exception e) {
 
@@ -138,7 +158,8 @@ public class DefaultLaraLimitedCapacityStorageImplTest {
 	 */
 	@Test
 	public void testFIFO() {
-		LaraCapacityManageable<MyProperty> cmStorage = (LaraCapacityManageable<MyProperty>) storage;
+		@SuppressWarnings("unchecked")
+		LaraCapacityManageableContainer<MyProperty> cmStorage = (LaraCapacityManageableContainer<MyProperty>) storage;
 		cmStorage.setCapacityManager(LCapacityManagers.<MyProperty> makeFIFO());
 		cmStorage.setCapacity(2);
 
@@ -150,21 +171,20 @@ public class DefaultLaraLimitedCapacityStorageImplTest {
 		storage.store(property02);
 		storage.store(property03);
 
-		MyProperty propertyX = null;
 		try {
-			propertyX = storage.fetch("key02");
+			storage.fetch("key02");
 		} catch (Exception e) {
 			fail("This should not have raised an exception.");
 		}
 
 		try {
-			propertyX = storage.fetch("key03");
+			storage.fetch("key03");
 		} catch (Exception e) {
 			fail("This should not have raised an exception.");
 		}
 
 		try {
-			propertyX = storage.fetch("key01");
+			storage.fetch("key01");
 			fail("This should have raised an exception.");
 		} catch (Exception e) {
 
@@ -177,7 +197,8 @@ public class DefaultLaraLimitedCapacityStorageImplTest {
 	 */
 	@Test
 	public void testFILO() {
-		LaraCapacityManageable<MyProperty> cmStorage = (LaraCapacityManageable<MyProperty>) storage;
+		@SuppressWarnings("unchecked")
+		LaraCapacityManageableContainer<MyProperty> cmStorage = (LaraCapacityManageableContainer<MyProperty>) storage;
 		cmStorage.setCapacityManager(LCapacityManagers.<MyProperty> makeFILO());
 		cmStorage.setCapacity(2);
 
@@ -189,21 +210,20 @@ public class DefaultLaraLimitedCapacityStorageImplTest {
 		storage.store(property02);
 		storage.store(property03);
 
-		MyProperty propertyX = null;
 		try {
-			propertyX = storage.fetch("key01");
+			storage.fetch("key01");
 		} catch (Exception e) {
 			fail("This should not have raised an exception.");
 		}
 
 		try {
-			propertyX = storage.fetch("key03");
+			storage.fetch("key03");
 		} catch (Exception e) {
 			fail("This should not have raised an exception.");
 		}
 
 		try {
-			propertyX = storage.fetch("key02");
+			storage.fetch("key02");
 			fail("This should have raised an exception.");
 		} catch (Exception e) {
 

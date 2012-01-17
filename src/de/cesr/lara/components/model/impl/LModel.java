@@ -26,7 +26,7 @@ public final class LModel {
 	protected static LaraModel model;
 
 	/**
-	 * @return model Created by klemm on 16.02.2010
+	 * @return model
 	 */
 	public static LaraModel getModel() {
 		if (model == null) {

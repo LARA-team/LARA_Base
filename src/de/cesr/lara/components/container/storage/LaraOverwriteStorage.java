@@ -1,8 +1,21 @@
 /**
+ * This file is part of
+ * 
  * LARA - Lightweight Architecture for boundedly Rational citizen Agents
- *
- * Center for Environmental Systems Research, Kassel
- * Created by Sascha Holzhauer on 18.05.2010
+ * 
+ * Copyright (C) 2012 Center for Environmental Systems Research, Kassel, Germany
+ * 
+ * LARA is free software: You can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * LARA is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package de.cesr.lara.components.container.storage;
 
@@ -11,22 +24,23 @@ import java.util.Collection;
 import java.util.Set;
 
 import de.cesr.lara.components.LaraProperty;
-import de.cesr.lara.components.container.LaraCapacityManageable;
+import de.cesr.lara.components.container.LaraCapacityManageableContainer;
 import de.cesr.lara.components.container.LaraContainer;
 import de.cesr.lara.components.container.exceptions.LContainerFullException;
 import de.cesr.lara.components.container.exceptions.LInvalidTimestampException;
 import de.cesr.lara.components.container.exceptions.LRemoveException;
 import de.cesr.lara.components.container.exceptions.LRetrieveException;
 
-
 /**
- * The interface is intended for simple storages that do not care about time steps (i.e. store only the latest entry for
- * a specific key).
+ * The interface is intended for simple storages that do not care about time
+ * steps (i.e. store only the latest entry for a specific key).
+ * 
+ * @date 22.02.2010
  * 
  * @param <PropertyType>
  */
 public interface LaraOverwriteStorage<PropertyType extends LaraProperty<?>> extends LaraContainer<PropertyType>,
-		LaraCapacityManageable<PropertyType> {
+		LaraCapacityManageableContainer<PropertyType> {
 	/*
 	 * STORING
 	 */
@@ -35,7 +49,7 @@ public interface LaraOverwriteStorage<PropertyType extends LaraProperty<?>> exte
 	 * Tries to add the specified property to this storage.
 	 * 
 	 * @param propertyToStore
-	 *        the property to be stored. Created by Michael Elbers on 21.02.2010
+	 *            the property to be stored.
 	 * @throws LContainerFullException
 	 * @throws LInvalidTimestampException
 	 */
@@ -50,7 +64,7 @@ public interface LaraOverwriteStorage<PropertyType extends LaraProperty<?>> exte
 	 * Removes the specified property from this storage.
 	 * 
 	 * @param propertyToRemove
-	 *        the property to be removed. Created by Michael Elbers on 22.02.2010
+	 *        the property to be removed.
 	 * @return the property that was removed
 	 * @throws LRemoveException
 	 */

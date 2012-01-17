@@ -1,8 +1,21 @@
 /**
+ * This file is part of
+ * 
  * LARA - Lightweight Architecture for boundedly Rational citizen Agents
- *
- * Center for Environmental Systems Research, Kassel
- * Created by Sascha Holzhauer on 18.05.2010
+ * 
+ * Copyright (C) 2012 Center for Environmental Systems Research, Kassel, Germany
+ * 
+ * LARA is free software: You can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * LARA is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package de.cesr.lara.components.container.storage.impl;
 
@@ -67,7 +80,7 @@ public class LDefaultSimpleStorage<PropertyType extends LaraProperty<?>>
 	private Map<String, PropertyType> properties;
 
 	// observer management:
-	private MultiMap<LaraStorageListener.StorageEvent, LaraStorageListener> propertyListeners = new MultiHashMap<LaraStorageListener.StorageEvent, LaraStorageListener>();
+	private final MultiMap<LaraStorageListener.StorageEvent, LaraStorageListener> propertyListeners = new MultiHashMap<LaraStorageListener.StorageEvent, LaraStorageListener>();
 
 	/**
 	 * 
@@ -119,9 +132,16 @@ public class LDefaultSimpleStorage<PropertyType extends LaraProperty<?>>
 	@Override
 	public PropertyType fetch(String key) {
 		if (isEmpty()) {
+			// <- LOGGING
+			logger.warn("No entry found. Memory is empty (requested key: "
+					+ key + ")");
+			// LOGGING ->
 			throw new LRetrieveException("No entry found. Memory is empty.");
 		}
 		if (!properties.containsKey(key)) {
+			// <- LOGGING
+			logger.warn("No entry for requested key: " + key + ".");
+			// LOGGING ->
 			throw new LRetrieveException("No entry found for key " + key + ".");
 		}
 		PropertyType propertyToStore = properties.get(key);
@@ -153,31 +173,9 @@ public class LDefaultSimpleStorage<PropertyType extends LaraProperty<?>>
 	public LaraCapacityManagementView<PropertyType> getCapacityManagementView() {
 		return new LaraCapacityManagementView<PropertyType>() {
 
-			@Override
-			public int getCapacity() {
-				return LDefaultSimpleStorage.this.getCapacity();
-			}
-
-			@Override
-			public int getSize() {
-				return LDefaultSimpleStorage.this.getSize();
-			}
-
-			@Override
-			public boolean isEmpty() {
-				return LDefaultSimpleStorage.this.isEmpty();
-			}
-
-			@Override
-			public boolean isFull() {
-				return LDefaultSimpleStorage.this.isFull();
-			}
-
-			@Override
-			public Iterator<PropertyType> iterator() {
-				return LDefaultSimpleStorage.this.iterator();
-			}
-
+			/**
+			 * @see de.cesr.lara.components.container.LaraCapacityManagementView#remove(de.cesr.lara.components.LaraProperty)
+			 */
 			@Override
 			public void remove(PropertyType item) {
 				if (propListenersContainsEventKey(StorageEvent.PROPERTY_AUTO_REMOVED)) {
@@ -189,6 +187,14 @@ public class LDefaultSimpleStorage<PropertyType extends LaraProperty<?>>
 				}
 				LDefaultSimpleStorage.this.removeWithoutNotification(item
 						.getKey());
+			}
+
+			/**
+			 * @see de.cesr.lara.components.container.LaraCapacityManagementView#iterator()
+			 */
+			@Override
+			public Iterator<PropertyType> iterator() {
+				return LDefaultSimpleStorage.this.iterator();
 			}
 		};
 	}
@@ -283,7 +289,7 @@ public class LDefaultSimpleStorage<PropertyType extends LaraProperty<?>>
 				int sizeBefore, sizeAfter;
 				do {
 					sizeBefore = getSize();
-					capacityManager.manage(this);
+					capacityManager.freeSpace(this.getCapacityManagementView());
 					sizeAfter = getSize();
 				} while (sizeBefore != sizeAfter && getSize() > capacity);
 			}
@@ -320,7 +326,8 @@ public class LDefaultSimpleStorage<PropertyType extends LaraProperty<?>>
 			}
 		} else {
 			if (isFull()) {
-				if (!capacityManager.manage(this)) {
+				if (!capacityManager
+						.freeSpace(this.getCapacityManagementView())) {
 					return;
 				}
 			}

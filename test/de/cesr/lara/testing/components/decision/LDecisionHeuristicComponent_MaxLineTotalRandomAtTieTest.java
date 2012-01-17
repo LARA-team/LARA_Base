@@ -1,8 +1,21 @@
 /**
+ * This file is part of
+ * 
  * LARA - Lightweight Architecture for boundedly Rational citizen Agents
- *
- * Center for Environmental Systems Research, Kassel
- * Created by Sascha Holzhauer on 05.05.2010
+ * 
+ * Copyright (C) 2012 Center for Environmental Systems Research, Kassel, Germany
+ * 
+ * LARA is free software: You can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * LARA is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package de.cesr.lara.testing.components.decision;
 
@@ -29,13 +42,13 @@ import de.cesr.lara.components.LaraPreference;
 import de.cesr.lara.components.decision.LaraDecisionConfiguration;
 import de.cesr.lara.components.decision.LaraRow;
 import de.cesr.lara.components.decision.LaraUtilityMatrix;
-import de.cesr.lara.components.decision.impl.LDecisionHeuristicComponent_MaxLineTotalRandomAtTie;
 import de.cesr.lara.components.decision.impl.LDecisionConfiguration;
+import de.cesr.lara.components.decision.impl.LDecisionHeuristicComponent_MaxLineTotalRandomAtTie;
 import de.cesr.lara.components.decision.impl.LRow;
 import de.cesr.lara.components.decision.impl.LUtilityMatrix;
-import de.cesr.lara.components.impl.LGeneralBehaviouralOption;
 import de.cesr.lara.testing.TestUtils;
 import de.cesr.lara.testing.TestUtils.TestAgent;
+import de.cesr.lara.testing.TestUtils.TestBo;
 
 
 /**
@@ -44,8 +57,8 @@ import de.cesr.lara.testing.TestUtils.TestAgent;
 public class LDecisionHeuristicComponent_MaxLineTotalRandomAtTieTest {
 
 	LDecisionHeuristicComponent_MaxLineTotalRandomAtTie	heuristic;
-	LaraUtilityMatrix<LGeneralBehaviouralOption<TestAgent>>										matrix;
-	LGeneralBehaviouralOption<TestAgent>[]														bos;
+	LaraUtilityMatrix<TestBo> matrix;
+	TestBo[] bos;
 	LaraDecisionConfiguration																			dBuilder;
 
 	/**
@@ -55,22 +68,22 @@ public class LDecisionHeuristicComponent_MaxLineTotalRandomAtTieTest {
 	public void setUp() throws Exception {
 		// TODO there is a memory error (no key...)
 		heuristic = new LDecisionHeuristicComponent_MaxLineTotalRandomAtTie();
-		matrix = new LUtilityMatrix<LGeneralBehaviouralOption<TestAgent>>();
+		matrix = new LUtilityMatrix<TestBo>();
 		dBuilder = new LDecisionConfiguration();
 
-		Collection<LaraRow<LGeneralBehaviouralOption<TestAgent>>> utilityMatrixRows = new ArrayList<LaraRow<LGeneralBehaviouralOption<TestAgent>>>();
+		Collection<LaraRow<TestBo>> utilityMatrixRows = new ArrayList<LaraRow<TestBo>>();
 		// add behavioural options as row to matrix
 		int[] utValues = { 0, 1, 2, 3, 5, 5, 5, 7, 8, 9 };
-		bos = new LGeneralBehaviouralOption[10];
+		bos = new TestBo[10];
 
 		TestAgent agent = new TestUtils.TestAgent("TestAgent");
 
 		for (int i = 0; i < 10; i++) {
-			bos[i] = new LGeneralBehaviouralOption<TestAgent>("" + i, agent,
+			bos[i] = new TestBo("" + i, agent,
 					new HashMap<Class<? extends LaraPreference>, Double>()) {
 
 				@Override
-				public LGeneralBehaviouralOption<TestAgent> getModifiedBO(TestAgent agent,
+				public TestBo getModifiedBO(TestAgent agent,
 						Map<Class<? extends LaraPreference>, Double> utilities) {
 					return null;
 				}
@@ -82,7 +95,7 @@ public class LDecisionHeuristicComponent_MaxLineTotalRandomAtTieTest {
 			};
 			List<Double> values = new ArrayList<Double>();
 			values.add(new Double(utValues[i]));
-			utilityMatrixRows.add(new LRow(bos[i], values));
+			utilityMatrixRows.add(new LRow<TestBo>(bos[i], values));
 		}
 		matrix.setRows(utilityMatrixRows);
 	}
@@ -112,7 +125,8 @@ public class LDecisionHeuristicComponent_MaxLineTotalRandomAtTieTest {
 	 */
 	@Test
 	public final void testGetKBestBehaviouralOptions() {
-		Set<? extends LaraBehaviouralOption> bosSet = heuristic.getKSelectedBOs(dBuilder, matrix, 3);
+		Set<? extends LaraBehaviouralOption<TestAgent, TestBo>> bosSet = heuristic
+				.getKSelectedBOs(dBuilder, matrix, 3);
 		assertEquals(3, bosSet.size());
 		assertFalse(bosSet.contains(bos[0]));
 		assertFalse(bosSet.contains(bos[1]));

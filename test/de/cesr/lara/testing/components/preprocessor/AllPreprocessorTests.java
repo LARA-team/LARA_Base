@@ -19,7 +19,8 @@ import org.junit.runners.Suite.SuiteClasses;
  * 
  */
 @RunWith(Suite.class)
-@SuiteClasses( { DefaultConfiguratorTest.class, LPreprocessorBuilderTest.class, LDefaultBOCollectorTest.class })
+@SuiteClasses({ DefaultConfiguratorTest.class, LDefaultBOCollectorTest.class,
+		LPpEventBusTest.class, LPreprocessorBuilderTest.class })
 public class AllPreprocessorTests {
 
 }

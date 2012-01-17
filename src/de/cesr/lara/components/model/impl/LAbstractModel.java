@@ -16,10 +16,11 @@ import org.apache.log4j.Logger;
 import de.cesr.lara.components.agents.impl.LAbstractAgent;
 import de.cesr.lara.components.decision.LaraDecisionConfiguration;
 import de.cesr.lara.components.eventbus.LaraInternalEventSubscriber;
-import de.cesr.lara.components.eventbus.events.LaraEvent;
+import de.cesr.lara.components.eventbus.events.LModelFinishEvent;
 import de.cesr.lara.components.eventbus.events.LModelInitializedEvent;
 import de.cesr.lara.components.eventbus.events.LModelInstantiatedEvent;
 import de.cesr.lara.components.eventbus.events.LModelStepEvent;
+import de.cesr.lara.components.eventbus.events.LaraEvent;
 import de.cesr.lara.components.eventbus.impl.LEventbus;
 import de.cesr.lara.components.model.LaraModel;
 import de.cesr.lara.components.util.LaraRandom;
@@ -37,7 +38,7 @@ import de.cesr.lara.components.util.logging.impl.Log4jLogger;
 public abstract class LAbstractModel implements LaraModel,
 		LaraInternalEventSubscriber {
 
-	private Logger logger = Log4jLogger.getLogger(LAbstractModel.class);
+	private final Logger logger = Log4jLogger.getLogger(LAbstractModel.class);
 
 	/**
 	 * 
@@ -162,13 +163,15 @@ public abstract class LAbstractModel implements LaraModel,
 	}
 
 	@Override
-	public <T extends LaraEvent> void onInternalEvent(T event) {
+	public void onInternalEvent(LaraEvent event) {
 
 		if (event instanceof LModelInstantiatedEvent) {
 			init();
 			eventBus.publish(new LModelInitializedEvent());
 		} else if (event instanceof LModelStepEvent) {
 			step();
+		} else if (event instanceof LModelFinishEvent) {
+			LEventbus.resetAll();
 		}
 
 	}

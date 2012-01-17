@@ -30,42 +30,41 @@ import org.apache.log4j.Priority;
 import de.cesr.lara.components.LaraBehaviouralOption;
 import de.cesr.lara.components.LaraPreference;
 import de.cesr.lara.components.agents.LaraAgent;
-import de.cesr.lara.components.decision.LaraDecisionConfiguration;
 import de.cesr.lara.components.eventbus.events.LaraEvent;
 import de.cesr.lara.components.preprocessor.LaraBOCollector;
 import de.cesr.lara.components.preprocessor.event.LPpBoCollectorEvent;
 import de.cesr.lara.components.util.logging.impl.Log4jLogger;
 
-
 /**
- * This LaraBoScanner implementation also filters out behavioural option that
- * indeed define one or more preferenceWeights also defined in the
- * {@link LaraDecisionConfiguration} but whose utility is not above zero. This
- * might be critical for some models since the utility may increase during
- * updating but might be useful for others.
+ * 
+ * Retrieves all recent behavioural options in memory and checks for each if any
+ * utility contributes to the decision represented by this decision builder.
  * 
  * NOTE regarding LOGGING: The agent logger for logging BOs is only enabled when
  * the logger for this class is enabled at least for {@link Priority#INFO}!
  * 
  * @param <A>
+ *            type of agents this BO collector is intended for
  * @param <BO>
- *            the type of behavioural options the given BO-memory memorises
+ *            type of behavioural options the given BO-memory memorises
+ * 
+ * @author Sascha Holzhauer
+ * @date 13.11.2009
  */
-public class LOmitZeroContributingBOCollector<A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<?, BO>>
+public class LContributingBoCollector<A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<?, BO>>
 		extends LAbstractPpComp<A, BO> implements LaraBOCollector<A, BO> {
-
 
 	/**
 	 * Logger
 	 */
 	static private Logger logger = Log4jLogger
-			.getLogger(LOmitZeroContributingBOCollector.class);
+			.getLogger(LContributingBoCollector.class);
 
 	/**
 	 * Retrieves all recent behavioural options in memory and checks for each if
 	 * any utility contributes to the decision represented by this decision
-	 * builder (if its weight is > 0.0). Contributing behavioural options are
-	 * returned. See {@link LContributingBoCollector}.
+	 * builder even if it is 0.0 or below. Contributing behavioural options are
+	 * returned. See {@link LOmitZeroContributingBOCollector}.
 	 * 
 	 * @see de.cesr.lara.components.preprocessor.LaraBOCollector#onInternalEvent(de.cesr.lara.components.preprocessor.event.LPpBoCollectorEvent)
 	 */
@@ -76,7 +75,6 @@ public class LOmitZeroContributingBOCollector<A extends LaraAgent<A, BO>, BO ext
 			logger.debug(this.getClass() + "> processes " + e.getClass());
 		}
 		// LOGGING ->
-
 		LPpBoCollectorEvent event = castEvent(LPpBoCollectorEvent.class, e);
 
 		Collection<BO> bos = new ArrayList<BO>();
@@ -86,10 +84,8 @@ public class LOmitZeroContributingBOCollector<A extends LaraAgent<A, BO>, BO ext
 		for (BO bo : agent.getLaraComp().getBOMemory().recallAllMostRecent()) {
 			boolean contributes = false;
 			for (Entry<Class<? extends LaraPreference>, Double> utility : bo.getValue().entrySet()) {
-
-				if (utility.getValue().doubleValue() > 0.0
-						&& event.getdConfig().getPreferences()
-								.contains(utility.getKey())) {
+				if (event.getdConfig().getPreferences()
+						.contains(utility.getKey())) {
 					contributes = true;
 					break;
 				}

@@ -22,7 +22,7 @@ import org.junit.runners.Suite.SuiteClasses;
  * 
  */
 @RunWith(Suite.class)
-@SuiteClasses( { DefaultLaraAgentCompTest.class, LGeneralBoTest.class, AbstractLaraAgentTest.class })
+@SuiteClasses( { DefaultLaraAgentCompTest.class, LaraBehaviouralOptionTest.class, AbstractLaraAgentTest.class })
 public class AllComponentsImplTests {
 
 }

@@ -33,7 +33,7 @@ public class LSemiParaemterTest {
 	 * 
 	 * @param <BO> the BO type, the agent type <A> may deal 
 	 */
-	static class CompanyBO<A extends LaraAgent<? super A, ?>, BO extends CompanyBO<A, ? extends BO>> extends
+	static class CompanyBO<A extends LaraAgent<? super A, ?>, BO extends CompanyBO<A, ?>> extends
 			LaraBehaviouralOption<A,BO> {
 		
 		/**
