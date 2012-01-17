@@ -7,7 +7,7 @@ import de.cesr.lara.components.eventbus.events.LaraEvent;
  * interface. Only for core components in de.cesr.lara.components.
  */
 public interface LaraInternalEventSubscriber extends
-		AbstractLaraEventSubscriber {
+		LaraAbstractEventSubscriber {
 
 	/**
 	 * Only for internal super classes beeing part of the LARA core. Use this in
@@ -16,6 +16,6 @@ public interface LaraInternalEventSubscriber extends
 	 * 
 	 * @param event
 	 */
-	public abstract <T extends LaraEvent> void onInternalEvent(T event);
+	public abstract void onInternalEvent(LaraEvent event);
 
 }

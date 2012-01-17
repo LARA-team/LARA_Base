@@ -27,14 +27,14 @@ import de.cesr.lara.components.preprocessor.LaraDecisionModeSelector;
  *        the agent class
  * @param <BO>
  */
-public final class LaraDecisionData<A extends LaraAgent<? super A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>> {
+public final class LaraDecisionData<A extends LaraAgent<? super A, BO>, BO extends LaraBehaviouralOption<?, ?>> {
 
-	private LaraDecisionConfiguration			dConfiguration;
+	private final LaraDecisionConfiguration			dConfiguration;
 	private Collection<BO>									bos;
 	private Map<Class<? extends LaraPreference>, Double>	situationalPreferenceWeights;
 
 	private BO												bo;
-	private A												agent;
+	private final A												agent;
 
 	/**
 	 * A factory is used to prevent the process from storing LaraDecider objects before decide()! (SH)

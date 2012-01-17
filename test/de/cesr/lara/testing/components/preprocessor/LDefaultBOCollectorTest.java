@@ -1,8 +1,21 @@
 /**
- * LARA - Lightweight Architecture for bounded Rational citizen Agents
- *
- * Center for Environmental Systems Research, Kassel
- * Created by Sascha Holzhauer on 12.02.2010
+ * This file is part of
+ * 
+ * LARA - Lightweight Architecture for boundedly Rational citizen Agents
+ * 
+ * Copyright (C) 2012 Center for Environmental Systems Research, Kassel, Germany
+ * 
+ * LARA is free software: You can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * LARA is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package de.cesr.lara.testing.components.preprocessor;
 
@@ -11,6 +24,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -24,21 +38,25 @@ import de.cesr.lara.components.agents.impl.LDefaultAgentComp;
 import de.cesr.lara.components.container.memory.LaraBOMemory;
 import de.cesr.lara.components.container.memory.impl.LDefaultLimitedCapacityBOMemory;
 import de.cesr.lara.components.decision.LaraDecisionConfiguration;
-import de.cesr.lara.components.decision.impl.LDecisionHeuristicComponent_MaxLineTotalRandomAtTie;
 import de.cesr.lara.components.decision.impl.LDecisionConfiguration;
-import de.cesr.lara.components.environment.LaraEnvironment;
-import de.cesr.lara.components.environment.impl.LEnvironment;
-import de.cesr.lara.components.impl.LGeneralBehaviouralOption;
+import de.cesr.lara.components.decision.impl.LDecisionHeuristicComponent_MaxLineTotalRandomAtTie;
+import de.cesr.lara.components.eventbus.events.LaraEvent;
+import de.cesr.lara.components.eventbus.impl.LEventbus;
+import de.cesr.lara.components.model.impl.LAbstractModel;
+import de.cesr.lara.components.model.impl.LAbstractStandaloneSynchronisedModel;
+import de.cesr.lara.components.model.impl.LModel;
 import de.cesr.lara.components.preprocessor.LaraBOCollector;
-import de.cesr.lara.components.preprocessor.impl.LContributingBOPreselector;
+import de.cesr.lara.components.preprocessor.event.LPpBoCollectorEvent;
+import de.cesr.lara.components.preprocessor.event.LPpModeSelectorEvent;
+import de.cesr.lara.components.preprocessor.impl.LContributingBoCollector;
+import de.cesr.lara.components.util.LaraRandom;
 import de.cesr.lara.components.util.impl.LCapacityManagers;
+import de.cesr.lara.components.util.impl.LRandomService;
 import de.cesr.lara.testing.TestUtils.TestAgent;
+import de.cesr.lara.testing.TestUtils.TestBo;
 
 
 /**
- * 
- * TODO complement tests and add to AllPreprocessorTests! (SH) > SH
- * 
  * @author Sascha Holzhauer
  * @date 12.02.2010
  * 
@@ -46,7 +64,7 @@ import de.cesr.lara.testing.TestUtils.TestAgent;
 public class LDefaultBOCollectorTest {
 
 	TestAgent															agent;
-	LaraBOMemory<LGeneralBehaviouralOption<TestAgent>>					memory;
+	LaraBOMemory<TestBo> memory;
 
 	LaraPreference														goal1;
 	LaraPreference														goal2;
@@ -55,45 +73,56 @@ public class LDefaultBOCollectorTest {
 	/**
 	 * Does not contribute to any goal
 	 */
-	LGeneralBehaviouralOption<TestAgent>								bo1;
+	TestBo bo1;
 	/**
 	 * Contributes to goal1 by 0.0
 	 */
-	LGeneralBehaviouralOption<TestAgent>								bo2;
+	TestBo bo2;
 	/**
 	 * Contributes to goal1 by 1.0 and goal2 by 0.0
 	 */
-	LGeneralBehaviouralOption<TestAgent>								bo3;
+	TestBo bo3;
 
-	LaraDecisionConfiguration													dBuilder;
+	LaraDecisionConfiguration dBuilder;
 
-	LaraBOCollector<TestAgent, LGeneralBehaviouralOption<TestAgent>>	scanner;
+	LaraBOCollector<TestAgent, TestBo> scanner;
 
 	/**
 	 * @throws java.lang.Exception
-	 *         Created by Sascha Holzhauer on 12.02.2010
 	 */
-	@SuppressWarnings("unchecked")
-	// type parameter for agent does not matter
 	@Before
 	public void setUp() throws Exception {
+		LModel.setNewModel(new LAbstractStandaloneSynchronisedModel() {
+
+			@Override
+			public LaraRandom getLRandom() {
+				return new LRandomService((int) System.currentTimeMillis());
+			}
+
+			@Override
+			public void onInternalEvent(LaraEvent event) {
+			}
+		});
+		((LAbstractModel) LModel.getModel()).init();
+
 		Class<? extends LaraPreference> goal1 = new LaraPreference() {
 		}.getClass();
 		Class<? extends LaraPreference> goal2 = new LaraPreference() {
 		}.getClass();
 
-		LaraEnvironment env = new LEnvironment();
 		agent = new TestAgent("TestAgent");
 		Map<Class<? extends LaraPreference>, Double> utilities = new HashMap<Class<? extends LaraPreference>, Double>();
-		bo1 = new LGeneralBehaviouralOption<TestAgent>(agent, utilities);
+		bo1 = new TestBo(agent, utilities);
 		utilities.put(goal1, 0.0);
-		bo2 = new LGeneralBehaviouralOption<TestAgent>(agent, utilities);
+		bo2 = new TestBo(agent, utilities);
 		utilities.put(goal1, 1.0);
 		utilities.put(goal2, 0.0);
-		bo3 = new LGeneralBehaviouralOption<TestAgent>(agent, utilities);
+		bo3 = new TestBo(agent, utilities);
 
-		memory = new LDefaultLimitedCapacityBOMemory<LGeneralBehaviouralOption<TestAgent>>(LCapacityManagers
-				.<LGeneralBehaviouralOption<TestAgent>> makeNINO());
+		memory = new LDefaultLimitedCapacityBOMemory<TestBo>(
+				LCapacityManagers
+.<TestBo> makeNINO());
+		agent.getLaraComp().setBOMemory(memory);
 
 		dBuilder = new LDecisionConfiguration("TestDecision");
 		LDefaultAgentComp.setDefaultDeliberativeChoiceComp(dBuilder, new LDecisionHeuristicComponent_MaxLineTotalRandomAtTie());
@@ -102,12 +131,13 @@ public class LDefaultBOCollectorTest {
 		goals.add(goal2);
 		dBuilder.setPreferences(goals);
 
-		scanner = new LContributingBOPreselector<TestAgent, LGeneralBehaviouralOption<TestAgent>>();
+		scanner = new LContributingBoCollector<TestAgent, TestBo>();
+		LEventbus.getInstance(agent.getAgentId()).subscribe(scanner,
+				LPpBoCollectorEvent.class);
 	}
 
 	/**
 	 * @throws java.lang.Exception
-	 *         Created by Sascha Holzhauer on 12.02.2010
 	 */
 	@After
 	public void tearDown() throws Exception {
@@ -115,26 +145,43 @@ public class LDefaultBOCollectorTest {
 
 	/**
 	 * Test method for
-	 * {@link de.cesr.lara.components.preprocessor.impl.LContributingBOPreselector#collectBOs(LaraAgent, LaraBOMemory, LaraDecisionConfiguration)}
+	 * {@link de.cesr.lara.components.preprocessor.impl.LContributingBoCollector#collectBOs(LaraAgent, LaraBOMemory, LaraDecisionConfiguration)}
 	 */
 	@Test
 	public final void testGetBOs() {
-		assertEquals("No BO in memory contributes to the decision's preferenceWeights (since there is no bo inserted)", 0, scanner
-				.collectBOs(agent, memory, dBuilder).size());
+
+		assertEquals(
+				"No BO in memory contributes to the decision's preferenceWeights "
+						+ "(since there is no bo inserted)", 0,
+				getNumOfSelectedBos());
 		memory.memorize(bo1);
 		assertEquals(
-				"No BO in memory contributes to the decision's preferenceWeights (since bo1 is inserted but has no utility for any goal)",
-				0, scanner.collectBOs(agent, memory, dBuilder).size());
+				"No BO in memory contributes to the decision's preferenceWeights "
+						+ "(since bo1 is inserted but has no utility for any goal)",
+				0, getNumOfSelectedBos());
 		memory.memorize(bo2);
 		assertEquals(
-				"1 BO in memory contributes to the decision's preferenceWeights (since bo2 is inserted but has utility 0.0 for goal1)",
-				1, scanner.collectBOs(agent, memory, dBuilder).size());
+				"1 BO in memory contributes to the decision's preferenceWeights "
+						+ "(since bo2 is inserted and has utility 1.0 for goal1)",
+				1, getNumOfSelectedBos());
 		memory.clear();
 		memory.memorize(bo2);
 		memory.memorize(bo3);
 		assertEquals(
-				"2 BO in memory contribute to the decision's preferenceWeights (since bo2 with utility 0.0 for goal1 and bo3 with 1.0 for "
-						+ "goal1 and 0.0 for goal2 are inserted)", 2, scanner.collectBOs(agent, memory, dBuilder)
-						.size());
+				"2 BO in memory contribute to the decision's preferenceWeights "
+						+ "(since bo2 with utility 0.0 for goal1 and bo3 with 1.0 for "
+						+ "goal1 and 0.0 for goal2 are inserted)", 2,
+				getNumOfSelectedBos());
+	}
+
+	protected int getNumOfSelectedBos() {
+		agent.getLaraComp().getDecisionData(dBuilder)
+				.setBos(new HashSet<TestBo>());
+		// LPpBoCollectorEvent requires LPpModeSelectorEvent!
+		LEventbus.getInstance(agent.getAgentId()).publish(
+				new LPpModeSelectorEvent(agent, dBuilder));
+		LEventbus.getInstance(agent.getAgentId()).publish(
+				new LPpBoCollectorEvent(agent, dBuilder));
+		return agent.getLaraComp().getDecisionData(dBuilder).getBos().size();
 	}
 }

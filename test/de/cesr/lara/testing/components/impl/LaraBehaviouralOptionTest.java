@@ -1,8 +1,21 @@
 /**
- * LARA - Lightweight Architecture for bounded Rational citizen Agents
- *
- * Center for Environmental Systems Research, Kassel
- * Created by Sascha Holzhauer on 11.02.2010
+ * This file is part of
+ * 
+ * LARA - Lightweight Architecture for boundedly Rational citizen Agents
+ * 
+ * Copyright (C) 2012 Center for Environmental Systems Research, Kassel, Germany
+ * 
+ * LARA is free software: You can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * LARA is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package de.cesr.lara.testing.components.impl;
 
@@ -21,13 +34,13 @@ import de.cesr.lara.components.LaraPreference;
 import de.cesr.lara.components.environment.LaraEnvironment;
 import de.cesr.lara.components.environment.impl.LEnvironment;
 import de.cesr.lara.components.eventbus.events.LaraEvent;
-import de.cesr.lara.components.impl.LGeneralBehaviouralOption;
 import de.cesr.lara.components.model.impl.LAbstractStandaloneSynchronisedModel;
 import de.cesr.lara.components.model.impl.LModel;
 import de.cesr.lara.components.util.LaraRandom;
 import de.cesr.lara.components.util.impl.LRandomService;
 import de.cesr.lara.testing.TestUtils;
 import de.cesr.lara.testing.TestUtils.TestAgent;
+import de.cesr.lara.testing.TestUtils.TestBo;
 
 /**
  * 
@@ -35,23 +48,21 @@ import de.cesr.lara.testing.TestUtils.TestAgent;
  * @date 11.02.2010
  * 
  */
-public class LGeneralBoTest {
+public class LaraBehaviouralOptionTest {
 
 	private static class TestGoal implements LaraPreference {
-
 	}
 
 	TestAgent agent1;
 	TestAgent agent2;
 	Class<? extends LaraPreference> goal1;
-	LGeneralBehaviouralOption<TestAgent> bo1;
-	LGeneralBehaviouralOption<TestAgent> bo2;
+	TestBo bo1;
+	TestBo bo2;
 	LaraEnvironment env;
 	Map<Class<? extends LaraPreference>, Double> utilities1;
 
 	/**
 	 * @throws java.lang.Exception
-	 *             Created by Sascha Holzhauer on 11.02.2010
 	 */
 	@Before
 	public void setUp() throws Exception {
@@ -63,9 +74,7 @@ public class LGeneralBoTest {
 			}
 
 			@Override
-			public <T extends LaraEvent> void onInternalEvent(T event) {
-				// TODO Auto-generated method stub
-
+			public void onInternalEvent(LaraEvent event) {
 			}
 		});
 		env = new LEnvironment();
@@ -74,16 +83,13 @@ public class LGeneralBoTest {
 		utilities1 = new HashMap<Class<? extends LaraPreference>, Double>();
 		goal1 = TestGoal.class;
 		utilities1.put(goal1, new Double(1.0));
-		bo1 = new LGeneralBehaviouralOption<TestAgent>("BO1", agent1,
-				utilities1);
-		bo2 = new LGeneralBehaviouralOption<TestAgent>("BO2", agent1,
-				utilities1);
+		bo1 = new TestBo("BO1", agent1, utilities1);
+		bo2 = new TestBo("BO2", agent1, utilities1);
 
 	}
 
 	/**
 	 * @throws java.lang.Exception
-	 *             Created by Sascha Holzhauer on 11.02.2010
 	 */
 	@After
 	public void tearDown() throws Exception {
@@ -144,8 +150,7 @@ public class LGeneralBoTest {
 
 		assertTrue(bo1.equals(bo1));
 
-		LGeneralBehaviouralOption<TestAgent> bo12 = new LGeneralBehaviouralOption<TestAgent>(
-				"BO1", agent2, utilities1);
+		TestBo bo12 = new TestBo("BO1", agent2, utilities1);
 
 		assertTrue(bo1.getModifiedBO(bo12.getAgent(), bo12.getValue()).equals(
 				bo12));
@@ -153,8 +158,7 @@ public class LGeneralBoTest {
 
 		assertFalse(bo1.getModifiedUtilitiesBO(bo2.getValue()).equals(bo12));
 
-		assertTrue(bo1.equals(new LGeneralBehaviouralOption<TestAgent>("BO1",
-				agent1, utilities1)));
+		assertTrue(bo1.equals(new TestBo("BO1", agent1, utilities1)));
 	}
 
 	/**
@@ -164,11 +168,10 @@ public class LGeneralBoTest {
 	public final void testHashCode() {
 		assertEquals("hash codes of equal objects need to be equal",
 				bo1.hashCode(), bo1.hashCode());
-		LGeneralBehaviouralOption<TestAgent> bo12 = new LGeneralBehaviouralOption<TestAgent>(
-				"BO1", agent2, utilities1);
+		TestBo bo12 = new TestBo("BO1", agent2, utilities1);
 		assertEquals("hash codes of equal objects need to be equal",
-				bo1.hashCode(), new LGeneralBehaviouralOption<TestAgent>("BO1",
-						agent1, utilities1).hashCode());
+				bo1.hashCode(),
+				new TestBo("BO1", agent1, utilities1).hashCode());
 		assertEquals("hash codes of equal objects need to be equal", bo1
 				.getModifiedAgentBO(bo12.getAgent()).hashCode(),
 				bo12.hashCode());

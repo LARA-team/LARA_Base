@@ -19,69 +19,74 @@
  */
 package de.cesr.lara.components.preprocessor.impl;
 
-
-import java.util.Map.Entry;
+import java.text.DecimalFormat;
+import java.util.Collection;
 
 import org.apache.log4j.Logger;
 
 import de.cesr.lara.components.LaraBehaviouralOption;
-import de.cesr.lara.components.LaraPreference;
 import de.cesr.lara.components.agents.LaraAgent;
-import de.cesr.lara.components.decision.LaraDecisionData;
 import de.cesr.lara.components.eventbus.events.LaraEvent;
-import de.cesr.lara.components.preprocessor.LaraPreferenceUpdater;
-import de.cesr.lara.components.preprocessor.event.LPpPreferenceUpdaterEvent;
+import de.cesr.lara.components.preprocessor.LaraPreprocessorComp;
+import de.cesr.lara.components.preprocessor.event.LaraPpEvent;
 import de.cesr.lara.components.util.logging.impl.LAgentLevel;
 import de.cesr.lara.components.util.logging.impl.Log4jLogger;
 
 
 /**
- * Does _not_ update any preference.
+ * @author Sascha Holzhauer
  * 
  * @param <A>
- *        he type of agents this preference utilityUpdater is intended for
- * 
- * @author Sascha Holzhauer
- * @date 05.02.2010
- * 
+ * @param <BO>
  */
-public class LPseudoPrefereceUpdater<A extends LaraAgent<? super A, ?>, BO extends LaraBehaviouralOption<?, ?>>
-		extends LAbstractPpComp<A, BO> implements LaraPreferenceUpdater<A, BO> {
-
+public abstract class LAbstractPpComp<A extends LaraAgent<? super A, ?>, BO extends LaraBehaviouralOption<?, ?>> 
+		implements LaraPreprocessorComp<A, BO> {
+	
 	/**
 	 * Logger
 	 */
-	static private Logger logger = Log4jLogger
-			.getLogger(LPseudoPrefereceUpdater.class);
+	static private Logger logger = Log4jLogger.getLogger(LAbstractPpComp.class);
 
 	/**
-	 * Does _not_ update any preference (only sets agent's basic
-	 * preferenceWeights at the {@link LaraDecisionData} object).
-	 * 
-	 * @see de.cesr.lara.components.eventbus.LaraInternalEventSubscriber#onInternalEvent(de.cesr.lara.components.eventbus.events.LaraEvent)
+	 * @see de.cesr.lara.components.preprocessor.LaraPreprocessorComp#castEvent(java.lang.Class,
+	 *      de.cesr.lara.components.eventbus.events.LaraEvent)
 	 */
 	@Override
-	public void onInternalEvent(LaraEvent e) {
-		// <- LOGGING
-		if (logger.isDebugEnabled()) {
-			logger.debug(this.getClass() + "> processes " + e.getClass());
+	public <E extends LaraPpEvent> E castEvent(Class<E> clazz, LaraEvent event) {
+		if (clazz.isInstance(event)) {
+			return clazz.cast(event);
+		} else {
+			logger.error("The preprocessor component (" + this
+					+ "( may not be subscribed for this event: " + event
+					+ "! The component is suitable for events of type " + clazz);
+			throw new IllegalStateException("The preprocessor component ("
+					+ this + "( may not be subscribed " + "for this event: "
+					+ event + "! The component is suitable for events of type "
+					+ clazz);
 		}
-		// LOGGING ->
+	}
 
-		LPpPreferenceUpdaterEvent event = castEvent(
-				LPpPreferenceUpdaterEvent.class, e);
-		@SuppressWarnings("unchecked")
-		// the event will only be published by agents of type A
-		A agent = ((A) event.getAgent());
-		agent.getLaraComp()
-				.getDecisionData(event.getdConfig())
-				.setSituationalPreferences(
-						agent.getLaraComp().getPreferenceWeights());
+	/**
+	 * 
+	 * TODO check
+	 * 
+	 * Logs BOs to agentLogger
+	 * (<agent>.de.cesr.lara.components.preprocessor.impl.LPreprocessor) if its
+	 * not null and to logger if debug is enabled otherwise.
+	 * 
+	 * @param bos
+	 *            BOs to log
+	 * @param desc
+	 *            description that comments to BOs origin
+	 * @param agent
+	 */
+	protected void logBOs(Logger logger, Collection<BO> bos, String desc,
+			A agent) {
 
-		// <- LOGGING
+		Logger agentLogger = null;
+
 		// initialise agent specific logger (agent id is first part of logger
 		// name):
-		Logger agentLogger = null;
 		if (Log4jLogger.getLogger(
 				agent.getAgentId() + "." + LPreprocessor.class.getName())
 				.isEnabledFor(LAgentLevel.AGENT)) {
@@ -90,12 +95,11 @@ public class LPseudoPrefereceUpdater<A extends LaraAgent<? super A, ?>, BO exten
 		}
 
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("Preferences for " + agent + ":"
+		buffer.append(desc + "for " + agent + ":"
 				+ System.getProperty("line.separator"));
 		int i = 0;
-		for (Entry<Class<? extends LaraPreference>, Double> entry : agent
-				.getLaraComp().getPreferenceWeights().entrySet()) {
-			buffer.append(entry.getKey() + ": " + entry.getValue()
+		for (BO bo : bos) {
+			buffer.append(new DecimalFormat("00").format(i) + "th BO: " + bo
 					+ System.getProperty("line.separator"));
 			i++;
 		}
@@ -104,7 +108,5 @@ public class LPseudoPrefereceUpdater<A extends LaraAgent<? super A, ?>, BO exten
 		} else if (logger.isDebugEnabled()) {
 			logger.debug(buffer);
 		}
-		// LOGGING ->
-
 	}
 }

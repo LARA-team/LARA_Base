@@ -1,8 +1,21 @@
 /**
- * LARA
- *
- * Center for Environmental Systems Research, Kassel
- * Created by Sascha Holzhauer on 10.12.2009
+ * This file is part of
+ * 
+ * LARA - Lightweight Architecture for boundedly Rational citizen Agents
+ * 
+ * Copyright (C) 2012 Center for Environmental Systems Research, Kassel, Germany
+ * 
+ * LARA is free software: You can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * LARA is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package de.cesr.lara.components;
 
@@ -65,7 +78,7 @@ public abstract class LaraProperty<ValueType> {
 
 	/**
 	 * 
-	 * @return Created by Michael Elbers on 19.02.2010
+	 * @return
 	 */
 	public final String getKey() {
 		return key;
@@ -74,7 +87,6 @@ public abstract class LaraProperty<ValueType> {
 	/**
 	 * @param value
 	 * @return a new property with new value and key and current time stamp
-	 *         Created by Sascha Holzhauer on 10.02.2010
 	 */
 	public abstract LaraProperty<ValueType> getModifiedProperty(ValueType value);
 
@@ -87,7 +99,7 @@ public abstract class LaraProperty<ValueType> {
 
 	/**
 	 * 
-	 * @return Created by Michael Elbers on 19.02.2010
+	 * @return
 	 */
 	public final int getTimestamp() {
 		return timestamp;
@@ -110,6 +122,9 @@ public abstract class LaraProperty<ValueType> {
 		return result;
 	}
 
+	/**
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
 		return "[" + getKey() + ", " + getValue() + ", " + getTimestamp() + "]";

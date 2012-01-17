@@ -13,6 +13,6 @@ import de.cesr.lara.testing.util.AllUtilTests;
  * run all tests at once
  */
 @RunWith(Suite.class)
-@SuiteClasses( { AllComponentTests.class, /*AllToolboxTests.class,*/ AllUtilTests.class })
+@SuiteClasses({ AllComponentTests.class, AllUtilTests.class })
 public class AllLaraTests {
 }

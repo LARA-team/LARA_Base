@@ -8,6 +8,7 @@ package de.cesr.lara.testing.components.preprocessor;
 
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotSame;
 
 import java.util.Collection;
@@ -16,18 +17,16 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-
-import de.cesr.lara.components.LaraBehaviouralOption;
 import de.cesr.lara.components.LaraPreference;
-import de.cesr.lara.components.container.memory.LaraBOMemory;
 import de.cesr.lara.components.decision.LaraDecisionConfiguration;
-import de.cesr.lara.components.impl.LGeneralBehaviouralOption;
+import de.cesr.lara.components.eventbus.events.LaraEvent;
 import de.cesr.lara.components.preprocessor.LaraBOCollector;
-import de.cesr.lara.components.preprocessor.LaraBOPreselector;
-import de.cesr.lara.components.preprocessor.LaraPreprocessorFactory;
-import de.cesr.lara.components.preprocessor.LaraPreprocessorConfiguration;
+import de.cesr.lara.components.preprocessor.LaraPreprocessor;
+import de.cesr.lara.components.preprocessor.LaraPreprocessorConfigurator;
+import de.cesr.lara.components.preprocessor.event.LaraPpEvent;
 import de.cesr.lara.components.preprocessor.impl.LPreprocessorConfigurator;
 import de.cesr.lara.testing.TestUtils.TestAgent;
+import de.cesr.lara.testing.TestUtils.TestBo;
 
 
 /**
@@ -46,16 +45,18 @@ public class LPreprocessorBuilderTest {
 	LaraDecisionConfiguration																decision1;
 	LaraDecisionConfiguration																decision2;
 
-	LaraPreprocessorConfiguration<TestAgent, LGeneralBehaviouralOption<TestAgent>>	configurator1;
-	LaraPreprocessorConfiguration<TestAgent, LGeneralBehaviouralOption<TestAgent>>	configurator2;
-	LaraPreprocessorConfiguration<TestAgent, LGeneralBehaviouralOption<TestAgent>>	configurator3;
+	LaraPreprocessorConfigurator<TestAgent, TestBo> configurator1;
+	LaraPreprocessorConfigurator<TestAgent, TestBo> configurator2;
+	LaraPreprocessorConfigurator<TestAgent, TestBo> configurator3;
 
-	LaraBOCollector<TestAgent, LGeneralBehaviouralOption<TestAgent>>				scanner;
+	LaraBOCollector<TestAgent, TestBo> scanner;
 
-	LaraPreprocessorFactory<TestAgent, LGeneralBehaviouralOption<TestAgent>>			builder1;
-	LaraPreprocessorFactory<TestAgent, LGeneralBehaviouralOption<TestAgent>>			builder2;
-	LaraPreprocessorFactory<TestAgent, LGeneralBehaviouralOption<TestAgent>>			builder3;
-	LaraPreprocessorFactory<TestAgent, LGeneralBehaviouralOption<TestAgent>>			builder12;
+	LaraPreprocessor<TestAgent, TestBo> builder1;
+	LaraPreprocessor<TestAgent, TestBo> builder2;
+	LaraPreprocessor<TestAgent, TestBo> builder3;
+	LaraPreprocessor<TestAgent, TestBo> builder12;
+
+	static boolean preprocessCalled = false;
 
 	/**
 	 * @throws java.lang.Exception
@@ -115,7 +116,7 @@ public class LPreprocessorBuilderTest {
 		configurator1 = LPreprocessorConfigurator.getDefaultPreprocessConfigurator();
 
 		/**
-		 * Default LaraPreprocessorFactory
+		 * Default LaraPreprocessor
 		 */
 		builder1 = configurator1.getPreprocessorFactory();
 
@@ -123,11 +124,17 @@ public class LPreprocessorBuilderTest {
 		 * Second Configurator with another LaraBOCollector
 		 */
 		configurator2 = LPreprocessorConfigurator.getDefaultPreprocessConfigurator();
-		scanner = new LaraBOCollector<TestAgent, LGeneralBehaviouralOption<TestAgent>>() {
+		scanner = new LaraBOCollector<TestAgent, TestBo>() {
+
 			@Override
-			public Collection<LGeneralBehaviouralOption<TestAgent>> collectBOs(TestAgent agent,
-					LaraBOMemory<LGeneralBehaviouralOption<TestAgent>> memory, LaraDecisionConfiguration dBuilder) {
-				throw new LPreprocessorBuilderTest.PreprocessorTestException();
+			public <E extends LaraPpEvent> E castEvent(Class<E> clazz,
+					LaraEvent event) {
+				return null;
+			}
+
+			@Override
+			public void onInternalEvent(LaraEvent event) {
+				preprocessCalled = true;
 			}
 		};
 		configurator2.setBOCollector(scanner);
@@ -143,10 +150,10 @@ public class LPreprocessorBuilderTest {
 
 	/**
 	 * @throws java.lang.Exception
-	 *         Created by Sascha Holzhauer on 05.02.2010
 	 */
 	@After
 	public void tearDown() throws Exception {
+		preprocessCalled = false;
 	}
 
 	/**
@@ -154,19 +161,19 @@ public class LPreprocessorBuilderTest {
 	 */
 	@Test
 	public final void testGetPreprocessorBuilder() {
-		LaraPreprocessorFactory<TestAgent, LGeneralBehaviouralOption<TestAgent>> builder2 = configurator2
+		LaraPreprocessor<TestAgent, TestBo> builder2 = configurator2
 				.getPreprocessorFactory();
 		assertNotSame("Bilders of different configuration need to be different", builder1, builder2);
 	}
 
 	/**
 	 * Test method for
-	 * {@link de.cesr.lara.components.preprocessor.impl.LPreprocessFactory#getPreprocessor(de.cesr.lara.components.decision.LaraDecisionConfiguration)}
+	 * {@link de.cesr.lara.components.preprocessor.impl.LPreprocessor#getPreprocessor(de.cesr.lara.components.decision.LaraDecisionConfiguration)}
 	 * .
 	 */
-	@Test(expected = LPreprocessorBuilderTest.PreprocessorTestException.class)
 	public final void testGetPreprocessor() {
-		builder2.getPreprocessor(decision1).preprocess(LaraBOPreselector.LAccuracy.MODERATE, new TestAgent("TestAgent"));
+		builder2.preprocess(decision1, new TestAgent("TestAgent"));
+		assertFalse(preprocessCalled);
 	}
 
 	/**
@@ -194,7 +201,7 @@ public class LPreprocessorBuilderTest {
 
 	/**
 	 * @see LPreprocessorBuilderTest#testMeetsConfigurator() Test method for
-	 *      {@link de.cesr.lara.components.preprocessor.impl.LPreprocessFactory#equals(java.lang.Object)}. Created by
+	 *      {@link de.cesr.lara.components.preprocessor.impl.LPreprocessor#equals(java.lang.Object)}. Created by
 	 *      Sascha Holzhauer on 08.02.2010
 	 */
 	@Test

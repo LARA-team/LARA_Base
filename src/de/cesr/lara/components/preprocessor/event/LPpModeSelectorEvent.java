@@ -17,33 +17,27 @@
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.cesr.lara.components.container;
+package de.cesr.lara.components.preprocessor.event;
 
-import java.util.Iterator;
-
-import de.cesr.lara.components.LaraProperty;
+import de.cesr.lara.components.agents.LaraAgent;
+import de.cesr.lara.components.decision.LaraDecisionConfiguration;
+import de.cesr.lara.components.preprocessor.LaraDecisionModeSelector;
 
 /**
- * The management view constitutes a view to the underlying container that
- * enables {@link LaraCapacityManager}s to manager the container.
+ * Triggers mode selection. {@link LaraDecisionModeSelector}s should register
+ * for these events.
  * 
- * @author Michael Elbers
+ * @author Sascha Holzhauer
  * 
- * @param <PropertyType>
  */
-public interface LaraCapacityManagementView<PropertyType extends LaraProperty<?>>
-		extends Iterable<PropertyType> {
+public class LPpModeSelectorEvent extends LAbstractPpEvent {
 
 	/**
-	 * @param item
+	 * @param agent
+	 * @param dConfig
 	 */
-	public void remove(PropertyType property);
-	
-	/**
-	 * Provides an iterator over the underlying container
-	 * 
-	 * @return iterator over underlying container
-	 */
-	@Override
-	public Iterator<PropertyType> iterator();
+	public LPpModeSelectorEvent(LaraAgent<?, ?> agent,
+			LaraDecisionConfiguration dConfig) {
+		super(agent, dConfig);
+	}
 }

@@ -15,10 +15,9 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import de.cesr.lara.components.agents.LaraAgent;
 import de.cesr.lara.components.environment.LaraEnvironment;
 import de.cesr.lara.components.environment.impl.LEnvironment;
-import de.cesr.lara.testing.TestUtils;
+import de.cesr.lara.testing.TestUtils.TestAgent;
 
 
 /**
@@ -29,7 +28,7 @@ import de.cesr.lara.testing.TestUtils;
  */
 public class DefaultLaraAgentCompTest {
 
-	LaraAgent		testAgent;
+	TestAgent testAgent;
 	LaraEnvironment	env;
 
 	/**
@@ -39,7 +38,7 @@ public class DefaultLaraAgentCompTest {
 	@Before
 	public void setUp() throws Exception {
 		env = new LEnvironment();
-		testAgent = new TestUtils.TestAgent("TestAgent");
+		testAgent = new TestAgent("TestAgent");
 	}
 
 	/**

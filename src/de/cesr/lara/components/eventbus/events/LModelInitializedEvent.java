@@ -8,8 +8,8 @@ public class LModelInitializedEvent implements LaraSynchronousEvent,
 		LaraRequiresPrecedingEvent {
 
 	@Override
-	public String getRequiredPrecedingEventName() {
-		return LModelInstantiatedEvent.class.getSimpleName();
+	public Class<? extends LaraEvent> getRequiredPrecedingEventClass() {
+		return LModelInstantiatedEvent.class;
 	}
 
 }

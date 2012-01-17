@@ -28,38 +28,37 @@ import org.apache.log4j.Priority;
 
 import de.cesr.lara.components.LaraBehaviouralOption;
 import de.cesr.lara.components.agents.LaraAgent;
-import de.cesr.lara.components.decision.LaraDecisionConfiguration;
 import de.cesr.lara.components.eventbus.events.LaraEvent;
-import de.cesr.lara.components.preprocessor.LaraBOUtilityUpdater;
-import de.cesr.lara.components.preprocessor.event.LPpBoUtilityUpdaterEvent;
+import de.cesr.lara.components.preprocessor.LaraBOPreselector;
+import de.cesr.lara.components.preprocessor.event.LPpBoPreselectorEvent;
 import de.cesr.lara.components.util.logging.impl.Log4jLogger;
 
 /**
- * Calls
- * {@link LaraBehaviouralOption#getSituationalUtilities(LaraDecisionConfiguration)}
+ * Delegates checking to each behavioural option.
  * 
  * NOTE regarding LOGGING: The agent logger for logging BOs is only enabled when
  * the logger for this class is enabled at least for {@link Priority#INFO}!
  * 
  * @param <A>
- *            the type of agents this BO utilityUpdater is intended for
+ *            type of agents this BO preselector is intended for
  * @param <BO>
- *            the type of behavioural options that are updated
+ *            type of behavioural options that are checked
  * 
  * @author Sascha Holzhauer
- * @date 05.02.2010
- * 
+ * @date 13.11.2009
  */
-public class LDefaultBOUpdater<A extends LaraAgent<? super A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>>
-		extends LAbstractPpComp<A, BO> implements LaraBOUtilityUpdater<A, BO> {
+public class LDelegatingBoPreselector<A extends LaraAgent<? super A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>>
+		extends LAbstractPpComp<A, BO> implements LaraBOPreselector<A, BO> {
 
 	/**
 	 * Logger
 	 */
 	static private Logger logger = Log4jLogger
-			.getLogger(LDefaultBOUpdater.class);
+			.getLogger(LDelegatingBoPreselector.class);
 
 	/**
+	 * Delegates checking to each behavioural option.
+	 * 
 	 * @see de.cesr.lara.components.eventbus.LaraInternalEventSubscriber#onInternalEvent(de.cesr.lara.components.eventbus.events.LaraEvent)
 	 */
 	@Override
@@ -70,24 +69,23 @@ public class LDefaultBOUpdater<A extends LaraAgent<? super A, BO>, BO extends La
 		}
 		// LOGGING ->
 
-		LPpBoUtilityUpdaterEvent event = castEvent(
-				LPpBoUtilityUpdaterEvent.class, e);
-
+		LPpBoPreselectorEvent event = castEvent(LPpBoPreselectorEvent.class, e);
 		@SuppressWarnings("unchecked")
 		// the event will only be published by agents of type A
 		A agent = (A) event.getAgent();
-		Collection<BO> updatedBos = new ArrayList<BO>();
-		Collection<BO> bos = agent.getLaraComp()
-				.getDecisionData(event.getdConfig()).getBos();
-		for (BO bo : bos) {
-			updatedBos.add(bo.getModifiedUtilitiesBO(bo
-					.getSituationalUtilities(event.getdConfig())));
+		Collection<BO> bos = new ArrayList<BO>();
+		for (BO bo : agent.getLaraComp().getDecisionData(event.getdConfig())
+				.getBos()) {
+			if (bo.isCurrentlyApplicable()) {
+				bos.add(bo);
+			}
 		}
 		// <-- LOGGING
 		if (logger.isEnabledFor(Priority.INFO)) {
-			logBOs(logger, bos, "after utility updating", agent);
+			logBOs(logger, bos, "after preselection", agent);
 		}
 		// LOGGING -->
+
 		agent.getLaraComp().getDecisionData(event.getdConfig()).setBos(bos);
 	}
 }

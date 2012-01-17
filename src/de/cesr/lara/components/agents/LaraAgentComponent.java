@@ -19,7 +19,8 @@ import de.cesr.lara.components.decision.LaraDecisionData;
 import de.cesr.lara.components.decision.LaraDeliberativeChoiceComponent;
 import de.cesr.lara.components.environment.LaraEnvironment;
 import de.cesr.lara.components.environment.LaraEnvironmentListener;
-import de.cesr.lara.components.preprocessor.LaraPreprocessorFactory;
+import de.cesr.lara.components.eventbus.LaraInternalEventSubscriber;
+import de.cesr.lara.components.preprocessor.LaraPreprocessor;
 
 
 /**
@@ -32,8 +33,8 @@ import de.cesr.lara.components.preprocessor.LaraPreprocessorFactory;
  * @author Sascha Holzhauer
  * @date 17.12.2009
  */
-public interface LaraAgentComponent<A extends LaraAgent<? super A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>>
-		extends LaraEnvironmentListener {
+public interface LaraAgentComponent<A extends LaraAgent<? super A, BO>, BO extends LaraBehaviouralOption<?, ?>>
+		extends LaraEnvironmentListener, LaraInternalEventSubscriber {
 
 	/**
 	 * Do the pre-processing for a decision: Scan memory for BOs, check BOs and adapt them. Also updates the agent's
@@ -57,16 +58,14 @@ public interface LaraAgentComponent<A extends LaraAgent<? super A, BO>, BO exten
 	 * Set the agent's pre-processor.
 	 * 
 	 * @param preProcessorFactory
-	 * 
 	 */
-	public void setPreProcessorFactory(LaraPreprocessorFactory<A, BO> preProcessorFactory);
+	public void setPreProcessorFactory(LaraPreprocessor<A, BO> preProcessorFactory);
 
 	/**
 	 * Get the environment this agent belongs to by its type
 	 * 
 	 * @return environment the agent is embedded in
 	 */
-
 	public LaraEnvironment getEnvironment();
 
 	/*****************************

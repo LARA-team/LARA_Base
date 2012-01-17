@@ -18,18 +18,20 @@ public final class Log4jLogger {
 	 * static reference to the log4j logger
 	 */
 	private static Logger logger = Logger.getRootLogger();
+	
+	private static boolean initialised = false;
 
 	/**
 	 * @param name
-	 * @return the valid logger object Created by Sascha Holzhauer on 02.12.2009
+	 * @return the valid logger object
 	 */
-	public static Logger getLogger(Class<?> name) {
-		return Logger.getLogger(name);
+	public static Logger getLogger(Class<?> clazz) {
+		return Logger.getLogger(clazz);
 	}
 
 	/**
 	 * @param name
-	 * @return the valid logger object Created by Sascha Holzhauer on 02.12.2009
+	 * @return the valid logger object
 	 */
 	public static Logger getLogger(String name) {
 		return Logger.getLogger(name);
@@ -37,22 +39,25 @@ public final class Log4jLogger {
 
 	/**
 	 * initialises the log4j logging system has to be called once before using
-	 * the logging system
+	 * No entry found. Memory is empty. the logging system
 	 */
 	public static void init() {
-		try {
-			SimpleLayout layout = new SimpleLayout();
-
-			// TODO remove static path?!
-			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
-			FileAppender fileAppender = new FileAppender(layout, "log"
-					+ File.separator + "lara_" + dateFormat.format(Calendar.getInstance().getTime())
-					+ ".log", false);
-			logger.addAppender(fileAppender);
-			// ALL | DEBUG | INFO | WARN | ERROR | FATAL | OFF:
-		} catch (Exception ex) {
-			System.err.println(ex);
+		if (!initialised) {
+			try {
+				SimpleLayout layout = new SimpleLayout();
+	
+				// TODO remove static path?!
+				DateFormat dateFormat = new SimpleDateFormat(
+						"yyyy-MM-dd_HH-mm-ss");
+				FileAppender fileAppender = new FileAppender(layout, "log"
+						+ File.separator + "lara_" + dateFormat.format(Calendar.getInstance().getTime())
+						+ ".log", false);
+				logger.addAppender(fileAppender);
+				// ALL | DEBUG | INFO | WARN | ERROR | FATAL | OFF:
+			} catch (Exception ex) {
+				System.err.println(ex);
+			}
+			initialised = true;
 		}
 	}
-
 }
