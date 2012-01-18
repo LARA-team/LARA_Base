@@ -40,18 +40,13 @@ import de.cesr.lara.components.container.memory.impl.LDefaultLimitedCapacityBOMe
 import de.cesr.lara.components.decision.LaraDecisionConfiguration;
 import de.cesr.lara.components.decision.impl.LDecisionConfiguration;
 import de.cesr.lara.components.decision.impl.LDecisionHeuristicComponent_MaxLineTotalRandomAtTie;
-import de.cesr.lara.components.eventbus.events.LaraEvent;
 import de.cesr.lara.components.eventbus.impl.LEventbus;
-import de.cesr.lara.components.model.impl.LAbstractModel;
-import de.cesr.lara.components.model.impl.LAbstractStandaloneSynchronisedModel;
-import de.cesr.lara.components.model.impl.LModel;
 import de.cesr.lara.components.preprocessor.LaraBOCollector;
 import de.cesr.lara.components.preprocessor.event.LPpBoCollectorEvent;
 import de.cesr.lara.components.preprocessor.event.LPpModeSelectorEvent;
 import de.cesr.lara.components.preprocessor.impl.LContributingBoCollector;
-import de.cesr.lara.components.util.LaraRandom;
 import de.cesr.lara.components.util.impl.LCapacityManagers;
-import de.cesr.lara.components.util.impl.LRandomService;
+import de.cesr.lara.testing.TestUtils;
 import de.cesr.lara.testing.TestUtils.TestAgent;
 import de.cesr.lara.testing.TestUtils.TestBo;
 
@@ -92,18 +87,7 @@ public class LDefaultBOCollectorTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		LModel.setNewModel(new LAbstractStandaloneSynchronisedModel() {
-
-			@Override
-			public LaraRandom getLRandom() {
-				return new LRandomService((int) System.currentTimeMillis());
-			}
-
-			@Override
-			public void onInternalEvent(LaraEvent event) {
-			}
-		});
-		((LAbstractModel) LModel.getModel()).init();
+		TestUtils.initTestModel();
 
 		Class<? extends LaraPreference> goal1 = new LaraPreference() {
 		}.getClass();
@@ -132,7 +116,7 @@ public class LDefaultBOCollectorTest {
 		dBuilder.setPreferences(goals);
 
 		scanner = new LContributingBoCollector<TestAgent, TestBo>();
-		LEventbus.getInstance(agent.getAgentId()).subscribe(scanner,
+		LEventbus.getInstance(agent).subscribe(scanner,
 				LPpBoCollectorEvent.class);
 	}
 
@@ -178,9 +162,9 @@ public class LDefaultBOCollectorTest {
 		agent.getLaraComp().getDecisionData(dBuilder)
 				.setBos(new HashSet<TestBo>());
 		// LPpBoCollectorEvent requires LPpModeSelectorEvent!
-		LEventbus.getInstance(agent.getAgentId()).publish(
+		LEventbus.getInstance(agent).publish(
 				new LPpModeSelectorEvent(agent, dBuilder));
-		LEventbus.getInstance(agent.getAgentId()).publish(
+		LEventbus.getInstance(agent).publish(
 				new LPpBoCollectorEvent(agent, dBuilder));
 		return agent.getLaraComp().getDecisionData(dBuilder).getBos().size();
 	}

@@ -52,7 +52,7 @@ public class LPreprocessorConfigurator<A extends LaraAgent<A, BO>, BO extends La
 	private final Map<LaraDecisionConfiguration, LaraBOUtilityUpdater<A, BO>> adapterMap;
 	private final Map<LaraDecisionConfiguration, LaraPreferenceUpdater<? extends A, BO>> prefUpdaterMap;
 
-	private LaraPreprocessor<A, BO> preprocessorBuilder;
+	private LaraPreprocessor<A, BO> preprocessor;
 	/**
 	 * 
 	 */
@@ -289,16 +289,20 @@ public class LPreprocessorConfigurator<A extends LaraAgent<A, BO>, BO extends La
 	}
 
 	/**
-	 * @see de.cesr.lara.components.preprocessor.LaraPreprocessorConfigurator#getPreprocessorFactory()
+	 * Checks whether the stored preprocessor matches this configuration and
+	 * return it if true. Builds a new preprocessor of the current configuration
+	 * otherwise.
+	 * 
+	 * @see de.cesr.lara.components.preprocessor.LaraPreprocessorConfigurator#getPreprocessor()
 	 */
 	@Override
-	public LaraPreprocessor<A, BO> getPreprocessorFactory() {
+	public LaraPreprocessor<A, BO> getPreprocessor() {
 		try {
-			if (this.preprocessorBuilder == null
-					|| !this.preprocessorBuilder.meetsConfiguration(this)) {
-				this.preprocessorBuilder = new LPreprocessor<A, BO>(this);
+			if (this.preprocessor == null
+					|| !this.preprocessor.meetsConfiguration(this)) {
+				this.preprocessor = new LPreprocessor<A, BO>(this);
 			}
-			return this.preprocessorBuilder;
+			return this.preprocessor;
 		} catch (ClassCastException e) {
 			throw new ClassCastException(
 					"The stored builder has not the requested agent type!");

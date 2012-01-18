@@ -1,8 +1,21 @@
 /**
+ * This file is part of
+ * 
  * LARA - Lightweight Architecture for boundedly Rational citizen Agents
- *
- * Center for Environmental Systems Research, Kassel
- * Created by Sascha Holzhauer on 05.02.2010
+ * 
+ * Copyright (C) 2012 Center for Environmental Systems Research, Kassel, Germany
+ * 
+ * LARA is free software: You can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * LARA is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package de.cesr.lara.testing.components.preprocessor;
 
@@ -35,7 +48,7 @@ import de.cesr.lara.testing.TestUtils.TestBo;
  * @date 05.02.2010
  * 
  */
-public class LPreprocessorBuilderTest {
+public class LPreprocessorTest {
 
 	static class PreprocessorTestException extends RuntimeException {
 
@@ -118,7 +131,7 @@ public class LPreprocessorBuilderTest {
 		/**
 		 * Default LaraPreprocessor
 		 */
-		builder1 = configurator1.getPreprocessorFactory();
+		builder1 = configurator1.getPreprocessor();
 
 		/**
 		 * Second Configurator with another LaraBOCollector
@@ -138,14 +151,14 @@ public class LPreprocessorBuilderTest {
 			}
 		};
 		configurator2.setBOCollector(scanner);
-		builder2 = configurator2.getPreprocessorFactory();
+		builder2 = configurator2.getPreprocessor();
 
 		configurator3 = LPreprocessorConfigurator.getDefaultPreprocessConfigurator();
 		configurator3.setBOCollector(scanner, decision1);
 
-		builder3 = configurator3.getPreprocessorFactory();
+		builder3 = configurator3.getPreprocessor();
 
-		builder12 = configurator1.getPreprocessorFactory();
+		builder12 = configurator1.getPreprocessor();
 	}
 
 	/**
@@ -157,12 +170,12 @@ public class LPreprocessorBuilderTest {
 	}
 
 	/**
-	 * @see LPreprocessorBuilderTest#testEqualsObject() Created by Sascha Holzhauer on 08.02.2010
+	 * @see LPreprocessorTest#testEqualsObject() Created by Sascha Holzhauer on 08.02.2010
 	 */
 	@Test
 	public final void testGetPreprocessorBuilder() {
 		LaraPreprocessor<TestAgent, TestBo> builder2 = configurator2
-				.getPreprocessorFactory();
+				.getPreprocessor();
 		assertNotSame("Bilders of different configuration need to be different", builder1, builder2);
 	}
 
@@ -200,7 +213,7 @@ public class LPreprocessorBuilderTest {
 	}
 
 	/**
-	 * @see LPreprocessorBuilderTest#testMeetsConfigurator() Test method for
+	 * @see LPreprocessorTest#testMeetsConfigurator() Test method for
 	 *      {@link de.cesr.lara.components.preprocessor.impl.LPreprocessor#equals(java.lang.Object)}. Created by
 	 *      Sascha Holzhauer on 08.02.2010
 	 */

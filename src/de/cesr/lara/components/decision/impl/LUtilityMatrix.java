@@ -17,7 +17,8 @@ import de.cesr.lara.components.decision.LaraUtilityMatrix;
  * 
  * @author klemm
  */
-public class LUtilityMatrix<BO extends LaraBehaviouralOption<?, BO>> implements
+public class LUtilityMatrix<BO extends LaraBehaviouralOption<?, ? extends BO>>
+		implements
 		LaraUtilityMatrix<BO> {
 
 	LaraHeader				header	= null;

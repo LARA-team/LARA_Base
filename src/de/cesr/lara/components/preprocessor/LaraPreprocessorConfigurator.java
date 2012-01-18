@@ -26,19 +26,21 @@ import de.cesr.lara.components.LaraBehaviouralOption;
 import de.cesr.lara.components.agents.LaraAgent;
 import de.cesr.lara.components.decision.LaraDecisionConfiguration;
 
-
 /**
- * This configurator is used to configure a {@link LaraPreprocessor} with desired preprocessor components.
+ * This configurator is used to configure a {@link LaraPreprocessor} with
+ * desired preprocessor components.
  * 
- * The BO type parameter indicates which BO classes the pre-processor may handle. Components BO type need to exactly
- * match that BO type. <? super BO> as component BO parameter does not work since A<A, ? super BO> does not fulfil ?
- * super (? super BO) regarding BO parameter for the component (in which that would result for the component).
+ * The BO type parameter indicates which BO classes the pre-processor may
+ * handle. Components BO type need to exactly match that BO type. <? super BO>
+ * as component BO parameter does not work since A<A, ? super BO> does not
+ * fulfill ? super (? super BO) regarding BO parameter for the component (in
+ * which that would result for the component).
  * 
  * 
  * @param <A>
- *        the type of agents the preprocessor builder is intended for
+ *            the type of agents the preprocessor builder is intended for
  * @param <BO>
- *        the type of behavioural options the preprocessor manages
+ *            the type of behavioural options the preprocessor manages
  * 
  * @author Sascha Holzhauer
  * @date 05.02.2010
@@ -165,24 +167,31 @@ public interface LaraPreprocessorConfigurator<A extends LaraAgent<? super A, BO>
 			Class<? super T> type);
 
 	/**
-	 * @return preprocessor builder for the given configuration
+	 * Provides the {@link LaraPreprocessor} that matches this configuration.
+	 * 
+	 * @return preprocessor for the given configuration
 	 */
-	public LaraPreprocessor<A, BO> getPreprocessorFactory();
+	public LaraPreprocessor<A, BO> getPreprocessor();
 
 	/**
-	 * Return a new configuration that meets this configuration.
+	 * Return a new configuration that meets this configuration. This is
+	 * intended for creating new {@link LaraPreprocessor}s with a different
+	 * configuration. I.e. the provided configuration is altered and used to
+	 * create a new pre-processor.
 	 * 
 	 * @return new configuration that meets this configuration
 	 */
 	public LaraPreprocessorConfigurator<A, BO> clone();
 
 	/**
+	 * Provides the map of {@link LaraDecisionConfiguration} to
+	 * {@link LaraPreprocessorComp} as defined by the given component class.
+	 * 
 	 * @param <T>
 	 *            the generic type of the agent
-	 * @param <U>
-	 *            comp type
 	 * @param compType
-	 * @return
+	 *            the class of component type that is requested
+	 * @return the map of defined components
 	 */
 	public <T extends LaraPreprocessorComp<A, BO>> Map<LaraDecisionConfiguration, T> getMap(
 			Class<? super T> compType);
@@ -191,13 +200,28 @@ public interface LaraPreprocessorConfigurator<A extends LaraAgent<? super A, BO>
 	 * DEFAULT value ACCESSORS
 	 ********************************************/
 
+	/**
+	 * @return the default {@link LaraDecisionConfiguration}
+	 */
 	public LaraDecisionModeSelector<A, BO> getDefaultDecisionModeSelector();
 
+	/**
+	 * @return the default {@link LaraBOCollector}
+	 */
 	public LaraBOCollector<A, BO> getDefaultBoCollector();
 
+	/**
+	 * @return the default {@link LaraBOPreselector}
+	 */
 	public LaraBOPreselector<A, BO> getDefaultBoPreselector();
 
+	/**
+	 * @return the default {@link LaraBOUtilityUpdater}
+	 */
 	public LaraBOUtilityUpdater<A, BO> getDefaultBoUtilityUpdater();
 
+	/**
+	 * @return the default {@link LaraPreferenceUpdater}
+	 */
 	public LaraPreferenceUpdater<A, BO> getDefaultPreferenceUpdater();
 }

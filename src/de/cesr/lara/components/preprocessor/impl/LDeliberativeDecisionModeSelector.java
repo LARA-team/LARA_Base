@@ -87,7 +87,7 @@ public class LDeliberativeDecisionModeSelector<A extends LaraAgent<A, BO>, BO ex
 		// the event will only be published by agents of type A
 		A agent = (A) event.getAgent();
 		LaraDecisionConfiguration dConfig = event.getdConfig();
-		LEventbus eBus = LEventbus.getInstance(agent.getAgentId());
+		LEventbus eBus = LEventbus.getInstance(agent);
 
 		@SuppressWarnings("unchecked")
 		// unchecked cast

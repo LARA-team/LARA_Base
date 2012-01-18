@@ -1,8 +1,21 @@
 /**
- * LARA - Lightweight Architecture for bounded Rational citizen Agents
- *
- * Center for Environmental Systems Research, Kassel
- * Created by Sascha Holzhauer on 17.12.2009
+ * This file is part of
+ * 
+ * LARA - Lightweight Architecture for boundedly Rational citizen Agents
+ * 
+ * Copyright (C) 2012 Center for Environmental Systems Research, Kassel, Germany
+ * 
+ * LARA is free software: You can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * LARA is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package de.cesr.lara.components.agents;
 
@@ -37,15 +50,6 @@ public interface LaraAgentComponent<A extends LaraAgent<? super A, BO>, BO exten
 		extends LaraEnvironmentListener, LaraInternalEventSubscriber {
 
 	/**
-	 * Do the pre-processing for a decision: Scan memory for BOs, check BOs and adapt them. Also updates the agent's
-	 * situational preferenceWeights. *
-	 * 
-	 * @param dConfiguration
-	 *        decision builder that identifies the decision to pre-process
-	 */
-	public void preProcess(LaraDecisionConfiguration dConfiguration);
-
-	/**
 	 * Executes decision making for the given {@link LaraDecisionConfiguration}: Simulates the agent's decision making
 	 * process.
 	 * 
@@ -57,9 +61,9 @@ public interface LaraAgentComponent<A extends LaraAgent<? super A, BO>, BO exten
 	/**
 	 * Set the agent's pre-processor.
 	 * 
-	 * @param preProcessorFactory
+	 * @param preprocessor
 	 */
-	public void setPreProcessorFactory(LaraPreprocessor<A, BO> preProcessorFactory);
+	public void setPreprocessor(LaraPreprocessor<A, BO> preprocessor);
 
 	/**
 	 * Get the environment this agent belongs to by its type
