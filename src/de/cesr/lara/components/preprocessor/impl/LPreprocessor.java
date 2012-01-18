@@ -83,17 +83,25 @@ public final class LPreprocessor<A extends LaraAgent<A, BO>, BO extends LaraBeha
 	private final LaraPreprocessorConfigurator<A, BO> configuration;
 
 	/**
-	 * Uses LPreprocessorConfigurator.<A, BO>getDefaultPreprocessConfigurator()
+	 * Use {@link LaraPreprocessorConfigurator#getPreprocessor()} to receive an
+	 * instance of a pre-processor (it keeps instances and returns it if
+	 * appropriate)!
+	 * 
+	 * Uses LPreprocessorConfigurator.<A, BO>getDefaultPreprocessConfigurator().
 	 */
-	public LPreprocessor() {
+	protected LPreprocessor() {
 		this(LPreprocessorConfigurator
 				.<A, BO> getDefaultPreprocessConfigurator());
 	}
 
 	/**
+	 * Use {@link LaraPreprocessorConfigurator#getPreprocessor()} to receive an
+	 * instance of a pre-processor (it keeps instances and returns it if
+	 * appropriate)!
+	 * 
 	 * @param configuration
 	 */
-	public LPreprocessor(LaraPreprocessorConfigurator<A, BO> configuration) {
+	protected LPreprocessor(LaraPreprocessorConfigurator<A, BO> configuration) {
 
 		this.configuration = configuration;
 
@@ -200,12 +208,12 @@ public final class LPreprocessor<A extends LaraAgent<A, BO>, BO extends LaraBeha
 	}
 
 	/**
-	 * Checks whether this preprocessor builder1 conforms to the configuration represented by the given
-	 * {@link LaraPreprocessorConfigurator}.
+	 * Checks whether this preprocessor conforms to the configuration
+	 * represented by the given {@link LaraPreprocessorConfigurator}.
 	 * 
 	 * @param configuration
-	 * @return true, if every component map matches the given configurator, false else and if the given configurator is
-	 *         not compatible
+	 * @return true, if every component map matches the given configurator,
+	 *         false else and if the given configurator is not compatible
 	 */
 	@Override
 	public boolean meetsConfiguration(
@@ -319,7 +327,7 @@ public final class LPreprocessor<A extends LaraAgent<A, BO>, BO extends LaraBeha
 		}
 		// LOGGING ->
 
-		LEventbus eBus = LEventbus.getInstance(agent.getAgentId());
+		LEventbus eBus = LEventbus.getInstance(agent);
 
 		eBus.subscribe(
 				selectorMap.containsKey(dConfig) ? selectorMap.get(dConfig)
@@ -345,14 +353,15 @@ public final class LPreprocessor<A extends LaraAgent<A, BO>, BO extends LaraBeha
 		eBus.publish(new LPpUnsubscribeEvent(agent, dConfig));
 	}
 
-
 	/**
+	 * Checks for equal objects. This is valid in usual cases since then there
+	 * is only one instance per configuration.
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
-	public boolean equals(Object preprocessorBuilder) {
-		// this is valid since there is only one instance per configuration
-		if (this == preprocessorBuilder) {
+	public boolean equals(Object preprocessor) {
+		if (this == preprocessor) {
 			return true;
 		}
 		return false;
@@ -381,7 +390,7 @@ public final class LPreprocessor<A extends LaraAgent<A, BO>, BO extends LaraBeha
 		if (event instanceof LPpUnsubscribeEvent) {
 			@SuppressWarnings("unchecked")
 			A agent = (A) ((LPpUnsubscribeEvent) event).getAgent();
-			LEventbus eBus = LEventbus.getInstance(agent.getAgentId());
+			LEventbus eBus = LEventbus.getInstance(agent);
 			eBus.unsubscribe(LPpModeSelectorEvent.class);
 			eBus.unsubscribe(LPpBoCollectorEvent.class);
 			eBus.unsubscribe(LPpBoPreselectorEvent.class);

@@ -18,10 +18,16 @@ import de.cesr.lara.components.environment.LaraSuperEnvironment;
  * to sub-environments for {@link LEnvironment#containsProperty(String)},
  * {@link #removeProperty(LAbstractEnvironmentalProperty)}, etc.
  * 
- * TODO integrate LaraStorage TODO implement getters for filter properties TODO
- * parameterise LaraEnvironment TODO evaluate if containsProperty,
- * updateProperty, removeProperty etc. should deal with sub-environments. TODO
- * Test sub-environments
+ * TODO integrate LaraStorage
+ * 
+ * TODO implement getters for filter properties
+ * 
+ * TODO parameterise LaraEnvironment
+ * 
+ * TODO add property functions that deal with sub-envs (like
+ * removePopertySubenv)
+ * 
+ * TODO Test sub-environments
  * 
  * @author Sascha Holzhauer
  * @date 22.12.2009
@@ -150,6 +156,17 @@ public class LEnvironment implements LaraSuperEnvironment {
 	}
 
 	/**
+	 * @see de.cesr.lara.components.environment.LaraSuperEnvironment#getSubEnvironments(java.lang.Object)
+	 */
+	@Override
+	public Set<LaraEnvironment> getSubEnvironments(Object category) {
+		if (category == LaraSuperEnvironment.ALL_CATEGORIES) {
+			return new HashSet<LaraEnvironment>(subEnvironments.values());
+		}
+		return new HashSet<LaraEnvironment>(subEnvironments.get(category));
+	}
+
+	/**
 	 * @see de.cesr.lara.components.environment.LaraEnvironment#getTypedPropertyByName(java.lang.String)
 	 */
 	@SuppressWarnings("unchecked")
@@ -242,6 +259,21 @@ public class LEnvironment implements LaraSuperEnvironment {
 	}
 
 	/**
+	 * @see de.cesr.lara.components.environment.LaraSuperEnvironment#removePropertySubenv(java.lang.String)
+	 */
+	@Override
+	public boolean removePropertySubenv(Object category, String name) {
+		boolean removedAny = false;
+		if (abstractProperties.remove(name) != null) {
+			removedAny = true;
+		}
+		for (LaraEnvironment env : getSubEnvironments(category)) {
+			removedAny = removedAny ? true : env.removeProperty(name);
+		}
+		return removedAny;
+	}
+
+	/**
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -250,8 +282,18 @@ public class LEnvironment implements LaraSuperEnvironment {
 	}
 
 	/**
-	 * Inform listeners every time a value changed (should listeners be informed
-	 * of an update even if the value has not changed implement a new
+	 * Calls update.
+	 * 
+	 * @see de.cesr.lara.components.environment.LaraEnvironment#addProperty(de.cesr.lara.components.environment.impl.LAbstractEnvironmentalProperty)
+	 */
+	@Override
+	public void addProperty(LAbstractEnvironmentalProperty<?> property) {
+		this.updateProperty(property);
+	}
+
+	/**
+	 * Informs listeners every time a value changed (should listeners be
+	 * informed of an update even if the value has not changed implement a new
 	 * registration function <code>addEnvUpdateListeners()</code>!)
 	 * 
 	 * @see de.cesr.lara.components.environment.LaraEnvironment#updateProperty(de.cesr.lara.components.environment.impl.LAbstractEnvironmentalProperty)

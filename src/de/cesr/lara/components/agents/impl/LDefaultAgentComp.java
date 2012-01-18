@@ -75,6 +75,7 @@ public class LDefaultAgentComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 	 * {@link LaraDecisionConfiguration}. Contains default for key NULL.
 	 */
 	protected static Map<LaraDecisionConfiguration, LaraDeliberativeChoiceComponent> defaultDeliberativeChoiceComponents = null;
+
 	static {
 		defaultDeliberativeChoiceComponents = new HashMap<LaraDecisionConfiguration, LaraDeliberativeChoiceComponent>();
 		defaultDeliberativeChoiceComponents.put(null,
@@ -121,7 +122,6 @@ public class LDefaultAgentComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 	 */
 	protected Collection<Class<? extends LaraPreference>> preferences = null;
 
-	// TODO enable multiple environments!
 	/**
 	 * a collection of the agents preferenceWeights towards preferenceWeights
 	 */
@@ -142,9 +142,8 @@ public class LDefaultAgentComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 	 * selection, each agent is assigned an instance of {@link LaraPreprocessor}
 	 * . (SH)
 	 */
-	protected LaraPreprocessor<A, BO> preprocessorFactory;
+	protected LaraPreprocessor<A, BO> preprocessor;
 
-	// TODO enable multiple environments!
 	/**
 	 * environment
 	 */
@@ -152,7 +151,6 @@ public class LDefaultAgentComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 
 	protected LEventbus eventBus;
 
-	// memory property?!
 	/**
 	 * accuracy
 	 */
@@ -165,8 +163,7 @@ public class LDefaultAgentComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 	protected Map<String, Double> doubleProperties;
 
 	/**
-	 * Simplest Constructor TODO: Agent should have one or more environments!
-	 * (e.g. social environment, geographical environment)
+	 * Simplest Constructor (e.g. social environment, geographical environment)
 	 * 
 	 * @param agent
 	 * @param env
@@ -288,34 +285,8 @@ public class LDefaultAgentComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 	 */
 	@Override
 	public Map<Class<? extends LaraPreference>, Double> getPreferenceWeights() {
-		// TODO check performance...
 		return new LinkedHashMap<Class<? extends LaraPreference>, Double>(
 				preferenceWeights);
-	}
-
-	/**
-	 * If no {@link LaraPreprocessor} was set, it is set now. However, since in
-	 * this case for every agent a separate configurator needs to be initialised
-	 * it is highly recommended to use a global configurator before.
-	 * 
-	 * @see de.cesr.lara.components.agents.LaraAgentComponent#preProcess(de.cesr.lara.components.decision.LaraDecisionConfiguration)
-	 */
-	@Override
-	public void preProcess(LaraDecisionConfiguration dConfiguration) {
-		// <- LOGGING
-		if (logger.isDebugEnabled()) {
-			logger.debug(this.agent + "> preprocess DB "
-					+ dConfiguration.getId());
-			logger.debug("Preprocessor Builder: " + this.preprocessorFactory);
-		}
-		// LOGGING ->
-
-		if (this.preprocessorFactory == null) {
-			setPreProcessorFactory(LPreprocessorConfigurator
-					.<A, BO> getDefaultPreprocessConfigurator()
-					.getPreprocessorFactory());
-		}
-		preprocessorFactory.preprocess(dConfiguration, agent);
 	}
 
 	/**
@@ -372,15 +343,19 @@ public class LDefaultAgentComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 
 	/**
 	 * 
-	 * @see de.cesr.lara.components.agents.LaraAgentComponent#setPreProcessorFactory(de.cesr.lara.components.preprocessor.LaraPreprocessor)
+	 * @see de.cesr.lara.components.agents.LaraAgentComponent#setPreprocessor(de.cesr.lara.components.preprocessor.LaraPreprocessor)
 	 */
 	@Override
-	public void setPreProcessorFactory(
-			LaraPreprocessor<A, BO> preprocessorFactory) {
-		this.preprocessorFactory = preprocessorFactory;
+	public void setPreprocessor(
+LaraPreprocessor<A, BO> preprocessor) {
+		this.preprocessor = preprocessor;
 	}
 
 	/**
+	 * 
+	 * {@link LAgentPreprocessEvent}: If no {@link LaraPreprocessor} was set,
+	 * the default preprocessor is set now. However, it is recommended to use a
+	 * global configurator before.
 	 * 
 	 * @param <T>
 	 * @param event
@@ -389,10 +364,29 @@ public class LDefaultAgentComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 	public void onInternalEvent(LaraEvent event) {
 
 		if (event instanceof LAgentPreprocessEvent) {
-			preProcess(((LAgentPreprocessEvent) event)
-					.getDecisionConfiguration());
+			// <- LOGGING
+			if (logger.isDebugEnabled()) {
+				logger.debug(this.agent
+						+ "> preprocess DB "
+						+ ((LAgentPreprocessEvent) event)
+								.getDecisionConfiguration().getId());
+				logger.debug("Preprocessor Builder: " + this.preprocessor);
+			}
+			// LOGGING ->
+
+			if (this.preprocessor == null) {
+				logger.warn("The preprocessor has not been set! The default is used.");
+				setPreprocessor(LPreprocessorConfigurator
+						.<A, BO> getDefaultPreprocessConfigurator()
+						.getPreprocessor());
+			}
+			preprocessor.preprocess(
+					((LAgentPreprocessEvent) event).getDecisionConfiguration(),
+					agent);
+
 		} else if (event instanceof LAgentDecideEvent) {
 			decide(((LAgentDecideEvent) event).getDecisionConfiguration());
+
 		} else if (event instanceof LAgentPostprocessEvent) {
 
 		} else if (event instanceof LAgentExecutionEvent) {

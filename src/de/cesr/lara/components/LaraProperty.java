@@ -58,8 +58,8 @@ public abstract class LaraProperty<ValueType> {
 	}
 
 	/**
-	 * Two properties are equal if their names and values are equal. TODO what
-	 * about time stamp? (see also hashCode()) (SH)
+	 * Two properties are equal if their names and values and timestamps are
+	 * equal.
 	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
@@ -106,6 +106,15 @@ public abstract class LaraProperty<ValueType> {
 	}
 
 	/**
+	 * NOTE: Since {@link LaraProperty}s are meant to be immutable we avoid a
+	 * member in this class which is not private (members other than private
+	 * allow implementing a subclass that hurts the immutability). However,
+	 * implementing the getValue() method requires a non-private member because
+	 * subclasses need the ability to override getValues() and access value in
+	 * case they need to return and create a deep copy of value in order to
+	 * prevent external changes in the value (which is true for most
+	 * non-primitive data types).
+	 * 
 	 * @return the property's value
 	 */
 	public abstract ValueType getValue();

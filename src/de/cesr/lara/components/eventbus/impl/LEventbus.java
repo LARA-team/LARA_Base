@@ -51,7 +51,7 @@ import de.cesr.lara.components.util.logging.impl.Log4jLogger;
 public class LEventbus {
 
 	private static LEventbus instance = null;
-	private static Map<String, LEventbus> instances = new HashMap<String, LEventbus>();
+	private static Map<Object, LEventbus> instances = new HashMap<Object, LEventbus>();
 	private static Logger logger = Log4jLogger.getLogger(LEventbus.class);
 
 	/**
@@ -72,7 +72,7 @@ public class LEventbus {
 	 * @param id
 	 * @return
 	 */
-	public static LEventbus getInstance(String id) {
+	public static LEventbus getInstance(Object id) {
 		LEventbus theInstance = instances.get(id);
 		if (theInstance == null) {
 			theInstance = new LEventbus();
@@ -178,6 +178,7 @@ public class LEventbus {
 		// check precondition
 		if (event instanceof LaraRequiresPrecedingEvent) {
 			// TODO Also check for sub classes of the required event class!
+			// TODO provide means to check more than one required event
 			if (eventsThisTimestep
 					.contains(((LaraRequiresPrecedingEvent) event)
 							.getRequiredPrecedingEventClass())) {

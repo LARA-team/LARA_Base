@@ -32,9 +32,6 @@ import de.cesr.lara.components.decision.impl.LDecisionConfiguration;
 import de.cesr.lara.components.eventbus.events.LAgentPreprocessEvent;
 import de.cesr.lara.components.eventbus.events.LaraEvent;
 import de.cesr.lara.components.eventbus.impl.LEventbus;
-import de.cesr.lara.components.model.impl.LAbstractModel;
-import de.cesr.lara.components.model.impl.LAbstractStandaloneSynchronisedModel;
-import de.cesr.lara.components.model.impl.LModel;
 import de.cesr.lara.components.preprocessor.LaraBOCollector;
 import de.cesr.lara.components.preprocessor.LaraBOPreselector;
 import de.cesr.lara.components.preprocessor.LaraBOUtilityUpdater;
@@ -48,10 +45,8 @@ import de.cesr.lara.components.preprocessor.event.LPpBoUtilityUpdaterEvent;
 import de.cesr.lara.components.preprocessor.event.LPpModeSelectorEvent;
 import de.cesr.lara.components.preprocessor.event.LPpPreferenceUpdaterEvent;
 import de.cesr.lara.components.preprocessor.impl.LAbstractPpComp;
-import de.cesr.lara.components.preprocessor.impl.LPreprocessor;
 import de.cesr.lara.components.preprocessor.impl.LPreprocessorConfigurator;
-import de.cesr.lara.components.util.LaraRandom;
-import de.cesr.lara.components.util.impl.LRandomService;
+import de.cesr.lara.testing.TestUtils;
 import de.cesr.lara.testing.TestUtils.TestAgent;
 import de.cesr.lara.testing.TestUtils.TestBo;
 
@@ -85,7 +80,7 @@ public class LPpEventBusTest {
 			@SuppressWarnings("unchecked")
 			// the event will only be published by agents of type A
 			A agent = (A) event.getAgent();
-			LEventbus eBus = LEventbus.getInstance(agent.getAgentId());
+			LEventbus eBus = LEventbus.getInstance(agent);
 			if (agent.getAgentId().equals("Test-Agent01")) {
 
 				eBus.publish(new LPpBoCollectorEvent(event.getAgent(), event
@@ -152,18 +147,7 @@ public class LPpEventBusTest {
 	public void setUp() throws Exception {
 		LEventbus.resetAll();
 
-		LModel.setNewModel(new LAbstractStandaloneSynchronisedModel() {
-
-			@Override
-			public LaraRandom getLRandom() {
-				return new LRandomService((int) System.currentTimeMillis());
-			}
-
-			@Override
-			public void onInternalEvent(LaraEvent event) {
-			}
-		});
-		((LAbstractModel) LModel.getModel()).init();
+		TestUtils.initTestModel();
 
 		// init two agents with different properties to trigger different PP behaviours
 		agent1 = new TestAgent("Test-Agent01");
@@ -184,10 +168,10 @@ public class LPpEventBusTest {
 		configurator1.setPreferenceUpdater(new LTestPrefenceUpdater<TestAgent, TestBo>());
 
 		// configure PP-Factory
-		LaraPreprocessor<TestAgent, TestBo> pp = new LPreprocessor<TestAgent, TestBo>(
-				configurator1);
-		agent1.getLaraComp().setPreProcessorFactory(pp);
-		agent2.getLaraComp().setPreProcessorFactory(pp);
+		LaraPreprocessor<TestAgent, TestBo> pp = configurator1
+				.getPreprocessor();
+		agent1.getLaraComp().setPreprocessor(pp);
+		agent2.getLaraComp().setPreprocessor(pp);
 	}
 
 	@Test
@@ -234,8 +218,10 @@ public class LPpEventBusTest {
 		LEventbus.getInstance().unsubscribe(agent1.getLaraComp());
 		LEventbus.getInstance().unsubscribe(agent2.getLaraComp());
 
-		agent3.getLaraComp().setPreProcessorFactory(
-				new LPreprocessor<TestAgent, TestBo>());
+		agent3.getLaraComp().setPreprocessor(
+				LPreprocessorConfigurator
+						.<TestAgent, TestBo> getDefaultPreprocessConfigurator()
+						.getPreprocessor());
 
 		TestBo testBo = new TestBo(agent3);
 		agent3.getLaraComp().getBOMemory().memorize(testBo);

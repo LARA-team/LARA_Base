@@ -104,7 +104,7 @@ public class DefaultConfiguratorTest {
 
 			@Override
 			public void onInternalEvent(LaraEvent event) {
-				throw new LPreprocessorBuilderTest.PreprocessorTestException();
+				throw new LPreprocessorTest.PreprocessorTestException();
 			}
 		};
 	}

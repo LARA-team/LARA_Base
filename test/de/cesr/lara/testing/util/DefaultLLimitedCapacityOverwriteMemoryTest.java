@@ -1,8 +1,21 @@
 /**
+ * This file is part of
+ * 
  * LARA - Lightweight Architecture for boundedly Rational citizen Agents
- *
- * Center for Environmental Systems Research, Kassel
- * Created by Sascha Holzhauer on 19.05.2010
+ * 
+ * Copyright (C) 2012 Center for Environmental Systems Research, Kassel, Germany
+ * 
+ * LARA is free software: You can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * LARA is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package de.cesr.lara.testing.util;
 
@@ -24,9 +37,9 @@ import de.cesr.lara.components.container.memory.impl.LDefaultLimitedCapacityOver
 import de.cesr.lara.components.util.impl.LCapacityManagers;
 import de.cesr.lara.components.util.logging.impl.Log4jLogger;
 
-
 /**
- * 
+ * @author Sascha Holzhauer
+ * @date 19.05.2010
  */
 public class DefaultLLimitedCapacityOverwriteMemoryTest {
 
@@ -94,7 +107,8 @@ public class DefaultLLimitedCapacityOverwriteMemoryTest {
 		assertTrue("After inserting several properties memory size should remain 7", memory.getSize() == 7);
 
 		// change capacity to 0:
-		((LaraOverwriteMemory) memory).setCapacity(LaraContainer.UNLIMITED_CAPACITY);
+		((LaraOverwriteMemory<MyProperty>) memory)
+				.setCapacity(LaraContainer.UNLIMITED_CAPACITY);
 
 		assertTrue(memory.getCapacity() == LaraContainer.UNLIMITED_CAPACITY);
 		storeSomeEntries(100, 2);
@@ -103,7 +117,7 @@ public class DefaultLLimitedCapacityOverwriteMemoryTest {
 		logger.info(memory);
 
 		// change capacity to 10:
-		((LaraOverwriteMemory) memory).setCapacity(10);
+		((LaraOverwriteMemory<MyProperty>) memory).setCapacity(10);
 		logger.info(memory);
 
 		assertTrue("After setting capacity of memory of size 107 to 10 size should be 10", memory.getSize() == 10);
@@ -111,13 +125,14 @@ public class DefaultLLimitedCapacityOverwriteMemoryTest {
 		logger.info(memory);
 
 		// change capacity to 0:
-		((LaraOverwriteMemory) memory).setCapacity(0);
+		((LaraOverwriteMemory<MyProperty>) memory).setCapacity(0);
 		assertTrue(memory.getSize() == 0);
 		assertTrue(memory.getCapacity() == 0);
 		logger.info(memory);
 
 		// change capacity back to 0:
-		((LaraOverwriteMemory) memory).setCapacity(LaraContainer.UNLIMITED_CAPACITY);
+		((LaraOverwriteMemory<MyProperty>) memory)
+				.setCapacity(LaraContainer.UNLIMITED_CAPACITY);
 		storeSomeEntries(100, 2);
 		assertTrue(memory.getSize() == 100);
 		logger.info(memory);
