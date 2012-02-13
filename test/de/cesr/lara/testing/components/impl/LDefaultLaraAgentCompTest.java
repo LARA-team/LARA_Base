@@ -1,23 +1,34 @@
 /**
+ * This file is part of
+ * 
  * LARA - Lightweight Architecture for boundedly Rational citizen Agents
- *
- * Center for Environmental Systems Research, Kassel
- * Created by Sascha Holzhauer on 25.01.2010
+ * 
+ * Copyright (C) 2012 Center for Environmental Systems Research, Kassel, Germany
+ * 
+ * LARA is free software: You can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * LARA is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package de.cesr.lara.testing.components.impl;
 
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import de.cesr.lara.components.environment.LaraEnvironment;
 import de.cesr.lara.components.environment.impl.LEnvironment;
-import de.cesr.lara.testing.TestUtils.TestAgent;
+import de.cesr.lara.testing.TestUtils.LTestAgent;
 
 
 /**
@@ -26,42 +37,29 @@ import de.cesr.lara.testing.TestUtils.TestAgent;
  * @date 25.01.2010
  * 
  */
-public class DefaultLaraAgentCompTest {
+public class LDefaultLaraAgentCompTest {
 
-	TestAgent testAgent;
+	LTestAgent testAgent;
 	LaraEnvironment	env;
 
 	/**
 	 * @throws java.lang.Exception
-	 *         Created by Sascha Holzhauer on 25.01.2010
 	 */
 	@Before
 	public void setUp() throws Exception {
 		env = new LEnvironment();
-		testAgent = new TestAgent("TestAgent");
+		testAgent = new LTestAgent("LTestAgent");
 	}
 
 	/**
 	 * @throws java.lang.Exception
-	 *         Created by Sascha Holzhauer on 25.01.2010
 	 */
 	@After
 	public void tearDown() throws Exception {
 	}
 
 	/**
-	 * Test method for
-	 * {@link de.cesr.lara.components.agents.impl.LDefaultAgentComp#getEnvironment(java.lang.reflect.Type)}.
-	 */
-	@Test
-	@Ignore
-	public final void testGetEnvironment() {
-		fail("Not yet implemented"); // TODO
-	}
-
-	/**
 	 * 
-	 * Created by Sascha Holzhauer on 25.01.2010
 	 */
 	@Test
 	public final void testDoubleProperty() {
@@ -77,5 +75,4 @@ public class DefaultLaraAgentCompTest {
 		assertEquals("NewProperty2 should no be 40.0", 40.0, testAgent.getLaraComp().getDoubleProperty("NewProperty2"),
 				0.0);
 	}
-
 }

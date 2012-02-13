@@ -1,43 +1,67 @@
 /**
+ * This file is part of
+ * 
  * LARA - Lightweight Architecture for boundedly Rational citizen Agents
- *
- * Center for Environmental Systems Research, Kassel
- * Created by Sascha Holzhauer on 26.05.2010
+ * 
+ * Copyright (C) 2012 Center for Environmental Systems Research, Kassel, Germany
+ * 
+ * LARA is free software: You can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * LARA is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package de.cesr.lara.components.decision;
 
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 
 import org.apache.commons.collections15.map.UnmodifiableMap;
+import org.apache.log4j.Logger;
 
 import de.cesr.lara.components.LaraBehaviouralOption;
 import de.cesr.lara.components.LaraPreference;
 import de.cesr.lara.components.agents.LaraAgent;
 import de.cesr.lara.components.preprocessor.LaraDecisionModeSelector;
+import de.cesr.lara.components.util.logging.impl.Log4jLogger;
 
 
 /**
- * TODO investigate whether the LaraDeciderFactory is appropriate and high-performance! (SH) TODO check creating a sub
- * class for dealing with single BO decisions (problem requires probably casting) > both classes provide all methods but
- * throw exceptions when not supported TODO improve interaction between bos and bo
+ * 
+ * @author Sascha Holzhauer
+ * @date 26.05.2010
  * 
  * @param <A>
- *        the agent class
+ *            the agent type
  * @param <BO>
+ *            the behavioural options type
  */
 public final class LaraDecisionData<A extends LaraAgent<? super A, BO>, BO extends LaraBehaviouralOption<?, ?>> {
 
+	/**
+	 * Logger
+	 */
+	static private Logger logger = Log4jLogger
+			.getLogger(LaraDecisionData.class);
+
 	private final LaraDecisionConfiguration			dConfiguration;
 	private Collection<BO>									bos;
-	private Map<Class<? extends LaraPreference>, Double>	situationalPreferenceWeights;
+	private Map<Class<? extends LaraPreference>, Double> individualPreferenceWeights;
 
 	private BO												bo;
 	private final A												agent;
 
 	/**
-	 * A factory is used to prevent the process from storing LaraDecider objects before decide()! (SH)
+	 * A factory is used to prevent the process from storing LaraDecider objects
+	 * which might cause side effects.
 	 */
 	LaraDeciderFactory<A, BO>								deciderFactory;
 	LaraDecider<BO>											decider;
@@ -102,21 +126,34 @@ public final class LaraDecisionData<A extends LaraAgent<? super A, BO>, BO exten
 	}
 
 	/**
-	 * @return the currentPreferences
+	 * @param bo
+	 *            list of BOs to set
 	 */
-	public Map<Class<? extends LaraPreference>, Double> getSituationalPreferenceWeights() {
-		if (situationalPreferenceWeights == null) {
-			throw new IllegalStateException(agent + "> Situational preference weights not set!");
-		}
-		return UnmodifiableMap.decorate(situationalPreferenceWeights);
+	public void setBos(BO... bo) {
+		this.bos = Arrays.asList(bo);
 	}
 
 	/**
-	 * @param situationalPreferenceWeights
-	 *        the currentPreferences to set
+	 * @return the currentPreferences
 	 */
-	public void setSituationalPreferences(Map<Class<? extends LaraPreference>, Double> situationalPreferenceWeights) {
-		this.situationalPreferenceWeights = situationalPreferenceWeights;
+	public Map<Class<? extends LaraPreference>, Double> getIndividualPreferenceWeights() {
+		if (individualPreferenceWeights == null) {
+			// <- LOGGING
+			logger.error(agent + "> Situational preference weights not set!");
+			// LOGGING ->
+
+			throw new IllegalStateException(agent + "> Situational preference weights not set!");
+		}
+		return UnmodifiableMap.decorate(individualPreferenceWeights);
+	}
+
+	/**
+	 * @param individualPreferenceWeights
+	 *            the currentPreferences to set
+	 */
+	public void setIndividualPreferences(
+			Map<Class<? extends LaraPreference>, Double> individualPreferenceWeights) {
+		this.individualPreferenceWeights = individualPreferenceWeights;
 	}
 
 	/**

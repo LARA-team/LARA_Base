@@ -38,8 +38,8 @@ import de.cesr.lara.components.preprocessor.LaraPreprocessorComp;
 import de.cesr.lara.components.preprocessor.LaraPreprocessorConfigurator;
 import de.cesr.lara.components.preprocessor.event.LaraPpEvent;
 import de.cesr.lara.components.preprocessor.impl.LPreprocessorConfigurator;
-import de.cesr.lara.testing.TestUtils.TestAgent;
-import de.cesr.lara.testing.TestUtils.TestBo;
+import de.cesr.lara.testing.TestUtils.LTestAgent;
+import de.cesr.lara.testing.TestUtils.LTestBo;
 
 
 /**
@@ -50,10 +50,10 @@ import de.cesr.lara.testing.TestUtils.TestBo;
  */
 public class DefaultConfiguratorTest {
 
-	LaraPreprocessorConfigurator<TestAgent, TestBo> configurator1;
+	LaraPreprocessorConfigurator<LTestAgent, LTestBo> configurator1;
 	LaraDecisionConfiguration														decision1;
 
-	LaraBOCollector<TestAgent, TestBo> collector;
+	LaraBOCollector<LTestAgent, LTestBo> collector;
 
 	/**
 	 * @throws java.lang.Exception
@@ -82,19 +82,19 @@ public class DefaultConfiguratorTest {
 		};
 
 		configurator1
-				.setDecisionModeSelector(((LPreprocessorConfigurator<TestAgent, TestBo>) configurator1).DEFAULT_DECISION_MODE_SELECTOR);
+				.setDecisionModeSelector(((LPreprocessorConfigurator<LTestAgent, LTestBo>) configurator1).DEFAULT_DECISION_MODE_SELECTOR);
 		configurator1
-				.setBOCollector(((LPreprocessorConfigurator<TestAgent, TestBo>) configurator1).DEFAULT_BO_COLLECTOR);
+				.setBOCollector(((LPreprocessorConfigurator<LTestAgent, LTestBo>) configurator1).DEFAULT_BO_COLLECTOR);
 		configurator1
 				.setBOPreselector(
-						((LPreprocessorConfigurator<TestAgent, TestBo>) configurator1).DEFAULT_BO_PRESELECTOR,
+						((LPreprocessorConfigurator<LTestAgent, LTestBo>) configurator1).DEFAULT_BO_PRESELECTOR,
 						decision1);
 		configurator1
-				.setBOAdapter(((LPreprocessorConfigurator<TestAgent, TestBo>) configurator1).DEFAULT_BO_UPDATE_BUILDER);
+				.setBOAdapter(((LPreprocessorConfigurator<LTestAgent, LTestBo>) configurator1).DEFAULT_BO_UPDATE_BUILDER);
 		configurator1
-				.setPreferenceUpdater(((LPreprocessorConfigurator<TestAgent, TestBo>) configurator1).DEFAULT_PREFERENCE_UPDATER);
+				.setPreferenceUpdater(((LPreprocessorConfigurator<LTestAgent, LTestBo>) configurator1).DEFAULT_PREFERENCE_UPDATER);
 
-		collector = new LaraBOCollector<TestAgent, TestBo>() {
+		collector = new LaraBOCollector<LTestAgent, LTestBo>() {
 
 			@Override
 			public <E extends LaraPpEvent> E castEvent(Class<E> clazz,
@@ -138,7 +138,7 @@ public class DefaultConfiguratorTest {
 	@Test
 	public final void testGet() {
 		assertEquals("default preselector needs to be default preselector",
-				((LPreprocessorConfigurator<TestAgent, TestBo>) configurator1).DEFAULT_BO_PRESELECTOR,
+				((LPreprocessorConfigurator<LTestAgent, LTestBo>) configurator1).DEFAULT_BO_PRESELECTOR,
 				configurator1.get(decision1,
 						LaraBOPreselector.class));
 	}
@@ -150,14 +150,14 @@ public class DefaultConfiguratorTest {
 	@Test
 	public final void testGetMap() {
 		configurator1.set(decision1, LaraBOCollector.class, collector);
-		Map<LaraDecisionConfiguration, LaraBOCollector<TestAgent, TestBo>> scannerMap = configurator1
-				.<LaraBOCollector<TestAgent, TestBo>> getMap(LaraBOCollector.class);
+		Map<LaraDecisionConfiguration, LaraBOCollector<LTestAgent, LTestBo>> scannerMap = configurator1
+				.<LaraBOCollector<LTestAgent, LTestBo>> getMap(LaraBOCollector.class);
 		assertEquals("collector map needs to contain collector for decsion1", collector, scannerMap.get(decision1));
 
-		Map<LaraDecisionConfiguration, LaraBOPreselector<TestAgent, TestBo>> checkerMap = configurator1
-				.<LaraBOPreselector<TestAgent, TestBo>> getMap(LaraBOPreselector.class);
+		Map<LaraDecisionConfiguration, LaraBOPreselector<LTestAgent, LTestBo>> checkerMap = configurator1
+				.<LaraBOPreselector<LTestAgent, LTestBo>> getMap(LaraBOPreselector.class);
 		assertEquals("preselector map needs to contain collector for decsion1",
-				((LPreprocessorConfigurator<TestAgent, TestBo>) configurator1).DEFAULT_BO_PRESELECTOR,
+				((LPreprocessorConfigurator<LTestAgent, LTestBo>) configurator1).DEFAULT_BO_PRESELECTOR,
 				checkerMap.get(decision1));
 	}
 }

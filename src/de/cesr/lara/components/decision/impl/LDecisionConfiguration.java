@@ -8,7 +8,7 @@ import de.cesr.lara.components.decision.LaraDecisionConfiguration;
 
 
 /**
- * creates instance of decision for given set of preferenceWeights and heuristic TODO make immutable (SH) TODO consider id
+ * creates instance of decision for given set of preferenceWeights and deliberativeChoiceComp TODO make immutable (SH) TODO consider id
  * field to make the builder identifiable - to be set in constructor like other fields (SH) sorry - needed these
  * features instantly (SH) > not possible to make static since multiple instances with different goal-definitions are
  * required! (SH)
@@ -41,7 +41,7 @@ public class LDecisionConfiguration implements LaraDecisionConfiguration {
 	 */
 	/**
 	 * @param id
-	 * @param heuristic
+	 * @param deliberativeChoiceComp
 	 *        the mechanism used to fetch best BOs.
 	 */
 	public LDecisionConfiguration(String id) {

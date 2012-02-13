@@ -38,8 +38,8 @@ import de.cesr.lara.components.preprocessor.LaraPreprocessor;
 import de.cesr.lara.components.preprocessor.LaraPreprocessorConfigurator;
 import de.cesr.lara.components.preprocessor.event.LaraPpEvent;
 import de.cesr.lara.components.preprocessor.impl.LPreprocessorConfigurator;
-import de.cesr.lara.testing.TestUtils.TestAgent;
-import de.cesr.lara.testing.TestUtils.TestBo;
+import de.cesr.lara.testing.TestUtils.LTestAgent;
+import de.cesr.lara.testing.TestUtils.LTestBo;
 
 
 /**
@@ -58,16 +58,16 @@ public class LPreprocessorTest {
 	LaraDecisionConfiguration																decision1;
 	LaraDecisionConfiguration																decision2;
 
-	LaraPreprocessorConfigurator<TestAgent, TestBo> configurator1;
-	LaraPreprocessorConfigurator<TestAgent, TestBo> configurator2;
-	LaraPreprocessorConfigurator<TestAgent, TestBo> configurator3;
+	LaraPreprocessorConfigurator<LTestAgent, LTestBo> configurator1;
+	LaraPreprocessorConfigurator<LTestAgent, LTestBo> configurator2;
+	LaraPreprocessorConfigurator<LTestAgent, LTestBo> configurator3;
 
-	LaraBOCollector<TestAgent, TestBo> scanner;
+	LaraBOCollector<LTestAgent, LTestBo> scanner;
 
-	LaraPreprocessor<TestAgent, TestBo> builder1;
-	LaraPreprocessor<TestAgent, TestBo> builder2;
-	LaraPreprocessor<TestAgent, TestBo> builder3;
-	LaraPreprocessor<TestAgent, TestBo> builder12;
+	LaraPreprocessor<LTestAgent, LTestBo> builder1;
+	LaraPreprocessor<LTestAgent, LTestBo> builder2;
+	LaraPreprocessor<LTestAgent, LTestBo> builder3;
+	LaraPreprocessor<LTestAgent, LTestBo> builder12;
 
 	static boolean preprocessCalled = false;
 
@@ -137,7 +137,7 @@ public class LPreprocessorTest {
 		 * Second Configurator with another LaraBOCollector
 		 */
 		configurator2 = LPreprocessorConfigurator.getDefaultPreprocessConfigurator();
-		scanner = new LaraBOCollector<TestAgent, TestBo>() {
+		scanner = new LaraBOCollector<LTestAgent, LTestBo>() {
 
 			@Override
 			public <E extends LaraPpEvent> E castEvent(Class<E> clazz,
@@ -174,7 +174,7 @@ public class LPreprocessorTest {
 	 */
 	@Test
 	public final void testGetPreprocessorBuilder() {
-		LaraPreprocessor<TestAgent, TestBo> builder2 = configurator2
+		LaraPreprocessor<LTestAgent, LTestBo> builder2 = configurator2
 				.getPreprocessor();
 		assertNotSame("Bilders of different configuration need to be different", builder1, builder2);
 	}
@@ -185,7 +185,7 @@ public class LPreprocessorTest {
 	 * .
 	 */
 	public final void testGetPreprocessor() {
-		builder2.preprocess(decision1, new TestAgent("TestAgent"));
+		builder2.preprocess(decision1, new LTestAgent("LTestAgent"));
 		assertFalse(preprocessCalled);
 	}
 

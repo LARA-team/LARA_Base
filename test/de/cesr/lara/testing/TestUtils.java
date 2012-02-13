@@ -34,6 +34,7 @@ import de.cesr.lara.components.model.impl.LAbstractModel;
 import de.cesr.lara.components.model.impl.LAbstractStandaloneSynchronisedModel;
 import de.cesr.lara.components.model.impl.LModel;
 import de.cesr.lara.components.util.LaraRandom;
+import de.cesr.lara.components.util.impl.LPrefEntry;
 import de.cesr.lara.components.util.impl.LRandomService;
 
 
@@ -45,7 +46,7 @@ public class TestUtils {
 	/**
 	 * test agent
 	 */
-	public static class TestAgent extends LAbstractAgent<TestAgent, TestBo> {
+	public static class LTestAgent extends LAbstractAgent<LTestAgent, LTestBo> {
 
 		/**
 		 * constructor
@@ -53,7 +54,7 @@ public class TestUtils {
 		 * @param env
 		 * @param name
 		 */
-		public TestAgent(String name) {
+		public LTestAgent(String name) {
 			super(new LEnvironment(), name);
 		}
 
@@ -61,7 +62,7 @@ public class TestUtils {
 		}
 
 		@Override
-		public TestAgent getThis() {
+		public LTestAgent getThis() {
 			return this;
 		}
 
@@ -71,30 +72,39 @@ public class TestUtils {
 	}
 
 	/**
-	 * Test behavioural option for TestAgent
+	 * Test behavioural option for LTestAgent
 	 * 
 	 * @author Sascha Holzhauer
 	 * 
 	 */
-	public static class TestBo extends LaraBehaviouralOption<TestAgent, TestBo> {
+	public static class LTestBo extends LaraBehaviouralOption<LTestAgent, LTestBo> {
 
 		static int counter = 0;
-		public TestBo(TestAgent agent) {
-			super("TestBo"
+		public LTestBo(LTestAgent agent) {
+			super("LTestBo"
 					+ LModel.getModel().getIntegerFormat().format(counter++),
 					agent);
 		}
 
-		public TestBo(TestAgent agent,
+		public LTestBo(LTestAgent agent,
 				Map<Class<? extends LaraPreference>, Double> utilities) {
-			super("TestBo"
+			super("LTestBo"
 					+ LModel.getModel().getIntegerFormat().format(counter++),
 					agent, utilities);
 		}
 
-		public TestBo(String key, TestAgent agent,
+		public LTestBo(String key, LTestAgent agent,
 				Map<Class<? extends LaraPreference>, Double> utilities) {
 			super(key, agent, utilities);
+		}
+
+		/**
+		 * @param key
+		 * @param agent
+		 * @param prefEntry
+		 */
+		public LTestBo(String key, LTestAgent agent, LPrefEntry... prefEntry) {
+			super(key, agent, prefEntry);
 		}
 
 		@Override
@@ -104,9 +114,9 @@ public class TestUtils {
 		}
 
 		@Override
-		public TestBo getModifiedBO(TestAgent agent,
+		public LTestBo getModifiedBO(LTestAgent agent,
 				Map<Class<? extends LaraPreference>, Double> preferenceUtilities) {
-			return new TestBo(this.getKey(), agent, preferenceUtilities);
+			return new LTestBo(this.getKey(), agent, preferenceUtilities);
 		}
 	}
 

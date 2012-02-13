@@ -34,6 +34,7 @@ import de.cesr.lara.components.agents.LaraAgent;
 import de.cesr.lara.components.decision.LaraDecisionConfiguration;
 import de.cesr.lara.components.model.impl.LModel;
 import de.cesr.lara.components.preprocessor.LaraBOPreselector;
+import de.cesr.lara.components.util.impl.LPrefEntry;
 import de.cesr.lara.components.util.impl.LPreferenceWeightMap;
 import de.cesr.lara.components.util.logging.impl.LAgentLevel;
 import de.cesr.lara.components.util.logging.impl.Log4jLogger;
@@ -102,9 +103,26 @@ public abstract class LaraBehaviouralOption<A extends LaraAgent<? super A, ?>, B
 				LAgentLevel.AGENT)) {
 			agentLogger = Log4jLogger.getLogger(agent.getAgentId() + "." + LaraBehaviouralOption.class.getName());
 		}
-
 	}
 
+	/**
+	 * constructor
+	 * 
+	 * @param key
+	 * @param agent
+	 * @param prefEntry list of {@link LPrefEntry}s
+	 */
+	public LaraBehaviouralOption(String key, A agent, LPrefEntry ... prefEntry) {
+		super(key);
+		this.agent = agent;
+		this.preferenceUtilities = new LPreferenceWeightMap(prefEntry);
+		this.hashCode = calculateHashCode();
+		if (Log4jLogger.getLogger(agent.getAgentId() + "." + LaraBehaviouralOption.class.getName()).isEnabledFor(
+				LAgentLevel.AGENT)) {
+			agentLogger = Log4jLogger.getLogger(agent.getAgentId() + "." + LaraBehaviouralOption.class.getName());
+		}
+	}
+	
 	/**
 	 * Does not call constructor with more parameters above to prevent double initialisation of preferenceUtilities
 	 * 
@@ -158,7 +176,7 @@ public abstract class LaraBehaviouralOption<A extends LaraAgent<? super A, ?>, B
 	// ////////////////////////////////
 
 	/**
-	 * @param dBuilder
+	 * @param dConfig
 	 * @return the current preferenceUtilities of this behavioural option
 	 */
 	public abstract Map<Class<? extends LaraPreference>, Double> getSituationalUtilities(
@@ -167,7 +185,7 @@ public abstract class LaraBehaviouralOption<A extends LaraAgent<? super A, ?>, B
 	/**
 	 * @param agent
 	 * @param preferenceUtilities
-	 * @return behavioural option Created by klemm on 16.02.2010
+	 * @return behavioural option
 	 */
 	public abstract BO getModifiedBO(A agent, Map<Class<? extends LaraPreference>, Double> preferenceUtilities);
 
@@ -207,13 +225,12 @@ public abstract class LaraBehaviouralOption<A extends LaraAgent<? super A, ?>, B
 	 * Returns the sum of BO-utility * agent'S situational preference over all preferenceWeights. Sorts preferenceWeights only when agent
 	 * debugging is enabled.
 	 * 
-	 * TODO check name clash in subclasses <-> precise LaraDecisionConfiguration object
-	 * @param dBuilder
+	 * @param dConfig
 	 *        the {@link LaraDecisionConfiguration} the situational preferenceWeights apply to
 	 * 
 	 * @return sum of situational preferenceUtilities over all preferenceWeights.
 	 */
-	public float getTotalSituationalUtility(LaraDecisionConfiguration dBuilder) {
+	public float getTotalSituationalUtility(LaraDecisionConfiguration dConfig) {
 		// float overall_utility = 0.0f;
 		double overall_utility = 0.0;
 
@@ -238,7 +255,9 @@ public abstract class LaraBehaviouralOption<A extends LaraAgent<? super A, ?>, B
 		// LOGGING ->
 
 		for (Entry<Class<? extends LaraPreference>, Double> utilityEntry : goals.entrySet()) {
-			situationalGoalPreference = agent.getLaraComp().getDecisionData(dBuilder).getSituationalPreferenceWeights().get(
+			situationalGoalPreference = agent.getLaraComp()
+					.getDecisionData(dConfig).getIndividualPreferenceWeights()
+					.get(
 					utilityEntry.getKey()).doubleValue();
 
 			// security:
@@ -297,14 +316,16 @@ public abstract class LaraBehaviouralOption<A extends LaraAgent<? super A, ?>, B
 	// ////////////////////////////////
 
 	/**
-	 * TODO make appropriate!
-	 * 
 	 * @param bo1
 	 * @return a negative int if the given BO is larger, a positive int if the given BO is smaller and 0 otherwise
 	 */
 	@Override
 	public int compareTo(LaraBehaviouralOption<A, BO> bo1) {
-		return getKey().compareTo(bo1.getKey());
+		return !getKey().equals(bo1.getKey()) ? getKey()
+				.compareTo(bo1.getKey()) : !(getTimestamp() == bo1
+				.getTimestamp()) ? getTimestamp() - bo1.getTimestamp()
+				: getAgent().getAgentId()
+						.compareTo(bo1.getAgent().getAgentId());
 	}
 
 	/**
@@ -329,12 +350,13 @@ public abstract class LaraBehaviouralOption<A extends LaraAgent<? super A, ?>, B
 			if (getTimestamp() != bo.getTimestamp()) {
 				return false;
 			}
-			// TODO check advantages/disadvantages of comparing actual values for getValue()
-			if (!getValue().equals(bo.getValue())) {
-				return false;
-			} else {
-				return true;
+			for (Entry<Class<? extends LaraPreference>, Double> entry : getValue()
+					.entrySet()) {
+				if (!entry.getValue().equals(bo.getValue().get(entry.getKey()))) {
+					return false;
+				}
 			}
+			return true;
 		} else {
 			return false;
 		}

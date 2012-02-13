@@ -29,26 +29,26 @@ import org.junit.Test;
 
 import de.cesr.lara.components.agents.impl.LAbstractAgent;
 import de.cesr.lara.testing.TestUtils;
-import de.cesr.lara.testing.TestUtils.TestBo;
+import de.cesr.lara.testing.TestUtils.LTestBo;
 
 
 /**
  * Tests hashCode() and equals()...
  */
-public class AbstractLaraAgentTest {
+public class LAbstractAgentTest {
 
-	LAbstractAgent<TestUtils.TestAgent, TestBo> agent1;
-	LAbstractAgent<TestUtils.TestAgent, TestBo> agent2;
-	LAbstractAgent<TestUtils.TestAgent, TestBo> agent3;
+	LAbstractAgent<TestUtils.LTestAgent, LTestBo> agent1;
+	LAbstractAgent<TestUtils.LTestAgent, LTestBo> agent2;
+	LAbstractAgent<TestUtils.LTestAgent, LTestBo> agent3;
 
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@Before
 	public void setUp() throws Exception {
-		agent1 = new TestUtils.TestAgent("Agent1");
-		agent2 = new TestUtils.TestAgent("Agent2");
-		agent3 = new TestUtils.TestAgent("Agent2");
+		agent1 = new TestUtils.LTestAgent("Agent1");
+		agent2 = new TestUtils.LTestAgent("Agent2");
+		agent3 = new TestUtils.LTestAgent("Agent2");
 	}
 
 	/**

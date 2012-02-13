@@ -33,14 +33,9 @@ import org.junit.Test;
 import de.cesr.lara.components.LaraPreference;
 import de.cesr.lara.components.environment.LaraEnvironment;
 import de.cesr.lara.components.environment.impl.LEnvironment;
-import de.cesr.lara.components.eventbus.events.LaraEvent;
-import de.cesr.lara.components.model.impl.LAbstractStandaloneSynchronisedModel;
-import de.cesr.lara.components.model.impl.LModel;
-import de.cesr.lara.components.util.LaraRandom;
-import de.cesr.lara.components.util.impl.LRandomService;
 import de.cesr.lara.testing.TestUtils;
-import de.cesr.lara.testing.TestUtils.TestAgent;
-import de.cesr.lara.testing.TestUtils.TestBo;
+import de.cesr.lara.testing.TestUtils.LTestAgent;
+import de.cesr.lara.testing.TestUtils.LTestBo;
 
 /**
  * 
@@ -53,11 +48,11 @@ public class LaraBehaviouralOptionTest {
 	private static class TestGoal implements LaraPreference {
 	}
 
-	TestAgent agent1;
-	TestAgent agent2;
+	LTestAgent agent1;
+	LTestAgent agent2;
 	Class<? extends LaraPreference> goal1;
-	TestBo bo1;
-	TestBo bo2;
+	LTestBo bo1;
+	LTestBo bo2;
 	LaraEnvironment env;
 	Map<Class<? extends LaraPreference>, Double> utilities1;
 
@@ -66,25 +61,15 @@ public class LaraBehaviouralOptionTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		LModel.setNewModel(new LAbstractStandaloneSynchronisedModel() {
-
-			@Override
-			public LaraRandom getLRandom() {
-				return new LRandomService((int) System.currentTimeMillis());
-			}
-
-			@Override
-			public void onInternalEvent(LaraEvent event) {
-			}
-		});
+		TestUtils.initTestModel();
 		env = new LEnvironment();
-		agent1 = new TestUtils.TestAgent("TestAgent1");
-		agent2 = new TestUtils.TestAgent("TestAgent2");
+		agent1 = new TestUtils.LTestAgent("TestAgent1");
+		agent2 = new TestUtils.LTestAgent("TestAgent2");
 		utilities1 = new HashMap<Class<? extends LaraPreference>, Double>();
 		goal1 = TestGoal.class;
 		utilities1.put(goal1, new Double(1.0));
-		bo1 = new TestBo("BO1", agent1, utilities1);
-		bo2 = new TestBo("BO2", agent1, utilities1);
+		bo1 = new LTestBo("BO1", agent1, utilities1);
+		bo2 = new LTestBo("BO2", agent1, utilities1);
 
 	}
 
@@ -128,6 +113,16 @@ public class LaraBehaviouralOptionTest {
 	}
 
 	/**
+	 * 
+	 */
+	@Test(expected = UnsupportedOperationException.class)
+	public final void testModifyEntry() {
+		bo1.getValue().entrySet().iterator().next().setValue(42.0);
+		assertEquals("The utility for 'goal1' should be 1.0", 1.0, bo1
+				.getValue().get(goal1), 0.01);
+	}
+
+	/**
 	 * Test method for
 	 * {@link de.cesr.lara.components.impl.AbstractBO#getModifiableUtilities()}.
 	 */
@@ -150,7 +145,7 @@ public class LaraBehaviouralOptionTest {
 
 		assertTrue(bo1.equals(bo1));
 
-		TestBo bo12 = new TestBo("BO1", agent2, utilities1);
+		LTestBo bo12 = new LTestBo("BO1", agent2, utilities1);
 
 		assertTrue(bo1.getModifiedBO(bo12.getAgent(), bo12.getValue()).equals(
 				bo12));
@@ -158,7 +153,7 @@ public class LaraBehaviouralOptionTest {
 
 		assertFalse(bo1.getModifiedUtilitiesBO(bo2.getValue()).equals(bo12));
 
-		assertTrue(bo1.equals(new TestBo("BO1", agent1, utilities1)));
+		assertTrue(bo1.equals(new LTestBo("BO1", agent1, utilities1)));
 	}
 
 	/**
@@ -168,10 +163,10 @@ public class LaraBehaviouralOptionTest {
 	public final void testHashCode() {
 		assertEquals("hash codes of equal objects need to be equal",
 				bo1.hashCode(), bo1.hashCode());
-		TestBo bo12 = new TestBo("BO1", agent2, utilities1);
+		LTestBo bo12 = new LTestBo("BO1", agent2, utilities1);
 		assertEquals("hash codes of equal objects need to be equal",
 				bo1.hashCode(),
-				new TestBo("BO1", agent1, utilities1).hashCode());
+				new LTestBo("BO1", agent1, utilities1).hashCode());
 		assertEquals("hash codes of equal objects need to be equal", bo1
 				.getModifiedAgentBO(bo12.getAgent()).hashCode(),
 				bo12.hashCode());
@@ -238,6 +233,9 @@ public class LaraBehaviouralOptionTest {
 		utilities1.put(goal1, new Double(42.0));
 		assertEquals("The utility for 'goal1' should be 1.0", 1.0, bo1
 				.getValue().get(goal1).doubleValue(), 0.1);
-	}
 
+		// modifications via entry objects
+		assertEquals("The utility for 'goal1' should be 1.0", 1.0, bo1
+				.getValue().get(goal1), 0.01);
+	}
 }

@@ -21,7 +21,6 @@ package de.cesr.lara.components.decision.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -30,12 +29,10 @@ import org.apache.log4j.Logger;
 
 import de.cesr.lara.components.LaraBehaviouralOption;
 import de.cesr.lara.components.LaraPreference;
+import de.cesr.lara.components.decision.LaraBoRow;
 import de.cesr.lara.components.decision.LaraDecisionConfiguration;
 import de.cesr.lara.components.decision.LaraDeliberativeChoiceComponent;
 import de.cesr.lara.components.decision.LaraDeliberativeDecider;
-import de.cesr.lara.components.decision.LaraHeader;
-import de.cesr.lara.components.decision.LaraRow;
-import de.cesr.lara.components.decision.LaraUtilityMatrix;
 import de.cesr.lara.components.util.logging.impl.Log4jLogger;
 
 /**
@@ -54,9 +51,20 @@ public class LDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? extends 
 	protected Logger logger = Log4jLogger.getLogger(LDeliberativeDecider.class);
 
 	/**
+	 * According {@link LaraDecisionConfiguration}
+	 */
+	protected LaraDecisionConfiguration dConfiguration;
+
+	/**
+	 * deliberativeChoiceComp component
+	 */
+	protected LaraDeliberativeChoiceComponent deliberativeChoiceComponent = null;
+
+	/**
 	 * preferenceWeights
 	 */
 	protected Map<Class<? extends LaraPreference>, Double> preferenceWeights = null;
+
 	/**
 	 * behavioural options
 	 */
@@ -67,123 +75,18 @@ public class LDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? extends 
 	 */
 	protected BO selectedBo = null;
 
-	/**
-	 * header
-	 */
-	protected LaraHeader header = null;
+	protected Collection<LaraBoRow<BO>> situationalUtilityMatrixRows;
 
 	/**
-	 * utility matrix
-	 */
-	protected LaraUtilityMatrix<BO> utilityMatrix = null;
-
-	/**
-	 * situational utility matrix
-	 */
-	protected LaraUtilityMatrix<BO> situationalUtilityMatrix = null;
-
-	/**
-	 * heuristic component
-	 */
-	protected LaraDeliberativeChoiceComponent deliberativeChoiceComponent = null;
-
-	/**
-	 * According {@link LaraDecisionConfiguration}
-	 */
-	protected LaraDecisionConfiguration dConfiguration;
-
-	/**
-	 * constructor
-	 * 
 	 * @param dConfiguration
+	 *            the decision configuration of the current decision process
 	 */
 	public LDeliberativeDecider(LaraDecisionConfiguration dConfiguration) {
-		logger.info(this.getClass().getSimpleName() + "()");
+		// <- LOGGING
+		logger.info(this.getClass().getSimpleName() + " initialised.");
+		// LOGGING ->
 
 		this.dConfiguration = dConfiguration;
-		// initialised here because in case of empty set of BOs initMatrix() is
-		// not called (SH):
-		// create matrix
-		utilityMatrix = new LUtilityMatrix<BO>();
-		// create situational matrix
-		situationalUtilityMatrix = new LUtilityMatrix<BO>();
-
-	}
-
-	/**
-	 * returns the preference (importance) value of the given goal (by simple
-	 * class name)
-	 * 
-	 * @param goalname
-	 * @return
-	 */
-	private double getPreferenceForGoal(Class<? extends LaraPreference> goal) {
-		return preferenceWeights.get(goal).doubleValue();
-	}
-
-	/**
-	 * Checks if preference for the given goal is defined, which also means by
-	 * definition whether the specified goal is considered during the decision
-	 * process.
-	 * 
-	 * @param utility
-	 *            the goal to check
-	 * @return Created by klemm on 10.02.2010
-	 */
-	private boolean isGoalConsidered(Class<? extends LaraPreference> utilityGoal) {
-		return preferenceWeights.containsKey(utilityGoal);
-	}
-
-	/**
-	 * @see de.cesr.lara.components.decision.LaraDeliberativeDecider#getPreferenceWeights()
-	 */
-	@Override
-	public Map<Class<? extends LaraPreference>, Double> getPreferenceWeights() {
-		return preferenceWeights;
-	}
-
-	/**
-	 * @see de.cesr.lara.components.decision.LaraDeliberativeDecider#getSelectedBO()
-	 */
-	@Override
-	public BO getSelectedBO() {
-		return deliberativeChoiceComponent.getSelectedBO(dConfiguration,
-				situationalUtilityMatrix);
-	}
-
-	/**
-	 * @see de.cesr.lara.components.decision.LaraDeliberativeDecider#getSelectableBOs()
-	 */
-	@Override
-	public Collection<BO> getSelectableBOs() {
-		return selectableBOs;
-	}
-
-	/**
-	 * @see de.cesr.lara.components.decision.LaraDeliberativeDecider#getHeader()
-	 */
-	@Override
-	public LaraHeader getHeader() {
-		return header;
-	}
-
-	/**
-	 * @see de.cesr.lara.components.decision.LaraDeliberativeDecider#setSelectableBOs(java.util.Collection)
-	 */
-	@Override
-	public void setSelectableBOs(Collection<BO> behaviouralOptions) {
-		this.selectableBOs = behaviouralOptions;
-		logger.info(behaviouralOptions != null ? "Received "
-				+ behaviouralOptions.size() + " behavioural options"
-				: "Received set of BOs is empty!");
-	}
-
-	/**
-	 * @see de.cesr.lara.components.decision.LaraDeliberativeDecider#setHeader(de.cesr.lara.components.decision.LaraHeader)
-	 */
-	@Override
-	public void setHeader(LaraHeader header) {
-		this.header = header;
 	}
 
 	/**
@@ -200,22 +103,8 @@ public class LDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? extends 
 		}
 		// LOGGING -->
 
-		// add header
-		List<String> cells = new ArrayList<String>();
-		cells.add("Behavioural Option");
+		situationalUtilityMatrixRows = new ArrayList<LaraBoRow<BO>>();
 
-		for (Class<? extends LaraPreference> g : dConfiguration
-				.getPreferences()) {
-			cells.add(g.getSimpleName());
-		}
-		header = new LHeader(cells);
-		// set header
-		utilityMatrix.setHeader(header);
-		situationalUtilityMatrix.setHeader(header);
-
-		Collection<LaraRow<BO>> utilityMatrixRows = new ArrayList<LaraRow<BO>>();
-		Collection<LaraRow<BO>> situationalUtilityMatrixRows = new ArrayList<LaraRow<BO>>();
-		// add behavioural options as row to matrix
 
 		// // Facilitate comparison of rows:
 		// Collections.<LaraBehaviouralOption>sort((ArrayList<LaraBehaviouralOption>)
@@ -229,20 +118,19 @@ public class LDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? extends 
 		// });
 
 		for (BO bo : selectableBOs) {
-			List<Double> values = new ArrayList<Double>();
-			List<Double> situationalValues = new ArrayList<Double>();
-			// TODO calculate utility for current time step / in preprocessor?!
+			LaraBoRow<BO> boRow = new LLightBoRow<BO>(bo);
 			for (Entry<Class<? extends LaraPreference>, Double> utility : bo
 					.getValue().entrySet()) {
-				// avoid putting utilities into matrix which are not needed for
-				// current decision
-				// (BOs may be valid for other decisions and thus define utility
-				// for more preferenceWeights.)
+				/*
+				 * avoid putting utilities into laraBoRows which are not needed for
+				 * current decision (BOs may be valid for other decisions and
+				 * thus define utility for more preferenceWeights.)
+				 */
 				if (isGoalConsidered(utility.getKey())) {
-					values.add(new Double(utility.getValue()));
-					situationalValues.add(new Double(utility.getValue()
-							.doubleValue()
-							* getPreferenceForGoal(utility.getKey())));
+					boRow.setIndividualUtilityValue(
+							utility.getKey(),
+							utility.getValue()
+									* getPreferenceForGoal(utility.getKey()));
 
 					// <- LOGGING
 					if (logger.isDebugEnabled()) {
@@ -252,20 +140,50 @@ public class LDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? extends 
 								* getPreferenceForGoal(utility.getKey()));
 					}
 					// LOGGING ->
-
 				}
 			}
-			utilityMatrixRows.add(new LRow<BO>(bo, values));
-			situationalUtilityMatrixRows
-					.add(new LRow<BO>(bo, situationalValues));
+			situationalUtilityMatrixRows.add(boRow);
 		}
-		utilityMatrix.setRows(utilityMatrixRows);
-		situationalUtilityMatrix.setRows(situationalUtilityMatrixRows);
-		selectedBo = deliberativeChoiceComponent.getSelectedBO(dConfiguration,
-				utilityMatrix);
+
+		selectedBo = getDeliberativeChoiceComp().getSelectedBo(dConfiguration,
+				situationalUtilityMatrixRows);
+		// <- LOGGING
 		logger.info("Post decide: SitautionalMatrix: "
-				+ situationalUtilityMatrix);
+				+ situationalUtilityMatrixRows);
+		// LOGGING ->
 	}
+
+
+	/******************************************************************************
+	 * HELPER METHODS
+	 ******************************************************************************/
+
+	/**
+	 * Provides the individual preference weight of the given preference.
+	 * 
+	 * @param preference
+	 * @return individual preference weight
+	 */
+	private double getPreferenceForGoal(Class<? extends LaraPreference> goal) {
+		return preferenceWeights.get(goal).doubleValue();
+	}
+
+	/**
+	 * Checks if the given preference is defined, which also means by definition
+	 * whether the specified preference is considered during the decision
+	 * process.
+	 * 
+	 * @param preference
+	 *            the preference to check
+	 * @return true if the given preference is considered
+	 */
+	private boolean isGoalConsidered(Class<? extends LaraPreference> preference) {
+		return preferenceWeights.containsKey(preference);
+	}
+
+	/******************************************************************************
+	 * GETTER & SETTER
+	 ******************************************************************************/
 
 	/**
 	 * @see de.cesr.lara.components.decision.LaraDeliberativeDecider#setDeliberativeChoiceComponent(de.cesr.lara.components.decision.LaraDeliberativeChoiceComponent)
@@ -277,10 +195,29 @@ public class LDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? extends 
 	}
 
 	/**
-	 * @see de.cesr.lara.components.decision.LaraDeliberativeDecider#setPreferences(java.util.Map)
+	 * Checks if the deliberative choice component has been set and provides it
+	 * true.
+	 * 
+	 * @return deliberative choice component
+	 */
+	protected LaraDeliberativeChoiceComponent getDeliberativeChoiceComp() {
+		if (this.deliberativeChoiceComponent == null) {
+			// <- LOGGING
+			logger.error("Deliberative Choice Component has not been set at "
+					+ this);
+			// LOGGING ->
+			throw new IllegalStateException(
+					"Deliberative Choice Component has not been set at " + this);
+		} else {
+			return this.deliberativeChoiceComponent;
+		}
+	}
+
+	/**
+	 * @see de.cesr.lara.components.decision.LaraDeliberativeDecider#setPreferenceWeights(java.util.Map)
 	 */
 	@Override
-	public void setPreferences(
+	public void setPreferenceWeights(
 			Map<Class<? extends LaraPreference>, Double> preference) {
 		this.preferenceWeights = preference;
 
@@ -288,22 +225,48 @@ public class LDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? extends 
 		if (logger.isDebugEnabled()) {
 			logger.debug("Received Preferences: " + preferenceWeights);
 		}
-		// LOGGING ->
-
 		logger.info("Received " + preference.size() + " preferenceWeights");
+		// LOGGING ->
 	}
 
 	/**
-	 * @see de.cesr.lara.components.decision.LaraDeliberativeDecider#getSelectedBo()
+	 * @see de.cesr.lara.components.decision.LaraDeliberativeDecider#getPreferenceWeights()
+	 */
+	@Override
+	public Map<Class<? extends LaraPreference>, Double> getPreferenceWeights() {
+		return preferenceWeights;
+	}
+
+	/**
+	 * @see de.cesr.lara.components.decision.LaraDeliberativeDecider#setSelectableBos(java.util.Collection)
+	 */
+	@Override
+	public void setSelectableBos(Collection<BO> behaviouralOptions) {
+		this.selectableBOs = behaviouralOptions;
+		// <- LOGGING
+		logger.info(behaviouralOptions != null ? "Received "
+				+ behaviouralOptions.size() + " behavioural options"
+				: "Received set of BOs is empty!");
+		// LOGGING ->
+	}
+
+	/**
+	 * @see de.cesr.lara.components.decision.LaraDeliberativeDecider#getSelectableBos()
+	 */
+	@Override
+	public Collection<BO> getSelectableBos() {
+		return selectableBOs;
+	}
+
+	/**
+	 * @see de.cesr.lara.components.decision.LaraDecider#getSelectedBo()
 	 */
 	@Override
 	public BO getSelectedBo() {
-		if (selectedBo == null) {
-			selectedBo = deliberativeChoiceComponent.getSelectedBO(
-					dConfiguration, utilityMatrix);
-		}
-		return selectedBo;
+		return getDeliberativeChoiceComp().getSelectedBo(dConfiguration,
+				situationalUtilityMatrixRows);
 	}
+
 
 	/**
 	 * This method delegates to the deliberative choice component since bos may
@@ -318,8 +281,8 @@ public class LDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? extends 
 					+ ") is larger than the number of available BOs"
 					+ getNumSelectableBOs() + ")!");
 		}
-		return deliberativeChoiceComponent.getKSelectedBOs(dConfiguration,
-				utilityMatrix, k);
+		return getDeliberativeChoiceComp().getKSelectedBos(dConfiguration,
+				situationalUtilityMatrixRows, k);
 	}
 
 	/**
@@ -327,8 +290,9 @@ public class LDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? extends 
 	 */
 	@Override
 	public int getNumSelectableBOs() {
-		return utilityMatrix.getNumRows();
+		return situationalUtilityMatrixRows.size();
 	}
+
 
 	/**
 	 * Return the name of this decider and the {@link LaraDecisionConfiguration}

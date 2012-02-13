@@ -53,7 +53,8 @@ import de.cesr.lara.components.util.logging.impl.Log4jLogger;
  * 
  * @param <PropertyType>
  */
-public class LDefaultMemory<PropertyType extends LaraProperty<?>> implements LaraMemory<PropertyType>,
+public class LDefaultMemory<PropertyType extends LaraProperty<?>>
+		implements LaraMemory<PropertyType>,
 		LaraStorageListener {
 
 	/**
@@ -512,6 +513,9 @@ public class LDefaultMemory<PropertyType extends LaraProperty<?>> implements Lar
 
 		// property needs to be forgotten first, because it may not be overwritten due to different time stamps:
 		forgetAllEssential(propertyToRefresh.getKey());
+
+		// TODO check if LaraProperty can be parameterised with PropertyType to
+		// achieve type safe actions here (SH)
 		memorize((PropertyType) propertyToRefresh.getRefreshedProperty());
 
 		if (propertyListeners.containsKey(MemoryEvent.REFRESHED_PROPERTY_FORGOTTEN)) {
