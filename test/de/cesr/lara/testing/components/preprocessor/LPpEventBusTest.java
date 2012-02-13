@@ -47,8 +47,8 @@ import de.cesr.lara.components.preprocessor.event.LPpPreferenceUpdaterEvent;
 import de.cesr.lara.components.preprocessor.impl.LAbstractPpComp;
 import de.cesr.lara.components.preprocessor.impl.LPreprocessorConfigurator;
 import de.cesr.lara.testing.TestUtils;
-import de.cesr.lara.testing.TestUtils.TestAgent;
-import de.cesr.lara.testing.TestUtils.TestBo;
+import de.cesr.lara.testing.TestUtils.LTestAgent;
+import de.cesr.lara.testing.TestUtils.LTestBo;
 
 /**
  * 
@@ -63,7 +63,7 @@ public class LPpEventBusTest {
 
 	static protected Integer counter = new Integer(0);
 	
-	protected TestAgent agent1, agent2, agent3;
+	protected LTestAgent agent1, agent2, agent3;
 
 	protected LaraDecisionConfiguration dConfig = new LDecisionConfiguration();
 
@@ -150,25 +150,25 @@ public class LPpEventBusTest {
 		TestUtils.initTestModel();
 
 		// init two agents with different properties to trigger different PP behaviours
-		agent1 = new TestAgent("Test-Agent01");
-		agent2 = new TestAgent("Test-Agent02");
+		agent1 = new LTestAgent("Test-Agent01");
+		agent2 = new LTestAgent("Test-Agent02");
 		
 		LEventbus.getInstance().unsubscribe(agent1.getLaraComp());
 		LEventbus.getInstance().unsubscribe(agent2.getLaraComp());
 
 		// init preprocesor
-		LaraPreprocessorConfigurator<TestAgent, TestBo> configurator1 = LPreprocessorConfigurator
+		LaraPreprocessorConfigurator<LTestAgent, LTestBo> configurator1 = LPreprocessorConfigurator
 				.getDefaultPreprocessConfigurator();
 		configurator1
-				.setDecisionModeSelector(new LTestDecisionModeSelector<TestAgent, TestBo>());
-		configurator1.setBOCollector(new LTestBoCollector<TestAgent, TestBo>());
-		configurator1.setBoPreselector(new LTestBoPreselector<TestAgent, TestBo>());
+				.setDecisionModeSelector(new LTestDecisionModeSelector<LTestAgent, LTestBo>());
+		configurator1.setBOCollector(new LTestBoCollector<LTestAgent, LTestBo>());
+		configurator1.setBoPreselector(new LTestBoPreselector<LTestAgent, LTestBo>());
 		configurator1
-				.setBOAdapter(new LTestBoUtilityUpdater<TestAgent, TestBo>());
-		configurator1.setPreferenceUpdater(new LTestPrefenceUpdater<TestAgent, TestBo>());
+				.setBOAdapter(new LTestBoUtilityUpdater<LTestAgent, LTestBo>());
+		configurator1.setPreferenceUpdater(new LTestPrefenceUpdater<LTestAgent, LTestBo>());
 
 		// configure PP-Factory
-		LaraPreprocessor<TestAgent, TestBo> pp = configurator1
+		LaraPreprocessor<LTestAgent, LTestBo> pp = configurator1
 				.getPreprocessor();
 		agent1.getLaraComp().setPreprocessor(pp);
 		agent2.getLaraComp().setPreprocessor(pp);
@@ -213,17 +213,17 @@ public class LPpEventBusTest {
 	 */
 	@Test
 	public void testAgent1Bos() {
-		agent3 = new TestAgent("Test-Agent03");
+		agent3 = new LTestAgent("Test-Agent03");
 
 		LEventbus.getInstance().unsubscribe(agent1.getLaraComp());
 		LEventbus.getInstance().unsubscribe(agent2.getLaraComp());
 
 		agent3.getLaraComp().setPreprocessor(
 				LPreprocessorConfigurator
-						.<TestAgent, TestBo> getDefaultPreprocessConfigurator()
+						.<LTestAgent, LTestBo> getDefaultPreprocessConfigurator()
 						.getPreprocessor());
 
-		TestBo testBo = new TestBo(agent3);
+		LTestBo testBo = new LTestBo(agent3);
 		agent3.getLaraComp().getBOMemory().memorize(testBo);
 
 		// subscribe agents at global eventbus

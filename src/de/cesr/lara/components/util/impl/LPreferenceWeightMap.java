@@ -42,6 +42,16 @@ public class LPreferenceWeightMap extends
 		super(map);
 	}
 
+	/**
+	 * @param map
+	 */
+	public LPreferenceWeightMap(LPrefEntry... entry) {
+		super();
+		for (LPrefEntry e : entry) {
+			this.put(e.getKey(), e.getValue());
+		}
+	}
+
 	@Override
 	public String toString() {
 		TreeSet<Entry<Class<? extends LaraPreference>, Double>> orderedEntries = new TreeSet<Entry<Class<? extends LaraPreference>, Double>>(

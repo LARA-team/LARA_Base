@@ -14,8 +14,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import de.cesr.lara.components.environment.LaraEnvironment;
-import de.cesr.lara.components.environment.impl.LEnvironmentalIntProperty;
 import de.cesr.lara.components.environment.impl.LEnvironment;
+import de.cesr.lara.components.environment.impl.LEnvironmentalIntProperty;
 
 
 /**
@@ -37,7 +37,7 @@ public class EnvironmentalIntPropertyTest {
 	public void setUp() throws Exception {
 		this.env = new LEnvironment();
 		this.prop1 = new LEnvironmentalIntProperty("Property1", 1, env);
-		this.prop2 = new LEnvironmentalIntProperty("Property2", 1, env);
+		this.prop2 = new LEnvironmentalIntProperty("Property1", 1, env);
 		this.prop3 = new LEnvironmentalIntProperty("Property3", 3, env);
 	}
 

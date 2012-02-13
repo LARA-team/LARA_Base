@@ -1,8 +1,21 @@
 /**
+ * This file is part of
+ * 
  * LARA - Lightweight Architecture for boundedly Rational citizen Agents
- *
- * Center for Environmental Systems Research, Kassel
- * Created by Sascha Holzhauer on 21.02.2011
+ * 
+ * Copyright (C) 2012 Center for Environmental Systems Research, Kassel, Germany
+ * 
+ * LARA is free software: You can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * LARA is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package de.cesr.lara.testing.components.impl;
 
@@ -19,20 +32,21 @@ import de.cesr.lara.components.agents.LaraAgentComponent;
 import de.cesr.lara.components.decision.LaraDecisionConfiguration;
 import de.cesr.lara.components.eventbus.events.LaraEvent;
 
-
 /**
  * 
- * This test class illustrates the parameterisation of agent classes and behavioural option classes.
+ * This test class illustrates the parameterisation of agent classes and
+ * behavioural option classes.
  * 
- * Agents: 	AbstractEmployeeAgent implements LaraAgent
- * 			Manager requires PowerBOs (has memory that may only store PowerBOs)
- * 			Boss extends Manager
+ * Agents: AbstractEmployeeAgent implements LaraAgent Manager requires PowerBOs
+ * (has memory that may only store PowerBOs) Boss extends Manager
  * 
- * BOs:		CompanyBO
- * 			PowerBO
- * 			HireAndFireBo
+ * BOs: CompanyBO PowerBO HireAndFireBo
  * 
- * CompanyBO<AgentT extends AbstractEmployee<? super CompanyBo> extends LaraBehaviouralOption<AgentT>
+ * CompanyBO<AgentT extends AbstractEmployee<? super CompanyBo> extends
+ * LaraBehaviouralOption<AgentT>
+ * 
+ * @author Sascha Holzhauer
+ * @date 21.02.2011
  */
 public class ParameterTest {
 
@@ -73,6 +87,7 @@ public class ParameterTest {
 		/**
 		 * @see de.cesr.lara.components.LaraBehaviouralOption#getModifiedBO(de.cesr.lara.components.agents.LaraAgent, java.util.Map)
 		 */
+		@Override
 		public BO getModifiedBO(A agent, Map<Class<? extends LaraPreference>, Double> utilities) {
 			return null;
 		}
@@ -109,6 +124,7 @@ public class ParameterTest {
 		/**
 		 * @see de.cesr.lara.components.LaraBehaviouralOption#getTotalSituationalUtility(de.cesr.lara.components.decision.LaraDecisionConfiguration)
 		 */
+		@Override
 		public float getTotalSituationalUtility(LaraDecisionConfiguration dBuilder) {
 			return getAgent().getHireAndFireUtility();
 		}
@@ -139,13 +155,10 @@ public class ParameterTest {
 
 		@Override
 		public LaraAgentComponent<A, BO> getLaraComp() {
-			// TODO Auto-generated method stub
 			return null;
 		}
 
 		public void laraExecute(LaraDecisionConfiguration dBuilder) {
-			// TODO Auto-generated method stub
-
 		}
 
 		@Override

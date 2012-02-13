@@ -53,6 +53,7 @@ import de.cesr.lara.components.preprocessor.LaraBOPreselector;
 import de.cesr.lara.components.preprocessor.LaraPreprocessor;
 import de.cesr.lara.components.preprocessor.impl.LPreprocessorConfigurator;
 import de.cesr.lara.components.util.impl.LCapacityManagers;
+import de.cesr.lara.components.util.impl.LPrefEntry;
 import de.cesr.lara.components.util.impl.LPreferenceWeightMap;
 import de.cesr.lara.components.util.logging.impl.LAgentLevel;
 import de.cesr.lara.components.util.logging.impl.Log4jLogger;
@@ -299,13 +300,28 @@ public class LDefaultAgentComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 			this.preferenceWeights = new HashMap<Class<? extends LaraPreference>, Double>();
 		}
 		this.preferenceWeights.putAll(preferenceWeights);
+
 		// <- LOGGING
 		if (logger.isDebugEnabled()) {
-
 			logger.debug(agent + "> Preferences: " + this.preferenceWeights);
 		}
 		// LOGGING ->
+	}
 
+	@Override
+	public void addPreferenceWeights(LPrefEntry... prefEntry) {
+		if (this.preferenceWeights == null) {
+			this.preferenceWeights = new HashMap<Class<? extends LaraPreference>, Double>();
+		}
+		for (LPrefEntry e : prefEntry) {
+			this.preferenceWeights.put(e.getKey(), e.getValue());
+		}
+
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			logger.debug(agent + "> Preferences: " + this.preferenceWeights);
+		}
+		// LOGGING ->
 	}
 
 	/**

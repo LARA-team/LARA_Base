@@ -18,7 +18,8 @@ import de.cesr.lara.components.container.memory.LaraBOMemory;
  * @param <BOType>
  *            the type of behavioural options this memory may store
  */
-public class LDefaultLimitedCapacityBOMemory<BOType extends LaraBehaviouralOption<?, ?>> extends
+public class LDefaultLimitedCapacityBOMemory<BOType extends LaraBehaviouralOption<?, ?>>
+		extends
 		LDefaultLimitedCapacityMemory<BOType> implements LaraBOMemory<BOType> {
 
 	/**

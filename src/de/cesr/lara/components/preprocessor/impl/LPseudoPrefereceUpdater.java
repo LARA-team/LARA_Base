@@ -75,7 +75,7 @@ public class LPseudoPrefereceUpdater<A extends LaraAgent<? super A, ?>, BO exten
 		A agent = ((A) event.getAgent());
 		agent.getLaraComp()
 				.getDecisionData(event.getdConfig())
-				.setSituationalPreferences(
+				.setIndividualPreferences(
 						agent.getLaraComp().getPreferenceWeights());
 
 		// <- LOGGING

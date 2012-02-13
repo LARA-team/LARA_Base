@@ -60,7 +60,7 @@ public class LDeliberativeDecisionModeSelector<A extends LaraAgent<A, BO>, BO ex
 			.getLogger(LDeliberativeDecisionModeSelector.class);
 
 	/**
-	 * Always selects the matrix deliberation mode (
+	 * Always selects the laraBoRows deliberation mode (
 	 * {@link LDeliberativeDeciderFactory}. This default implementation is used
 	 * in {@link LPreprocessor}.
 	 * 

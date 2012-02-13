@@ -34,6 +34,7 @@ import de.cesr.lara.components.environment.LaraEnvironment;
 import de.cesr.lara.components.environment.LaraEnvironmentListener;
 import de.cesr.lara.components.eventbus.LaraInternalEventSubscriber;
 import de.cesr.lara.components.preprocessor.LaraPreprocessor;
+import de.cesr.lara.components.util.impl.LPrefEntry;
 
 
 /**
@@ -111,21 +112,28 @@ public interface LaraAgentComponent<A extends LaraAgent<? super A, BO>, BO exten
 	 *****************************/
 
 	/**
-	 * Set the agent's preferenceWeights towards its preferenceWeights. Giving <code>null</code> as dConfiguration sets the default.
+	 * Set the agent's preference weights towards its preferences.
 	 * 
 	 * @param preferenceWeights
-	 *        the preferenceWeights to set
+	 *            the preferenceWeights to set
 	 */
 	public void addPreferenceWeights(Map<Class<? extends LaraPreference>, Double> preferenceWeights);
 
 	/**
+	 * Set the agent's preferenceWeights towards its preferences.
+	 * 
+	 * @param prefEntry
+	 */
+	public void addPreferenceWeights(LPrefEntry... prefEntry);
+
+	/**
 	 * @param preference
-	 * @return agent's preference weight regarding the given preferenceWeights
+	 * @return agent's preference weight regarding the given preference
 	 */
 	public Double getPreferenceWeight(Class<? extends LaraPreference> preference);
 
 	/**
-	 * @return a map of the agents decision builders an its corresponding preferenceWeights
+	 * @return a map of the agents preferenceWeights
 	 * 
 	 */
 	public Map<Class<? extends LaraPreference>, Double> getPreferenceWeights();
@@ -174,11 +182,13 @@ public interface LaraAgentComponent<A extends LaraAgent<? super A, BO>, BO exten
 	 * @return
 	 */
 	public LaraDeliberativeChoiceComponent getDeliberativeChoiceComp(LaraDecisionConfiguration dConfiguration);
-	
-	
+
 	/**
-	 * Sets the {@link LaraDeliberativeChoiceComponent} that shall be used for the given
-	 * decision configuration. Note: if possible, use the same instance of the LaraDeliberativeChoiceComponent for all agents to save memory.
+	 * Sets the {@link LaraDeliberativeChoiceComponent} that shall be used for
+	 * the given decision configuration.
+	 * 
+	 * Note: if possible, use the same instance of the
+	 * LaraDeliberativeChoiceComponent for all agents to save memory.
 	 * 
 	 * @param dConfiguration
 	 * @param comp
@@ -193,7 +203,7 @@ public interface LaraAgentComponent<A extends LaraAgent<? super A, BO>, BO exten
 	public int getNumDecisionDataObjects();
 
 	/**
-	 * Returns an iterator that iterates over all {@link LaraDecisionData}.
+	 * Returns an iterator that iterates over all {@link LaraDecisionData}s.
 	 * 
 	 * @return the iterator
 	 */

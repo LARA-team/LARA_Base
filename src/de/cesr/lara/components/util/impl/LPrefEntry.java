@@ -17,34 +17,35 @@
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.cesr.lara.components.decision.impl;
+package de.cesr.lara.components.util.impl;
 
-
-import java.util.Set;
+import java.util.AbstractMap.SimpleEntry;
 
 import de.cesr.lara.components.LaraBehaviouralOption;
-import de.cesr.lara.components.agents.LaraAgent;
-import de.cesr.lara.components.decision.LaraDecisionTree;
+import de.cesr.lara.components.LaraPreference;
 
 /**
- * @author Sascha Holzhauer
- * @date 25.05.2010
+ * Used to specify preference class - value pairs in order to instantiate
+ * {@link LaraBehaviouralOption}s more easily.
  * 
- * @param <A>
- *            type of agent
- * @param <BO>
- *            type of behavioural option
- * @param <P>
- *            type of tree parameter
+ * @author Sascha Holzhauer
+ * 
  */
-public abstract class LAbstractBinaryDecisionLeave<A extends LaraAgent<A, BO>,
-	BO extends LaraBehaviouralOption<?, BO>, P>
-		implements LaraDecisionTree<A, BO, P> {
+public class LPrefEntry extends
+		SimpleEntry<Class<? extends LaraPreference>, Double> {
 
 	/**
-	 * @see de.cesr.lara.components.decision.LaraDecisionTree#getBos(de.cesr.lara.components.agents.LaraAgent,
-	 *      java.lang.Object)
+	 * @param prefs
+	 *            preference class
+	 * @param value
+	 *            double value
 	 */
-	@Override
-	abstract public Set<BO> getBos(A agent, P parameter);
+	public LPrefEntry(Class<? extends LaraPreference> prefs, Double value) {
+		super(prefs, value);
+	}
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3002322186440419016L;
 }

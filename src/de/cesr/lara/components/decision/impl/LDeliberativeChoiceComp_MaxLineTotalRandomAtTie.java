@@ -1,15 +1,31 @@
 /**
+ * This file is part of
+ * 
  * LARA - Lightweight Architecture for boundedly Rational citizen Agents
- *
- * Center for Environmental Systems Research, Kassel
- * Created by Sascha Holzhauer on 08.03.2010
+ * 
+ * Copyright (C) 2012 Center for Environmental Systems Research, Kassel, Germany
+ * 
+ * LARA is free software: You can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * LARA is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package de.cesr.lara.components.decision.impl;
 
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.SortedSet;
@@ -21,10 +37,9 @@ import org.apache.log4j.Priority;
 import cern.jet.random.AbstractDistribution;
 import cern.jet.random.Uniform;
 import de.cesr.lara.components.LaraBehaviouralOption;
+import de.cesr.lara.components.decision.LaraBoRow;
 import de.cesr.lara.components.decision.LaraDecisionConfiguration;
 import de.cesr.lara.components.decision.LaraDeliberativeChoiceComponent;
-import de.cesr.lara.components.decision.LaraRow;
-import de.cesr.lara.components.decision.LaraUtilityMatrix;
 import de.cesr.lara.components.model.impl.LModel;
 import de.cesr.lara.components.util.LaraRandom;
 import de.cesr.lara.components.util.logging.impl.Log4jLogger;
@@ -33,23 +48,28 @@ import de.cesr.lara.components.util.logging.impl.Log4jLogger;
 /**
  * Tie Rule: In case there are more than one BOs with the highest score, a random one is chosen among these.
  */
-public class LDecisionHeuristicComponent_MaxLineTotalRandomAtTie implements
+public class LDeliberativeChoiceComp_MaxLineTotalRandomAtTie implements
 		LaraDeliberativeChoiceComponent {
 
 	/**
 	 * Logger
 	 */
 	static private Logger		logger	= Log4jLogger
-												.getLogger(LDecisionHeuristicComponent_MaxLineTotalRandomAtTie.class);
+												.getLogger(LDeliberativeChoiceComp_MaxLineTotalRandomAtTie.class);
 
-	static AbstractDistribution	rand	= null;
+	static Map<String, LDeliberativeChoiceComp_MaxLineTotalRandomAtTie> instances = new HashMap<String, LDeliberativeChoiceComp_MaxLineTotalRandomAtTie>();
+
+	protected AbstractDistribution rand;
 
 	/**
+	 * The distribution must be of type Uniform
+	 * 
 	 * @param distribution
-	 *        the distribution name to draw random number from
+	 *            the distribution name to draw random numbers from
 	 */
-	public LDecisionHeuristicComponent_MaxLineTotalRandomAtTie(String distribution) {
-		LDecisionHeuristicComponent_MaxLineTotalRandomAtTie.rand = LModel.getModel().getLRandom().getDistribution(
+	private LDeliberativeChoiceComp_MaxLineTotalRandomAtTie(String distribution) {
+		this.rand = LModel.getModel().getLRandom()
+				.getDistribution(
 				distribution);
 		if (!(rand instanceof Uniform)) {
 			logger.error("The given random stream name does not belong to a Uniform distribution!");
@@ -58,31 +78,50 @@ public class LDecisionHeuristicComponent_MaxLineTotalRandomAtTie implements
 		}
 	}
 
+
 	/**
+	 * Null is translated to LaraRandom.UNIFORM_DEFAULT.
 	 * 
+	 * @param distribution
+	 * @return
 	 */
-	public LDecisionHeuristicComponent_MaxLineTotalRandomAtTie() {
-		this(LaraRandom.UNIFORM_DEFAULT);
+	static public LDeliberativeChoiceComp_MaxLineTotalRandomAtTie getInstance(
+			String distribution) {
+		if (distribution == null) {
+			distribution = LaraRandom.UNIFORM_DEFAULT;
+		}
+		if (instances.get(distribution) == null) {
+			instances.put(distribution,
+					new LDeliberativeChoiceComp_MaxLineTotalRandomAtTie(
+							distribution));
+		}
+		return instances.get(distribution);
 	}
 
 	/**
-	 * /** Return the BO with the highest sum of preference fulfilment. Tie Rule: In case there are more than one BOs
-	 * with the highest score, a random one is chosen among these.
+	 * Return the BO with the highest sum of preference fulfillment.
+	 * 
+	 * Tie Rule: In case there are more than one BOs with the highest score, a
+	 * random one is chosen among these.
 	 * 
 	 * @see de.cesr.lara.components.decision.LaraDeliberativeChoiceComponent#getBestBehaviouralOption(de.cesr.lara.components.decision.LaraUtilityMatrix)
 	 */
 	@Override
-	public <BO extends LaraBehaviouralOption<?, ? extends BO>> BO getSelectedBO(LaraDecisionConfiguration dConfiguration, LaraUtilityMatrix<BO> matrix) {
-		logger.info(".getBestBehaviouralOption()");
+	public <BO extends LaraBehaviouralOption<?, ? extends BO>> BO getSelectedBo(
+			LaraDecisionConfiguration dConfiguration,
+			Collection<LaraBoRow<BO>> boRows) {
+		// <- LOGGING
+		logger.info("getBestBehaviouralOption()");
+		// LOGGING ->
 
-		if (matrix.getNumRows() == 0) {
-			throw new IllegalStateException("The matrix does not contain any row to choose from!");
+		if (boRows.size() == 0) {
+			throw new IllegalStateException("The laraBoRows does not contain any row to choose from!");
 
 		} else {
-			List<LaraRow<BO>> bestBos = new ArrayList<LaraRow<BO>>();
+			List<LaraBoRow<BO>> bestBos = new ArrayList<LaraBoRow<BO>>();
 			double bestSum = Float.NEGATIVE_INFINITY;
 			double rSum = 0;
-			for (LaraRow<BO> r : matrix.getRows()) {
+			for (LaraBoRow<BO> r : boRows) {
 				rSum = r.getSum();
 				if (rSum >= bestSum) {
 					if (rSum == bestSum) {
@@ -93,92 +132,124 @@ public class LDecisionHeuristicComponent_MaxLineTotalRandomAtTie implements
 						bestBos.add(r);
 					}
 				}
+				// <- LOGGING
 				if (logger.isEnabledFor(Priority.INFO)) {
 					logger.info("Score for " + r.getBehaviouralOption().getClass().getSimpleName() + ": " + rSum);
 				}
+				// LOGGING ->
 			}
 
 			if (bestBos.size() == 1) {
+				// <- LOGGING
 				logger.info("There is one BO with highest score.");
+				// LOGGING ->
+
 				return bestBos.get(0).getBehaviouralOption();
 			} else {
+				// <- LOGGING
 				logger.info("There are " + bestBos.size() + " BOs with highest score.");
+				// LOGGING ->
+
 				return bestBos.get(new Random().nextInt(bestBos.size() - 1)).getBehaviouralOption();
 			}
 		}
 	}
 
 	/**
-	 * TODO test!
+	 * Return the k BOs with the highest sum of preference fulfillment.
 	 * 
-	 * @param matrix
+	 * Tie Rule: In case there are more than one BOs with the highest score, a
+	 * random one is chosen among these.
+	 * 
+	 * @param boRows
+	 *            collection of {@link LaraBoRow}s to select from
 	 * @param k
+	 *            number of (best) BOs to select
 	 * @return a set of k best behavioural option (regarding row sum)
 	 */
-	public <BO extends LaraBehaviouralOption<?, ? extends BO>> Set<? extends BO> getKSelectedBOs(LaraDecisionConfiguration dConfiguration, LaraUtilityMatrix<BO> matrix,
+	@Override
+	public <BO extends LaraBehaviouralOption<?, ? extends BO>> Set<? extends BO> getKSelectedBos(
+			LaraDecisionConfiguration dConfiguration,
+			Collection<LaraBoRow<BO>> boRows,
 			int k) {
+		// <- LOGGING
 		if (logger.isDebugEnabled()) {
-			for (LaraRow<BO> row : matrix.getRows()) {
+			for (LaraBoRow<BO> row : boRows) {
 				logger.debug("\t\t row: " + row.getBehaviouralOption().getKey());
 			}
 		}
-		if (k > matrix.getNumRows()) {
+		// LOGGING ->
+
+		if (k > boRows.size()) {
+			// <- LOGGING
 			if (logger.isDebugEnabled())
-				logger.debug("k (" + k + ") greater thant number of rows: " + matrix.getNumRows());
-			throw new IllegalArgumentException("The number of rows in the matrix is below the number of requested BOs");
+			 {
+				logger.debug("k (" + k + ") greater thant number of rows: " + boRows.size());
+			// LOGGING ->
+			}
+
+			throw new IllegalArgumentException("The number of rows in the laraBoRows is below the number of requested BOs");
 		}
 
 		Set<BO> bos = new TreeSet<BO>();
 
 		// add rows to a sorted set:
-		SortedSet<LaraRow<BO>> rows = new TreeSet<LaraRow<BO>>(new Comparator<LaraRow<BO>>() {
+		SortedSet<LaraBoRow<BO>> rows = new TreeSet<LaraBoRow<BO>>(new Comparator<LaraBoRow<BO>>() {
 			@Override
-			public int compare(LaraRow<BO> row1, LaraRow<BO> row2) {
-				return Double.compare(row2.getSum(), row1.getSum()) != 0 ? Double.compare(row2.getSum(), row1.getSum())
-						:
+			public int compare(LaraBoRow<BO> row1, LaraBoRow<BO> row2) {
+						return Double.compare(row2.getSum(), row1.getSum()) != 0 ? Double
+								.compare(row2.getSum(), row1.getSum()) :
 						// same sum: compare according to key names:
-						// TODO refactor!
-						// return 1 if even keys are equal:
-						row1.getBehaviouralOption().getKey().compareTo(row2.getBehaviouralOption().getKey()) != 0 ? row1
-								.getBehaviouralOption().getKey().compareTo(row2.getBehaviouralOption().getKey())
-								: row1.toString().compareTo(row2.toString());
+								row2.getBehaviouralOption().compareTo(
+										row1.getBehaviouralOption());
 			}
 		});
-		rows.addAll(matrix.getRows());
+		rows.addAll(boRows);
 
-		if (k == matrix.getNumRows()) {
-			for (LaraRow<BO> row : rows) {
+		if (k == boRows.size()) {
+			for (LaraBoRow<BO> row : rows) {
 				bos.add(row.getBehaviouralOption());
 			}
+
+			// <- LOGGING
 			if (logger.isDebugEnabled()) {
 				logger.debug("k: " + k + " / number of available rows: " + rows.size() + " rows: " + rows);
-				for (LaraRow row : rows) {
+				for (LaraBoRow<BO> row : rows) {
 					logger.debug("\t\t row: " + row.getBehaviouralOption().getKey());
 				}
 			}
+			// LOGGING ->
+
 			return bos;
 		}
 
-		assert (k < matrix.getNumRows());
+		assert (k < boRows.size());
 
-		LaraRow<BO>[] arrayRows = new LaraRow[rows.size()];
+		@SuppressWarnings("unchecked")
+		// rows only consist of LaraBoRow<BO>s!
+		LaraBoRow<BO>[] arrayRows = new LaraBoRow[rows.size()];
 		// arrayRows = sorted BOs in ascending order:
 		arrayRows = rows.toArray(arrayRows);
-		// check whether the a row outside the requested range has same sum than the last row inside the range:
+
+		// <- LOGGING
 		if (logger.isDebugEnabled()) {
 			logger.debug("k: " + k + " / number of available rows: " + rows.size() + " rows: " + rows + " array size: "
 					+ arrayRows.length);
-			for (LaraRow row : rows) {
+			for (LaraBoRow<BO> row : rows) {
 				logger.debug("\t\t row: " + row.getBehaviouralOption().getKey());
 			}
 		}
+		// LOGGING ->
+
+		// check whether the a row outside the requested range has same sum than
+		// the last row inside the range:
 		if (arrayRows[k - 1].getSum() == arrayRows[k].getSum()) {
 			// the last row in selected range is equal to the first row outside the selected range
 
 			// choose the rows with the same sum as the last in the selected range:
 			int numSameSum = 0;
 			int numWithinRange = 0;
-			List<LaraRow<BO>> bestBos = new ArrayList<LaraRow<BO>>();
+			List<LaraBoRow<BO>> bestBos = new ArrayList<LaraBoRow<BO>>();
 			for (int i = 0; i < rows.size(); i++) {
 				if (arrayRows[i].getSum() == arrayRows[k - 1].getSum()) {
 					bestBos.add(arrayRows[i]);
@@ -201,14 +272,20 @@ public class LDecisionHeuristicComponent_MaxLineTotalRandomAtTie implements
 				// -i because the size of bestBos decreases!
 				int random = ((Uniform) rand).nextIntFromTo(0, numSameSum - i - 1);
 				bos.add(bestBos.get(random).getBehaviouralOption());
+
+				// <- LOGGING
 				if (logger.isDebugEnabled()) {
 					logger.debug("random: " + random);
 				}
+				// LOGGING ->
+
 				bestBos.remove(random);
 			}
+			// <- LOGGING
 			if (logger.isDebugEnabled()) {
 				logger.debug("number of bos: " + bos.size() + " bos: " + bos);
 			}
+			// LOGGING ->
 		} else {
 			for (int i = 0; i < k; i++) {
 				bos.add(arrayRows[i].getBehaviouralOption());
