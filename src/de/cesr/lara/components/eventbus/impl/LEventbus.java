@@ -356,6 +356,16 @@ public class LEventbus {
 	}
 
 	/**
+	 * The counter of how many event subscribers are notified but
+	 * have not yet finished their work.
+	 * 
+	 * @param event
+	 */
+	private synchronized int getWaitingCounter(LaraEvent event) {
+		return eventWaitingCounters.get(event);
+	}
+
+	/**
 	 * Increments the counter of how many event subscribers are notified but
 	 * have not yet finished their work.
 	 * 
@@ -458,6 +468,7 @@ public class LEventbus {
 	 */
 	private void notifySubscribersSynchronous(
 			Set<LaraAbstractEventSubscriber> subscribers, final LaraEvent event) {
+		//TODO too much threads at once is highly ineffective. use taskgroups/max number of concurrent threads
 		// <- LOGGING
 		logger.info("Notifying " + subscribers.size()
 				+ " subscribers synchronously");
@@ -485,6 +496,14 @@ public class LEventbus {
 					}
 				};
 				incrementWaitingCounter(event);
+				//XXX ok? waste of memory
+				// limit number of concurrent tasks to 32
+				while (getWaitingCounter(event)>32) {
+					try {
+						Thread.sleep(10);
+					} catch (InterruptedException e) {
+					}
+				}
 				workerThread.start();
 			}
 		}
