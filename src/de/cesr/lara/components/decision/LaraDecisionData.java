@@ -44,7 +44,7 @@ import de.cesr.lara.components.util.logging.impl.Log4jLogger;
  * @param <BO>
  *            the behavioural options type
  */
-public final class LaraDecisionData<A extends LaraAgent<? super A, BO>, BO extends LaraBehaviouralOption<?, ?>> {
+public final class LaraDecisionData<A extends LaraAgent<? super A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>> {
 
 	/**
 	 * Logger
@@ -56,7 +56,6 @@ public final class LaraDecisionData<A extends LaraAgent<? super A, BO>, BO exten
 	private Collection<BO>									bos;
 	private Map<Class<? extends LaraPreference>, Double> individualPreferenceWeights;
 
-	private BO												bo;
 	private final A												agent;
 
 	/**
@@ -100,21 +99,6 @@ public final class LaraDecisionData<A extends LaraAgent<? super A, BO>, BO exten
 	 */
 	public Collection<BO> getBos() {
 		return bos;
-	}
-
-	/**
-	 * @return the BO
-	 */
-	public BO getBo() {
-		return bo;
-	}
-
-	/**
-	 * @param bo
-	 *        the BO to set
-	 */
-	public void setBo(BO bo) {
-		this.bo = bo;
 	}
 
 	/**
@@ -187,9 +171,7 @@ public final class LaraDecisionData<A extends LaraAgent<? super A, BO>, BO exten
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("DecisionData of " + agent + " for " + dConfiguration + ". Selectable BO(s): ");
-		if (bo != null) {
-			buffer.append(bo);
-		} else if (bos != null) {
+		if (bos != null) {
 			for (BO b : bos) {
 				buffer.append("\t" + b + System.getProperty("line.separator"));
 			}

@@ -19,9 +19,7 @@ import org.junit.runners.Suite.SuiteClasses;
  * 
  */
 @RunWith(Suite.class)
-@SuiteClasses( { DefaultLaraStorageImplTest.class, DefaultLaraLimitedCapacityStorageImplTest.class,
-		DefaultLaraMemoryImplTest.class, DefaultLaraLimitedCapacityMemoryImplTest.class,
-		DefaultLLimitedCapacityOverwriteMemoryTest.class, LRandomTest.class })
+@SuiteClasses({ LRandomTest.class })
 public class AllUtilTests {
 
 }

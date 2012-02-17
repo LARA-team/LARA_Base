@@ -61,5 +61,6 @@ public interface LaraStorageListener {
 	 * @param property
 	 *            the property that is affected
 	 */
-	public void storageEventOccured(StorageEvent event, LaraProperty<?> property);
+	public void storageEventOccured(StorageEvent event,
+			LaraProperty<?, ?> property);
 }

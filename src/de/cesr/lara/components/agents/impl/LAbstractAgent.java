@@ -30,7 +30,7 @@ import de.cesr.lara.components.util.logging.impl.Log4jLogger;
  * @date 12.02.2010
  */
 @SuppressWarnings("unchecked")
-public abstract class LAbstractAgent<A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>>
+public abstract class LAbstractAgent<A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<?, BO>>
 		implements LaraAgent<A, BO> {
 
 	static private Logger				logger		= Log4jLogger.getLogger(LAbstractAgent.class);

@@ -49,6 +49,7 @@ import de.cesr.lara.components.eventbus.events.LAgentPostprocessEvent;
 import de.cesr.lara.components.eventbus.events.LAgentPreprocessEvent;
 import de.cesr.lara.components.eventbus.events.LaraEvent;
 import de.cesr.lara.components.eventbus.impl.LEventbus;
+import de.cesr.lara.components.postprocessor.LaraPostprocessorComp;
 import de.cesr.lara.components.preprocessor.LaraBOPreselector;
 import de.cesr.lara.components.preprocessor.LaraPreprocessor;
 import de.cesr.lara.components.preprocessor.impl.LPreprocessorConfigurator;
@@ -131,7 +132,7 @@ public class LDefaultAgentComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 	/**
 	 * a collection of the agents behavioural options
 	 */
-	protected LaraMemory<LaraProperty<?>> memory = null;
+	protected LaraMemory<LaraProperty<?, ?>> memory = null;
 
 	/**
 	 * memory for behavioural options
@@ -144,6 +145,8 @@ public class LDefaultAgentComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 	 * . (SH)
 	 */
 	protected LaraPreprocessor<A, BO> preprocessor;
+
+	protected LaraPostprocessorComp<A, BO> postProcessorComp;
 
 	/**
 	 * environment
@@ -184,8 +187,8 @@ public class LDefaultAgentComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 		this.agent = agent;
 		this.environment = env;
 		logger.info("Assign preprocessor to agent");
-		memory = new LDefaultLimitedCapacityMemory<LaraProperty<?>>(
-				LCapacityManagers.<LaraProperty<?>> makeNINO());
+		memory = new LDefaultLimitedCapacityMemory<LaraProperty<?, ?>>(
+				LCapacityManagers.<LaraProperty<?, ?>> makeNINO());
 		boMemory = new LDefaultLimitedCapacityBOMemory<BO>(
 				LCapacityManagers.<BO> makeNINO());
 		doubleProperties = new HashMap<String, Double>();
@@ -272,7 +275,7 @@ public class LDefaultAgentComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 	 * @see de.cesr.lara.components.agents.LaraAgentComponent#getGeneralMemory()
 	 */
 	@Override
-	public LaraMemory<LaraProperty<?>> getGeneralMemory() {
+	public LaraMemory<LaraProperty<?, ?>> getGeneralMemory() {
 		return memory;
 	}
 
@@ -353,7 +356,7 @@ public class LDefaultAgentComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 	 * @see de.cesr.lara.components.agents.LaraAgentComponent#setGeneralMemory(LaraMemory)
 	 */
 	@Override
-	public void setGeneralMemory(LaraMemory<LaraProperty<?>> memory) {
+	public void setGeneralMemory(LaraMemory<LaraProperty<?, ?>> memory) {
 		this.memory = memory;
 	}
 
@@ -404,6 +407,8 @@ LaraPreprocessor<A, BO> preprocessor) {
 			decide(((LAgentDecideEvent) event).getDecisionConfiguration());
 
 		} else if (event instanceof LAgentPostprocessEvent) {
+			postProcessorComp.postProcess(agent,
+					((LAgentDecideEvent) event).getDecisionConfiguration());
 
 		} else if (event instanceof LAgentExecutionEvent) {
 			removeDecisionData(((LAgentExecutionEvent) event)

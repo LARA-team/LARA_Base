@@ -34,7 +34,7 @@ import de.cesr.lara.components.container.storage.LaraStorage;
  * @date 22.02.2010
  * 
  */
-public interface LaraCapacityManager<PropertyType extends LaraProperty<?>> {
+public interface LaraCapacityManager<PropertyType extends LaraProperty<? extends PropertyType, ?>> {
 
 	/**
 	 * Tries to apply this manager's capacity management strategy to the storage

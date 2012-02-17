@@ -38,6 +38,8 @@ import de.cesr.lara.components.util.impl.LPrefEntry;
 import de.cesr.lara.testing.TestUtils;
 import de.cesr.lara.testing.TestUtils.LTestAgent;
 import de.cesr.lara.testing.TestUtils.LTestBo;
+import de.cesr.lara.testing.TestUtils.LTestPreference1;
+import de.cesr.lara.testing.TestUtils.LTestPreference2;
 
 /**
  * @author Sascha Holzhauer
@@ -50,11 +52,6 @@ public class LDeliberativeDeciderTest {
 
 	LTestBo bo1, bo2;
 
-	static class TestPreference1 implements LaraPreference {
-	};
-
-	static class TestPreference2 implements LaraPreference {
-	};
 
 	/**
 	 * @throws java.lang.Exception
@@ -66,12 +63,12 @@ public class LDeliberativeDeciderTest {
 		agent = new LTestAgent("TestAgent");
 		
 		agent.getLaraComp().addPreferenceWeights(
-				new LPrefEntry(TestPreference1.class, new Double(1.0)),
-				new LPrefEntry(TestPreference2.class, new Double(0.1)));
+				new LPrefEntry(LTestPreference1.class, new Double(1.0)),
+				new LPrefEntry(LTestPreference2.class, new Double(0.1)));
 
 		Collection<Class<? extends LaraPreference>> prefs = new HashSet<Class<? extends LaraPreference>>();
-		prefs.add(TestPreference1.class);
-		prefs.add(TestPreference2.class);
+		prefs.add(LTestPreference1.class);
+		prefs.add(LTestPreference2.class);
 
 		dConfig = new LDecisionConfiguration();
 		dConfig.setPreferences(prefs);
@@ -91,14 +88,14 @@ public class LDeliberativeDeciderTest {
 	@Test
 	public void testGetSelectedBO() {
 		bo1 = new LTestBo("TestBo1", agent, new LPrefEntry(
-				TestPreference1.class, new Double(1.5)), new LPrefEntry(
-				TestPreference2.class, new Double(1.5)));
+				LTestPreference1.class, new Double(1.5)), new LPrefEntry(
+				LTestPreference2.class, new Double(1.5)));
 
 		// flip order of preferences (if first preference is treated as second,
 		// the test below fails)
 		bo2 = new LTestBo("TestBo2", agent, new LPrefEntry(
-				TestPreference2.class, new Double(1.0)), new LPrefEntry(
-				TestPreference1.class, new Double(2.0)));
+				LTestPreference2.class, new Double(1.0)), new LPrefEntry(
+				LTestPreference1.class, new Double(2.0)));
 
 		agent.getLaraComp().getDecisionData(dConfig).setBos(bo1, bo2);
 
@@ -125,12 +122,12 @@ public class LDeliberativeDeciderTest {
 	public void testGetSelectedBoAgentPreferences() {
 		// bo1 wins only when agent preferences (high for pref 1) are considered
 		bo1 = new LTestBo("TestBo1", agent, new LPrefEntry(
-				TestPreference1.class, new Double(1.7)), new LPrefEntry(
-				TestPreference2.class, new Double(1.0)));
+				LTestPreference1.class, new Double(1.7)), new LPrefEntry(
+				LTestPreference2.class, new Double(1.0)));
 
 		bo2 = new LTestBo("TestBo2", agent, new LPrefEntry(
-				TestPreference1.class, new Double(1.5)), new LPrefEntry(
-				TestPreference2.class, new Double(2.0)));
+				LTestPreference1.class, new Double(1.5)), new LPrefEntry(
+				LTestPreference2.class, new Double(2.0)));
 
 		agent.getLaraComp().getDecisionData(dConfig).setBos(bo1, bo2);
 
@@ -142,15 +139,15 @@ public class LDeliberativeDeciderTest {
 				.getInstance());
 
 		agent.getLaraComp().addPreferenceWeights(
-				new LPrefEntry(TestPreference1.class, new Double(1.0)),
-				new LPrefEntry(TestPreference2.class, new Double(1.0)));
+				new LPrefEntry(LTestPreference1.class, new Double(1.0)),
+				new LPrefEntry(LTestPreference2.class, new Double(1.0)));
 		decider.setPreferenceWeights(agent.getLaraComp().getPreferenceWeights());
 		decider.decide();
 		assertEquals(bo2.getKey(), decider.getSelectedBo().getKey());
 
 		agent.getLaraComp().addPreferenceWeights(
-				new LPrefEntry(TestPreference1.class, new Double(1.0)),
-				new LPrefEntry(TestPreference2.class, new Double(0.1)));
+				new LPrefEntry(LTestPreference1.class, new Double(1.0)),
+				new LPrefEntry(LTestPreference2.class, new Double(0.1)));
 		decider.setPreferenceWeights(agent.getLaraComp().getPreferenceWeights());
 		decider.decide();
 		assertEquals(bo1.getKey(), decider.getSelectedBo().getKey());

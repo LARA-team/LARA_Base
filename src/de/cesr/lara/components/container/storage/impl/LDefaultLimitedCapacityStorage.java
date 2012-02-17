@@ -33,7 +33,7 @@ import de.cesr.lara.components.container.storage.LaraStorageListener.StorageEven
  * 
  * @param <PropertyType>
  */
-public class LDefaultLimitedCapacityStorage<PropertyType extends LaraProperty<?>>
+public class LDefaultLimitedCapacityStorage<PropertyType extends LaraProperty<PropertyType, ?>>
 		extends LDefaultStorage<PropertyType> implements
 		LaraCapacityManageableContainer<PropertyType> {
 

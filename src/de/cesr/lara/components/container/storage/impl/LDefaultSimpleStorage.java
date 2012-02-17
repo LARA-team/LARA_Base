@@ -49,7 +49,7 @@ import de.cesr.lara.components.util.logging.impl.Log4jLogger;
  * @param <PropertyType>
  * 
  */
-public class LDefaultSimpleStorage<PropertyType extends LaraProperty<?>>
+public class LDefaultSimpleStorage<PropertyType extends LaraProperty<PropertyType, ?>>
 		implements LaraOverwriteStorage<PropertyType> {
 
 	/**

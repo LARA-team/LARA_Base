@@ -47,7 +47,7 @@ import de.cesr.lara.components.util.impl.LPrefEntry;
  * @author Sascha Holzhauer
  * @date 17.12.2009
  */
-public interface LaraAgentComponent<A extends LaraAgent<? super A, BO>, BO extends LaraBehaviouralOption<?, ?>>
+public interface LaraAgentComponent<A extends LaraAgent<? super A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>>
 		extends LaraEnvironmentListener, LaraInternalEventSubscriber {
 
 	/**
@@ -82,7 +82,7 @@ public interface LaraAgentComponent<A extends LaraAgent<? super A, BO>, BO exten
 	 * 
 	 * @return agent's general property memory
 	 */
-	public LaraMemory<LaraProperty<?>> getGeneralMemory();
+	public LaraMemory<LaraProperty<?, ?>> getGeneralMemory();
 
 	/**
 	 * Set the agent's general property memory
@@ -90,7 +90,7 @@ public interface LaraAgentComponent<A extends LaraAgent<? super A, BO>, BO exten
 	 * @param memory
 	 *        agent's general property memory
 	 */
-	public void setGeneralMemory(LaraMemory<LaraProperty<?>> memory);
+	public void setGeneralMemory(LaraMemory<LaraProperty<?, ?>> memory);
 
 	/**
 	 * Get the {@link LaraBOMemory} (for behavioural options) of this agent.

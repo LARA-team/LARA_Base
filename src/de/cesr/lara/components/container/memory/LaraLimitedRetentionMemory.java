@@ -29,7 +29,7 @@ import de.cesr.lara.components.LaraProperty;
  * @author elbers
  * 
  */
-public interface LaraLimitedRetentionMemory<PropertyType extends LaraProperty<?>>
+public interface LaraLimitedRetentionMemory<PropertyType extends LaraProperty<PropertyType, ?>>
 		extends LaraMemory<PropertyType> {
 
 	/**

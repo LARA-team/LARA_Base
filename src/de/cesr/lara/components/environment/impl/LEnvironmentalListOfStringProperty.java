@@ -7,7 +7,6 @@ package de.cesr.lara.components.environment.impl;
 
 import java.util.List;
 
-import de.cesr.lara.components.LaraProperty;
 import de.cesr.lara.components.environment.LaraEnvironment;
 
 public class LEnvironmentalListOfStringProperty extends
@@ -42,7 +41,8 @@ public class LEnvironmentalListOfStringProperty extends
 	}
 
 	@Override
-	public LaraProperty<List<String>> getModifiedProperty(List<String> value) {
+	public LEnvironmentalListOfStringProperty getModifiedProperty(
+			List<String> value) {
 		return new LEnvironmentalListOfStringProperty(getKey(), value,
 				environment);
 	}

@@ -17,22 +17,32 @@
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.cesr.lara.components.preprocessor;
-
+package de.cesr.lara.components.postprocessor.impl;
 
 import de.cesr.lara.components.LaraBehaviouralOption;
 import de.cesr.lara.components.agents.LaraAgent;
-
+import de.cesr.lara.components.decision.LaraDecisionConfiguration;
+import de.cesr.lara.components.param.LDecisionMakingPa;
+import de.cesr.lara.components.postprocessor.LaraPostprocessorComp;
+import de.cesr.parma.core.PmParameterManager;
 
 /**
- * Updates the utility values for the given behavioural options regarding the decision of the given decision builder.
- * 
- * @param <A>
- *        the type of agents this BO utilityUpdater is intended for
- * @param <BO>
- *        the type of behavioural options that are updated
- * 
+ * @author Sascha Holzhauer
+ *
  */
-public interface LaraBOUtilityUpdater<A extends LaraAgent<? super A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>>
-		extends LaraPreprocessorComp<A, BO> {
+public class LDefaultPostProcessorComp<A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>>
+		implements LaraPostprocessorComp<A, BO> {
+
+	@Override
+	public void postProcess(A agent, LaraDecisionConfiguration dConfig) {
+		agent.getLaraComp()
+				.getGeneralMemory()
+				.memorize(
+						new LSelectedBoProperty<BO>(dConfig, agent
+								.getLaraComp()
+								.getDecisionData(dConfig).getDecider()
+								.getSelectedBo()),
+						(Integer) PmParameterManager
+								.getParameter(LDecisionMakingPa.HABIT_TRESHOLD));
+	}
 }

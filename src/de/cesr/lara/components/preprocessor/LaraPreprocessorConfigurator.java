@@ -46,7 +46,7 @@ import de.cesr.lara.components.decision.LaraDecisionConfiguration;
  * @date 05.02.2010
  * 
  */
-public interface LaraPreprocessorConfigurator<A extends LaraAgent<? super A, BO>, BO extends LaraBehaviouralOption<?, ?>> {
+public interface LaraPreprocessorConfigurator<A extends LaraAgent<? super A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>> {
 
 	/**
 	 * Specifying <code>null</code> corresponds to

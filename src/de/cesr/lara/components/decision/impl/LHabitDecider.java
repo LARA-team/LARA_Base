@@ -15,12 +15,17 @@ import de.cesr.lara.components.agents.LaraAgent;
 import de.cesr.lara.components.decision.LaraDecider;
 import de.cesr.lara.components.decision.LaraDecisionConfiguration;
 
-
 /**
+ * 
+ * TODO implement decide() TODO implement methods to retrieve last property from
+ * general memory TODO implement method to check whether LSelectedBoPropertyx
+ * exists for last tick TODO implement getter/setter for postProcessor-Component
+ * TODO set default postProcessor-Component TODO doc
+ * 
  * @param <A>
- *        type of agent
+ *            type of agent
  * @param <BO>
- *        type of behavioural option
+ *            type of behavioural option
  * 
  */
 public class LHabitDecider<A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>> implements
@@ -45,7 +50,10 @@ public class LHabitDecider<A extends LaraAgent<A, BO>, BO extends LaraBehavioura
 	@Override
 	public void decide() {
 		// TODO fetch BO from LAST time step!
-		bo = agent.getLaraComp().getDecisionData(dConfiguration).getBo();
+		// if (agent.getLaraComp().getGeneralMemory().contains("SelectedBO")) {
+		// bo = agent.getLaraComp().getGeneralMemory().("SelectedBO")
+		// }
+
 	}
 
 	/**

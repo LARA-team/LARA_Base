@@ -19,6 +19,7 @@
  */
 package de.cesr.lara.components.model.impl;
 
+import de.cesr.lara.components.eventbus.impl.LEventbus;
 import de.cesr.lara.components.model.LaraModel;
 import de.cesr.lara.components.util.impl.LVersionInfo;
 
@@ -66,6 +67,7 @@ public final class LModel {
 	 * @return new model
 	 */
 	public static LaraModel setNewModel(LaraModel model) {
+		LEventbus.resetAll();
 		LModel.model = model;
 		return getModel();
 	}

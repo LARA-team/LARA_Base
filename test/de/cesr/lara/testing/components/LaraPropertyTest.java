@@ -17,11 +17,11 @@ import de.cesr.lara.components.LaraProperty;
  */
 public class LaraPropertyTest {
 
-	private LaraProperty<Integer>	prop1, prop2, prop3, prop4;
+	private LaraProperty<?, Integer> prop1, prop2, prop3, prop4;
 
-	private class TestProperty extends LaraProperty<Integer> {
+	private class TestProperty extends LaraProperty<TestProperty, Integer> {
 
-		private int	value;
+		private final int	value;
 
 		public TestProperty(String key, int value) {
 			super(key);
@@ -34,7 +34,7 @@ public class LaraPropertyTest {
 		}
 
 		@Override
-		public LaraProperty<Integer> getModifiedProperty(Integer value) {
+		public TestProperty getModifiedProperty(Integer value) {
 			return null; // Test unnecessary
 		}
 

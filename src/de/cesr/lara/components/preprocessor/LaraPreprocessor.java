@@ -25,7 +25,7 @@ import de.cesr.lara.components.decision.LaraDecisionConfiguration;
  * @author Sascha Holzhauer
  * @date 05.02.2010
  */
-public interface LaraPreprocessor<A extends LaraAgent<? super A, BO>, BO extends LaraBehaviouralOption<?, ?>> {
+public interface LaraPreprocessor<A extends LaraAgent<? super A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>> {
 
 	/**
 	 * @param accuracy

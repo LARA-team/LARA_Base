@@ -33,7 +33,7 @@ import de.cesr.lara.components.model.impl.LModel;
  * @param <ValueType>
  * @date 19.02.2010
  */
-public abstract class LaraProperty<ValueType> {
+public abstract class LaraProperty<PropType extends LaraProperty<?, ValueType>, ValueType> {
 
 	private String key;
 	private int timestamp;
@@ -66,8 +66,8 @@ public abstract class LaraProperty<ValueType> {
 	@Override
 	@SuppressWarnings("unchecked")
 	public boolean equals(Object o) {
-		if (o instanceof LaraProperty<?>) {
-			LaraProperty<ValueType> otherProperty = (LaraProperty<ValueType>) o;
+		if (o instanceof LaraProperty<?, ?>) {
+			LaraProperty<PropType, ValueType> otherProperty = (LaraProperty<PropType, ValueType>) o;
 			return (getKey().equals(otherProperty.getKey())
 					&& getTimestamp() == otherProperty.getTimestamp() && getValue()
 					.equals(otherProperty.getValue()));
@@ -88,12 +88,12 @@ public abstract class LaraProperty<ValueType> {
 	 * @param value
 	 * @return a new property with new value and key and current time stamp
 	 */
-	public abstract LaraProperty<ValueType> getModifiedProperty(ValueType value);
+	public abstract PropType getModifiedProperty(ValueType value);
 
 	/**
 	 * @return a property with same value and current time stamp
 	 */
-	public LaraProperty<ValueType> getRefreshedProperty() {
+	public PropType getRefreshedProperty() {
 		return getModifiedProperty(getValue());
 	}
 

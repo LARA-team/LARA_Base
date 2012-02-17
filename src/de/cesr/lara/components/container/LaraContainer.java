@@ -28,7 +28,8 @@ import de.cesr.lara.components.LaraProperty;
  * @param <PropertyType>
  *            the type of properties this container shall store
  */
-public interface LaraContainer<PropertyType extends LaraProperty<?>> extends
+public interface LaraContainer<PropertyType extends LaraProperty<? extends PropertyType, ?>>
+		extends
 		Iterable<PropertyType> {
 
 	/**

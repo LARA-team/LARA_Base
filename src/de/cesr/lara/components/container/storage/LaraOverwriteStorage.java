@@ -39,7 +39,8 @@ import de.cesr.lara.components.container.exceptions.LRetrieveException;
  * 
  * @param <PropertyType>
  */
-public interface LaraOverwriteStorage<PropertyType extends LaraProperty<?>> extends LaraContainer<PropertyType>,
+public interface LaraOverwriteStorage<PropertyType extends LaraProperty<PropertyType, ?>>
+		extends LaraContainer<PropertyType>,
 		LaraCapacityManageableContainer<PropertyType> {
 	/*
 	 * STORING

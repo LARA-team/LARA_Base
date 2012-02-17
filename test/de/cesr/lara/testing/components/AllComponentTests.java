@@ -23,6 +23,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+import de.cesr.lara.testing.components.container.LAllContainerTests;
 import de.cesr.lara.testing.components.decision.AllDecisionTests;
 import de.cesr.lara.testing.components.environment.AllEnvironmentalTests;
 import de.cesr.lara.testing.components.impl.AllComponentsImplTests;
@@ -35,7 +36,8 @@ import de.cesr.lara.testing.components.preprocessor.AllPreprocessorTests;
  * 
  */
 @RunWith(Suite.class)
-@SuiteClasses({ LaraPropertyTest.class, AllComponentsImplTests.class,
+@SuiteClasses({ LaraPropertyTest.class, LAllContainerTests.class,
+		AllComponentsImplTests.class,
 		AllDecisionTests.class, AllEnvironmentalTests.class,
 		AllPreprocessorTests.class })
 public class AllComponentTests {

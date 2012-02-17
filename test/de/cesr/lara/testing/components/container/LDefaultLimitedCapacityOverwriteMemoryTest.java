@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.cesr.lara.testing.util;
+package de.cesr.lara.testing.components.container;
 
 
 import static org.junit.Assert.assertEquals;
@@ -29,46 +29,26 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.cesr.lara.components.LaraProperty;
 import de.cesr.lara.components.container.LaraContainer;
 import de.cesr.lara.components.container.memory.LaraMemory;
 import de.cesr.lara.components.container.memory.LaraOverwriteMemory;
 import de.cesr.lara.components.container.memory.impl.LDefaultLimitedCapacityOverwriteMemory;
 import de.cesr.lara.components.util.impl.LCapacityManagers;
 import de.cesr.lara.components.util.logging.impl.Log4jLogger;
+import de.cesr.lara.testing.components.container.LContainerTestUtils.MyProperty;
 
 /**
  * @author Sascha Holzhauer
  * @date 19.05.2010
  */
-public class DefaultLLimitedCapacityOverwriteMemoryTest {
+public class LDefaultLimitedCapacityOverwriteMemoryTest {
 
 	/**
 	 * Logger
 	 */
-	static private Logger	logger	= Log4jLogger.getLogger(DefaultLLimitedCapacityOverwriteMemoryTest.class);
+	static private Logger	logger	= Log4jLogger.getLogger(LDefaultLimitedCapacityOverwriteMemoryTest.class);
 
 	LaraMemory<MyProperty>	memory;
-
-	private class MyProperty extends LaraProperty<String> {
-
-		String	value;
-
-		public MyProperty(String key, String value, int timestamp) {
-			super(key, timestamp);
-			this.value = value;
-		}
-
-		@Override
-		public LaraProperty<String> getModifiedProperty(String value) {
-			return new MyProperty(getKey(), value, getTimestamp());
-		}
-
-		@Override
-		public String getValue() {
-			return value;
-		}
-	}
 
 	/**
 	 * 

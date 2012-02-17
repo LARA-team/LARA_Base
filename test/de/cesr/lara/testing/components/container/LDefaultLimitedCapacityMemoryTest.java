@@ -1,4 +1,4 @@
-package de.cesr.lara.testing.util;
+package de.cesr.lara.testing.components.container;
 
 
 import static org.junit.Assert.assertEquals;
@@ -10,47 +10,26 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.cesr.lara.components.LaraProperty;
 import de.cesr.lara.components.container.LaraCapacityManageableContainer;
 import de.cesr.lara.components.container.LaraContainer;
 import de.cesr.lara.components.container.memory.LaraMemory;
 import de.cesr.lara.components.container.memory.impl.LDefaultLimitedCapacityMemory;
 import de.cesr.lara.components.util.impl.LCapacityManagers;
 import de.cesr.lara.components.util.logging.impl.Log4jLogger;
+import de.cesr.lara.testing.components.container.LContainerTestUtils.MyProperty;
 
 
 /**
  * Tests the memory functionality with respect to the capacity management
  */
-public class DefaultLaraLimitedCapacityMemoryImplTest {
+public class LDefaultLimitedCapacityMemoryTest {
 
 	/**
 	 * Logger
 	 */
-	static private Logger	logger	= Log4jLogger.getLogger(DefaultLaraLimitedCapacityMemoryImplTest.class);
+	static private Logger	logger	= Log4jLogger.getLogger(LDefaultLimitedCapacityMemoryTest.class);
 
 	LaraMemory<MyProperty>	memory;
-
-	private class MyProperty extends LaraProperty<String> {
-
-		String	value;
-
-		public MyProperty(String key, String value, int timestamp) {
-			super(key, timestamp);
-			this.value = value;
-		}
-
-		@Override
-		public LaraProperty<String> getModifiedProperty(String value) {
-			return new MyProperty(getKey(), value, getTimestamp());
-		}
-
-		@Override
-		public String getValue() {
-			return value;
-		}
-
-	}
 
 	/**
 	 * 

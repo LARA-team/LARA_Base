@@ -32,7 +32,8 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses({ LDeliberativeChoiceComponent_MaxLineTotalRandomAtTieTest.class,
 		LDeliberativeChoiceComp_MaxLineTotalTest.class,
-		LDeliberativeDeciderTest.class })
+		LDeliberativeDeciderTest.class,
+LTreeDeciderTest.class })
 public class AllDecisionTests {
 
 }

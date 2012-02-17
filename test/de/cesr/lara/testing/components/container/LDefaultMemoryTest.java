@@ -4,7 +4,7 @@
  * Center for Environmental Systems Research, Kassel
  * Created by Sascha Holzhauer on 16.12.2009
  */
-package de.cesr.lara.testing.util;
+package de.cesr.lara.testing.components.container;
 
 
 import static org.junit.Assert.assertEquals;
@@ -41,6 +41,7 @@ import de.cesr.lara.components.model.impl.LSimulationStage;
 import de.cesr.lara.components.util.LaraRandom;
 import de.cesr.lara.components.util.impl.LRandomService;
 import de.cesr.lara.components.util.logging.impl.Log4jLogger;
+import de.cesr.lara.testing.components.container.LContainerTestUtils.MyProperty;
 
 
 /**
@@ -50,35 +51,15 @@ import de.cesr.lara.components.util.logging.impl.Log4jLogger;
  * @date 16.12.2009
  * 
  */
-public class DefaultLaraMemoryImplTest {
+public class LDefaultMemoryTest {
 
 	/**
 	 * Logger
 	 */
-	static private Logger	logger	= Log4jLogger.getLogger(DefaultLaraMemoryImplTest.class);
+	static private Logger	logger	= Log4jLogger.getLogger(LDefaultMemoryTest.class);
 
 	LaraMemory<MyProperty>	memory;
 
-	private class MyProperty extends LaraProperty<String> {
-
-		String	value;
-
-		public MyProperty(String key, String value, int timestamp) {
-			super(key, timestamp);
-			this.value = value;
-		}
-
-		@Override
-		public LaraProperty<String> getModifiedProperty(String value) {
-			return new MyProperty(getKey(), value, getTimestamp());
-		}
-
-		@Override
-		public String getValue() {
-			return value;
-		}
-
-	}
 
 	private class MyMemoryPropertyListener implements LaraMemoryListener {
 
@@ -99,7 +80,7 @@ public class DefaultLaraMemoryImplTest {
 		}
 
 		@Override
-		public void memoryEventOccured(MemoryEvent event, LaraProperty<?> property) {
+		public void memoryEventOccured(MemoryEvent event, LaraProperty<?,?> property) {
 			informed = true;
 		}
 	}

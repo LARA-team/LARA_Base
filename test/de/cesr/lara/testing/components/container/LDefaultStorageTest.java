@@ -1,4 +1,23 @@
-package de.cesr.lara.testing.util;
+/**
+ * This file is part of
+ * 
+ * LARA - Lightweight Architecture for boundedly Rational citizen Agents
+ * 
+ * Copyright (C) 2012 Center for Environmental Systems Research, Kassel, Germany
+ * 
+ * LARA is free software: You can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * LARA is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+package de.cesr.lara.testing.components.container;
 
 
 import static org.junit.Assert.assertEquals;
@@ -13,21 +32,14 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.cesr.lara.components.LaraProperty;
 import de.cesr.lara.components.container.LaraContainer;
 import de.cesr.lara.components.container.exceptions.LInvalidTimestampException;
 import de.cesr.lara.components.container.exceptions.LRemoveException;
 import de.cesr.lara.components.container.exceptions.LRetrieveException;
 import de.cesr.lara.components.container.storage.LaraStorage;
 import de.cesr.lara.components.container.storage.impl.LDefaultStorage;
+import de.cesr.lara.testing.components.container.LContainerTestUtils.MyProperty;
 
-
-/**
- * LARA - Lightweight Architecture for boundedly Rational citizen Agents
- *
- * Center for Environmental Systems Research, Kassel
- * Created by Sascha Holzhauer on 16.12.2009
- */
 
 /**
  * 
@@ -35,34 +47,12 @@ import de.cesr.lara.components.container.storage.impl.LDefaultStorage;
  * @date 16.12.2009
  * 
  */
-public class DefaultLaraStorageImplTest {
+public class LDefaultStorageTest {
 
 	LaraStorage<MyProperty>	storage;
 
-	private class MyProperty extends LaraProperty<String> {
-
-		String	value;
-
-		public MyProperty(String key, String value, int timestamp) {
-			super(key, timestamp);
-			this.value = value;
-		}
-
-		@Override
-		public LaraProperty<String> getModifiedProperty(String value) {
-			return new MyProperty(getKey(), value, getTimestamp());
-		}
-
-		@Override
-		public String getValue() {
-			return value;
-		}
-
-	}
-
 	/**
 	 * @throws java.lang.Exception
-	 *         Created by Sascha Holzhauer on 16.12.2009
 	 */
 	@Before
 	public void setUp() throws Exception {
@@ -71,7 +61,6 @@ public class DefaultLaraStorageImplTest {
 
 	/**
 	 * @throws java.lang.Exception
-	 *         Created by Sascha Holzhauer on 16.12.2009
 	 */
 	@After
 	public void tearDown() throws Exception {
@@ -198,7 +187,6 @@ public class DefaultLaraStorageImplTest {
 		} catch (LRemoveException lre) {
 
 		}
-
 	}
 
 	/**
