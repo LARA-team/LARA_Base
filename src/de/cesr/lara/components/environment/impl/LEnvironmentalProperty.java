@@ -6,7 +6,6 @@
  */
 package de.cesr.lara.components.environment.impl;
 
-import de.cesr.lara.components.LaraProperty;
 import de.cesr.lara.components.environment.LaraEnvironment;
 
 /**
@@ -44,7 +43,7 @@ public class LEnvironmentalProperty<ValueType> extends
 	}
 
 	@Override
-	public LaraProperty<ValueType> getModifiedProperty(ValueType value) {
+	public LEnvironmentalProperty<ValueType> getModifiedProperty(ValueType value) {
 		return new LEnvironmentalProperty<ValueType>(getKey(), value,
 				environment);
 	}

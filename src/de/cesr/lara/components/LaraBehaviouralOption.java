@@ -65,7 +65,8 @@ import de.cesr.lara.components.util.logging.impl.Log4jLogger;
  * @date 12.02.2010
  */
 public abstract class LaraBehaviouralOption<A extends LaraAgent<? super A, ?>, BO extends LaraBehaviouralOption<?,?>>
-		extends LaraProperty<Map<Class<? extends LaraPreference>, Double>> implements
+		extends LaraProperty<BO, Map<Class<? extends LaraPreference>, Double>>
+		implements
 		Comparable<LaraBehaviouralOption<A, BO>> {
 
 	/**
@@ -258,7 +259,7 @@ public abstract class LaraBehaviouralOption<A extends LaraAgent<? super A, ?>, B
 			situationalGoalPreference = agent.getLaraComp()
 					.getDecisionData(dConfig).getIndividualPreferenceWeights()
 					.get(
-					utilityEntry.getKey()).doubleValue();
+utilityEntry.getKey()).doubleValue();
 
 			// security:
 			if (utilityEntry.getValue().isNaN()) {

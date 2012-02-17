@@ -34,7 +34,7 @@ import de.cesr.lara.components.LaraProperty;
  * @date 22.02.2010
  * 
  */
-public interface LaraCapacityManageableContainer<PropertyType extends LaraProperty<?>>
+public interface LaraCapacityManageableContainer<PropertyType extends LaraProperty<? extends PropertyType, ?>>
 		extends LaraContainer<PropertyType> {
 
 	/**

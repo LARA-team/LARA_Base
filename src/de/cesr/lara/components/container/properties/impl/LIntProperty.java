@@ -11,9 +11,9 @@ import de.cesr.lara.components.LaraProperty;
 /**
  * 
  */
-public class LIntProperty extends LaraProperty<Integer> {
+public class LIntProperty extends LaraProperty<LIntProperty, Integer> {
 
-	private Integer value;
+	private final Integer value;
 
 	/**
 	 * @param key

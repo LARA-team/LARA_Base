@@ -20,13 +20,16 @@
 package de.cesr.lara.testing;
 
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import de.cesr.lara.components.LaraBehaviouralOption;
 import de.cesr.lara.components.LaraPreference;
 import de.cesr.lara.components.agents.impl.LAbstractAgent;
 import de.cesr.lara.components.decision.LaraDecisionConfiguration;
+import de.cesr.lara.components.decision.impl.LDecisionConfiguration;
 import de.cesr.lara.components.environment.impl.LEnvironment;
 import de.cesr.lara.components.eventbus.events.LaraEvent;
 import de.cesr.lara.components.model.LaraModel;
@@ -42,6 +45,22 @@ import de.cesr.lara.components.util.impl.LRandomService;
  * 
  */
 public class TestUtils {
+
+	static public class LTestPreference1 implements LaraPreference {
+	};
+
+	static public class LTestPreference2 implements LaraPreference {
+	};
+
+	static public class LTestDecisionConfig extends LDecisionConfiguration {
+		public LTestDecisionConfig() {
+			Collection<Class<? extends LaraPreference>> prefs = new HashSet<Class<? extends LaraPreference>>();
+			prefs.add(LTestPreference1.class);
+			prefs.add(LTestPreference2.class);
+
+			this.setPreferences(prefs);
+		}
+	}
 
 	/**
 	 * test agent

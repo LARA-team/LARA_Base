@@ -29,7 +29,7 @@ import de.cesr.lara.components.container.LaraCapacityManager;
 /**
  * @param <PropertyType>
  */
-public class LDefaultLimitedCapacityMemory<PropertyType extends LaraProperty<?>>
+public class LDefaultLimitedCapacityMemory<PropertyType extends LaraProperty<? extends PropertyType, ?>>
 		extends LDefaultMemory<PropertyType> implements
 		LaraCapacityManageableContainer<PropertyType> {
 

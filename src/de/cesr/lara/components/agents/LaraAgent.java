@@ -39,7 +39,7 @@ import de.cesr.lara.components.eventbus.LaraEventSubscriber;
  *            with
  * 
  */
-public interface LaraAgent<A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<?, ?>>
+public interface LaraAgent<A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>>
 		extends LaraEventSubscriber {
 
 	/**

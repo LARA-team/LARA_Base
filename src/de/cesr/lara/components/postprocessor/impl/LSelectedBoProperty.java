@@ -17,27 +17,39 @@
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.cesr.lara.testing.components.impl;
+package de.cesr.lara.components.postprocessor.impl;
 
+import de.cesr.lara.components.LaraBehaviouralOption;
+import de.cesr.lara.components.LaraProperty;
+import de.cesr.lara.components.decision.LaraDecisionConfiguration;
 
 /**
- *
  * @author Sascha Holzhauer
- * @date 10.02.2010 
  *
  */
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+public class LSelectedBoProperty<BO extends LaraBehaviouralOption<?, ?>>
+		extends LaraProperty<LSelectedBoProperty<BO>, BO> {
 
+	protected BO bo;
+	protected LaraDecisionConfiguration dConfig;
 
-/**
- * 
- */
-@RunWith(Suite.class)
-@SuiteClasses({ LDefaultLaraAgentCompTest.class,
-		LaraBehaviouralOptionTest.class, LAbstractAgentTest.class
-})
-public class AllComponentsImplTests {
+	public LSelectedBoProperty(LaraDecisionConfiguration dConfig, BO bo) {
+		super("SelectedBO");
+		this.bo = bo;
+		this.dConfig = dConfig;
+	}
 
+	@Override
+	public LSelectedBoProperty<BO> getModifiedProperty(BO value) {
+		return new LSelectedBoProperty<BO>(this.dConfig, bo);
+	}
+
+	@Override
+	public BO getValue() {
+		return this.bo;
+	}
+
+	public LaraDecisionConfiguration getDConfig() {
+		return this.dConfig;
+	}
 }

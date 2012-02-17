@@ -17,27 +17,33 @@
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.cesr.lara.testing.components.impl;
+package de.cesr.lara.testing.components.container;
 
+import de.cesr.lara.components.LaraProperty;
 
 /**
- *
  * @author Sascha Holzhauer
- * @date 10.02.2010 
  *
  */
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+public class LContainerTestUtils {
 
+	public static class MyProperty extends LaraProperty<MyProperty, String> {
 
-/**
- * 
- */
-@RunWith(Suite.class)
-@SuiteClasses({ LDefaultLaraAgentCompTest.class,
-		LaraBehaviouralOptionTest.class, LAbstractAgentTest.class
-})
-public class AllComponentsImplTests {
+		String value;
 
+		public MyProperty(String key, String value, int timestamp) {
+			super(key, timestamp);
+			this.value = value;
+		}
+
+		@Override
+		public MyProperty getModifiedProperty(String value) {
+			return new MyProperty(getKey(), value, getTimestamp());
+		}
+
+		@Override
+		public String getValue() {
+			return value;
+		}
+	}
 }

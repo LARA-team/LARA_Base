@@ -51,7 +51,8 @@ import de.cesr.lara.components.container.exceptions.LRetrieveException;
  * @date 16.03.2010
  * 
  */
-public interface LaraStorage<PropertyType extends LaraProperty<?>> extends LaraContainer<PropertyType> {
+public interface LaraStorage<PropertyType extends LaraProperty<? extends PropertyType, ?>>
+		extends LaraContainer<PropertyType> {
 
 	/*
 	 * STORING

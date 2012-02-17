@@ -53,7 +53,7 @@ import de.cesr.lara.components.util.logging.impl.Log4jLogger;
  * 
  * @param <PropertyType>
  */
-public class LDefaultMemory<PropertyType extends LaraProperty<?>>
+public class LDefaultMemory<PropertyType extends LaraProperty<? extends PropertyType, ?>>
 		implements LaraMemory<PropertyType>,
 		LaraStorageListener {
 
@@ -484,7 +484,8 @@ public class LDefaultMemory<PropertyType extends LaraProperty<?>>
 	}
 
 	@Override
-	public void storageEventOccured(StorageEvent event, LaraProperty<?> property) {
+	public void storageEventOccured(StorageEvent event,
+			LaraProperty<?, ?> property) {
 		switch (event) {
 			case PROPERTY_REMOVED: {
 				for (LaraMemoryListener listener : propertyListeners
@@ -516,7 +517,7 @@ public class LDefaultMemory<PropertyType extends LaraProperty<?>>
 
 		// TODO check if LaraProperty can be parameterised with PropertyType to
 		// achieve type safe actions here (SH)
-		memorize((PropertyType) propertyToRefresh.getRefreshedProperty());
+		memorize(propertyToRefresh.getRefreshedProperty());
 
 		if (propertyListeners.containsKey(MemoryEvent.REFRESHED_PROPERTY_FORGOTTEN)) {
 			for (LaraMemoryListener listener : propertyListeners
@@ -551,7 +552,7 @@ public class LDefaultMemory<PropertyType extends LaraProperty<?>>
 
 		// property needs to be forgotten first, because it may not be overwritten due to different time stamps:
 		forgetEssential(propertyToRefresh);
-		memorize((PropertyType) propertyToRefresh.getRefreshedProperty());
+		memorize(propertyToRefresh.getRefreshedProperty());
 
 		if (propertyListeners.containsKey(MemoryEvent.REFRESHED_PROPERTY_FORGOTTEN)) {
 			for (LaraMemoryListener listener : propertyListeners

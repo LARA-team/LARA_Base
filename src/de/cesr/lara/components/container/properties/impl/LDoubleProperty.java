@@ -11,9 +11,9 @@ import de.cesr.lara.components.LaraProperty;
 /**
  * 
  */
-public class LDoubleProperty extends LaraProperty<Double> {
+public class LDoubleProperty extends LaraProperty<LDoubleProperty, Double> {
 
-	private Double value;
+	private final Double value;
 
 	/**
 	 * @param key

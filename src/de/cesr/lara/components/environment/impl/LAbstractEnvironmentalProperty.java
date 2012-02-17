@@ -20,7 +20,8 @@ import de.cesr.lara.components.environment.LaraEnvironment;
  * @param <V>
  *            type of property's value
  */
-public abstract class LAbstractEnvironmentalProperty<V> extends LaraProperty<V> {
+public abstract class LAbstractEnvironmentalProperty<V> extends
+		LaraProperty<LAbstractEnvironmentalProperty<V>, V> {
 
 	/**
 	 * environment this property is associated with

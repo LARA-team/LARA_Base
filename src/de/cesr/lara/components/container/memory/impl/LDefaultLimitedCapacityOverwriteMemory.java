@@ -41,7 +41,7 @@ import de.cesr.lara.components.util.logging.impl.Log4jLogger;
  * 
  * @param <PropertyType>
  */
-public class LDefaultLimitedCapacityOverwriteMemory<PropertyType extends LaraProperty<?>>
+public class LDefaultLimitedCapacityOverwriteMemory<PropertyType extends LaraProperty<PropertyType, ?>>
 		implements LaraOverwriteMemory<PropertyType>, LaraStorageListener {
 
 	/**
@@ -60,7 +60,7 @@ public class LDefaultLimitedCapacityOverwriteMemory<PropertyType extends LaraPro
 	private String name;
 
 	// observer management:
-	private MultiMap<LaraMemoryListener.MemoryEvent, LaraMemoryListener> propertyListeners = new MultiHashMap<LaraMemoryListener.MemoryEvent, LaraMemoryListener>();
+	private final MultiMap<LaraMemoryListener.MemoryEvent, LaraMemoryListener> propertyListeners = new MultiHashMap<LaraMemoryListener.MemoryEvent, LaraMemoryListener>();
 
 	private LaraOverwriteStorage<PropertyType> storage;
 
@@ -378,7 +378,8 @@ public class LDefaultLimitedCapacityOverwriteMemory<PropertyType extends LaraPro
 	}
 
 	@Override
-	public void storageEventOccured(StorageEvent event, LaraProperty<?> property) {
+	public void storageEventOccured(StorageEvent event,
+			LaraProperty<?, ?> property) {
 		switch (event) {
 		case PROPERTY_REMOVED:
 		case PROPERTY_AUTO_REMOVED: {

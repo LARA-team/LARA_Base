@@ -91,7 +91,7 @@ public final class LCapacityManagers {
 	 *            the type of properties this container shall store
 	 * @return capacity manager
 	 */
-	public static final <PropertyType extends LaraProperty<?>> LaraCapacityManager<PropertyType> makeFIFO() {
+	public static final <PropertyType extends LaraProperty<? extends PropertyType, ?>> LaraCapacityManager<PropertyType> makeFIFO() {
 
 		return new LaraCapacityManager<PropertyType>() {
 
@@ -129,7 +129,7 @@ public final class LCapacityManagers {
 	 *            manage
 	 * @return capacity manager
 	 */
-	public static final <PropertyType extends LaraProperty<?>> LaraCapacityManager<PropertyType> makeFILO() {
+	public static final <PropertyType extends LaraProperty<? extends PropertyType, ?>> LaraCapacityManager<PropertyType> makeFILO() {
 
 		return new LaraCapacityManager<PropertyType>() {
 
@@ -168,7 +168,7 @@ public final class LCapacityManagers {
 	 *            manage
 	 * @return capacity manager
 	 */
-	public static final <PropertyType extends LaraProperty<?>> LaraCapacityManager<PropertyType> makeNINO() {
+	public static final <PropertyType extends LaraProperty<? extends PropertyType, ?>> LaraCapacityManager<PropertyType> makeNINO() {
 
 		return new LaraCapacityManager<PropertyType>() {
 			/**

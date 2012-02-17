@@ -11,9 +11,9 @@ import de.cesr.lara.components.LaraProperty;
 /**
  * 
  */
-public class LFloatProperty extends LaraProperty<Float> {
+public class LFloatProperty extends LaraProperty<LFloatProperty, Float> {
 
-	private Float value;
+	private final Float value;
 
 	/**
 	 * @param key

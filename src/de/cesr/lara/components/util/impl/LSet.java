@@ -17,27 +17,29 @@
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.cesr.lara.testing.components.impl;
+package de.cesr.lara.components.util.impl;
 
+import java.util.Arrays;
+import java.util.LinkedHashSet;
 
 /**
- *
  * @author Sascha Holzhauer
- * @date 10.02.2010 
  *
  */
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+public class LSet<E> extends LinkedHashSet<E> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8698440369878570597L;
 
-/**
- * 
- */
-@RunWith(Suite.class)
-@SuiteClasses({ LDefaultLaraAgentCompTest.class,
-		LaraBehaviouralOptionTest.class, LAbstractAgentTest.class
-})
-public class AllComponentsImplTests {
+	public LSet(E... entries) {
+		super();
+		addAll(Arrays.asList(entries));
+	}
 
+	public LSet(E entry) {
+		super();
+		add(entry);
+	}
 }

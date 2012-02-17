@@ -85,6 +85,10 @@ public class LDeliberativeChoiceComp_MaxLineTotal implements
 		logger.info("Determine selected BO...");
 		// LOGGING ->
 
+		if (boRows.size() == 0) {
+			logger.error("The number of BOs passed to LDeliberativeChoiceComp_MaxLineTotal was 0!");
+		}
+
 		// get best row form laraBoRows
 		double bestSum = Float.NEGATIVE_INFINITY;
 		double rSum = Float.NEGATIVE_INFINITY;

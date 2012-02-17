@@ -31,7 +31,7 @@ import de.cesr.lara.components.LaraProperty;
  * 
  * @param <PropertyType>
  */
-public interface LaraCapacityManagementView<PropertyType extends LaraProperty<?>>
+public interface LaraCapacityManagementView<PropertyType extends LaraProperty<?, ?>>
 		extends Iterable<PropertyType> {
 
 	/**

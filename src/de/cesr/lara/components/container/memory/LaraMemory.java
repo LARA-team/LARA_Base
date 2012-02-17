@@ -18,7 +18,8 @@ import de.cesr.lara.components.container.exceptions.LRetrieveException;
  * @param <PropertyType>
  *        the type of properties the memory may memorise
  */
-public interface LaraMemory<PropertyType extends LaraProperty<?>> extends LaraContainer<PropertyType> {
+public interface LaraMemory<PropertyType extends LaraProperty<? extends PropertyType, ?>>
+		extends LaraContainer<PropertyType> {
 
 	/**
 	 * constant representing unlimited retention time

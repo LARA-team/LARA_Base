@@ -58,5 +58,6 @@ public interface LaraMemoryListener {
 	 * @param property
 	 *            the property that is affected
 	 */
-	public void memoryEventOccured(MemoryEvent event, LaraProperty<?> property);
+	public void memoryEventOccured(MemoryEvent event,
+			LaraProperty<?, ?> property);
 }
