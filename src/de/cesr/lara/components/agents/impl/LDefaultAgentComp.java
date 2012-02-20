@@ -408,7 +408,7 @@ LaraPreprocessor<A, BO> preprocessor) {
 
 		} else if (event instanceof LAgentPostprocessEvent) {
 			postProcessorComp.postProcess(agent,
-					((LAgentDecideEvent) event).getDecisionConfiguration());
+					((LAgentPostprocessEvent) event).getDecisionConfiguration());
 
 		} else if (event instanceof LAgentExecutionEvent) {
 			removeDecisionData(((LAgentExecutionEvent) event)
