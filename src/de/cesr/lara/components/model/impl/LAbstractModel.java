@@ -76,6 +76,9 @@ public abstract class LAbstractModel implements LaraModel,
 	 * Constructor.
 	 */
 	public LAbstractModel() {
+		LAbstractAgent.resetCounter();
+		LModel.setNewModel(this);
+
 		eventBus = LEventbus.getInstance();
 		eventBus.subscribe(this, LModelInstantiatedEvent.class);
 		eventBus.subscribe(this, LModelStepEvent.class);
@@ -144,7 +147,6 @@ public abstract class LAbstractModel implements LaraModel,
 	 * 
 	 */
 	public void init() {
-		// TODO: reset necessary or leading to errors?
 		logger.info("LAbstractModel: Initialising/Resetting");
 		this.step = 0;
 		this.randomMan = new LRandomService(0);
@@ -156,10 +158,6 @@ public abstract class LAbstractModel implements LaraModel,
 		// a
 		// day to May, 31th (results in April 1st).
 		calendar.setLenient(true);
-
-		// TODO: still necessary?
-		LModel.setNewModel(this);
-		LAbstractAgent.resetCounter();
 	}
 
 	@Override
