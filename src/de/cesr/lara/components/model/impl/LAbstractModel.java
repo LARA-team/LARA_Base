@@ -169,7 +169,8 @@ public abstract class LAbstractModel implements LaraModel,
 		} else if (event instanceof LModelStepEvent) {
 			step();
 		} else if (event instanceof LModelFinishEvent) {
-			LEventbus.resetAll();
+			//TODO outcommented because to early
+			//LEventbus.resetAll();
 		}
 
 	}
