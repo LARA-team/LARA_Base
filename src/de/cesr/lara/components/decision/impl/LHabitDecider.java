@@ -10,10 +10,14 @@ package de.cesr.lara.components.decision.impl;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
 import de.cesr.lara.components.LaraBehaviouralOption;
 import de.cesr.lara.components.agents.LaraAgent;
 import de.cesr.lara.components.decision.LaraDecider;
 import de.cesr.lara.components.decision.LaraDecisionConfiguration;
+import de.cesr.lara.components.postprocessor.impl.LSelectedBoProperty;
+import de.cesr.lara.components.util.logging.impl.Log4jLogger;
 
 /**
  * 
@@ -30,6 +34,11 @@ import de.cesr.lara.components.decision.LaraDecisionConfiguration;
  */
 public class LHabitDecider<A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>> implements
 		LaraDecider<BO> {
+
+	/**
+	 * Logger
+	 */
+	static private Logger logger = Log4jLogger.getLogger(LHabitDecider.class);
 
 	A										agent	= null;
 	BO										bo		= null;
@@ -49,11 +58,16 @@ public class LHabitDecider<A extends LaraAgent<A, BO>, BO extends LaraBehavioura
 	 */
 	@Override
 	public void decide() {
-		// TODO fetch BO from LAST time step!
-		// if (agent.getLaraComp().getGeneralMemory().contains("SelectedBO")) {
-		// bo = agent.getLaraComp().getGeneralMemory().("SelectedBO")
-		// }
-
+		if (agent.getLaraComp().getGeneralMemory()
+				.contains(dConfiguration.getId())) {
+			bo = (BO) agent.getLaraComp().getGeneralMemory()
+					.recall(LSelectedBoProperty.class, dConfiguration.getId())
+					.getValue();
+		} else {
+			// <- LOGGING
+			logger.warn("Habitual behaviour could not select a behavioural option!");
+			// LOGGING ->
+		}
 	}
 
 	/**

@@ -26,6 +26,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.apache.commons.collections15.MultiMap;
@@ -40,12 +41,14 @@ import de.cesr.lara.components.container.exceptions.LRetrieveException;
 import de.cesr.lara.components.container.storage.LaraStorage;
 import de.cesr.lara.components.container.storage.LaraStorageListener;
 import de.cesr.lara.components.container.storage.LaraStorageListener.StorageEvent;
+import de.cesr.lara.components.model.impl.LModel;
 import de.cesr.lara.components.util.logging.impl.Log4jLogger;
 
 /**
- * TODO in which cases should this class check for invalid time stamps and throw
- * exceptions? (ME) TODO implement observer management for other events than
- * AUTO_REMOVED! (SH)
+ * TODO implement observer management for other events than AUTO_REMOVED! (SH)
+ * 
+ * Updates a key-wise (Key -> Step -> Property) and a step-wise (Step -> Key ->
+ * Property) map.
  * 
  * @param <PropertyType>
  */
@@ -58,13 +61,12 @@ public class LDefaultStorage<PropertyType extends LaraProperty<? extends Propert
 	 */
 	static private Logger logger = Log4jLogger.getLogger(LDefaultStorage.class);
 
-	private final Map<String, Map<Integer, PropertyType>> keywise = new HashMap<String, Map<Integer, PropertyType>>();
+	private final Map<String, TreeMap<Integer, PropertyType>> keywise = new HashMap<String, TreeMap<Integer, PropertyType>>();
+	private final TreeMap<Integer, Map<String, PropertyType>> stepwise = new TreeMap<Integer, Map<String, PropertyType>>();
 
 	// observer management:
 	private final MultiMap<LaraStorageListener.StorageEvent, LaraStorageListener> propertyListeners = new MultiHashMap<LaraStorageListener.StorageEvent, LaraStorageListener>();
 	private int size;
-
-	private final Map<Integer, Map<String, PropertyType>> stepwise = new HashMap<Integer, Map<String, PropertyType>>();
 
 	/**
 	 * 
@@ -94,27 +96,11 @@ public class LDefaultStorage<PropertyType extends LaraProperty<? extends Propert
 	}
 
 	/**
-	 * TODO test
-	 * 
 	 * @see de.cesr.lara.components.container.storage.LaraStorage#contains(java.lang.String)
 	 */
 	@Override
 	public boolean contains(String key) {
-		if (!keywise.containsKey(key)) {
-			return false;
-		}
-
-		// TODO is it efficient to construct the tree set every time? (SH) -
-		// needs to be up to date...
-		SortedSet<Integer> stepsDescendingOrder = new TreeSet<Integer>(
-				stepwise.keySet()).descendingSet();
-		boolean contains = false;
-		for (Integer step : stepsDescendingOrder) {
-			if (contains(key, step)) {
-				contains = true;
-			}
-		}
-		return contains;
+		return keywise.containsKey(key);
 	}
 
 	/**
@@ -133,6 +119,47 @@ public class LDefaultStorage<PropertyType extends LaraProperty<? extends Propert
 	}
 
 	/**
+	 * NOTE: This method is highly inefficient in this implementation!
+	 * 
+	 * @see de.cesr.lara.components.container.storage.LaraStorage#contains(de.cesr.lara.components.LaraProperty)
+	 */
+	@Override
+	public boolean contains(PropertyType property) {
+		for (Map<String, PropertyType> map : stepwise.values()) {
+			if (map.values().contains(property)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * @see de.cesr.lara.components.container.storage.LaraStorage#contains(de.cesr.lara.components.LaraProperty,
+	 *      java.lang.String)
+	 */
+	@Override
+	public boolean contains(PropertyType property, String key) {
+		return keywise.get(key).values().contains(property);
+	}
+
+	/**
+	 * @see de.cesr.lara.components.container.storage.LaraStorage#contains(de.cesr.lara.components.LaraProperty,
+	 *      java.lang.String)
+	 */
+	@Override
+	public boolean contains(Class<?> propertyType,
+			String key) {
+		if (keywise.containsKey(key)) {
+			for (PropertyType prop : keywise.get(key).values()) {
+				if (propertyType.isInstance(prop)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * @see de.cesr.lara.components.container.storage.LaraStorage#fetch(java.lang.String)
 	 */
 	@Override
@@ -143,6 +170,8 @@ public class LDefaultStorage<PropertyType extends LaraProperty<? extends Propert
 		if (!keywise.containsKey(key)) {
 			throw new LRetrieveException("No entry found for key " + key + ".");
 		}
+
+		// TODO efficiency
 		SortedSet<Integer> stepsDescendingOrder = new TreeSet<Integer>(
 				stepwise.keySet()).descendingSet();
 		PropertyType property = null;
@@ -200,6 +229,131 @@ public class LDefaultStorage<PropertyType extends LaraProperty<? extends Propert
 					+ ".");
 		}
 		return keywise.get(key).values();
+	}
+
+	/**
+	 * @see de.cesr.lara.components.container.storage.LaraStorage#fetchAll()
+	 */
+	@Override
+	public Collection<PropertyType> fetchAll() throws LRetrieveException {
+		if (isEmpty()) {
+			throw new LRetrieveException("No entry found. Memory is empty.");
+		}
+		Collection<PropertyType> properties = new HashSet<PropertyType>();
+		for (Map<Integer, PropertyType> map : keywise.values()) {
+			properties.addAll(map.values());
+		}
+		return properties;
+	}
+
+	/**
+	 * @see de.cesr.lara.components.container.storage.LaraStorage#fetch(java.lang.Class,
+	 *      java.lang.String, int)
+	 */
+	@SuppressWarnings("unchecked")
+	// checked by isInstance()
+	@Override
+	public <RequestPropertyType extends PropertyType> RequestPropertyType fetch(
+			Class<RequestPropertyType> propertyType, String key, int step)
+			throws LRetrieveException {
+		if (isEmpty()) {
+			LRetrieveException ex = new LRetrieveException(
+					"No entry found. Memory is empty.");
+			logger.error(ex.getMessage() + ex.getStackTrace());
+			throw ex;
+		}
+		if (!stepwise.containsKey(step)) {
+			LRetrieveException ex = new LRetrieveException(
+					"No entries for step " + step + ".");
+			logger.error(ex.getMessage() + ex.getStackTrace());
+			throw ex;
+		}
+		if (!stepwise.get(step).containsKey(key)) {
+			throw new LRetrieveException("No entry found with key " + key
+					+ " for step " + step + ".");
+		}
+
+		PropertyType recalled = stepwise.get(step).get(key);
+		if (propertyType.isInstance(recalled)) {
+			return (RequestPropertyType) recalled;
+		} else {
+			throw new LRetrieveException("No entry found of class "
+					+ propertyType + " with key " + key + " for step " + step
+					+ ".");
+		}
+	}
+
+	/**
+	 * @see de.cesr.lara.components.container.storage.LaraStorage#fetch(java.lang.Class,
+	 *      java.lang.String)
+	 */
+	@SuppressWarnings("unchecked")
+	// Checked by isInstance
+	@Override
+	public <RequestPropertyType extends PropertyType> RequestPropertyType fetch(
+			Class<RequestPropertyType> propertyType, String key)
+			throws LRetrieveException {
+		if (isEmpty()) {
+			LRetrieveException ex = new LRetrieveException(
+					"No entry found. Memory is empty.");
+			logger.error(ex.getMessage() + ex.getStackTrace());
+			throw ex;
+		}
+
+		PropertyType recalled = keywise.get(key).lastEntry().getValue();
+		if (propertyType.isInstance(recalled)) {
+			return (RequestPropertyType) recalled;
+		} else {
+			throw new LRetrieveException("No entry found of class "
+					+ propertyType + " with key " + key + ".");
+		}
+	}
+
+	/**
+	 * @see de.cesr.lara.components.container.storage.LaraStorage#fetchAll(java.lang.Class,
+	 *      java.lang.String)
+	 */
+	@SuppressWarnings("unchecked")
+	// checked by isInstance
+	@Override
+	public <RequestPropertyType extends PropertyType> Collection<RequestPropertyType> fetchAll(
+			Class<RequestPropertyType> propertyType, String key)
+			throws LRetrieveException {
+		if (isEmpty()) {
+			throw new LRetrieveException("No entry found. Memory is empty.");
+		}
+		if (!keywise.containsKey(key)) {
+			throw new LRetrieveException("No entries found for key " + key
+					+ ".");
+		}
+		Collection<RequestPropertyType> properties = new HashSet<RequestPropertyType>();
+		for (PropertyType prop : keywise.get(key).values()) {
+			if (propertyType.isInstance(prop)) {
+				properties.add((RequestPropertyType) prop);
+			}
+		}
+		return properties;
+	}
+
+	/**
+	 * @see de.cesr.lara.components.container.storage.LaraStorage#fetchAll(java.lang.Class)
+	 */
+	@SuppressWarnings("unchecked")
+	// Checked by isInstance
+	@Override
+	public <RequestPropertyType extends PropertyType> Collection<RequestPropertyType> fetchAll(
+			Class<RequestPropertyType> propertyType) throws LRetrieveException {
+		if (isEmpty()) {
+			throw new LRetrieveException("No entry found. Memory is empty.");
+		}
+
+		Collection<RequestPropertyType> properties = new HashSet<RequestPropertyType>();
+		for (PropertyType prop : fetchAll()) {
+			if (propertyType.isInstance(prop)) {
+				properties.add((RequestPropertyType) prop);
+			}
+		}
+		return properties;
 	}
 
 	/**
@@ -347,7 +501,8 @@ public class LDefaultStorage<PropertyType extends LaraProperty<? extends Propert
 	 */
 	@Override
 	public void store(PropertyType propertyToStore) {
-		if (propertyToStore.getTimestamp() < 0) {
+		if (propertyToStore.getTimestamp() != LModel.getModel()
+				.getCurrentStep()) {
 			throw new LInvalidTimestampException();
 		}
 		if (isFull()) {
@@ -365,10 +520,10 @@ public class LDefaultStorage<PropertyType extends LaraProperty<? extends Propert
 		}
 		keyMap.put(propertyToStore.getKey(), propertyToStore);
 
-		Map<Integer, PropertyType> stepMap = keywise.get(propertyToStore
+		TreeMap<Integer, PropertyType> stepMap = keywise.get(propertyToStore
 				.getKey());
 		if (stepMap == null) {
-			stepMap = new HashMap<Integer, PropertyType>();
+			stepMap = new TreeMap<Integer, PropertyType>();
 			keywise.put(propertyToStore.getKey(), stepMap);
 		}
 		stepMap.put(propertyToStore.getTimestamp(), propertyToStore);

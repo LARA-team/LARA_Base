@@ -1,8 +1,21 @@
 /**
- * LARA - Lightweight Architecture for boundedly Rational citizen Agents
- *
- * Center for Environmental Systems Research, Kassel
+ * This file is part of
  * 
+ * LARA - Lightweight Architecture for boundedly Rational citizen Agents
+ * 
+ * Copyright (C) 2012 Center for Environmental Systems Research, Kassel, Germany
+ * 
+ * LARA is free software: You can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * LARA is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package de.cesr.lara.components.model;
 
@@ -14,9 +27,8 @@ import de.cesr.lara.components.util.LaraRandom;
 
 /**
  * Classes that implement this interface need to provide basic simulation
- * functionality for Lara like time stepping etc. For many cases, this
- * represents an adapter to existing simulation frameworks. TODO splitt into
- * interfaces like hasEnvironment, hasMemory, hasInput, hasOutput, hasRandom
+ * functionality for LARA like time stepping etc. For many cases, this
+ * represents an adapter to existing simulation frameworks.
  */
 public interface LaraModel {
 
@@ -41,24 +53,20 @@ public interface LaraModel {
 	 * Retrieve the current overall time step.
 	 * 
 	 * @return step the current time step of the overall model
-	 * 
-	 *         Created by Sascha Holzhauer on 22.12.2009
 	 */
 	public int getCurrentStep();
 
 	/**
 	 * Returns a {@link NumberFormat} to format decimal floating point numbers
 	 * 
-	 * @return A NumberFormat to format decimal floating point numbers Created
-	 *         by Sascha Holzhauer on 19.10.2010
+	 * @return A NumberFormat to format decimal floating point numbers
 	 */
 	public NumberFormat getFloatPointFormat();
 
 	/**
 	 * Returns a {@link NumberFormat} to format integer numbers
 	 * 
-	 * @return A NumberFormat to format integer numbers Created by Sascha
-	 *         Holzhauer on 19.10.2010
+	 * @return A NumberFormat to format integer numbers
 	 */
 	public NumberFormat getIntegerFormat();
 
@@ -82,8 +90,6 @@ public interface LaraModel {
 	 * 
 	 * @param step
 	 *            the current time step of the overall model
-	 * 
-	 *            Created by Sascha Holzhauer on 22.12.2009
 	 */
 	public void setCurrentStep(int step);
 
@@ -98,8 +104,7 @@ public interface LaraModel {
 	 * last step number is increased by stepIncrease.
 	 * 
 	 * @param stepIncrease
-	 *            the current step to set
+	 *            the number of steps to increase
 	 */
 	public void step(int stepIncrease);
-
 }

@@ -129,6 +129,33 @@ public class LDefaultSimpleStorage<PropertyType extends LaraProperty<PropertyTyp
 		return properties.containsKey(key);
 	}
 
+	/**
+	 * @see de.cesr.lara.components.container.storage.LaraOverwriteStorage#contains(de.cesr.lara.components.LaraProperty)
+	 */
+	@Override
+	public boolean contains(PropertyType property) {
+		return properties.values().contains(property);
+	}
+
+	/**
+	 * @see de.cesr.lara.components.container.storage.LaraOverwriteStorage#contains(de.cesr.lara.components.LaraProperty,
+	 *      java.lang.String)
+	 */
+	@Override
+	public boolean contains(PropertyType property, String key) {
+		return properties.get(key).equals(property);
+	}
+
+	/**
+	 * @see de.cesr.lara.components.container.storage.LaraOverwriteStorage#contains(java.lang.Class,
+	 *      java.lang.String)
+	 */
+	@Override
+	public boolean contains(Class<?> propertyType,
+			String key) {
+		return propertyType.isInstance(properties.get(key));
+	}
+
 	@Override
 	public PropertyType fetch(String key) {
 		if (isEmpty()) {
@@ -154,6 +181,53 @@ public class LDefaultSimpleStorage<PropertyType extends LaraProperty<PropertyTyp
 			}
 		}
 		return propertyToStore;
+	}
+
+	/**
+	 * @see de.cesr.lara.components.container.storage.LaraOverwriteStorage#fetch(java.lang.Class,
+	 *      java.lang.String)
+	 */
+	@SuppressWarnings("unchecked")
+	// Checked by isInstance
+	@Override
+	public <RequestPropertyType extends PropertyType> RequestPropertyType fetch(
+			Class<RequestPropertyType> propertyType, String key)
+			throws LRetrieveException {
+		if (isEmpty()) {
+			LRetrieveException ex = new LRetrieveException(
+					"No entry found. Memory is empty.");
+			logger.error(ex.getMessage() + ex.getStackTrace());
+			throw ex;
+		}
+
+		PropertyType recalled = properties.get(key);
+		if (propertyType.isInstance(recalled)) {
+			return (RequestPropertyType) recalled;
+		} else {
+			throw new LRetrieveException("No entry found of class "
+					+ propertyType + " with key " + key + ".");
+		}
+	}
+
+	/**
+	 * @see de.cesr.lara.components.container.storage.LaraOverwriteStorage#fetchAll(java.lang.Class)
+	 */
+	@SuppressWarnings("unchecked")
+	// Checked by isInstance
+	@Override
+	public <RequestPropertyType extends PropertyType> Collection<RequestPropertyType> fetchAll(
+			Class<RequestPropertyType> propertyType) throws LRetrieveException {
+		if (isEmpty()) {
+			throw new LRetrieveException("No entry found. Memory is empty.");
+		}
+
+		Collection<RequestPropertyType> properties = new HashSet<RequestPropertyType>();
+		for (PropertyType prop : this.properties.values()) {
+			if (propertyType.isInstance(prop)) {
+				properties.add((RequestPropertyType) prop);
+			}
+		}
+		return properties;
 	}
 
 	/**

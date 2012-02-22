@@ -35,11 +35,11 @@ import de.cesr.lara.components.decision.impl.LDecisionConfiguration;
 import de.cesr.lara.components.decision.impl.LDeliberativeChoiceComp_MaxLineTotal;
 import de.cesr.lara.components.decision.impl.LDeliberativeDecider;
 import de.cesr.lara.components.util.impl.LPrefEntry;
-import de.cesr.lara.testing.TestUtils;
-import de.cesr.lara.testing.TestUtils.LTestAgent;
-import de.cesr.lara.testing.TestUtils.LTestBo;
-import de.cesr.lara.testing.TestUtils.LTestPreference1;
-import de.cesr.lara.testing.TestUtils.LTestPreference2;
+import de.cesr.lara.testing.LTestUtils;
+import de.cesr.lara.testing.LTestUtils.LTestAgent;
+import de.cesr.lara.testing.LTestUtils.LTestBo;
+import de.cesr.lara.testing.LTestUtils.LTestPreference1;
+import de.cesr.lara.testing.LTestUtils.LTestPreference2;
 
 /**
  * @author Sascha Holzhauer
@@ -59,7 +59,7 @@ public class LDeliberativeDeciderTest {
 	@Before
 	public void setUp() throws Exception {
 
-		TestUtils.initTestModel();
+		LTestUtils.initTestModel();
 		agent = new LTestAgent("TestAgent");
 		
 		agent.getLaraComp().addPreferenceWeights(

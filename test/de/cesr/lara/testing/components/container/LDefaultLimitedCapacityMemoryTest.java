@@ -1,3 +1,22 @@
+/**
+ * This file is part of
+ * 
+ * LARA - Lightweight Architecture for boundedly Rational citizen Agents
+ * 
+ * Copyright (C) 2012 Center for Environmental Systems Research, Kassel, Germany
+ * 
+ * LARA is free software: You can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * LARA is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package de.cesr.lara.testing.components.container;
 
 
@@ -14,9 +33,11 @@ import de.cesr.lara.components.container.LaraCapacityManageableContainer;
 import de.cesr.lara.components.container.LaraContainer;
 import de.cesr.lara.components.container.memory.LaraMemory;
 import de.cesr.lara.components.container.memory.impl.LDefaultLimitedCapacityMemory;
+import de.cesr.lara.components.eventbus.events.LModelStepEvent;
+import de.cesr.lara.components.eventbus.impl.LEventbus;
 import de.cesr.lara.components.util.impl.LCapacityManagers;
 import de.cesr.lara.components.util.logging.impl.Log4jLogger;
-import de.cesr.lara.testing.components.container.LContainerTestUtils.MyProperty;
+import de.cesr.lara.testing.components.container.LContainerTestUtils.LTestProperty;
 
 
 /**
@@ -29,14 +50,14 @@ public class LDefaultLimitedCapacityMemoryTest {
 	 */
 	static private Logger	logger	= Log4jLogger.getLogger(LDefaultLimitedCapacityMemoryTest.class);
 
-	LaraMemory<MyProperty>	memory;
+	LaraMemory<LTestProperty>	memory;
 
 	/**
 	 * 
 	 */
 	@Before
 	public void setUp() {
-		memory = new LDefaultLimitedCapacityMemory<MyProperty>(LCapacityManagers.<MyProperty> makeFIFO(), 7);
+		memory = new LDefaultLimitedCapacityMemory<LTestProperty>(LCapacityManagers.<LTestProperty> makeFIFO(), 7);
 	}
 
 	/**
@@ -45,34 +66,36 @@ public class LDefaultLimitedCapacityMemoryTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testCapacity() {
-		storeSomeEntries(6, 1);
+		LContainerTestUtils.storeSomeEntries(memory, 6);
 
 		assertTrue("memory was initialised with a capacity of 7", memory.getCapacity() == 7);
 		assertTrue("6 properties were memorised", memory.getSize() == 6);
 
-		memory.memorize(new MyProperty("key07", "value07", 2));
+		LEventbus.getInstance().publish(new LModelStepEvent());
+
+		memory.memorize(new LTestProperty("key07", "value07"));
 		assertTrue("6 + 1 properties were memorised", memory.getSize() == 7);
 		assertTrue("7 properties added at capacity of 7 means full", memory.isFull());
 
-		memory.memorize(new MyProperty("key08", "value08", 2));
+		memory.memorize(new LTestProperty("key08", "value08"));
 		assertTrue(memory.getSize() == 7);
 		assertFalse("The first property should have been removed now", memory.contains("key01"));
 
 		logger.info(memory);
 
-		MyProperty propertyX = null;
+		LTestProperty propertyX = null;
 		propertyX = memory.recall("key08");
 		assertEquals(propertyX.getValue(), "value08");
 
-		storeSomeEntries(6, 2);
+		LContainerTestUtils.storeSomeEntries(memory, 6);
 		assertTrue("After inserting several properties memory size should remain 7", memory.getSize() == 7);
 
 		// change capacity to 0:
-		LaraCapacityManageableContainer<MyProperty> cmStorage = (LaraCapacityManageableContainer<MyProperty>) memory;
+		LaraCapacityManageableContainer<LTestProperty> cmStorage = (LaraCapacityManageableContainer<LTestProperty>) memory;
 		cmStorage.setCapacity(LaraContainer.UNLIMITED_CAPACITY);
 
 		assertTrue(memory.getCapacity() == LaraContainer.UNLIMITED_CAPACITY);
-		storeSomeEntries(100, 2);
+		LContainerTestUtils.storeSomeEntries(memory, 100);
 		assertTrue("7 + 100 (at unlimited capcaity) = 107", memory.getSize() == 107);
 
 		logger.info(memory);
@@ -93,7 +116,7 @@ public class LDefaultLimitedCapacityMemoryTest {
 
 		// change capacity back to 0:
 		cmStorage.setCapacity(LaraContainer.UNLIMITED_CAPACITY);
-		storeSomeEntries(100, 2);
+		LContainerTestUtils.storeSomeEntries(memory, 100);
 		assertTrue(memory.getSize() == 100);
 		logger.info(memory);
 	}
@@ -105,16 +128,4 @@ public class LDefaultLimitedCapacityMemoryTest {
 	public void tearDown() {
 		memory = null;
 	}
-
-	/**
-	 * counter for labeling properties
-	 */
-	private static int	count	= 0;
-
-	private void storeSomeEntries(int num, int step) {
-		for (int i = 0; i < num; i++) {
-			memory.memorize(new MyProperty("key" + count, "value" + count++, step));
-		}
-	}
-
 }

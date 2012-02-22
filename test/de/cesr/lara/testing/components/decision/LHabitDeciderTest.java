@@ -29,21 +29,21 @@ import de.cesr.lara.components.decision.LaraDecisionConfiguration;
 import de.cesr.lara.components.decision.impl.LDeliberativeDecider;
 import de.cesr.lara.components.decision.impl.LHabitDecider;
 import de.cesr.lara.components.eventbus.events.LAgentDecideEvent;
+import de.cesr.lara.components.eventbus.events.LAgentPostprocessEvent;
+import de.cesr.lara.components.eventbus.events.LAgentPreprocessEvent;
+import de.cesr.lara.components.eventbus.events.LModelStepEvent;
 import de.cesr.lara.components.eventbus.impl.LEventbus;
 import de.cesr.lara.components.param.LDecisionMakingPa;
 import de.cesr.lara.components.util.impl.LPrefEntry;
-import de.cesr.lara.testing.TestUtils;
-import de.cesr.lara.testing.TestUtils.LTestAgent;
-import de.cesr.lara.testing.TestUtils.LTestBo;
-import de.cesr.lara.testing.TestUtils.LTestDecisionConfig;
-import de.cesr.lara.testing.TestUtils.LTestPreference1;
+import de.cesr.lara.testing.LTestUtils;
+import de.cesr.lara.testing.LTestUtils.LTestAgent;
+import de.cesr.lara.testing.LTestUtils.LTestBo;
+import de.cesr.lara.testing.LTestUtils.LTestDecisionConfig;
+import de.cesr.lara.testing.LTestUtils.LTestPreference1;
 import de.cesr.parma.core.PmParameterManager;
 
 /**
  * @author Sascha Holzhauer
- * 
- *         TODO integrate in AllDecisionTests
- * 
  */
 public class LHabitDeciderTest {
 
@@ -58,7 +58,7 @@ public class LHabitDeciderTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		TestUtils.initTestModel();
+		LTestUtils.initTestModel();
 
 		agent = new LTestAgent("TestAgent");
 
@@ -87,12 +87,21 @@ LTestPreference1.class,
 	 */
 	@Test
 	public void testGetSelectedBo() {
+		// The default mode selector is LDefaultDecisionModeSelector
+		// which supports habit.
+		LEventbus.getInstance().subscribe(agent, LAgentPreprocessEvent.class);
 		LEventbus.getInstance().subscribe(agent, LAgentDecideEvent.class);
+		LEventbus.getInstance().subscribe(agent, LAgentPostprocessEvent.class);
 
 		// deliberative decision making for X steps:
 		for (int i = 0; i < (Integer) PmParameterManager
 				.getParameter(LDecisionMakingPa.HABIT_TRESHOLD); i++) {
+			LEventbus.getInstance().publish(new LModelStepEvent());
+			LEventbus.getInstance().publish(new LAgentPreprocessEvent(dConfig));
 			LEventbus.getInstance().publish(new LAgentDecideEvent(dConfig));
+			LEventbus.getInstance()
+					.publish(new LAgentPostprocessEvent(dConfig));
+
 			assertEquals(i + 1, agent.getLaraComp().getGeneralMemory()
 					.getSize());
 			assertEquals(LDeliberativeDecider.class, agent.getLaraComp()
@@ -100,8 +109,10 @@ LTestPreference1.class,
 		}
 
 		// X + 1 should be habit:
-		LEventbus.getInstance().publish(
-new LAgentDecideEvent(dConfig));
+		LEventbus.getInstance().publish(new LModelStepEvent());
+		LEventbus.getInstance().publish(new LAgentPreprocessEvent(dConfig));
+		LEventbus.getInstance().publish(new LAgentDecideEvent(dConfig));
+		LEventbus.getInstance().publish(new LAgentPostprocessEvent(dConfig));
 		assertEquals(
 				(Integer) PmParameterManager
 						.getParameter(LDecisionMakingPa.HABIT_TRESHOLD) + 1,
@@ -109,7 +120,7 @@ new LAgentDecideEvent(dConfig));
 		assertEquals(LHabitDecider.class,
 				agent.getLaraComp().getDecisionData(dConfig).getDecider()
 						.getClass());
-		assertEquals(one, agent.getLaraComp().getDecisionData(dConfig)
-				.getDecider().getSelectedBo());
+		assertEquals(one.getKey(), agent.getLaraComp().getDecisionData(dConfig)
+				.getDecider().getSelectedBo().getKey());
 	}
 }

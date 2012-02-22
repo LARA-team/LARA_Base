@@ -30,7 +30,7 @@ import de.cesr.lara.components.environment.LaraEnvironment;
 import de.cesr.lara.components.environment.LaraSuperEnvironment;
 import de.cesr.lara.components.environment.impl.LEnvironment;
 import de.cesr.lara.components.environment.impl.LEnvironmentalProperty;
-import de.cesr.lara.testing.TestUtils;
+import de.cesr.lara.testing.LTestUtils;
 
 /**
  * @author Sascha Holzhauer
@@ -46,7 +46,7 @@ public class TestSuperEnvironment {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		TestUtils.initTestModel();
+		LTestUtils.initTestModel();
 
 		subEnv = new LEnvironment();
 		subEnv.addProperty(new LEnvironmentalProperty<Object>("Prop1",

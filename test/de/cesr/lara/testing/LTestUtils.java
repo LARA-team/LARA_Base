@@ -36,15 +36,14 @@ import de.cesr.lara.components.model.LaraModel;
 import de.cesr.lara.components.model.impl.LAbstractModel;
 import de.cesr.lara.components.model.impl.LAbstractStandaloneSynchronisedModel;
 import de.cesr.lara.components.model.impl.LModel;
-import de.cesr.lara.components.util.LaraRandom;
 import de.cesr.lara.components.util.impl.LPrefEntry;
-import de.cesr.lara.components.util.impl.LRandomService;
 
 
 /**
+ * @author Sascha Holzhauer
  * 
  */
-public class TestUtils {
+public class LTestUtils {
 
 	static public class LTestPreference1 implements LaraPreference {
 	};
@@ -143,17 +142,8 @@ public class TestUtils {
 	 * Inits a {@link LaraModel} as test model.
 	 */
 	public static void initTestModel() {
-		LModel.setNewModel(new LAbstractStandaloneSynchronisedModel() {
-
-			@Override
-			public LaraRandom getLRandom() {
-				return new LRandomService((int) System.currentTimeMillis());
-			}
-
-			@Override
-			public void onInternalEvent(LaraEvent event) {
-			}
-		});
-		((LAbstractModel) LModel.getModel()).init();
+		LaraModel model = new LAbstractStandaloneSynchronisedModel() {
+		};
+		((LAbstractModel) model).init();
 	}
 }

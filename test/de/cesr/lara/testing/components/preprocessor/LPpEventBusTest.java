@@ -46,9 +46,9 @@ import de.cesr.lara.components.preprocessor.event.LPpModeSelectorEvent;
 import de.cesr.lara.components.preprocessor.event.LPpPreferenceUpdaterEvent;
 import de.cesr.lara.components.preprocessor.impl.LAbstractPpComp;
 import de.cesr.lara.components.preprocessor.impl.LPreprocessorConfigurator;
-import de.cesr.lara.testing.TestUtils;
-import de.cesr.lara.testing.TestUtils.LTestAgent;
-import de.cesr.lara.testing.TestUtils.LTestBo;
+import de.cesr.lara.testing.LTestUtils;
+import de.cesr.lara.testing.LTestUtils.LTestAgent;
+import de.cesr.lara.testing.LTestUtils.LTestBo;
 
 /**
  * 
@@ -147,7 +147,7 @@ public class LPpEventBusTest {
 	public void setUp() throws Exception {
 		LEventbus.resetAll();
 
-		TestUtils.initTestModel();
+		LTestUtils.initTestModel();
 
 		// init two agents with different properties to trigger different PP behaviours
 		agent1 = new LTestAgent("Test-Agent01");

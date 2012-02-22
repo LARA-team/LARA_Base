@@ -56,7 +56,7 @@ public class LPreprocessorConfigurator<A extends LaraAgent<A, BO>, BO extends La
 	/**
 	 * 
 	 */
-	public final LaraDecisionModeSelector<A, BO> DEFAULT_DECISION_MODE_SELECTOR = new LDeliberativeDecisionModeSelector<A, BO>();
+	public final LaraDecisionModeSelector<A, BO> DEFAULT_DECISION_MODE_SELECTOR = new LDefaultDecisionModeSelector<A, BO>();
 	/**
 	 * 
 	 */

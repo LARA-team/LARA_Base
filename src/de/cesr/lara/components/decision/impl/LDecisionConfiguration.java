@@ -22,18 +22,18 @@ public class LDecisionConfiguration implements LaraDecisionConfiguration {
 	 */
 	protected Collection<Class<? extends LaraPreference>>	preferences	= null;
 
-	private String											id;
+	private final String											id;
 
 	/**
 	 * The default id string
 	 */
-	public final String										DEFAULT_ID	= "default";
+	public static int idCounter = 0;
 
 	/**
 	 * Assigns the default id String.
 	 */
 	public LDecisionConfiguration() {
-		this.id = DEFAULT_ID;
+		this.id = "DConfig" + idCounter++;
 	}
 
 	/**

@@ -28,8 +28,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import de.cesr.lara.components.agents.impl.LAbstractAgent;
-import de.cesr.lara.testing.TestUtils;
-import de.cesr.lara.testing.TestUtils.LTestBo;
+import de.cesr.lara.testing.LTestUtils;
+import de.cesr.lara.testing.LTestUtils.LTestBo;
 
 
 /**
@@ -37,18 +37,18 @@ import de.cesr.lara.testing.TestUtils.LTestBo;
  */
 public class LAbstractAgentTest {
 
-	LAbstractAgent<TestUtils.LTestAgent, LTestBo> agent1;
-	LAbstractAgent<TestUtils.LTestAgent, LTestBo> agent2;
-	LAbstractAgent<TestUtils.LTestAgent, LTestBo> agent3;
+	LAbstractAgent<LTestUtils.LTestAgent, LTestBo> agent1;
+	LAbstractAgent<LTestUtils.LTestAgent, LTestBo> agent2;
+	LAbstractAgent<LTestUtils.LTestAgent, LTestBo> agent3;
 
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@Before
 	public void setUp() throws Exception {
-		agent1 = new TestUtils.LTestAgent("Agent1");
-		agent2 = new TestUtils.LTestAgent("Agent2");
-		agent3 = new TestUtils.LTestAgent("Agent2");
+		agent1 = new LTestUtils.LTestAgent("Agent1");
+		agent2 = new LTestUtils.LTestAgent("Agent2");
+		agent3 = new LTestUtils.LTestAgent("Agent2");
 	}
 
 	/**

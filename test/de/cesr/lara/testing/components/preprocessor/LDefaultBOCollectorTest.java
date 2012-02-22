@@ -46,9 +46,9 @@ import de.cesr.lara.components.preprocessor.event.LPpBoCollectorEvent;
 import de.cesr.lara.components.preprocessor.event.LPpModeSelectorEvent;
 import de.cesr.lara.components.preprocessor.impl.LContributingBoCollector;
 import de.cesr.lara.components.util.impl.LCapacityManagers;
-import de.cesr.lara.testing.TestUtils;
-import de.cesr.lara.testing.TestUtils.LTestAgent;
-import de.cesr.lara.testing.TestUtils.LTestBo;
+import de.cesr.lara.testing.LTestUtils;
+import de.cesr.lara.testing.LTestUtils.LTestAgent;
+import de.cesr.lara.testing.LTestUtils.LTestBo;
 
 
 /**
@@ -87,7 +87,7 @@ public class LDefaultBOCollectorTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		TestUtils.initTestModel();
+		LTestUtils.initTestModel();
 
 		Class<? extends LaraPreference> goal1 = new LaraPreference() {
 		}.getClass();
