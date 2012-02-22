@@ -38,8 +38,8 @@ import de.cesr.lara.components.preprocessor.LaraPreprocessorComp;
 import de.cesr.lara.components.preprocessor.LaraPreprocessorConfigurator;
 import de.cesr.lara.components.preprocessor.event.LaraPpEvent;
 import de.cesr.lara.components.preprocessor.impl.LPreprocessorConfigurator;
-import de.cesr.lara.testing.TestUtils.LTestAgent;
-import de.cesr.lara.testing.TestUtils.LTestBo;
+import de.cesr.lara.testing.LTestUtils.LTestAgent;
+import de.cesr.lara.testing.LTestUtils.LTestBo;
 
 
 /**

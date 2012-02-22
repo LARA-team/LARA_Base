@@ -38,18 +38,6 @@ public class LEnvironmentalIntProperty extends
 	/**
 	 * @param key
 	 * @param value
-	 * @param timestamp
-	 * @param env
-	 */
-	public LEnvironmentalIntProperty(String key, int value, int timestamp,
-			LaraEnvironment env) {
-		super(key, env, timestamp);
-		this.intValue = value;
-	}
-
-	/**
-	 * @param key
-	 * @param value
 	 * @param env
 	 */
 	public LEnvironmentalIntProperty(String key, int value, LaraEnvironment env) {

@@ -114,6 +114,31 @@ public interface LaraOverwriteStorage<PropertyType extends LaraProperty<Property
 	 */
 	public PropertyType fetch(String key) throws LRetrieveException;
 
+	/**
+	 * Generic method that returns the most recently stored property that is of
+	 * the specified type and identified with {@code key}.
+	 * 
+	 * @param propertyType
+	 * @param key
+	 *            identifier for the property to be retrieved.
+	 * @return the most recently stored property that is of the specified type
+	 *         and identified with {@code key}.
+	 */
+	public <RequestPropertyType extends PropertyType> RequestPropertyType fetch(
+			Class<RequestPropertyType> propertyType, String key)
+			throws LRetrieveException;
+
+	/**
+	 * Generic method that returns a collection of all properties found.
+	 * 
+	 * @param propertyType
+	 *            identifier for the properties to be retrieved.
+	 * @return the properties of the specified type that were stored in
+	 *         {@code step} and identified with {@code key}.
+	 */
+	public <RequestPropertyType extends PropertyType> Collection<RequestPropertyType> fetchAll(
+			Class<RequestPropertyType> propertyType) throws LRetrieveException;
+
 	/*
 	 * UTIL
 	 */
@@ -128,8 +153,38 @@ public interface LaraOverwriteStorage<PropertyType extends LaraProperty<Property
 	public boolean contains(String key);
 
 	/**
-	 * Returns a set of Strings that represent the keys of properties stored in the storage such that any property in
-	 * the storage is represented.
+	 * Returns <code>true</code>, if, and only if, this storage contains the
+	 * given property.
+	 * 
+	 * @param property
+	 * @return <code>true</code>, if, and only if, this storage contains the
+	 *         given property.
+	 * 
+	 */
+	public boolean contains(PropertyType property);
+
+	/**
+	 * Checks whether the memory contains the given {@link LaraProperty} with
+	 * the given key.
+	 * 
+	 * @param key
+	 * @return true if such a property is contained
+	 */
+	public boolean contains(PropertyType property, String key);
+
+	/**
+	 * Checks whether the storage contains a property of the given type with the
+	 * given key.
+	 * 
+	 * @param key
+	 * @return true if such a property is contained
+	 */
+	public boolean contains(Class<?> propertyType,
+			String key);
+
+	/**
+	 * Returns a set of Strings that represent the keys of properties stored in
+	 * the storage such that any property in the storage is represented.
 	 * 
 	 * @return set of keys that represent a property stored in the storage
 	 */

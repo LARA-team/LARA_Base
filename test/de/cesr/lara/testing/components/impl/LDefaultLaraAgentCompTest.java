@@ -28,7 +28,7 @@ import org.junit.Test;
 
 import de.cesr.lara.components.environment.LaraEnvironment;
 import de.cesr.lara.components.environment.impl.LEnvironment;
-import de.cesr.lara.testing.TestUtils.LTestAgent;
+import de.cesr.lara.testing.LTestUtils.LTestAgent;
 
 
 /**

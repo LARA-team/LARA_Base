@@ -50,6 +50,7 @@ import de.cesr.lara.components.eventbus.events.LAgentPreprocessEvent;
 import de.cesr.lara.components.eventbus.events.LaraEvent;
 import de.cesr.lara.components.eventbus.impl.LEventbus;
 import de.cesr.lara.components.postprocessor.LaraPostprocessorComp;
+import de.cesr.lara.components.postprocessor.impl.LDefaultPostProcessorComp;
 import de.cesr.lara.components.preprocessor.LaraBOPreselector;
 import de.cesr.lara.components.preprocessor.LaraPreprocessor;
 import de.cesr.lara.components.preprocessor.impl.LPreprocessorConfigurator;
@@ -196,6 +197,8 @@ public class LDefaultAgentComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 		decisionData = new HashMap<LaraDecisionConfiguration, LaraDecisionData<A, BO>>();
 		deliberativeChoiceCompents = new HashMap<LaraDecisionConfiguration, LaraDeliberativeChoiceComponent>();
 
+		this.postProcessorComp = new LDefaultPostProcessorComp<A, BO>();
+
 		eventBus.subscribe(this, LAgentPerceptionEvent.class);
 		eventBus.subscribe(this, LAgentPreprocessEvent.class);
 		eventBus.subscribe(this, LAgentDecideEvent.class);
@@ -211,7 +214,6 @@ public class LDefaultAgentComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 		LaraDecider<BO> decider = this.getDecisionData(decisionConfig)
 				.getDecider();
 
-		logger.info(this.agent + "> decide() (" + decider + ")");
 		if (Log4jLogger.getLogger(
 				agent.getAgentId() + "." + LDefaultAgentComp.class.getName())
 				.isEnabledFor(LAgentLevel.AGENT)) {
@@ -407,8 +409,9 @@ LaraPreprocessor<A, BO> preprocessor) {
 			decide(((LAgentDecideEvent) event).getDecisionConfiguration());
 
 		} else if (event instanceof LAgentPostprocessEvent) {
-			//TODO implement / fix
-			//postProcessorComp.postProcess(agent, ((LAgentPostprocessEvent) event).getDecisionConfiguration());
+			postProcessorComp.postProcess(agent,
+ ((LAgentPostprocessEvent) event)
+							.getDecisionConfiguration());
 
 		} else if (event instanceof LAgentExecutionEvent) {
 			removeDecisionData(((LAgentExecutionEvent) event)

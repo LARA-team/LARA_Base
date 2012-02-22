@@ -31,17 +31,19 @@ import de.cesr.lara.components.container.LaraCapacityManageableContainer;
 import de.cesr.lara.components.container.LaraContainer;
 import de.cesr.lara.components.container.storage.LaraStorage;
 import de.cesr.lara.components.container.storage.impl.LDefaultLimitedCapacityStorage;
+import de.cesr.lara.components.eventbus.events.LModelStepEvent;
+import de.cesr.lara.components.eventbus.impl.LEventbus;
 import de.cesr.lara.components.util.impl.LCapacityManagers;
-import de.cesr.lara.testing.components.container.LContainerTestUtils.MyProperty;
+import de.cesr.lara.testing.components.container.LContainerTestUtils.LTestProperty;
 
 
 public class LDefaultLimitedCapacityStorageTest {
 
-	LaraStorage<MyProperty>	storage;
+	LaraStorage<LTestProperty>	storage;
 
 	@Before
 	public void setUp() throws Exception {
-		storage = new LDefaultLimitedCapacityStorage<MyProperty>(LCapacityManagers.<MyProperty> makeFIFO(), 7);
+		storage = new LDefaultLimitedCapacityStorage<LTestProperty>(LCapacityManagers.<LTestProperty> makeFIFO(), 7);
 	}
 
 	/**
@@ -49,15 +51,17 @@ public class LDefaultLimitedCapacityStorageTest {
 	 */
 	@Test
 	public void testCapacity() {
-		storeSomeEntries(6, 1);
+		LContainerTestUtils.storeSomeEntries(storage, 6);
 
 		assertTrue(storage.getCapacity() == 7);
 		assertTrue(storage.getSize() == 6);
 
-		storage.store(new MyProperty("key07", "value07", 2));
+		LEventbus.getInstance().publish(new LModelStepEvent());
+
+		storage.store(new LTestProperty("key07", "value07"));
 		assertTrue(storage.getSize() == 7);
 
-		storage.store(new MyProperty("key08", "value08", 2));
+		storage.store(new LTestProperty("key08", "value08"));
 		assertTrue(storage.getSize() == 7);
 
 
@@ -67,14 +71,14 @@ public class LDefaultLimitedCapacityStorageTest {
 			fail("This should not have raised an exception.");
 		}
 
-		storeSomeEntries(6, 2);
+		LContainerTestUtils.storeSomeEntries(storage, 6);
 		assertTrue(storage.getSize() == 7);
 
 		@SuppressWarnings("unchecked")
-		LaraCapacityManageableContainer<MyProperty> cmStorage = (LaraCapacityManageableContainer<MyProperty>) storage;
+		LaraCapacityManageableContainer<LTestProperty> cmStorage = (LaraCapacityManageableContainer<LTestProperty>) storage;
 		cmStorage.setCapacity(LaraContainer.UNLIMITED_CAPACITY);
 
-		storeSomeEntries(100, 2);
+		LContainerTestUtils.storeSomeEntries(storage, 100);
 		assertTrue(storage.getSize() == 107);
 		assertTrue(storage.getCapacity() == LaraContainer.UNLIMITED_CAPACITY);
 
@@ -88,7 +92,7 @@ public class LDefaultLimitedCapacityStorageTest {
 		assertTrue(storage.getCapacity() == 0);
 
 		cmStorage.setCapacity(LaraContainer.UNLIMITED_CAPACITY);
-		storeSomeEntries(100, 2);
+		LContainerTestUtils.storeSomeEntries(storage, 100);
 		assertTrue(storage.getSize() == 100);
 
 	}
@@ -99,16 +103,21 @@ public class LDefaultLimitedCapacityStorageTest {
 	@Test
 	public void testNINO() {
 		@SuppressWarnings("unchecked")
-		LaraCapacityManageableContainer<MyProperty> cmStorage = (LaraCapacityManageableContainer<MyProperty>) storage;
-		cmStorage.setCapacityManager(LCapacityManagers.<MyProperty> makeNINO());
+		LaraCapacityManageableContainer<LTestProperty> cmStorage = (LaraCapacityManageableContainer<LTestProperty>) storage;
+		cmStorage.setCapacityManager(LCapacityManagers.<LTestProperty> makeNINO());
 		cmStorage.setCapacity(2);
 
-		MyProperty property01 = new MyProperty("key01", "value01", 0);
-		MyProperty property02 = new MyProperty("key02", "value02", 1);
-		MyProperty property03 = new MyProperty("key03", "value03", 2);
-
+		LTestProperty property01 = new LTestProperty("key01", "value01");
 		storage.store(property01);
+
+		LEventbus.getInstance().publish(new LModelStepEvent());
+
+		LTestProperty property02 = new LTestProperty("key02", "value02");
 		storage.store(property02);
+
+		LEventbus.getInstance().publish(new LModelStepEvent());
+
+		LTestProperty property03 = new LTestProperty("key03", "value03");
 		storage.store(property03);
 
 		try {
@@ -138,16 +147,21 @@ public class LDefaultLimitedCapacityStorageTest {
 	@Test
 	public void testFIFO() {
 		@SuppressWarnings("unchecked")
-		LaraCapacityManageableContainer<MyProperty> cmStorage = (LaraCapacityManageableContainer<MyProperty>) storage;
-		cmStorage.setCapacityManager(LCapacityManagers.<MyProperty> makeFIFO());
+		LaraCapacityManageableContainer<LTestProperty> cmStorage = (LaraCapacityManageableContainer<LTestProperty>) storage;
+		cmStorage.setCapacityManager(LCapacityManagers.<LTestProperty> makeFIFO());
 		cmStorage.setCapacity(2);
 
-		MyProperty property01 = new MyProperty("key01", "value01", 0);
-		MyProperty property02 = new MyProperty("key02", "value02", 1);
-		MyProperty property03 = new MyProperty("key03", "value03", 2);
-
+		LTestProperty property01 = new LTestProperty("key01", "value01");
 		storage.store(property01);
+
+		LEventbus.getInstance().publish(new LModelStepEvent());
+
+		LTestProperty property02 = new LTestProperty("key02", "value02");
 		storage.store(property02);
+
+		LEventbus.getInstance().publish(new LModelStepEvent());
+
+		LTestProperty property03 = new LTestProperty("key03", "value03");
 		storage.store(property03);
 
 		try {
@@ -177,16 +191,21 @@ public class LDefaultLimitedCapacityStorageTest {
 	@Test
 	public void testFILO() {
 		@SuppressWarnings("unchecked")
-		LaraCapacityManageableContainer<MyProperty> cmStorage = (LaraCapacityManageableContainer<MyProperty>) storage;
-		cmStorage.setCapacityManager(LCapacityManagers.<MyProperty> makeFILO());
+		LaraCapacityManageableContainer<LTestProperty> cmStorage = (LaraCapacityManageableContainer<LTestProperty>) storage;
+		cmStorage.setCapacityManager(LCapacityManagers.<LTestProperty> makeFILO());
 		cmStorage.setCapacity(2);
 
-		MyProperty property01 = new MyProperty("key01", "value01", 0);
-		MyProperty property02 = new MyProperty("key02", "value02", 1);
-		MyProperty property03 = new MyProperty("key03", "value03", 2);
-
+		LTestProperty property01 = new LTestProperty("key01", "value01");
 		storage.store(property01);
+
+		LEventbus.getInstance().publish(new LModelStepEvent());
+
+		LTestProperty property02 = new LTestProperty("key02", "value02");
 		storage.store(property02);
+
+		LEventbus.getInstance().publish(new LModelStepEvent());
+
+		LTestProperty property03 = new LTestProperty("key03", "value03");
 		storage.store(property03);
 
 		try {
@@ -214,13 +233,4 @@ public class LDefaultLimitedCapacityStorageTest {
 	public void tearDown() throws Exception {
 		storage = null;
 	}
-
-	private static int	count	= 0;
-
-	private void storeSomeEntries(int num, int step) {
-		for (int i = 0; i < num; i++) {
-			storage.store(new MyProperty("key" + count, "value" + count++, step));
-		}
-	}
-
 }

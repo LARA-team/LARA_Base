@@ -35,6 +35,9 @@ public class LDefaultPostProcessorComp<A extends LaraAgent<A, BO>, BO extends La
 
 	@Override
 	public void postProcess(A agent, LaraDecisionConfiguration dConfig) {
+
+		// TODO check memories capacity (needs to be truly larger than habit
+		// threshold!)
 		agent.getLaraComp()
 				.getGeneralMemory()
 				.memorize(
@@ -43,6 +46,6 @@ public class LDefaultPostProcessorComp<A extends LaraAgent<A, BO>, BO extends La
 								.getDecisionData(dConfig).getDecider()
 								.getSelectedBo()),
 						(Integer) PmParameterManager
-								.getParameter(LDecisionMakingPa.HABIT_TRESHOLD));
+								.getParameter(LDecisionMakingPa.HABIT_TRESHOLD) + 1);
 	}
 }

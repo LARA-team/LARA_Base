@@ -25,9 +25,11 @@ import de.cesr.lara.components.model.impl.LModel;
  * Common abstract base class for all properties used in environment, memory
  * etc. These properties are meant to be immutable. Therefore, subclasses of
  * <code>LaraProperty</code> will usually need to provide copying/cloning
- * facilities either by implementing a copy constructor or an equivalent method
- * and setting the time stamp of the copy appropriately (normally to the current
- * step).
+ * facilities either by implementing a copy constructor or an equivalent method.
+ * 
+ * The time-stamp may not be manipulated to ensure correct handling of
+ * properties in memory. Consider wrapping properties in order to handle
+ * 'ancient' properties.
  * 
  * @author Sascha Holzhauer, Michael Elbers
  * @param <ValueType>
@@ -35,27 +37,18 @@ import de.cesr.lara.components.model.impl.LModel;
  */
 public abstract class LaraProperty<PropType extends LaraProperty<?, ValueType>, ValueType> {
 
-	private String key;
-	private int timestamp;
+	private final String key;
+	private final int timestamp;
 
 	/**
 	 * @param key
 	 *            the property's key
 	 */
 	public LaraProperty(String key) {
-		this(key, LModel.getModel().getCurrentStep());
+		this.key = key;
+		this.timestamp = LModel.getModel().getCurrentStep();
 	}
 
-	/**
-	 * @param key
-	 *            the property's key
-	 * @param timestamp
-	 *            the time step the property was created at
-	 */
-	public LaraProperty(String key, int timestamp) {
-		this.key = key;
-		this.timestamp = timestamp;
-	}
 
 	/**
 	 * Two properties are equal if their names and values and timestamps are

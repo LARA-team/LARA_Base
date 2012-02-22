@@ -33,22 +33,35 @@ public class LSelectedBoProperty<BO extends LaraBehaviouralOption<?, ?>>
 	protected BO bo;
 	protected LaraDecisionConfiguration dConfig;
 
+	/**
+	 * @param dConfig
+	 * @param bo
+	 */
 	public LSelectedBoProperty(LaraDecisionConfiguration dConfig, BO bo) {
-		super("SelectedBO");
+		super(dConfig.getId());
 		this.bo = bo;
 		this.dConfig = dConfig;
 	}
 
+	/**
+	 * @see de.cesr.lara.components.LaraProperty#getModifiedProperty(java.lang.Object)
+	 */
 	@Override
 	public LSelectedBoProperty<BO> getModifiedProperty(BO value) {
 		return new LSelectedBoProperty<BO>(this.dConfig, bo);
 	}
 
+	/**
+	 * @see de.cesr.lara.components.LaraProperty#getValue()
+	 */
 	@Override
 	public BO getValue() {
 		return this.bo;
 	}
 
+	/**
+	 * @return decision configuration of this selected BO property
+	 */
 	public LaraDecisionConfiguration getDConfig() {
 		return this.dConfig;
 	}

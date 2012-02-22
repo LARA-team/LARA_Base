@@ -31,7 +31,6 @@ import org.apache.commons.collections15.MultiMap;
 import org.apache.commons.collections15.multimap.MultiHashMap;
 import org.apache.log4j.Logger;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import de.cesr.lara.components.LaraProperty;
 import de.cesr.lara.components.container.exceptions.LContainerFullException;
 import de.cesr.lara.components.container.exceptions.LInvalidTimestampException;
@@ -331,7 +330,6 @@ public class LDefaultMemory<PropertyType extends LaraProperty<? extends Property
 			logger.error(ex + ex.getStackTrace().toString());
 			throw ex;
 		}
-
 	}
 
 	@Override
@@ -346,18 +344,54 @@ public class LDefaultMemory<PropertyType extends LaraProperty<? extends Property
 		return property;
 	}
 
+	/**
+	 * @see de.cesr.lara.components.container.memory.LaraMemory#recall(java.lang.Class,
+	 *      java.lang.String, int)
+	 */
+	@SuppressWarnings("unchecked")
+	// Checked by isInstance
 	@Override
-	public PropertyType recall(Class<PropertyType> propertyType, String key, int step) throws LRetrieveException {
+	public <RequestPropertyType extends PropertyType> RequestPropertyType recall(
+			Class<RequestPropertyType> propertyType,
+			String key, int step) throws LRetrieveException {
 		checkIfNewStep();
-		// TODO test and implement! (SH)
-		return null;
+		try {
+			PropertyType recalled = storage.fetch(propertyType, key, step);
+			if (propertyListeners
+						.containsKey(MemoryEvent.PROPERTY_RECALLED)) {
+					for (LaraMemoryListener listener : propertyListeners
+							.get(MemoryEvent.PROPERTY_RECALLED)) {
+						listener.memoryEventOccured(
+								MemoryEvent.PROPERTY_RECALLED, recalled);
+					}
+				}
+			return (RequestPropertyType) recalled;
+		} catch (LRetrieveException ex) {
+			logger.error(ex + ex.getStackTrace().toString());
+			throw ex;
+		}
 	}
 
+	/**
+	 * @see de.cesr.lara.components.container.memory.LaraMemory#recall(java.lang.Class,
+	 *      java.lang.String)
+	 */
+	@SuppressWarnings("unchecked")
+	// checked by isInstance
 	@Override
-	public PropertyType recall(Class<PropertyType> propertyType, String key) throws LRetrieveException {
+	public <RequestPropertyType extends PropertyType> RequestPropertyType recall(
+			Class<RequestPropertyType> propertyType,
+			String key) throws LRetrieveException {
 		checkIfNewStep();
-		// TODO test and implement! (SH)
-		return null;
+		PropertyType property = storage.fetch(propertyType, key);
+		if (propertyListeners.containsKey(MemoryEvent.PROPERTY_RECALLED)) {
+			for (LaraMemoryListener listener : propertyListeners
+					.get(MemoryEvent.PROPERTY_RECALLED)) {
+				listener.memoryEventOccured(MemoryEvent.PROPERTY_RECALLED,
+						property);
+			}
+		}
+		return (RequestPropertyType) property;
 	}
 
 	@Override
@@ -374,12 +408,49 @@ public class LDefaultMemory<PropertyType extends LaraProperty<? extends Property
 		return properties;
 	}
 
+	/**
+	 * @see de.cesr.lara.components.container.memory.LaraMemory#recallAll(java.lang.Class,
+	 *      java.lang.String)
+	 */
 	@Override
-	public Collection<PropertyType> recallAll(Class<PropertyType> propertyType, String key)
+	public <RequestPropertyType extends PropertyType> Collection<RequestPropertyType> recallAll(
+			Class<RequestPropertyType> propertyType) throws LRetrieveException {
+		checkIfNewStep();
+		Collection<RequestPropertyType> properties = storage
+				.fetchAll(propertyType);
+		if (propertyListeners.containsKey(MemoryEvent.PROPERTY_RECALLED)) {
+			for (LaraMemoryListener listener : propertyListeners
+					.get(MemoryEvent.PROPERTY_RECALLED)) {
+				for (PropertyType property : properties) {
+					listener.memoryEventOccured(MemoryEvent.PROPERTY_RECALLED,
+							property);
+				}
+			}
+		}
+		return properties;
+	}
+
+	/**
+	 * @see de.cesr.lara.components.container.memory.LaraMemory#recallAll(java.lang.Class,
+	 *      java.lang.String)
+	 */
+	@Override
+	public <RequestPropertyType extends PropertyType> Collection<RequestPropertyType> recallAll(
+			Class<RequestPropertyType> propertyType, String key)
 			throws LRetrieveException {
 		checkIfNewStep();
-		// TODO test and implement! (SH)
-		return null;
+		Collection<RequestPropertyType> properties = storage.fetchAll(
+				propertyType, key);
+		if (propertyListeners.containsKey(MemoryEvent.PROPERTY_RECALLED)) {
+			for (LaraMemoryListener listener : propertyListeners
+					.get(MemoryEvent.PROPERTY_RECALLED)) {
+				for (PropertyType property : properties) {
+					listener.memoryEventOccured(MemoryEvent.PROPERTY_RECALLED,
+							property);
+				}
+			}
+		}
+		return properties;
 	}
 
 	@Override
@@ -462,6 +533,42 @@ public class LDefaultMemory<PropertyType extends LaraProperty<? extends Property
 		return storage.contains(key);
 	}
 
+	/**
+	 * @see de.cesr.lara.components.container.memory.LaraMemory#contains(java.lang.String,
+	 *      int)
+	 */
+	@Override
+	public boolean contains(String key, int timestamp) {
+		return storage.contains(key, timestamp);
+	}
+
+	/**
+	 * @see de.cesr.lara.components.container.memory.LaraMemory#contains(de.cesr.lara.components.LaraProperty)
+	 */
+	@Override
+	public boolean contains(PropertyType property) {
+		return storage.contains(property);
+	}
+
+	/**
+	 * @see de.cesr.lara.components.container.memory.LaraMemory#contains(de.cesr.lara.components.LaraProperty,
+	 *      java.lang.String)
+	 */
+	@Override
+	public boolean contains(PropertyType property, String key) {
+		return storage.contains(property, key);
+	}
+
+	/**
+	 * @see de.cesr.lara.components.container.memory.LaraMemory#contains(java.lang.Class,
+	 *      java.lang.String)
+	 */
+	@Override
+	public boolean contains(Class<?> propertyType,
+			String key) {
+		return storage.contains(propertyType, key);
+	}
+
 	// observer Management:
 	/**
 	 * @see de.cesr.lara.components.container.memory.LaraMemory#addMemoryPropertyObserver(de.cesr.lara.components.container.memory.LaraMemoryListener.MemoryEvent,
@@ -515,34 +622,18 @@ public class LDefaultMemory<PropertyType extends LaraProperty<? extends Property
 		// property needs to be forgotten first, because it may not be overwritten due to different time stamps:
 		forgetAllEssential(propertyToRefresh.getKey());
 
-		// TODO check if LaraProperty can be parameterised with PropertyType to
-		// achieve type safe actions here (SH)
 		memorize(propertyToRefresh.getRefreshedProperty());
 
-		if (propertyListeners.containsKey(MemoryEvent.REFRESHED_PROPERTY_FORGOTTEN)) {
-			for (LaraMemoryListener listener : propertyListeners
-					.get(MemoryEvent.REFRESHED_PROPERTY_FORGOTTEN)) {
-				listener.memoryEventOccured(MemoryEvent.REFRESHED_PROPERTY_FORGOTTEN, propertyToRefresh);
-			}
-		}
-		if (propertyListeners.containsKey(MemoryEvent.REFRESHED_PROPERTY_MEMORIZED)) {
-			for (LaraMemoryListener listener : propertyListeners
-					.get(MemoryEvent.REFRESHED_PROPERTY_MEMORIZED)) {
-				listener.memoryEventOccured(MemoryEvent.REFRESHED_PROPERTY_MEMORIZED, propertyToRefresh);
-			}
-		}
+		informListenersRefresh(propertyToRefresh);
 		if (logger.isDebugEnabled()) {
 			logger.debug(getName() + ": Memorised property: " + propertyToRefresh);
 		}
 	}
 
+
 	/**
-	 * TODO optimise! (SH) TODO don't call memorise and forget since listeners are called three times, then (SH)
-	 * 
 	 * @see de.cesr.lara.components.container.memory.LaraMemory#refresh(java.lang.String) (SH)
 	 */
-	@SuppressWarnings("unchecked")
-	// memorise: LaraPropery.getRefreshedProperty needs to return a property of same type
 	@Override
 	public void refresh(String key) throws LRemoveException {
 		// in case a property was forgotten in mean time it may not be refreshed...:
@@ -554,6 +645,66 @@ public class LDefaultMemory<PropertyType extends LaraProperty<? extends Property
 		forgetEssential(propertyToRefresh);
 		memorize(propertyToRefresh.getRefreshedProperty());
 
+		informListenersRefresh(propertyToRefresh);
+		if (logger.isDebugEnabled()) {
+			logger.debug(getName() + ": Memorised property: "
+					+ propertyToRefresh);
+		}
+	}
+
+	@Override
+	public void refresh(String key, int step) throws LRemoveException {
+		// in case a property was forgotten in mean time it may not be
+		// refreshed...:
+		checkIfNewStep();
+		PropertyType propertyToRefresh = storage.fetch(key, step);
+
+		forgetEssential(propertyToRefresh);
+		memorize(propertyToRefresh.getRefreshedProperty());
+
+		informListenersRefresh(propertyToRefresh);
+		if (logger.isDebugEnabled()) {
+			logger.debug(getName() + ": Memorised property: "
+					+ propertyToRefresh);
+		}
+	}
+
+	@Override
+	public void refresh(String key, int step, int retentionTime)
+			throws LInvalidTimestampException, LRemoveException {
+		// in case a property was forgotten in mean time it may not be
+		// refreshed...:
+		checkIfNewStep();
+		PropertyType propertyToRefresh = storage.fetch(key, step);
+
+		forgetEssential(propertyToRefresh);
+		memorize(propertyToRefresh.getRefreshedProperty(), retentionTime);
+
+		informListenersRefresh(propertyToRefresh);
+		if (logger.isDebugEnabled()) {
+			logger.debug(getName() + ": Memorised property: "
+					+ propertyToRefresh);
+		}
+	}
+
+	@Override
+	public void refresh(PropertyType propertyToRefresh, int retentionTime)
+			throws LInvalidTimestampException, LRemoveException {
+		// in case a property was forgotten in mean time it may not be
+		// refreshed...:
+		checkIfNewStep();
+
+		forgetEssential(propertyToRefresh);
+		memorize(propertyToRefresh.getRefreshedProperty(), retentionTime);
+
+		informListenersRefresh(propertyToRefresh);
+		if (logger.isDebugEnabled()) {
+			logger.debug(getName() + ": Memorised property: "
+					+ propertyToRefresh);
+		}
+	}
+
+	private void informListenersRefresh(PropertyType propertyToRefresh) {
 		if (propertyListeners.containsKey(MemoryEvent.REFRESHED_PROPERTY_FORGOTTEN)) {
 			for (LaraMemoryListener listener : propertyListeners
 					.get(MemoryEvent.REFRESHED_PROPERTY_FORGOTTEN)) {
@@ -566,14 +717,5 @@ public class LDefaultMemory<PropertyType extends LaraProperty<? extends Property
 				listener.memoryEventOccured(MemoryEvent.REFRESHED_PROPERTY_MEMORIZED, propertyToRefresh);
 			}
 		}
-		if (logger.isDebugEnabled()) {
-			logger.debug(getName() + ": Memorised property: " + propertyToRefresh);
-		}
-	}
-
-	@Override
-	public void refresh(String key, int step) throws LRemoveException {
-		// TODO Auto-generated method stub
-		throw new NotImplementedException();
 	}
 }

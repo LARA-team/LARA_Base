@@ -43,11 +43,11 @@ import de.cesr.lara.components.preprocessor.impl.LAbstractPpComp;
 import de.cesr.lara.components.preprocessor.impl.LPreprocessorConfigurator;
 import de.cesr.lara.components.util.impl.LPrefEntry;
 import de.cesr.lara.components.util.impl.LSet;
-import de.cesr.lara.testing.TestUtils;
-import de.cesr.lara.testing.TestUtils.LTestAgent;
-import de.cesr.lara.testing.TestUtils.LTestBo;
-import de.cesr.lara.testing.TestUtils.LTestDecisionConfig;
-import de.cesr.lara.testing.TestUtils.LTestPreference1;
+import de.cesr.lara.testing.LTestUtils;
+import de.cesr.lara.testing.LTestUtils.LTestAgent;
+import de.cesr.lara.testing.LTestUtils.LTestBo;
+import de.cesr.lara.testing.LTestUtils.LTestDecisionConfig;
+import de.cesr.lara.testing.LTestUtils.LTestPreference1;
 
 /**
  * @author Sascha Holzhauer
@@ -138,7 +138,7 @@ public class LTreeDeciderTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		TestUtils.initTestModel();
+		LTestUtils.initTestModel();
 		agent = new LTestAgent("TestAgent");
 
 		one = new LTestBo("Bo1", agent, new LPrefEntry(LTestPreference1.class,

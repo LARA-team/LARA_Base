@@ -20,6 +20,8 @@
 package de.cesr.lara.testing.components.container;
 
 import de.cesr.lara.components.LaraProperty;
+import de.cesr.lara.components.container.memory.LaraMemory;
+import de.cesr.lara.components.container.storage.LaraStorage;
 
 /**
  * @author Sascha Holzhauer
@@ -27,23 +29,70 @@ import de.cesr.lara.components.LaraProperty;
  */
 public class LContainerTestUtils {
 
-	public static class MyProperty extends LaraProperty<MyProperty, String> {
+	/**
+	 * counter for labeling properties
+	 */
+	private static int count = 0;
+
+	public static class LTestProperty extends LaraProperty<LTestProperty, String> {
 
 		String value;
-
-		public MyProperty(String key, String value, int timestamp) {
-			super(key, timestamp);
+		
+		public LTestProperty(String key, String value) {
+			super(key);
 			this.value = value;
 		}
 
 		@Override
-		public MyProperty getModifiedProperty(String value) {
-			return new MyProperty(getKey(), value, getTimestamp());
+		public LTestProperty getModifiedProperty(String value) {
+			return new LTestProperty(getKey(), value);
 		}
 
 		@Override
 		public String getValue() {
 			return value;
+		}
+	}
+
+	public static class LSubTestProperty extends LTestProperty {
+
+		public LSubTestProperty(String key, String value) {
+			super(key, value);
+		}
+	}
+
+	public static void storeSixStandardEntries(
+			LaraMemory<? super LTestProperty> storage) {
+		storage.memorize(new LTestProperty("key01", "value01"));
+		storage.memorize(new LTestProperty("key02", "value02"));
+		storage.memorize(new LTestProperty("key03", "value03"));
+		storage.memorize(new LTestProperty("key04", "value04"));
+		storage.memorize(new LTestProperty("key05", "value05"));
+		storage.memorize(new LTestProperty("key06", "value06"));
+	}
+
+	public static void storeSixStandardEntries(
+			LaraStorage<? super LTestProperty> storage) {
+		storage.store(new LTestProperty("key01", "value01"));
+		storage.store(new LTestProperty("key02", "value02"));
+		storage.store(new LTestProperty("key03", "value03"));
+		storage.store(new LTestProperty("key04", "value04"));
+		storage.store(new LTestProperty("key05", "value05"));
+		storage.store(new LTestProperty("key06", "value06"));
+	}
+
+	public static void storeSomeEntries(
+			LaraMemory<? super LTestProperty> memory,
+			int num) {
+		for (int i = 0; i < num; i++) {
+			memory.memorize(new LTestProperty("key" + count, "value" + count++));
+		}
+	}
+
+	public static void storeSomeEntries(
+			LaraStorage<? super LTestProperty> storage, int num) {
+		for (int i = 0; i < num; i++) {
+			storage.store(new LTestProperty("key" + count, "value" + count++));
 		}
 	}
 }

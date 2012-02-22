@@ -155,6 +155,14 @@ public final class LaraDecisionData<A extends LaraAgent<? super A, BO>, BO exten
 	 */
 	public void setDeciderFactory(LaraDeciderFactory<A, BO> deciderFactory) {
 		this.deciderFactory = deciderFactory;
+		this.decider = null;
+
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			logger.debug(this.dConfiguration + "> Set deciderFactory: "
+					+ deciderFactory);
+		}
+		// LOGGING ->
 	}
 
 	/**

@@ -1,8 +1,21 @@
 /**
+ * This file is part of
+ * 
  * LARA - Lightweight Architecture for boundedly Rational citizen Agents
- *
- * Center for Environmental Systems Research, Kassel
- * Created by Sascha Holzhauer on 16.08.2010
+ * 
+ * Copyright (C) 2012 Center for Environmental Systems Research, Kassel, Germany
+ * 
+ * LARA is free software: You can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * LARA is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package de.cesr.lara.components.decision.impl;
 
@@ -13,17 +26,21 @@ import de.cesr.lara.components.decision.LaraDecider;
 import de.cesr.lara.components.decision.LaraDeciderFactory;
 import de.cesr.lara.components.decision.LaraDecisionConfiguration;
 
-
 /**
- * This decider factory creates a decider that just fetches the aagent's preceding behavioural actions and chooses it as
- * new action. TODO when the model selector is able to define/alter the course of decision making, this steps of the
- * factory and decider might be omitted. However, it could be useful to evaluate not only the last but the k last
- * actions...
+ * 
+ * @date 16.08.2010
+ * 
+ *       This decider factory creates a decider that just fetches the aagent's
+ *       preceding behavioural actions and chooses it as new action. TODO when
+ *       the model selector is able to define/alter the course of decision
+ *       making, this steps of the factory and decider might be omitted.
+ *       However, it could be useful to evaluate not only the last but the k
+ *       last actions...
  * 
  * @param <A>
- *        type of agent
+ *            type of agent
  * @param <BO>
- *        type of behavioural option
+ *            type of behavioural option
  */
 public class LHabitDeciderFactory<A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>>
 		implements LaraDeciderFactory<A, BO> {

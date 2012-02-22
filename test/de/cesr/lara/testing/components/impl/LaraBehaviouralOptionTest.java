@@ -33,9 +33,9 @@ import org.junit.Test;
 import de.cesr.lara.components.LaraPreference;
 import de.cesr.lara.components.environment.LaraEnvironment;
 import de.cesr.lara.components.environment.impl.LEnvironment;
-import de.cesr.lara.testing.TestUtils;
-import de.cesr.lara.testing.TestUtils.LTestAgent;
-import de.cesr.lara.testing.TestUtils.LTestBo;
+import de.cesr.lara.testing.LTestUtils;
+import de.cesr.lara.testing.LTestUtils.LTestAgent;
+import de.cesr.lara.testing.LTestUtils.LTestBo;
 
 /**
  * 
@@ -61,10 +61,10 @@ public class LaraBehaviouralOptionTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		TestUtils.initTestModel();
+		LTestUtils.initTestModel();
 		env = new LEnvironment();
-		agent1 = new TestUtils.LTestAgent("TestAgent1");
-		agent2 = new TestUtils.LTestAgent("TestAgent2");
+		agent1 = new LTestUtils.LTestAgent("TestAgent1");
+		agent2 = new LTestUtils.LTestAgent("TestAgent2");
 		utilities1 = new HashMap<Class<? extends LaraPreference>, Double>();
 		goal1 = TestGoal.class;
 		utilities1.put(goal1, new Double(1.0));

@@ -38,7 +38,10 @@ import de.cesr.lara.components.container.exceptions.LRemoveException;
 import de.cesr.lara.components.container.exceptions.LRetrieveException;
 import de.cesr.lara.components.container.storage.LaraStorage;
 import de.cesr.lara.components.container.storage.impl.LDefaultStorage;
-import de.cesr.lara.testing.components.container.LContainerTestUtils.MyProperty;
+import de.cesr.lara.components.eventbus.events.LModelStepEvent;
+import de.cesr.lara.components.eventbus.impl.LEventbus;
+import de.cesr.lara.testing.LTestUtils;
+import de.cesr.lara.testing.components.container.LContainerTestUtils.LTestProperty;
 
 
 /**
@@ -49,14 +52,16 @@ import de.cesr.lara.testing.components.container.LContainerTestUtils.MyProperty;
  */
 public class LDefaultStorageTest {
 
-	LaraStorage<MyProperty>	storage;
+	LaraStorage<LTestProperty>	storage;
 
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@Before
 	public void setUp() throws Exception {
-		storage = new LDefaultStorage<MyProperty>();
+		LTestUtils.initTestModel();
+		LEventbus.getInstance().publish(new LModelStepEvent());
+		storage = new LDefaultStorage<LTestProperty>();
 	}
 
 	/**
@@ -86,40 +91,112 @@ public class LDefaultStorageTest {
 		assertTrue(storage.getSize() == 0);
 		assertTrue(storage.isEmpty());
 
-		try {
-			storage.store(new MyProperty("IAmInvalid", "", -1));
-			fail("This should have raised an exception.");
-		} catch (LInvalidTimestampException litse) {
+		LTestProperty invalid = new LTestProperty("IBecomeInvalid", "");
 
-		}
 		assertTrue(storage.isEmpty());
 
-		storeSixStandardEntries(1);
+		LContainerTestUtils.storeSixStandardEntries(storage);
 		// overwrite entries
-		storeSixStandardEntries(1);
+		LContainerTestUtils.storeSixStandardEntries(storage);
 
 		assertFalse(storage.isEmpty());
 		assertTrue(storage.getSize() == 6);
 
 		// overwrite one entry with new value
-		storage.store(new MyProperty("key01", "Haha", 1));
+		storage.store(new LTestProperty("key01", "Haha"));
 		assertTrue(storage.getSize() == 6);
 		assertTrue(storage.fetch("key01", 1).value == "Haha");
 
-		storeSixStandardEntries(2);
+		LEventbus.getInstance().publish(new LModelStepEvent());
+
+		try {
+			storage.store(invalid);
+			fail("This should have raised an exception.");
+		} catch (LInvalidTimestampException litse) {
+		}
+
+		LContainerTestUtils.storeSixStandardEntries(storage);
 
 		assertFalse(storage.isFull()); // should always return false (at least for LDefaultStorage), so doesn't
 										// really matter where it's called
 
 		assertTrue(storage.getSize() == 12);
-		MyProperty property1 = storage.fetch("key06", 1);
-		MyProperty property2 = storage.fetch("key06", 2);
+		LTestProperty property1 = storage.fetch("key06", 1);
+		LTestProperty property2 = storage.fetch("key06", 2);
 		assertNotSame(property1, property2);
 		// assertFalse(property1.equals(property2)); // This actually a test for the property; see comment in
 		// LaraProperty.equals (ME)
 
-		MyProperty propertyX = storage.fetch("key06");
+		LTestProperty propertyX = storage.fetch("key06");
 		assertSame(property2, propertyX);
+	}
+
+	@Test
+	public void testContains() {
+		LContainerTestUtils.storeSixStandardEntries(storage);
+		assertTrue(storage.contains("key01"));
+		assertTrue(storage.contains("key02"));
+		assertTrue(storage.contains("key03"));
+		assertTrue(storage.contains("key04"));
+		assertTrue(storage.contains("key05"));
+		assertTrue(storage.contains("key06"));
+
+		assertTrue(storage.contains("key01", 1));
+		assertTrue(storage.contains("key02", 1));
+		assertTrue(storage.contains("key03", 1));
+		assertTrue(storage.contains("key04", 1));
+		assertTrue(storage.contains("key05", 1));
+		assertTrue(storage.contains("key06", 1));
+
+		assertFalse(storage.contains("key01", 2));
+		assertFalse(storage.contains("key02", 3));
+		assertFalse(storage.contains("key03", 4));
+		assertFalse(storage.contains("key04", 5));
+		assertFalse(storage.contains("key05", 6));
+		assertFalse(storage.contains("key06", 7));
+
+		LEventbus.getInstance().publish(new LModelStepEvent());
+
+		assertTrue(storage.contains("key01"));
+		assertTrue(storage.contains("key02"));
+		assertTrue(storage.contains("key03"));
+		assertTrue(storage.contains("key04"));
+		assertTrue(storage.contains("key05"));
+		assertTrue(storage.contains("key06"));
+
+		storage.removeAll("key01");
+		assertFalse(storage.contains("key01"));
+		assertFalse(storage.contains("key01", 1));
+
+		assertTrue(storage.contains("key02"));
+		assertTrue(storage.contains("key02", 1));
+
+		assertTrue(storage.contains("key03"));
+		assertTrue(storage.contains("key03", 1));
+
+		assertTrue(storage.contains("key04"));
+		assertTrue(storage.contains("key04", 1));
+
+		assertTrue(storage.contains("key05"));
+		assertTrue(storage.contains("key05", 1));
+
+		assertTrue(storage.contains("key06"));
+		assertTrue(storage.contains("key06", 1));
+
+		storage.removeAll("key02");
+		assertFalse(storage.contains("key02"));
+
+		storage.removeAll("key03");
+		assertFalse(storage.contains("key03"));
+
+		storage.removeAll("key04");
+		assertFalse(storage.contains("key04"));
+
+		storage.removeAll("key05");
+		assertFalse(storage.contains("key05"));
+
+		storage.removeAll("key06");
+		assertFalse(storage.contains("key06"));
 	}
 
 	/**
@@ -127,8 +204,8 @@ public class LDefaultStorageTest {
 	 */
 	@Test
 	public void testFetch() {
-		storeSixStandardEntries(1);
-		MyProperty property = storage.fetch("key02", 1);
+		LContainerTestUtils.storeSixStandardEntries(storage);
+		LTestProperty property = storage.fetch("key02", 1);
 		assertNotNull(property);
 		assertTrue(property.getKey() == "key02");
 		assertTrue(property.getValue() == "value02");
@@ -148,26 +225,21 @@ public class LDefaultStorageTest {
 
 		}
 
-		storage.store(new MyProperty("key05", "lastAdded", 5));
+		LEventbus.getInstance().publish(new LModelStepEvent());
+
+		storage.store(new LTestProperty("key05", "lastAdded"));
 		assertEquals("The last added property of key key05 hast value lastAdded", "lastAdded", storage.fetch("key05")
 				.getValue());
 	}
 
-	private void storeSixStandardEntries(int step) {
-		storage.store(new MyProperty("key01", "value01", step));
-		storage.store(new MyProperty("key02", "value02", step));
-		storage.store(new MyProperty("key03", "value03", step));
-		storage.store(new MyProperty("key04", "value04", step));
-		storage.store(new MyProperty("key05", "value05", step));
-		storage.store(new MyProperty("key06", "value06", step));
-	}
+
 
 	/**
 	 * 
 	 */
 	@Test
 	public void testRemove() {
-		storeSixStandardEntries(1);
+		LContainerTestUtils.storeSixStandardEntries(storage);
 
 		storage.remove("key03", 1);
 		assertTrue(storage.getSize() == 5);
@@ -194,12 +266,15 @@ public class LDefaultStorageTest {
 	 */
 	@Test
 	public void testIterator() {
-		storeSixStandardEntries(1);
-		storeSixStandardEntries(2);
+		LContainerTestUtils.storeSixStandardEntries(storage);
+
+		LEventbus.getInstance().publish(new LModelStepEvent());
+
+		LContainerTestUtils.storeSixStandardEntries(storage);
 
 		int size = 0;
 		for (@SuppressWarnings("unused")
-		MyProperty property : storage) {
+		LTestProperty property : storage) {
 			size++;
 		}
 		assertTrue("iterator needs to iterate over 12 proeprties", size == 12);

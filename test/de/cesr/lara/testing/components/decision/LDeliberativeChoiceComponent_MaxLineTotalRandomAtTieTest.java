@@ -39,9 +39,9 @@ import de.cesr.lara.components.decision.LaraDecisionConfiguration;
 import de.cesr.lara.components.decision.impl.LDecisionConfiguration;
 import de.cesr.lara.components.decision.impl.LDeliberativeChoiceComp_MaxLineTotalRandomAtTie;
 import de.cesr.lara.components.decision.impl.LLightBoRow;
-import de.cesr.lara.testing.TestUtils;
-import de.cesr.lara.testing.TestUtils.LTestAgent;
-import de.cesr.lara.testing.TestUtils.LTestBo;
+import de.cesr.lara.testing.LTestUtils;
+import de.cesr.lara.testing.LTestUtils.LTestAgent;
+import de.cesr.lara.testing.LTestUtils.LTestBo;
 
 /**
  * 
@@ -58,7 +58,7 @@ public class LDeliberativeChoiceComponent_MaxLineTotalRandomAtTieTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		TestUtils.initTestModel();
+		LTestUtils.initTestModel();
 		deliberativeChoiceComp = LDeliberativeChoiceComp_MaxLineTotalRandomAtTie
 				.getInstance(null);
 		laraBoRows = new LinkedHashSet<LaraBoRow<LTestBo>>();
@@ -68,7 +68,7 @@ public class LDeliberativeChoiceComponent_MaxLineTotalRandomAtTieTest {
 		double[] valuesSum = { 0, 1, 2, 3, 5, 5, 5, 7, 8, 9 };
 		bos = new LTestBo[10];
 
-		LTestAgent agent = new TestUtils.LTestAgent("LTestAgent");
+		LTestAgent agent = new LTestUtils.LTestAgent("LTestAgent");
 
 		for (int i = 0; i < 10; i++) {
 			bos[i] = new LTestBo("" + i, agent,
