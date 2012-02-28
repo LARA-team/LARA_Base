@@ -463,4 +463,12 @@ LaraPreprocessor<A, BO> preprocessor) {
 			LaraDeliberativeChoiceComponent comp) {
 		deliberativeChoiceCompents.put(dConfiguration, comp);
 	}
+
+	/**
+	 * @see de.cesr.lara.components.agents.LaraAgentComponent#setPostProcessor(de.cesr.lara.components.postprocessor.LaraPostprocessorComp)
+	 */
+	@Override
+	public void setPostProcessor(LaraPostprocessorComp<A, BO> postprocesor) {
+		this.postProcessorComp = postprocesor;
+	}
 }

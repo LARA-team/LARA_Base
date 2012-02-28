@@ -1,8 +1,21 @@
 /**
+ * This file is part of
+ * 
  * LARA - Lightweight Architecture for boundedly Rational citizen Agents
- *
- * Center for Environmental Systems Research, Kassel
- * Created by Sascha Holzhauer on 16.08.2010
+ * 
+ * Copyright (C) 2012 Center for Environmental Systems Research, Kassel, Germany
+ * 
+ * LARA is free software: You can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * LARA is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package de.cesr.lara.components.decision.impl;
 
@@ -20,11 +33,6 @@ import de.cesr.lara.components.postprocessor.impl.LSelectedBoProperty;
 import de.cesr.lara.components.util.logging.impl.Log4jLogger;
 
 /**
- * 
- * TODO implement decide() TODO implement methods to retrieve last property from
- * general memory TODO implement method to check whether LSelectedBoPropertyx
- * exists for last tick TODO implement getter/setter for postProcessor-Component
- * TODO set default postProcessor-Component TODO doc
  * 
  * @param <A>
  *            type of agent
@@ -56,6 +64,9 @@ public class LHabitDecider<A extends LaraAgent<A, BO>, BO extends LaraBehavioura
 	/**
 	 * @see de.cesr.lara.components.decision.LaraDecider#decide()
 	 */
+	@SuppressWarnings("unchecked")
+	// LSelectedBoProperty is associated with the agent and parameterized with
+	// BO
 	@Override
 	public void decide() {
 		if (agent.getLaraComp().getGeneralMemory()

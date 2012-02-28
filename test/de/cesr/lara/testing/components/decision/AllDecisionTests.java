@@ -34,7 +34,7 @@ import org.junit.runners.Suite.SuiteClasses;
 		LDeliberativeChoiceComp_MaxLineTotalTest.class,
 		LDeliberativeDeciderTest.class,
  LHabitDeciderTest.class,
-LTreeDeciderTest.class })
+		LTreeDeciderTest.class, LDeliberativeChoiceComp_ProbabilisticTest.class })
 public class AllDecisionTests {
 
 }

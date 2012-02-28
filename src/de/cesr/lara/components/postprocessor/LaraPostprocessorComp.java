@@ -25,9 +25,11 @@ import de.cesr.lara.components.decision.LaraDecisionConfiguration;
 
 /**
  * @author Sascha Holzhauer
- *
+ * 
+ *         TODO doc
+ * 
  */
-public interface LaraPostprocessorComp<A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>> {
+public interface LaraPostprocessorComp<A extends LaraAgent<?, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>> {
 
 	public void postProcess(A agent, LaraDecisionConfiguration dConfig);
 
