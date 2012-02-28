@@ -33,6 +33,7 @@ import de.cesr.lara.components.decision.LaraDeliberativeChoiceComponent;
 import de.cesr.lara.components.environment.LaraEnvironment;
 import de.cesr.lara.components.environment.LaraEnvironmentListener;
 import de.cesr.lara.components.eventbus.LaraInternalEventSubscriber;
+import de.cesr.lara.components.postprocessor.LaraPostprocessorComp;
 import de.cesr.lara.components.preprocessor.LaraPreprocessor;
 import de.cesr.lara.components.util.impl.LPrefEntry;
 
@@ -65,6 +66,13 @@ public interface LaraAgentComponent<A extends LaraAgent<? super A, BO>, BO exten
 	 * @param preprocessor
 	 */
 	public void setPreprocessor(LaraPreprocessor<A, BO> preprocessor);
+
+	/**
+	 * Sets the post-processor component.
+	 * 
+	 * @param postprocesor
+	 */
+	public void setPostProcessor(LaraPostprocessorComp<A, BO> postprocesor);
 
 	/**
 	 * Get the environment this agent belongs to by its type
