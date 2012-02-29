@@ -21,10 +21,14 @@ package de.cesr.lara.components.container.memory.impl;
 
 import java.util.Iterator;
 
+import org.apache.log4j.Logger;
+
 import de.cesr.lara.components.LaraProperty;
 import de.cesr.lara.components.container.LaraCapacityManageableContainer;
 import de.cesr.lara.components.container.LaraCapacityManagementView;
 import de.cesr.lara.components.container.LaraCapacityManager;
+import de.cesr.lara.components.container.exceptions.LContainerFullException;
+import de.cesr.lara.components.util.logging.impl.Log4jLogger;
 
 /**
  * @param <PropertyType>
@@ -32,6 +36,12 @@ import de.cesr.lara.components.container.LaraCapacityManager;
 public class LDefaultLimitedCapacityMemory<PropertyType extends LaraProperty<? extends PropertyType, ?>>
 		extends LDefaultMemory<PropertyType> implements
 		LaraCapacityManageableContainer<PropertyType> {
+
+	/**
+	 * Logger
+	 */
+	static private Logger logger = Log4jLogger
+			.getLogger(LDefaultLimitedCapacityMemory.class);
 
 	/**
 	 * The memory's initial capacity in amount of entries
@@ -136,7 +146,10 @@ public class LDefaultLimitedCapacityMemory<PropertyType extends LaraProperty<? e
 	public void memorize(PropertyType propertyToMemorize) {
 		if (isFull()) {
 			if (!capacityManager.freeSpace(this.getCapacityManagementView())) {
-				return;
+				// <- LOGGING
+				logger.error("Memory could free space!");
+				// LOGGING ->
+				throw new LContainerFullException("Memory could free space!");
 			}
 		}
 		super.memorize(propertyToMemorize);
@@ -150,7 +163,10 @@ public class LDefaultLimitedCapacityMemory<PropertyType extends LaraProperty<? e
 	public void memorize(PropertyType propertyToMemorize, int retentionTime) {
 		if (isFull()) {
 			if (!capacityManager.freeSpace(this.getCapacityManagementView())) {
-				return;
+				// <- LOGGING
+				logger.error("Memory could free space!");
+				// LOGGING ->
+				throw new LContainerFullException("Memory could free space!");
 			}
 		}
 		super.memorize(propertyToMemorize, retentionTime);

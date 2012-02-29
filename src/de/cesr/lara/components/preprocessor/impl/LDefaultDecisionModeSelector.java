@@ -23,6 +23,7 @@ import org.apache.log4j.Logger;
 
 import de.cesr.lara.components.LaraBehaviouralOption;
 import de.cesr.lara.components.agents.LaraAgent;
+import de.cesr.lara.components.container.exceptions.LContainerException;
 import de.cesr.lara.components.decision.LaraDeciderFactory;
 import de.cesr.lara.components.decision.LaraDecisionConfiguration;
 import de.cesr.lara.components.decision.impl.LDeliberativeDeciderFactory;
@@ -106,14 +107,25 @@ public class LDefaultDecisionModeSelector<A extends LaraAgent<A, BO>, BO extends
 
 			// start from the past...
 			for (int i = habitTH; i >= 1; i--) {
-				if (!agent
-						.getLaraComp()
-						.getGeneralMemory()
-						.recall(LSelectedBoProperty.class, dConfig.getId(),
-								LModel.getModel().getCurrentStep() - i)
-						.getValue().getKey().equals(bo.getKey())) {
-					useDeliberative = true;
-					break;
+				try {
+					if (!agent
+							.getLaraComp()
+							.getGeneralMemory()
+							.recall(LSelectedBoProperty.class, dConfig.getId(),
+									LModel.getModel().getCurrentStep() - i)
+							.getValue().getKey().equals(bo.getKey())) {
+						useDeliberative = true;
+						break;
+					}
+				} catch (LContainerException ex) {
+					// <- LOGGING
+					logger.error(this + "> Could not find "
+							+ LSelectedBoProperty.class + " for "
+							+ dConfig.getId() + " at time step "
+							+ (LModel.getModel().getCurrentStep() - i));
+					// LOGGING ->
+
+					throw ex;
 				}
 			}
 		}

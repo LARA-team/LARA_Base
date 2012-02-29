@@ -189,9 +189,9 @@ public class LDefaultAgentComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 		this.environment = env;
 		logger.info("Assign preprocessor to agent");
 		memory = new LDefaultLimitedCapacityMemory<LaraProperty<?, ?>>(
-				LCapacityManagers.<LaraProperty<?, ?>> makeNINO());
+				LCapacityManagers.<LaraProperty<?, ?>> makeFIFO());
 		boMemory = new LDefaultLimitedCapacityBOMemory<BO>(
-				LCapacityManagers.<BO> makeNINO());
+				LCapacityManagers.<BO> makeFIFO());
 		doubleProperties = new HashMap<String, Double>();
 		preferenceWeights = new LPreferenceWeightMap();
 		decisionData = new HashMap<LaraDecisionConfiguration, LaraDecisionData<A, BO>>();

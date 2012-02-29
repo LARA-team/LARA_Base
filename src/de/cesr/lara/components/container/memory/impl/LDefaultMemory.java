@@ -309,9 +309,12 @@ public class LDefaultMemory<PropertyType extends LaraProperty<? extends Property
 		properties.add(propertyToMemorize);
 		properties2tod.put(propertyToMemorize, tod);
 
+		// <- LOGGING
 		if (logger.isDebugEnabled()) {
-			// logger.debug(getName() + ": Memorised property: " + propertyToMemorize);
+			logger.debug(getName() + ": Memorised property: "
+					+ propertyToMemorize);
 		}
+		// LOGGING ->
 	}
 
 	@Override
@@ -334,6 +337,12 @@ public class LDefaultMemory<PropertyType extends LaraProperty<? extends Property
 
 	@Override
 	public PropertyType recall(String key) throws LRetrieveException {
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			logger.debug(getName() + ": Recall '" + key + "'");
+		}
+		// LOGGING ->
+
 		checkIfNewStep();
 		PropertyType property = storage.fetch(key);
 		if (propertyListeners.containsKey(MemoryEvent.PROPERTY_RECALLED)) {
@@ -354,6 +363,11 @@ public class LDefaultMemory<PropertyType extends LaraProperty<? extends Property
 	public <RequestPropertyType extends PropertyType> RequestPropertyType recall(
 			Class<RequestPropertyType> propertyType,
 			String key, int step) throws LRetrieveException {
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			logger.debug(getName() + ": Recall '" + key + "' at step " + step);
+		}
+		// LOGGING ->
 		checkIfNewStep();
 		try {
 			PropertyType recalled = storage.fetch(propertyType, key, step);
@@ -382,6 +396,13 @@ public class LDefaultMemory<PropertyType extends LaraProperty<? extends Property
 	public <RequestPropertyType extends PropertyType> RequestPropertyType recall(
 			Class<RequestPropertyType> propertyType,
 			String key) throws LRetrieveException {
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			logger.debug(getName() + ": Recall '" + key + "' of type "
+					+ propertyType);
+		}
+		// LOGGING ->
+
 		checkIfNewStep();
 		PropertyType property = storage.fetch(propertyType, key);
 		if (propertyListeners.containsKey(MemoryEvent.PROPERTY_RECALLED)) {
@@ -396,6 +417,12 @@ public class LDefaultMemory<PropertyType extends LaraProperty<? extends Property
 
 	@Override
 	public Collection<PropertyType> recallAll(String key) throws LRetrieveException {
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			logger.debug(getName() + ": Recall all of key '" + key + "'");
+		}
+		// LOGGING ->
+
 		checkIfNewStep();
 		Collection<PropertyType> properties = storage.fetchAll(key);
 		if (propertyListeners.containsKey(MemoryEvent.PROPERTY_RECALLED)) {
@@ -415,6 +442,12 @@ public class LDefaultMemory<PropertyType extends LaraProperty<? extends Property
 	@Override
 	public <RequestPropertyType extends PropertyType> Collection<RequestPropertyType> recallAll(
 			Class<RequestPropertyType> propertyType) throws LRetrieveException {
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			logger.debug(getName() + ": Recall all of type " + propertyType);
+		}
+		// LOGGING ->
+
 		checkIfNewStep();
 		Collection<RequestPropertyType> properties = storage
 				.fetchAll(propertyType);
@@ -438,6 +471,13 @@ public class LDefaultMemory<PropertyType extends LaraProperty<? extends Property
 	public <RequestPropertyType extends PropertyType> Collection<RequestPropertyType> recallAll(
 			Class<RequestPropertyType> propertyType, String key)
 			throws LRetrieveException {
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			logger.debug(getName() + ": Recall all of type " + propertyType
+					+ " of type " + propertyType);
+		}
+		// LOGGING ->
+
 		checkIfNewStep();
 		Collection<RequestPropertyType> properties = storage.fetchAll(
 				propertyType, key);
@@ -503,7 +543,12 @@ public class LDefaultMemory<PropertyType extends LaraProperty<? extends Property
 	public String toString() {
 		checkIfNewStep();
 		final String NEWLINE = System.getProperty("line.separator");
-		return "\t> " + getName() + NEWLINE + storage.toString();
+		StringBuffer buffer = new StringBuffer();
+		for (PropertyType property : this) {
+			buffer.append("\t" + property.toString() + "(ToD: "
+					+ getRetentionTime(property) + ")" + NEWLINE);
+		}
+		return buffer.toString();
 	}
 
 	@Override
