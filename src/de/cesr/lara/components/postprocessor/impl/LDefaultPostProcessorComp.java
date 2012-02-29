@@ -19,11 +19,14 @@
  */
 package de.cesr.lara.components.postprocessor.impl;
 
+import org.apache.log4j.Logger;
+
 import de.cesr.lara.components.LaraBehaviouralOption;
 import de.cesr.lara.components.agents.LaraAgent;
 import de.cesr.lara.components.decision.LaraDecisionConfiguration;
 import de.cesr.lara.components.param.LDecisionMakingPa;
 import de.cesr.lara.components.postprocessor.LaraPostprocessorComp;
+import de.cesr.lara.components.util.logging.impl.Log4jLogger;
 import de.cesr.parma.core.PmParameterManager;
 
 /**
@@ -33,11 +36,28 @@ import de.cesr.parma.core.PmParameterManager;
 public class LDefaultPostProcessorComp<A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>>
 		implements LaraPostprocessorComp<A, BO> {
 
+	/**
+	 * Logger
+	 */
+	static private Logger logger = Log4jLogger
+			.getLogger(LDefaultPostProcessorComp.class);
+
 	@Override
 	public void postProcess(A agent, LaraDecisionConfiguration dConfig) {
 
+
+
 		// TODO check memories capacity (needs to be truly larger than habit
 		// threshold!)
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			logger.debug(this
+					+ "> Memorize selected BO: "
+					+ agent.getLaraComp().getDecisionData(dConfig).getDecider()
+							.getSelectedBo() + " for decision '" + dConfig);
+		}
+		// LOGGING ->
+
 		agent.getLaraComp()
 				.getGeneralMemory()
 				.memorize(
