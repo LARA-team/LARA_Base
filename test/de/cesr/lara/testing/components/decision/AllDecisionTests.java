@@ -19,7 +19,6 @@
  */
 package de.cesr.lara.testing.components.decision;
 
-
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -32,8 +31,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses({ LDeliberativeChoiceComponent_MaxLineTotalRandomAtTieTest.class,
 		LDeliberativeChoiceComp_MaxLineTotalTest.class,
-		LDeliberativeDeciderTest.class,
- LHabitDeciderTest.class,
+		LDeliberativeDeciderTest.class, LHabitDeciderTest.class,
 		LTreeDeciderTest.class, LDeliberativeChoiceComp_ProbabilisticTest.class })
 public class AllDecisionTests {
 
