@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -43,8 +44,8 @@ import de.cesr.lara.components.util.logging.impl.Log4jLogger;
  * publish events to the LaraEventbus. All subscribers of this event will be
  * notified on occurrence. The event bus is implemented as a singleton to ensure
  * all components communicate over the same channel and to make use of the event
- * bus easier. However, it also manages eventbuses by ID objects which
- * enables specific eventbuses per agent.
+ * bus easier. However, it also manages eventbuses by ID objects which enables
+ * specific eventbuses per agent.
  * 
  * GOAL: Loose coupling of components, Event driven initialization.
  */
@@ -98,9 +99,10 @@ public class LEventbus {
 	}
 
 	/**
-	 * TODO search for subscribers to super classes!
-	 * (Custom PP component implementations could publish sub classes of PP-event
-	 * that other components need to recognise)
+	 * TODO search for subscribers to super classes! (Custom PP component
+	 * implementations could publish sub classes of PP-event that other
+	 * components need to recognise)
+	 * 
 	 * @param event
 	 */
 	protected void notifySubscribers(LaraEvent event) {
@@ -118,8 +120,8 @@ public class LEventbus {
 			// notify subscriber according to event type
 			if (event instanceof LaraSynchronousEvent) {
 				notifySubscribersSequential(subscribers, event);
-				//TODO fix this
-				//notifySubscribersSynchronous(subscribers, event);
+				// TODO fix this
+				// notifySubscribersSynchronous(subscribers, event);
 			} else if (event instanceof LaraAsynchronousEvent) {
 				notifySubscribersAsynchronous(subscribers, event);
 			} else {
@@ -145,8 +147,7 @@ public class LEventbus {
 	 * @param event
 	 */
 	private void logSubscribers(
-			Collection<LaraAbstractEventSubscriber> subscribers,
-			LaraEvent event) {
+			Collection<LaraAbstractEventSubscriber> subscribers, LaraEvent event) {
 		// <- LOGGING
 		if (logger.isDebugEnabled()) {
 			StringBuffer buffer = new StringBuffer();
@@ -198,10 +199,12 @@ public class LEventbus {
 			notifySubscribers(event);
 		}
 	}
-	
+
 	/**
 	 * Checks whether the given LaraEvent has occurred during the current tick.
-	 * @param event to check
+	 * 
+	 * @param event
+	 *            to check
 	 * @return true if the given event has occurred
 	 */
 	public boolean occured(LaraEvent event) {
@@ -211,7 +214,9 @@ public class LEventbus {
 	/**
 	 * Checks whether the given LaraEvent or any sub class has occurred during
 	 * the current tick.
-	 * @param event to check
+	 * 
+	 * @param event
+	 *            to check
 	 * @return true if the given event or any sub class has occurred
 	 */
 	public boolean subclassOccured(LaraEvent event) {
@@ -219,11 +224,10 @@ public class LEventbus {
 			if (e.isInstance(event)) {
 				return true;
 			}
-		}		
+		}
 		return false;
 	}
 
-	
 	/**
 	 * Unsubscribe a subscriber from an event
 	 * 
@@ -358,8 +362,8 @@ public class LEventbus {
 	}
 
 	/**
-	 * The counter of how many event subscribers are notified but
-	 * have not yet finished their work.
+	 * The counter of how many event subscribers are notified but have not yet
+	 * finished their work.
 	 * 
 	 * @param event
 	 */
@@ -470,78 +474,52 @@ public class LEventbus {
 	 */
 	private void notifySubscribersSynchronous(
 			Set<LaraAbstractEventSubscriber> subscribers, final LaraEvent event) {
-		//TODO too much threads at once is highly ineffective. use taskgroups/max number of concurrent threads
+		// TODO too much threads at once is highly ineffective. use
+		// taskgroups/max number of concurrent threads
 		// <- LOGGING
 		logger.info("Notifying " + subscribers.size()
 				+ " subscribers synchronously");
 		// LOGGING ->
 
-		// internal first
-		// <- LOGGING
+		// limit number of concurrent tasks by building workgroups
+		int numberOfCores = Runtime.getRuntime().availableProcessors();
+		int numberOfWorkerGroups = numberOfCores * 4;
 		if (logger.isDebugEnabled()) {
-			logger.debug("Internal subscribers...");
+			logger.debug("numberOfWorkerGroups: " + numberOfWorkerGroups);
 		}
-		// LOGGING ->
-
-		final Object monitorInternal = new Object();
-		// required to check if monitor need to wait
-		boolean anyInternalEvents = false;
-		for (final LaraAbstractEventSubscriber s : subscribers) {
-			if (s instanceof LaraInternalEventSubscriber) {
-				anyInternalEvents = true;
-				Thread workerThread = new Thread() {
-					@Override
-					public void run() {
-						((LaraInternalEventSubscriber) s)
-								.onInternalEvent(event);
-						decrementWaitingCounter(event, monitorInternal);
-					}
-				};
-				incrementWaitingCounter(event);
-				//XXX ok? waste of memory
-				// limit number of concurrent tasks to 32
-				while (getWaitingCounter(event)>32) {
-					try {
-						Thread.sleep(10);
-					} catch (InterruptedException e) {
-					}
-				}
-				workerThread.start();
-			}
-		}
-
-		// wait for all threads to finish
-		if (anyInternalEvents) {
-			waitUntilWorkDone(monitorInternal);
-		}
-
-		// <- LOGGING
-		if (logger.isDebugEnabled()) {
-			logger.debug("External subscribers...");
-		}
-		// LOGGING ->
+		Map<Integer, Set<LaraAbstractEventSubscriber>> workerGroupSubscriberMap = new HashMap<Integer, Set<LaraAbstractEventSubscriber>>();
 
 		final Object monitor = new Object();
 		// required to check if monitor need to wait
-		boolean anyExternalEvents = false;
+		int currentWorkGroup = 0;
 		for (final LaraAbstractEventSubscriber s : subscribers) {
-			if (s instanceof LaraEventSubscriber) {
-				anyExternalEvents = true;
-				Thread workerThread = new Thread() {
-					@Override
-					public void run() {
-						((LaraEventSubscriber) s).onEvent(event);
-						decrementWaitingCounter(event, monitor);
-					}
-				};
-				incrementWaitingCounter(event);
-				workerThread.start();
+			Set<LaraAbstractEventSubscriber> subscriberGroup = workerGroupSubscriberMap
+					.get(currentWorkGroup);
+			if (subscriberGroup == null) {
+				subscriberGroup = new HashSet<LaraAbstractEventSubscriber>();
+				workerGroupSubscriberMap.put(currentWorkGroup, subscriberGroup);
 			}
+			subscriberGroup.add(s);
+			currentWorkGroup++;
+			if (currentWorkGroup > numberOfWorkerGroups)
+				currentWorkGroup = 0;
 		}
-		// wait for all threads to finish
-		if (anyExternalEvents) {
-			waitUntilWorkDone(monitor);
+
+		// for every worker group start a new thread, that notifies all
+		// subscribers belonging to it sequentially
+		for (final Entry<Integer, Set<LaraAbstractEventSubscriber>> entry : workerGroupSubscriberMap
+				.entrySet()) {
+			Thread workerThread = new Thread() {
+				@Override
+				public void run() {
+					notifySubscribersSequential(entry.getValue(), event);
+					decrementWaitingCounter(event, monitor);
+				}
+			};
+			incrementWaitingCounter(event);
+			workerThread.start();
 		}
+		waitUntilWorkDone(monitor);
 
 		// <- LOGGING
 		logger.info("Notified " + subscribers.size()
