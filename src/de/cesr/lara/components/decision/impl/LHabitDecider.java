@@ -76,7 +76,8 @@ public class LHabitDecider<A extends LaraAgent<A, BO>, BO extends LaraBehavioura
 					.getValue();
 		} else {
 			// <- LOGGING
-			logger.warn("Habitual behaviour could not select a behavioural option!");
+			logger.warn("Habitual behaviour could not select a behavioural option since the " +
+					"(general) memory does not contain information about previously selected BO!");
 			// LOGGING ->
 		}
 	}

@@ -1,0 +1,146 @@
+ <project default="copyConfigFiles">
+ 
+ 	<!-- 
+		- Creates a jar file to local directory
+		
+		TODO adapt to LARA!!!
+		
+	 -->
+ 	
+ 	<!--property name="dest_jar_local" location="//Usf/home/holzhauer/Dissertation/Modell/Sonomode/Release/" /-->
+ 	<property name="dest_jar_local" location="./Release/" />
+ 	<property name="releaseName" value="LARA-Base"/>
+ 	
+ 	<property name="release_postfix" value="trunk"/>
+ 	<property name="batch_config_file" value="./batch_params_set"/>
+ 	<property name="batch_config_file_suffix" value=".xml"/>
+ 	
+ 	<property name="scriptGenerationScriptFolder" value="./python/sonomode/"/>
+ 	
+ 	<property name="rs_folder" value="./SoNOMoDe.rs"/>
+ 	<property name="rs_folder_end" value="./SoNOMoDe_End.rs"/>
+ 	<property name="rs_folder_AgentEnd" value="./Sonomode_AgentEnd.rs"/>
+ 	<property name="rs_folder_NoDB" value="./Sonomode_NoDB.rs"/>
+ 	<property name="rs_folder_Agent" value="./Sonomode_Agent.rs"/>
+ 	<property name="rs_folder_SocialEnd" value="./Sonomode_SocialEnd.rs"/>
+ 	
+ 	<property name="log_config_file" value="./log/custom.properties"/>
+ 	<property name="log_param_folder" value="./config/param/"/>
+ 	<property name="manifest_file" value="../manifest/META-INF/MANIFEST.MF"/>	
+ 	<property name="user" value="sholzhau"/>
+ 	<property name="remote_base_dir" value="/home/wz3/sholzhau/Sonomode/"/>
+ 	<property name="remote_host" value="hrz-cs400.hrz.uni-kassel.de"/>
+ 	
+ 	<property name="remote_config_file_source" value="/home/wz3/sholzhau/Sonomode/standard"/>
+ 	<property name="remote_lib_folder_name" value="Sonomode_lib"/>
+ 	
+ 	<property name="svn.info.rev" value="177"/>
+ 	
+ 	<target name="setRemoteDir">
+ 		<tstamp>
+ 			<format property="DSTAMP" pattern="yyyy-MM-dd_HH-mm" locale="ENGLISH, GERMANY"/>
+ 		</tstamp>
+ 		<property name="remote_dir" value="${remote_base_dir}/${svn.info.rev}_${DSTAMP}"/> 
+ 		<!-- specify an empty string to use hard-coded DB settings. Important: Ending ";"! -->
+ 		<property name="copy_db_command" value="cp ${remote_config_file_source}/config/DBSettings.xml ${remote_dir}/config/DBSettings.xml;"/>
+ 		<property name="copy_dbSoc_command" value="cp ${remote_config_file_source}/config/DBSettingsSocNet.xml ${remote_dir}/config/DBSettingsSocNet.xml;"/>
+ 	</target>
+    
+ 	<target name="createRunFiles" depends="make_jar">
+ 		  <copy todir="${dest_jar_local}/${svn.info.rev}-${DSTAMP}/python/">
+ 		  	<fileset id="myfileset2" dir="${basedir}/../../${scriptGenerationScriptFolder}">
+ 				<include name="**/*.*"/>
+ 			 </fileset>
+ 		  </copy>
+ 	</target>
+ 	
+	<echo>Copy jar file to ...</echo>
+	
+	<target name="svn_infos" description="Fetch SVN revision number">
+    	<typedef resource="org/tigris/subversion/svnant/svnantlib.xml" classpath="" />
+    	<svn javahl="false" username="holzhauer" password="holzhauer">
+    		<info target="${basedir}"/>
+    	</svn>
+    	<echo>"Last Revision: ${svn.info.rev}"</echo>
+    </target>
+	
+	<target name="make_jar" depends="setRemoteDir" description="Create JAR archive">
+	<mkdir dir="${dest_jar_local}/${svn.info.rev}-${DSTAMP}"/> 
+    <jar destfile="${dest_jar_local}/${svn.info.rev}-${DSTAMP}/${releaseName}.jar"
+    	basedir="${basedir}/../../bin"
+        includes="**/*.class"
+        update="false"
+        compress="true"
+        duplicate="add"
+        manifest="${basedir}/${manifest_file}">
+       <manifest>
+            <attribute name="Built-By" value="Sascha Holzhauer"/>
+            <attribute name="Implementation-Version"  value="${svn.info.rev}"/>
+            <attribute name="Built-Date" value="${TODAY}"/>
+        </manifest>
+    </jar>
+    </target>
+
+ 	<target name="queryPassword">
+		<input
+			message="Enter passwort!"
+			addproperty="passphrase"
+		/>
+ 	</target>
+
+	<target name="transfer" depends="make_jar, setRemoteDir,createRunFiles, queryPassword">	
+
+		<sshexec host="${remote_host}"
+				username="${user}"
+				password="${passphrase}"
+			  trust="true"
+				command="mkdir -p ${remote_dir}/"/>
+		
+	 	<scp
+	       todir="${user}@${remote_host}:${remote_dir}" 
+	       password="${passphrase}"
+	 	   trust="true"
+	 		sftp="true" >
+	 		<fileset id="myfileset" dir="${dest_jar_local}/${svn.info.rev}-${DSTAMP}">
+	 		       		<include name="**/*"/>
+	 		</fileset>
+	  	</scp>
+  	</target>
+
+ 	<target name="copyConfigFiles" depends="transfer, setRemoteDir">
+		<sshexec host="${remote_host}"
+				username="${user}"
+				password="${passphrase}"
+			  trust="true"
+				command="mkdir ${remote_dir}/log;
+						 mkdir ${remote_dir}/output;
+						 cp ${remote_config_file_source}/${log_config_file} ${remote_dir}/log;
+						 cp -r ${remote_config_file_source}/${log_param_folder} ${remote_dir}/config/param;
+						 cp -r ${remote_config_file_source}/${rs_folder} ${remote_dir}/;
+						 ln -s ${remote_config_file_source}/data ${remote_dir}/data ;
+						 ln -s ${remote_config_file_source}/${rs_folder_end} ${remote_dir}/${rs_folder_end} ;
+						 ln -s ${remote_config_file_source}/${rs_folder_AgentEnd} ${remote_dir}/${rs_folder_AgentEnd} ;
+						 ln -s ${remote_config_file_source}/${rs_folder_NoDB} ${remote_dir}/${rs_folder_NoDB} ;
+						 ln -s ${remote_config_file_source}/${rs_folder_Agent} ${remote_dir}/${rs_folder_Agent} ;
+						 ln -s ${remote_config_file_source}/${rs_folder_SocialEnd} ${remote_dir}/${rs_folder_SocialEnd} ;
+						 mkdir ${remote_dir}/config;
+						 ${copy_db_command}
+						 ${copy_dbSoc_command}
+ 						 ln -s ${remote_config_file_source}/${remote_lib_folder_name} ${remote_dir}/${remote_lib_folder_name};"/>
+ 	</target>
+
+
+
+	<target name="removeLocalFiles">
+		<delete dir="${dest_jar_local}/${svn.info.rev}-${DSTAMP}" />
+	</target>
+ 	
+ 	<!-- probably won't work when you include a timestamp in the dirs -->
+ 	<target name="cleanUpAll" depends="removeLocalFiles">
+ 		<sshexec host="${remote_host}"
+ 			username="${user}"
+ 			password="${passphrase}"
+ 			trust="true"
+ 			command="rm -R ${remote_dir}"/>
+ 	</target>
+</project>
