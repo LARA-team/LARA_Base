@@ -91,7 +91,7 @@ public final class LPreprocessor<A extends LaraAgent<A, BO>, BO extends LaraBeha
 	 */
 	protected LPreprocessor() {
 		this(LPreprocessorConfigurator
-				.<A, BO> getDefaultPreprocessConfigurator());
+				.<A, BO> getNewPreprocessorConfigurator());
 	}
 
 	/**
@@ -178,7 +178,7 @@ public final class LPreprocessor<A extends LaraAgent<A, BO>, BO extends LaraBeha
 			LaraPreprocessorConfigurator<A, BO> changeConfiguration) {
 		// make save against altering the given configurator:
 		LaraPreprocessorConfigurator<A, BO> pConfiguration = LPreprocessorConfigurator
-				.<A, BO> getDefaultPreprocessConfigurator();
+				.<A, BO> getNewPreprocessorConfigurator();
 
 		fillConfiguration(changeConfiguration, pConfiguration, selectorMap, LaraDecisionModeSelector.class);
 		fillConfiguration(changeConfiguration, pConfiguration, collectorMap, LaraBOCollector.class);

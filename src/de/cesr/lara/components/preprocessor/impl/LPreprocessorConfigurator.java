@@ -52,7 +52,10 @@ public class LPreprocessorConfigurator<A extends LaraAgent<A, BO>, BO extends La
 	private final Map<LaraDecisionConfiguration, LaraBOUtilityUpdater<A, BO>> adapterMap;
 	private final Map<LaraDecisionConfiguration, LaraPreferenceUpdater<? extends A, BO>> prefUpdaterMap;
 
-	private LaraPreprocessor<A, BO> preprocessor;
+	private LaraPreprocessor<A, BO> preprocessor = null;
+
+	private static LaraPreprocessor<?, ?> defaultPreprocessor = null;
+
 	/**
 	 * 
 	 */
@@ -297,16 +300,23 @@ public class LPreprocessorConfigurator<A extends LaraAgent<A, BO>, BO extends La
 	 */
 	@Override
 	public LaraPreprocessor<A, BO> getPreprocessor() {
-		try {
-			if (this.preprocessor == null
+		if (this.preprocessor == null
 					|| !this.preprocessor.meetsConfiguration(this)) {
 				this.preprocessor = new LPreprocessor<A, BO>(this);
 			}
-			return this.preprocessor;
-		} catch (ClassCastException e) {
-			throw new ClassCastException(
-					"The stored builder has not the requested agent type!");
+		return this.preprocessor;
+	}
+
+	@SuppressWarnings("unchecked")
+	// default components actually do not have any constraints regarding type
+	// parameters. TODO check
+	public static <A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>> LaraPreprocessor<A, BO> getDefaultPreprocessor() {
+		if (defaultPreprocessor == null) {
+			defaultPreprocessor = new LPreprocessor<A, BO>(
+					LPreprocessorConfigurator
+							.<A, BO> getNewPreprocessorConfigurator());
 		}
+		return (LaraPreprocessor<A, BO>) defaultPreprocessor;
 	}
 
 	/**
@@ -314,7 +324,7 @@ public class LPreprocessorConfigurator<A extends LaraAgent<A, BO>, BO extends La
 	 * @param <BO>
 	 * @return the default configurator
 	 */
-	public static <A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>> LPreprocessorConfigurator<A, BO> getDefaultPreprocessConfigurator() {
+	public static <A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>> LPreprocessorConfigurator<A, BO> getNewPreprocessorConfigurator() {
 		return new LPreprocessorConfigurator<A, BO>();
 	}
 

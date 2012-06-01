@@ -61,7 +61,7 @@ public class DefaultConfiguratorTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		configurator1 = LPreprocessorConfigurator.getDefaultPreprocessConfigurator();
+		configurator1 = LPreprocessorConfigurator.getNewPreprocessorConfigurator();
 		decision1 = new LaraDecisionConfiguration() {
 
 			@Override

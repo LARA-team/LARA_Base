@@ -398,7 +398,7 @@ LaraPreprocessor<A, BO> preprocessor) {
 			if (this.preprocessor == null) {
 				logger.warn("The preprocessor has not been set! The default is used.");
 				setPreprocessor(LPreprocessorConfigurator
-						.<A, BO> getDefaultPreprocessConfigurator()
+						.<A, BO> getNewPreprocessorConfigurator()
 						.getPreprocessor());
 			}
 			preprocessor.preprocess(

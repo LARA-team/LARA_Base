@@ -158,7 +158,7 @@ public class LPpEventBusTest {
 
 		// init preprocesor
 		LaraPreprocessorConfigurator<LTestAgent, LTestBo> configurator1 = LPreprocessorConfigurator
-				.getDefaultPreprocessConfigurator();
+				.getNewPreprocessorConfigurator();
 		configurator1
 				.setDecisionModeSelector(new LTestDecisionModeSelector<LTestAgent, LTestBo>());
 		configurator1.setBOCollector(new LTestBoCollector<LTestAgent, LTestBo>());
@@ -220,7 +220,7 @@ public class LPpEventBusTest {
 
 		agent3.getLaraComp().setPreprocessor(
 				LPreprocessorConfigurator
-						.<LTestAgent, LTestBo> getDefaultPreprocessConfigurator()
+						.<LTestAgent, LTestBo> getNewPreprocessorConfigurator()
 						.getPreprocessor());
 
 		LTestBo testBo = new LTestBo(agent3);
