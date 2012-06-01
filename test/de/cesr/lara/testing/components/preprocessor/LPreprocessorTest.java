@@ -126,7 +126,7 @@ public class LPreprocessorTest {
 		/**
 		 * Default Configurator
 		 */
-		configurator1 = LPreprocessorConfigurator.getDefaultPreprocessConfigurator();
+		configurator1 = LPreprocessorConfigurator.getNewPreprocessorConfigurator();
 
 		/**
 		 * Default LaraPreprocessor
@@ -136,7 +136,7 @@ public class LPreprocessorTest {
 		/**
 		 * Second Configurator with another LaraBOCollector
 		 */
-		configurator2 = LPreprocessorConfigurator.getDefaultPreprocessConfigurator();
+		configurator2 = LPreprocessorConfigurator.getNewPreprocessorConfigurator();
 		scanner = new LaraBOCollector<LTestAgent, LTestBo>() {
 
 			@Override
@@ -153,7 +153,7 @@ public class LPreprocessorTest {
 		configurator2.setBOCollector(scanner);
 		builder2 = configurator2.getPreprocessor();
 
-		configurator3 = LPreprocessorConfigurator.getDefaultPreprocessConfigurator();
+		configurator3 = LPreprocessorConfigurator.getNewPreprocessorConfigurator();
 		configurator3.setBOCollector(scanner, decision1);
 
 		builder3 = configurator3.getPreprocessor();

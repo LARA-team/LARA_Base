@@ -150,7 +150,7 @@ public class LTreeDeciderTest {
 		agent.getLaraComp().getBOMemory().memorize(two);
 
 		LPreprocessorConfigurator<LTestAgent, LTestBo> ppConfig = LPreprocessorConfigurator
-				.<LTestAgent, LTestBo> getDefaultPreprocessConfigurator();
+				.<LTestAgent, LTestBo> getNewPreprocessorConfigurator();
 		ppConfig.setDecisionModeSelector(new LTreeDeciderModeSelector());
 		agent.getLaraComp().setPreprocessor(ppConfig.getPreprocessor());
 
