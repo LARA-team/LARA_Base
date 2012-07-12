@@ -471,4 +471,5 @@ LaraPreprocessor<A, BO> preprocessor) {
 	public void setPostProcessor(LaraPostprocessorComp<A, BO> postprocesor) {
 		this.postProcessorComp = postprocesor;
 	}
+	
 }

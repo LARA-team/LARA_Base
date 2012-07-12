@@ -160,4 +160,5 @@ public class DefaultConfiguratorTest {
 				((LPreprocessorConfigurator<LTestAgent, LTestBo>) configurator1).DEFAULT_BO_PRESELECTOR,
 				checkerMap.get(decision1));
 	}
+	
 }
