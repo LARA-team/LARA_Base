@@ -1,19 +1,21 @@
-/** 
+/**
  * This file is part of
  * 
  * LARA - Lightweight Architecture for boundedly Rational citizen Agents
- *
+ * 
  * Copyright (C) 2012 Center for Environmental Systems Research, Kassel, Germany
  * 
- * LARA is free software: You can redistribute it and/or modify it under the 
- * terms of the GNU General Public License as published by the Free Software 
- * Foundation, either version 3 of the License, or (at your option) any later version.
- *  
- * LARA is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * LARA is free software: You can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * LARA is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package de.cesr.lara.components.eventbus.impl;
 
@@ -54,6 +56,10 @@ public class LEventbus {
 	private static LEventbus instance = null;
 	private static Map<Object, LEventbus> instances = new HashMap<Object, LEventbus>();
 	private static Logger logger = Log4jLogger.getLogger(LEventbus.class);
+	private final Set<Class<? extends LaraEvent>> eventsThisTimestep = new HashSet<Class<? extends LaraEvent>>();
+	private Map<Class<? extends LaraEvent>, Set<LaraAbstractEventSubscriber>> eventSubscriberMap = new HashMap<Class<? extends LaraEvent>, Set<LaraAbstractEventSubscriber>>();
+	private Map<LaraEvent, Integer> eventWaitingCounters = new HashMap<LaraEvent, Integer>();
+	private Map<Class<? extends LaraEvent>, Long> statistics = new HashMap<Class<? extends LaraEvent>, Long>();
 
 	/**
 	 * returns a reference to the global eventbus
@@ -83,14 +89,6 @@ public class LEventbus {
 		return theInstance;
 	}
 
-	private final Set<Class<? extends LaraEvent>> eventsThisTimestep = new HashSet<Class<? extends LaraEvent>>();
-
-	Map<Class<? extends LaraEvent>, Set<LaraAbstractEventSubscriber>> eventSubscriberMap = new HashMap<Class<? extends LaraEvent>, Set<LaraAbstractEventSubscriber>>();
-
-	Map<LaraEvent, Integer> eventWaitingCounters = new HashMap<LaraEvent, Integer>();
-
-	Map<Class<? extends LaraEvent>, Long> statistics = new HashMap<Class<? extends LaraEvent>, Long>();
-
 	/**
 	 * This is a singleton. Use of constructor is permitted. Use getInstance()
 	 * to obtain a reference to the event bus.
@@ -119,9 +117,9 @@ public class LEventbus {
 					+ event.getClass().getSimpleName());
 			// notify subscriber according to event type
 			if (event instanceof LaraSynchronousEvent) {
+				//TODO fix this
 				notifySubscribersSequential(subscribers, event);
-				// TODO fix this
-				// notifySubscribersSynchronous(subscribers, event);
+				//notifySubscribersSynchronous(subscribers, event);
 			} else if (event instanceof LaraAsynchronousEvent) {
 				notifySubscribersAsynchronous(subscribers, event);
 			} else {
@@ -578,4 +576,5 @@ public class LEventbus {
 		}
 		instances.clear();
 	}
+	
 }

@@ -116,4 +116,5 @@ public class LHabitDecider<A extends LaraAgent<A, BO>, BO extends LaraBehavioura
 	public String toString() {
 		return "LHabitDecider for " + dConfiguration;
 	}
+	
 }
