@@ -21,7 +21,8 @@ package de.cesr.lara.components.eventbus.events;
 
 /**
  * Is fired on initialization of the model. Triggers initialization of
- * components. Fired after ModelInstantiatedEvent (which signals Model existance).
+ * components. Fired after ModelInstantiatedEvent (which signals Model
+ * existance).
  */
 public class LModelInitializedEvent implements LaraSynchronousEvent,
 		LaraRequiresPrecedingEvent {

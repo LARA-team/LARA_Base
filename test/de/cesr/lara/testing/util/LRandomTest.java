@@ -19,7 +19,6 @@
  */
 package de.cesr.lara.testing.util;
 
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
@@ -36,22 +35,21 @@ import de.cesr.lara.components.util.impl.LRandomService;
 import de.cesr.lara.components.util.impl.LUniformController;
 import de.cesr.lara.components.util.logging.impl.Log4jLogger;
 
-
 /**
  * 
  */
 public class LRandomTest {
 
-	LRandomService			random;
-	int						randomSeed	= 0;
+	LRandomService random;
+	int randomSeed = 0;
 
 	/**
 	 * Logger
 	 */
-	static private Logger	logger		= Log4jLogger.getLogger(LRandomTest.class);
+	static private Logger logger = Log4jLogger.getLogger(LRandomTest.class);
 
 	private static final String RANDOM_STREAM = "Random Stream";
-	
+
 	/**
 	 * @throws java.lang.Exception
 	 */
@@ -69,7 +67,28 @@ public class LRandomTest {
 	}
 
 	/**
-	 * Test method for {@link de.cesr.lara.components.util.impl.LRandomService#getUniform()}.
+	 * Check whether a registered distribution can be returned
+	 */
+	@Test
+	public final void testDistributionRegistration() {
+		AbstractDistribution dist = new LUniformController(new MersenneTwister(
+				9));
+		random.registerDistribution(dist, RANDOM_STREAM);
+		assertEquals(dist, random.getDistribution(RANDOM_STREAM));
+	}
+
+	/**
+	 * Test method for
+	 * {@link de.cesr.lara.components.util.impl.LRandomService#getSeed()}.
+	 */
+	@Test
+	public final void testGetSeed() {
+		assertEquals(randomSeed, random.getSeed());
+	}
+
+	/**
+	 * Test method for
+	 * {@link de.cesr.lara.components.util.impl.LRandomService#getUniform()}.
 	 */
 	@Test
 	public final void testGetUniform() {
@@ -83,7 +102,8 @@ public class LRandomTest {
 	}
 
 	/**
-	 * Test method for {@link de.cesr.lara.components.util.impl.LRandomService#setSeed(int)}.
+	 * Test method for
+	 * {@link de.cesr.lara.components.util.impl.LRandomService#setSeed(int)}.
 	 */
 	@Test
 	public final void testSetSeed() {
@@ -94,27 +114,8 @@ public class LRandomTest {
 		assertNotSame(uniform, random.getUniform());
 		assertNull(random.getNormal());
 
-		logger
-				.warn("If a WARN message (Normal distributions has not been created!) was printed above this is intented");
+		logger.warn("If a WARN message (Normal distributions has not been created!) was printed above this is intented");
 
-	}
-
-	/**
-	 * Check whether a registered distribution can be returned
-	 */
-	@Test
-	public final void testDistributionRegistration() {
-		AbstractDistribution dist = new LUniformController(new MersenneTwister(9));
-		random.registerDistribution(dist, RANDOM_STREAM);
-		assertEquals(dist, random.getDistribution(RANDOM_STREAM));
-	}
-
-	/**
-	 * Test method for {@link de.cesr.lara.components.util.impl.LRandomService#getSeed()}.
-	 */
-	@Test
-	public final void testGetSeed() {
-		assertEquals(randomSeed, random.getSeed());
 	}
 
 }

@@ -19,7 +19,6 @@
  */
 package de.cesr.lara.components.container.storage;
 
-
 import java.util.Collection;
 import java.util.Set;
 
@@ -47,51 +46,22 @@ public interface LaraOverwriteStorage<PropertyType extends LaraProperty<Property
 	 */
 
 	/**
-	 * Tries to add the specified property to this storage.
+	 * Adds a given {@link LaraStorageListener} for the specified
+	 * {@link LaraStorageListener.StorageEvent}
 	 * 
-	 * @param propertyToStore
-	 *            the property to be stored.
-	 * @throws LContainerFullException
-	 * @throws LInvalidTimestampException
+	 * @param eventType
+	 *            the category of storage property events the listeners shall be
+	 *            registered for
+	 * @param listener
+	 *            the listener to be registered
 	 */
-	public void store(PropertyType propertyToStore) throws LContainerFullException,
-			LInvalidTimestampException;
+	public void addStoragePropertyObserver(
+			LaraStorageListener.StorageEvent eventType,
+			LaraStorageListener listener);
 
 	/*
 	 * REMOVING
 	 */
-
-	/**
-	 * Removes the specified property from this storage.
-	 * 
-	 * @param propertyToRemove
-	 *        the property to be removed.
-	 * @return the property that was removed
-	 * @throws LRemoveException
-	 */
-	public PropertyType remove(PropertyType propertyToRemove) throws LRemoveException;
-
-	/**
-	 * Removes the specified property from this storage.
-	 * 
-	 * @param key
-	 *        Key of property that shall be removed the property to be removed. Created by Michael Elbers on 22.02.2010
-	 * @return the property that was removed
-	 * @throws LRemoveException
-	 */
-	public PropertyType remove(String key) throws LRemoveException;
-
-	/**
-	 * Removes all properties in the specified collection from this storage.
-	 * 
-	 * @param propertiesToBeRemoved
-	 *        the properties to be removed
-	 * @return the properties that were removed
-	 * @throws LRemoveException
-	 * 
-	 */
-	public Collection<PropertyType> removeAll(Collection<PropertyType> propertiesToBeRemoved)
-			throws LRemoveException;
 
 	/**
 	 * Clears the storage, i.e. removes all properties.
@@ -100,57 +70,14 @@ public interface LaraOverwriteStorage<PropertyType extends LaraProperty<Property
 	 */
 	public void clear() throws LRemoveException;
 
-	/*
-	 * FETCHING
-	 */
-
 	/**
-	 * Generic method that returns the most recently stored property that is identified with {@code key}.
+	 * Checks whether the storage contains a property of the given type with the
+	 * given key.
 	 * 
 	 * @param key
-	 *        identifier for the property to be retrieved.
-	 * @return the most recently stored property that is identified with {@code key}.
-	 * @throws LRetrieveException
+	 * @return true if such a property is contained
 	 */
-	public PropertyType fetch(String key) throws LRetrieveException;
-
-	/**
-	 * Generic method that returns the most recently stored property that is of
-	 * the specified type and identified with {@code key}.
-	 * 
-	 * @param propertyType
-	 * @param key
-	 *            identifier for the property to be retrieved.
-	 * @return the most recently stored property that is of the specified type
-	 *         and identified with {@code key}.
-	 */
-	public <RequestPropertyType extends PropertyType> RequestPropertyType fetch(
-			Class<RequestPropertyType> propertyType, String key)
-			throws LRetrieveException;
-
-	/**
-	 * Generic method that returns a collection of all properties found.
-	 * 
-	 * @param propertyType
-	 *            identifier for the properties to be retrieved.
-	 * @return the properties of the specified type that were stored in
-	 *         {@code step} and identified with {@code key}.
-	 */
-	public <RequestPropertyType extends PropertyType> Collection<RequestPropertyType> fetchAll(
-			Class<RequestPropertyType> propertyType) throws LRetrieveException;
-
-	/*
-	 * UTIL
-	 */
-
-	/**
-	 * Returns <code>true</code>, if, and only if, this storage contains a property for the specified {@code key}.
-	 * 
-	 * @param key
-	 * @return <code>true</code>, if, and only if, this storage contains a property for the specified {@code key}.
-	 * 
-	 */
-	public boolean contains(String key);
+	public boolean contains(Class<?> propertyType, String key);
 
 	/**
 	 * Returns <code>true</code>, if, and only if, this storage contains the
@@ -172,15 +99,61 @@ public interface LaraOverwriteStorage<PropertyType extends LaraProperty<Property
 	 */
 	public boolean contains(PropertyType property, String key);
 
+	/*
+	 * FETCHING
+	 */
+
 	/**
-	 * Checks whether the storage contains a property of the given type with the
-	 * given key.
+	 * Returns <code>true</code>, if, and only if, this storage contains a
+	 * property for the specified {@code key}.
 	 * 
 	 * @param key
-	 * @return true if such a property is contained
+	 * @return <code>true</code>, if, and only if, this storage contains a
+	 *         property for the specified {@code key}.
+	 * 
 	 */
-	public boolean contains(Class<?> propertyType,
-			String key);
+	public boolean contains(String key);
+
+	/**
+	 * Generic method that returns the most recently stored property that is of
+	 * the specified type and identified with {@code key}.
+	 * 
+	 * @param propertyType
+	 * @param key
+	 *            identifier for the property to be retrieved.
+	 * @return the most recently stored property that is of the specified type
+	 *         and identified with {@code key}.
+	 */
+	public <RequestPropertyType extends PropertyType> RequestPropertyType fetch(
+			Class<RequestPropertyType> propertyType, String key)
+			throws LRetrieveException;
+
+	/**
+	 * Generic method that returns the most recently stored property that is
+	 * identified with {@code key}.
+	 * 
+	 * @param key
+	 *            identifier for the property to be retrieved.
+	 * @return the most recently stored property that is identified with
+	 *         {@code key}.
+	 * @throws LRetrieveException
+	 */
+	public PropertyType fetch(String key) throws LRetrieveException;
+
+	/*
+	 * UTIL
+	 */
+
+	/**
+	 * Generic method that returns a collection of all properties found.
+	 * 
+	 * @param propertyType
+	 *            identifier for the properties to be retrieved.
+	 * @return the properties of the specified type that were stored in
+	 *         {@code step} and identified with {@code key}.
+	 */
+	public <RequestPropertyType extends PropertyType> Collection<RequestPropertyType> fetchAll(
+			Class<RequestPropertyType> propertyType) throws LRetrieveException;
 
 	/**
 	 * Returns a set of Strings that represent the keys of properties stored in
@@ -190,27 +163,63 @@ public interface LaraOverwriteStorage<PropertyType extends LaraProperty<Property
 	 */
 	public Set<String> getAllPropertyKeys();
 
+	/**
+	 * Removes the specified property from this storage.
+	 * 
+	 * @param propertyToRemove
+	 *            the property to be removed.
+	 * @return the property that was removed
+	 * @throws LRemoveException
+	 */
+	public PropertyType remove(PropertyType propertyToRemove)
+			throws LRemoveException;
+
+	/**
+	 * Removes the specified property from this storage.
+	 * 
+	 * @param key
+	 *            Key of property that shall be removed the property to be
+	 *            removed. Created by Michael Elbers on 22.02.2010
+	 * @return the property that was removed
+	 * @throws LRemoveException
+	 */
+	public PropertyType remove(String key) throws LRemoveException;
+
+	/**
+	 * Removes all properties in the specified collection from this storage.
+	 * 
+	 * @param propertiesToBeRemoved
+	 *            the properties to be removed
+	 * @return the properties that were removed
+	 * @throws LRemoveException
+	 * 
+	 */
+	public Collection<PropertyType> removeAll(
+			Collection<PropertyType> propertiesToBeRemoved)
+			throws LRemoveException;
+
 	// Observer management:
 
 	/**
-	 * Adds a given {@link LaraStorageListener} for the specified
-	 * {@link LaraStorageListener.StorageEvent}
-	 * 
 	 * @param eventType
-	 *        the category of storage property events the listeners shall be registered for
+	 *            the category of storage property events the listeners shall be
+	 *            removed from
 	 * @param listener
-	 *        the listener to be registered
+	 *            the listener to be removed
 	 */
-	public void addStoragePropertyObserver(LaraStorageListener.StorageEvent eventType,
+	public void removeStoragePropertyObserver(
+			LaraStorageListener.StorageEvent eventType,
 			LaraStorageListener listener);
 
 	/**
-	 * @param eventType
-	 *        the category of storage property events the listeners shall be removed from
-	 * @param listener
-	 *        the listener to be removed
+	 * Tries to add the specified property to this storage.
+	 * 
+	 * @param propertyToStore
+	 *            the property to be stored.
+	 * @throws LContainerFullException
+	 * @throws LInvalidTimestampException
 	 */
-	public void removeStoragePropertyObserver(LaraStorageListener.StorageEvent eventType,
-			LaraStorageListener listener);
+	public void store(PropertyType propertyToStore)
+			throws LContainerFullException, LInvalidTimestampException;
 
 }

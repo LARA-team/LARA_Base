@@ -27,7 +27,8 @@ import de.cesr.lara.components.decision.LaraDecisionConfiguration;
 public class LAgentPostprocessEvent implements LaraSynchronousEvent {
 	private LaraDecisionConfiguration decisionConfiguration;
 
-	public LAgentPostprocessEvent(LaraDecisionConfiguration decisionConfiguration) {
+	public LAgentPostprocessEvent(
+			LaraDecisionConfiguration decisionConfiguration) {
 		this.decisionConfiguration = decisionConfiguration;
 	}
 

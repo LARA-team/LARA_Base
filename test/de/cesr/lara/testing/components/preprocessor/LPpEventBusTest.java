@@ -54,23 +54,36 @@ import de.cesr.lara.testing.LTestUtils.LTestBo;
  * 
  */
 public class LPpEventBusTest {
-	
-	static protected int timeModeSelector = 0;
-	static protected int timeBOCollector = 0;
-	static protected int timeBoPreselector = 0;
-	static protected int timeBOUtilityUpdater = 0;
-	static protected int timePreferenceUpdater = 0;
 
-	static protected Integer counter = new Integer(0);
-	
-	protected LTestAgent agent1, agent2, agent3;
+	static class LTestBoCollector<A extends LaraAgent<? super A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>>
+			extends LAbstractPpComp<A, BO> implements LaraBOCollector<A, BO> {
 
-	protected LaraDecisionConfiguration dConfig = new LDecisionConfiguration();
+		@Override
+		public void onInternalEvent(LaraEvent e) {
+			LPpEventBusTest.timeBOCollector = counter++;
+		}
+	}
+	static class LTestBoPreselector<A extends LaraAgent<? super A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>>
+			extends LAbstractPpComp<A, BO> implements LaraBOPreselector<A, BO> {
 
+		@Override
+		public void onInternalEvent(LaraEvent event) {
+			LPpEventBusTest.timeBoPreselector = counter++;
+		}
+	}
+	static class LTestBoUtilityUpdater<A extends LaraAgent<? super A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>>
+			extends LAbstractPpComp<A, BO> implements
+			LaraBOUtilityUpdater<A, BO> {
+
+		@Override
+		public void onInternalEvent(LaraEvent event) {
+			LPpEventBusTest.timeBOUtilityUpdater = counter++;
+		}
+	}
 	// PP components that allow monitoring:
 	static class LTestDecisionModeSelector<A extends LaraAgent<? super A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>>
-		extends LAbstractPpComp<A, BO>
-		implements LaraDecisionModeSelector<A, BO> {
+			extends LAbstractPpComp<A, BO> implements
+			LaraDecisionModeSelector<A, BO> {
 
 		@Override
 		public void onInternalEvent(LaraEvent e) {
@@ -101,35 +114,6 @@ public class LPpEventBusTest {
 			}
 		}
 	}
-	
-	static class LTestBoCollector<A extends LaraAgent<? super A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>>
-			extends LAbstractPpComp<A, BO> implements LaraBOCollector<A, BO> {
-
-		@Override
-		public void onInternalEvent(LaraEvent e) {
-			LPpEventBusTest.timeBOCollector = counter++;
-		}
-	}
-	
-	static class LTestBoPreselector<A extends LaraAgent<? super A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>>
-			extends LAbstractPpComp<A, BO> implements LaraBOPreselector<A, BO> {
-
-		@Override
-		public void onInternalEvent(LaraEvent event) {
-			LPpEventBusTest.timeBoPreselector = counter++;
-		}
-	}
-	
-	static class LTestBoUtilityUpdater<A extends LaraAgent<? super A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>>
-			extends LAbstractPpComp<A, BO> implements
-			LaraBOUtilityUpdater<A, BO> {
-
-		@Override
-		public void onInternalEvent(LaraEvent event) {
-			LPpEventBusTest.timeBOUtilityUpdater = counter++;
-		}
-	}
-
 	static class LTestPrefenceUpdater<A extends LaraAgent<? super A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>>
 			extends LAbstractPpComp<A, BO> implements
 			LaraPreferenceUpdater<A, BO> {
@@ -140,6 +124,22 @@ public class LPpEventBusTest {
 		}
 	}
 
+	static protected int timeModeSelector = 0;
+
+	static protected int timeBOCollector = 0;
+
+	static protected int timeBoPreselector = 0;
+
+	static protected int timeBOUtilityUpdater = 0;
+
+	static protected int timePreferenceUpdater = 0;
+
+	static protected Integer counter = new Integer(0);
+
+	protected LTestAgent agent1, agent2, agent3;
+
+	protected LaraDecisionConfiguration dConfig = new LDecisionConfiguration();
+
 	/**
 	 * @throws java.lang.Exception
 	 */
@@ -149,10 +149,11 @@ public class LPpEventBusTest {
 
 		LTestUtils.initTestModel();
 
-		// init two agents with different properties to trigger different PP behaviours
+		// init two agents with different properties to trigger different PP
+		// behaviours
 		agent1 = new LTestAgent("Test-Agent01");
 		agent2 = new LTestAgent("Test-Agent02");
-		
+
 		LEventbus.getInstance().unsubscribe(agent1.getLaraComp());
 		LEventbus.getInstance().unsubscribe(agent2.getLaraComp());
 
@@ -161,17 +162,34 @@ public class LPpEventBusTest {
 				.getNewPreprocessorConfigurator();
 		configurator1
 				.setDecisionModeSelector(new LTestDecisionModeSelector<LTestAgent, LTestBo>());
-		configurator1.setBOCollector(new LTestBoCollector<LTestAgent, LTestBo>());
-		configurator1.setBoPreselector(new LTestBoPreselector<LTestAgent, LTestBo>());
+		configurator1
+				.setBOCollector(new LTestBoCollector<LTestAgent, LTestBo>());
+		configurator1
+				.setBoPreselector(new LTestBoPreselector<LTestAgent, LTestBo>());
 		configurator1
 				.setBOAdapter(new LTestBoUtilityUpdater<LTestAgent, LTestBo>());
-		configurator1.setPreferenceUpdater(new LTestPrefenceUpdater<LTestAgent, LTestBo>());
+		configurator1
+				.setPreferenceUpdater(new LTestPrefenceUpdater<LTestAgent, LTestBo>());
 
 		// configure PP-Factory
 		LaraPreprocessor<LTestAgent, LTestBo> pp = configurator1
 				.getPreprocessor();
 		agent1.getLaraComp().setPreprocessor(pp);
 		agent2.getLaraComp().setPreprocessor(pp);
+	}
+
+	/**
+	 * @throws java.lang.Exception
+	 */
+	@After
+	public void tearDown() throws Exception {
+		timeModeSelector = 0;
+		timeBOCollector = 0;
+		timeBoPreselector = 0;
+		timeBOUtilityUpdater = 0;
+		timePreferenceUpdater = 0;
+
+		LEventbus.resetAll();
 	}
 
 	@Test
@@ -182,30 +200,13 @@ public class LPpEventBusTest {
 
 		// trigger pre-processing
 		LEventbus.getInstance().publish(new LAgentPreprocessEvent(dConfig));
-		
+
 		// check for execution of PP components
 		assertTrue(timeModeSelector < timeBOCollector);
 		assertTrue(timeBOCollector < timeBoPreselector);
 		assertTrue(timeBoPreselector + "<" + timeBOUtilityUpdater,
 				timeBoPreselector < timeBOUtilityUpdater);
 		assertTrue(timeBOUtilityUpdater < timePreferenceUpdater);
-	}
-
-	@Test
-	public void testAgent2() {
-		// subscribe agents at global eventbus
-		LEventbus.getInstance().subscribe(agent2.getLaraComp(),
-				LAgentPreprocessEvent.class);
-
-		// trigger pre-processing
-		LEventbus.getInstance().publish(new LAgentPreprocessEvent(dConfig));
-
-		// check for execution of PP components
-		assertTrue(timeModeSelector < timeBOCollector);
-		assertTrue(timeBOCollector < timeBoPreselector);
-		assertTrue(timeBoPreselector + "<" + timeBOUtilityUpdater,
-				timeBoPreselector < timeBOUtilityUpdater);
-		assertTrue(timePreferenceUpdater == 0);
 	}
 
 	/**
@@ -238,18 +239,21 @@ public class LPpEventBusTest {
 				.contains(testBo));
 	}
 
-	/**
-	 * @throws java.lang.Exception
-	 */
-	@After
-	public void tearDown() throws Exception {
-		timeModeSelector = 0;
-		timeBOCollector = 0;
-		timeBoPreselector = 0;
-		timeBOUtilityUpdater = 0;
-		timePreferenceUpdater = 0;
+	@Test
+	public void testAgent2() {
+		// subscribe agents at global eventbus
+		LEventbus.getInstance().subscribe(agent2.getLaraComp(),
+				LAgentPreprocessEvent.class);
 
-		LEventbus.resetAll();
+		// trigger pre-processing
+		LEventbus.getInstance().publish(new LAgentPreprocessEvent(dConfig));
+
+		// check for execution of PP components
+		assertTrue(timeModeSelector < timeBOCollector);
+		assertTrue(timeBOCollector < timeBoPreselector);
+		assertTrue(timeBoPreselector + "<" + timeBOUtilityUpdater,
+				timeBoPreselector < timeBOUtilityUpdater);
+		assertTrue(timePreferenceUpdater == 0);
 	}
-	
+
 }

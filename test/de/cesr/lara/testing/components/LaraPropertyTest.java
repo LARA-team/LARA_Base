@@ -19,7 +19,6 @@
  */
 package de.cesr.lara.testing.components;
 
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -33,17 +32,14 @@ import de.cesr.lara.components.eventbus.events.LModelStepEvent;
 import de.cesr.lara.components.eventbus.impl.LEventbus;
 import de.cesr.lara.testing.LTestUtils;
 
-
 /**
  * 
  */
 public class LaraPropertyTest {
 
-	private LaraProperty<?, Integer> prop1, prop2, prop3, prop4;
-
 	private class TestProperty extends LaraProperty<TestProperty, Integer> {
 
-		private final int	value;
+		private final int value;
 
 		public TestProperty(String key, int value) {
 			super(key);
@@ -59,7 +55,9 @@ public class LaraPropertyTest {
 		public Integer getValue() {
 			return value;
 		}
-	};
+	}
+
+	private LaraProperty<?, Integer> prop1, prop2, prop3, prop4;;
 
 	/**
 	 * 
@@ -81,6 +79,14 @@ public class LaraPropertyTest {
 	/**
 	 * 
 	 */
+	@After
+	public void tearDown() {
+		prop1 = prop2 = prop3 = null;
+	}
+
+	/**
+	 * 
+	 */
 	@Test
 	public void testLaraProperty() {
 		assertEquals("key01", prop1.getKey());
@@ -92,13 +98,5 @@ public class LaraPropertyTest {
 		assertFalse(prop1.equals(prop2));
 		assertFalse(prop1.equals(prop3));
 		assertFalse(prop2.equals(prop3));
-	}
-
-	/**
-	 * 
-	 */
-	@After
-	public void tearDown() {
-		prop1 = prop2 = prop3 = null;
 	}
 }

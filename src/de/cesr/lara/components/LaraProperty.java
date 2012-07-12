@@ -49,7 +49,6 @@ public abstract class LaraProperty<PropType extends LaraProperty<?, ValueType>, 
 		this.timestamp = LModel.getModel().getCurrentStep();
 	}
 
-
 	/**
 	 * Two properties are equal if their names and values and timestamps are
 	 * equal.

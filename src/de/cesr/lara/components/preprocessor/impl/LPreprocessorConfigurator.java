@@ -46,16 +46,35 @@ import de.cesr.lara.components.preprocessor.LaraPreprocessorConfigurator;
 public class LPreprocessorConfigurator<A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>>
 		implements LaraPreprocessorConfigurator<A, BO> {
 
+	@SuppressWarnings("unchecked")
+	// default components actually do not have any constraints regarding type
+	// parameters. TODO check
+	public static <A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>> LaraPreprocessor<A, BO> getDefaultPreprocessor() {
+		if (defaultPreprocessor == null) {
+			defaultPreprocessor = new LPreprocessor<A, BO>(
+					LPreprocessorConfigurator
+							.<A, BO> getNewPreprocessorConfigurator());
+		}
+		return (LaraPreprocessor<A, BO>) defaultPreprocessor;
+	}
+	/**
+	 * @param <A>
+	 * @param <BO>
+	 * @return the default configurator
+	 */
+	public static <A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>> LPreprocessorConfigurator<A, BO> getNewPreprocessorConfigurator() {
+		return new LPreprocessorConfigurator<A, BO>();
+	}
 	private final Map<LaraDecisionConfiguration, LaraDecisionModeSelector<A, BO>> selectorMap;
 	private final Map<LaraDecisionConfiguration, LaraBOCollector<A, ? extends BO>> scannerMap;
 	private final Map<LaraDecisionConfiguration, LaraBOPreselector<A, ? extends BO>> checkerMap;
+
 	private final Map<LaraDecisionConfiguration, LaraBOUtilityUpdater<A, BO>> adapterMap;
+
 	private final Map<LaraDecisionConfiguration, LaraPreferenceUpdater<? extends A, BO>> prefUpdaterMap;
 
 	private LaraPreprocessor<A, BO> preprocessor = null;
-
 	private static LaraPreprocessor<?, ?> defaultPreprocessor = null;
-
 	/**
 	 * 
 	 */
@@ -68,10 +87,12 @@ public class LPreprocessorConfigurator<A extends LaraAgent<A, BO>, BO extends La
 	 * 
 	 */
 	public final LaraBOPreselector<A, BO> DEFAULT_BO_PRESELECTOR = new LDelegatingBoPreselector<A, BO>();
+
 	/**
 	 * 
 	 */
 	public final LaraBOUtilityUpdater<A, BO> DEFAULT_BO_UPDATE_BUILDER = new LDefaultBOUpdater<A, BO>();
+
 	/**
 	 * 
 	 */
@@ -89,97 +110,131 @@ public class LPreprocessorConfigurator<A extends LaraAgent<A, BO>, BO extends La
 	}
 
 	/**
-	 * @see de.cesr.lara.components.preprocessor.LaraPreprocessorConfigurator#setBOAdapter(de.cesr.lara.components.preprocessor.LaraBOUtilityUpdater,
-	 *      de.cesr.lara.components.decision.LaraDecisionConfiguration)
+	 * @see java.lang.Object#clone()
 	 */
 	@Override
-	public void setBOAdapter(LaraBOUtilityUpdater<A, BO> boAdapter,
-			LaraDecisionConfiguration dConfiguration) {
-		adapterMap.put(dConfiguration, boAdapter);
+	public LaraPreprocessorConfigurator<A, BO> clone() {
+		LPreprocessorConfigurator<A, BO> clone = new LPreprocessorConfigurator<A, BO>();
+		clone.selectorMap.putAll(this.selectorMap);
+		clone.adapterMap.putAll(this.adapterMap);
+		clone.checkerMap.putAll(this.checkerMap);
+		clone.prefUpdaterMap.putAll(this.prefUpdaterMap);
+		clone.scannerMap.putAll(this.scannerMap);
+		return clone;
 	}
 
 	/**
-	 * @see de.cesr.lara.components.preprocessor.LaraPreprocessorConfigurator#setBOAdapter(de.cesr.lara.components.preprocessor.LaraBOUtilityUpdater)
+	 * @see de.cesr.lara.components.preprocessor.LaraPreprocessorConfigurator#get(de.cesr.lara.components.decision.LaraDecisionConfiguration,
+	 *      java.lang.Class)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
-	public void setBOAdapter(LaraBOUtilityUpdater<A, BO> boAdapter) {
-		adapterMap.put(null, boAdapter);
+	public <T> T get(LaraDecisionConfiguration dConfiguration,
+			Class<? super T> type) {
+		if (LaraDecisionModeSelector.class.isAssignableFrom(type)) {
+			return (T) selectorMap.get(dConfiguration);
+		}
+		if (LaraBOCollector.class.isAssignableFrom(type)) {
+			return (T) scannerMap.get(dConfiguration);
+		}
+		if (LaraBOPreselector.class.isAssignableFrom(type)) {
+			return (T) checkerMap.get(dConfiguration);
+		}
+		if (LaraBOUtilityUpdater.class.isAssignableFrom(type)) {
+			return (T) adapterMap.get(dConfiguration);
+		}
+		if (LaraPreferenceUpdater.class.isAssignableFrom(type)) {
+			return (T) prefUpdaterMap.get(dConfiguration);
+		}
+		new AssertionError("Missing case in DefaultConfigurator#get()");
+		return null;
 	}
 
 	/**
-	 * @see de.cesr.lara.components.preprocessor.LaraPreprocessorConfigurator#setBOPreselector(de.cesr.lara.components.preprocessor.LaraBOPreselector,
-	 *      de.cesr.lara.components.decision.LaraDecisionConfiguration)
+	 * @see de.cesr.lara.components.preprocessor.LaraPreprocessorConfigurator#getDefaultBoCollector()
 	 */
 	@Override
-	public void setBOPreselector(LaraBOPreselector<A, BO> boChecker,
-			LaraDecisionConfiguration dConfiguration) {
-		checkerMap.put(dConfiguration, boChecker);
+	public LaraBOCollector<A, BO> getDefaultBoCollector() {
+		return DEFAULT_BO_COLLECTOR;
 	}
 
 	/**
-	 * @see de.cesr.lara.components.preprocessor.LaraPreprocessorConfigurator#setBoPreselector(de.cesr.lara.components.preprocessor.LaraBOPreselector)
+	 * @see de.cesr.lara.components.preprocessor.LaraPreprocessorConfigurator#getDefaultBoPreselector()
 	 */
 	@Override
-	public void setBoPreselector(LaraBOPreselector<A, BO> boChecker) {
-		checkerMap.put(null, boChecker);
+	public LaraBOPreselector<A, BO> getDefaultBoPreselector() {
+		return DEFAULT_BO_PRESELECTOR;
 	}
 
 	/**
-	 * @see de.cesr.lara.components.preprocessor.LaraPreprocessorConfigurator#setBOCollector(de.cesr.lara.components.preprocessor.LaraBOCollector,
-	 *      de.cesr.lara.components.decision.LaraDecisionConfiguration)
+	 * @see de.cesr.lara.components.preprocessor.LaraPreprocessorConfigurator#getDefaultBoUtilityUpdater()
 	 */
 	@Override
-	public void setBOCollector(LaraBOCollector<A, BO> boscanner,
-			LaraDecisionConfiguration dConfiguration) {
-		scannerMap.put(dConfiguration, boscanner);
+	public LaraBOUtilityUpdater<A, BO> getDefaultBoUtilityUpdater() {
+		return DEFAULT_BO_UPDATE_BUILDER;
 	}
 
 	/**
-	 * @see de.cesr.lara.components.preprocessor.LaraPreprocessorConfigurator#setBOCollector(de.cesr.lara.components.preprocessor.LaraBOCollector)
+	 * @see de.cesr.lara.components.preprocessor.LaraPreprocessorConfigurator#getDefaultDecisionModeSelector()
 	 */
 	@Override
-	public void setBOCollector(LaraBOCollector<A, BO> boscanner) {
-		scannerMap.put(null, boscanner);
+	public LaraDecisionModeSelector<A, BO> getDefaultDecisionModeSelector() {
+		return DEFAULT_DECISION_MODE_SELECTOR;
 	}
 
 	/**
-	 * @see de.cesr.lara.components.preprocessor.LaraPreprocessorConfigurator#setDecisionModeSelector(de.cesr.lara.components.preprocessor.LaraDecisionModeSelector,
-	 *      de.cesr.lara.components.decision.LaraDecisionConfiguration)
+	 * @see de.cesr.lara.components.preprocessor.LaraPreprocessorConfigurator#getDefaultPreferenceUpdater()
 	 */
 	@Override
-	public void setDecisionModeSelector(
-			LaraDecisionModeSelector<A, BO> modeSelector,
-			LaraDecisionConfiguration dConfiguration) {
-		selectorMap.put(dConfiguration, modeSelector);
+	public LaraPreferenceUpdater<A, BO> getDefaultPreferenceUpdater() {
+		return DEFAULT_PREFERENCE_UPDATER;
 	}
 
 	/**
-	 * @see de.cesr.lara.components.preprocessor.LaraPreprocessorConfigurator#setDecisionModeSelector(de.cesr.lara.components.preprocessor.LaraDecisionModeSelector)
+	 * @see de.cesr.lara.components.preprocessor.LaraPreprocessorConfigurator#getMap(java.lang.Class)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
-	public void setDecisionModeSelector(
-			LaraDecisionModeSelector<A, BO> modeSelector) {
-		selectorMap.put(null, modeSelector);
+	public <T extends LaraPreprocessorComp<A, BO>> Map<LaraDecisionConfiguration, T> getMap(
+			Class<? super T> type) {
+		try {
+			if (LaraDecisionModeSelector.class.isAssignableFrom(type)) {
+				return (Map<LaraDecisionConfiguration, T>) selectorMap;
+			}
+			if (LaraBOCollector.class.isAssignableFrom(type)) {
+				return (Map<LaraDecisionConfiguration, T>) scannerMap;
+			}
+			if (LaraBOPreselector.class.isAssignableFrom(type)) {
+				return (Map<LaraDecisionConfiguration, T>) checkerMap;
+			}
+			if (LaraBOUtilityUpdater.class.isAssignableFrom(type)) {
+				return (Map<LaraDecisionConfiguration, T>) adapterMap;
+			}
+			if (LaraPreferenceUpdater.class.isAssignableFrom(type)) {
+				return (Map<LaraDecisionConfiguration, T>) prefUpdaterMap;
+			}
+			new AssertionError("Missing case in DefaultConfigurator#getMap()");
+			return null;
+		} catch (ClassCastException e) {
+			throw new ClassCastException(
+					"Agent parameter type did not match requested one!");
+		}
 	}
 
 	/**
-	 * @see de.cesr.lara.components.preprocessor.LaraPreprocessorConfigurator#setPreferenceUpdater(de.cesr.lara.components.preprocessor.LaraPreferenceUpdater,
-	 *      de.cesr.lara.components.decision.LaraDecisionConfiguration)
+	 * Checks whether the stored preprocessor matches this configuration and
+	 * return it if true. Builds a new preprocessor of the current configuration
+	 * otherwise.
+	 * 
+	 * @see de.cesr.lara.components.preprocessor.LaraPreprocessorConfigurator#getPreprocessor()
 	 */
 	@Override
-	public void setPreferenceUpdater(
-			LaraPreferenceUpdater<? extends A, BO> prefUpdater,
-			LaraDecisionConfiguration dConfiguration) {
-		prefUpdaterMap.put(dConfiguration, prefUpdater);
-	}
-
-	/**
-	 * @see de.cesr.lara.components.preprocessor.LaraPreprocessorConfigurator#setPreferenceUpdater(de.cesr.lara.components.preprocessor.LaraPreferenceUpdater)
-	 */
-	@Override
-	public void setPreferenceUpdater(
-			LaraPreferenceUpdater<? extends A, BO> prefUpdater) {
-		prefUpdaterMap.put(null, prefUpdater);
+	public LaraPreprocessor<A, BO> getPreprocessor() {
+		if (this.preprocessor == null
+				|| !this.preprocessor.meetsConfiguration(this)) {
+			this.preprocessor = new LPreprocessor<A, BO>(this);
+		}
+		return this.preprocessor;
 	}
 
 	/**
@@ -220,152 +275,97 @@ public class LPreprocessorConfigurator<A extends LaraAgent<A, BO>, BO extends La
 	}
 
 	/**
-	 * @see de.cesr.lara.components.preprocessor.LaraPreprocessorConfigurator#get(de.cesr.lara.components.decision.LaraDecisionConfiguration,
-	 *      java.lang.Class)
+	 * @see de.cesr.lara.components.preprocessor.LaraPreprocessorConfigurator#setBOAdapter(de.cesr.lara.components.preprocessor.LaraBOUtilityUpdater)
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T get(LaraDecisionConfiguration dConfiguration,
-			Class<? super T> type) {
-		if (LaraDecisionModeSelector.class.isAssignableFrom(type)) {
-			return (T) selectorMap.get(dConfiguration);
-		}
-		if (LaraBOCollector.class.isAssignableFrom(type)) {
-			return (T) scannerMap.get(dConfiguration);
-		}
-		if (LaraBOPreselector.class.isAssignableFrom(type)) {
-			return (T) checkerMap.get(dConfiguration);
-		}
-		if (LaraBOUtilityUpdater.class.isAssignableFrom(type)) {
-			return (T) adapterMap.get(dConfiguration);
-		}
-		if (LaraPreferenceUpdater.class.isAssignableFrom(type)) {
-			return (T) prefUpdaterMap.get(dConfiguration);
-		}
-		new AssertionError("Missing case in DefaultConfigurator#get()");
-		return null;
+	public void setBOAdapter(LaraBOUtilityUpdater<A, BO> boAdapter) {
+		adapterMap.put(null, boAdapter);
 	}
 
 	/**
-	 * @see de.cesr.lara.components.preprocessor.LaraPreprocessorConfigurator#getMap(java.lang.Class)
+	 * @see de.cesr.lara.components.preprocessor.LaraPreprocessorConfigurator#setBOAdapter(de.cesr.lara.components.preprocessor.LaraBOUtilityUpdater,
+	 *      de.cesr.lara.components.decision.LaraDecisionConfiguration)
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
-	public <T extends LaraPreprocessorComp<A, BO>> Map<LaraDecisionConfiguration, T> getMap(
-			Class<? super T> type) {
-		try {
-			if (LaraDecisionModeSelector.class.isAssignableFrom(type)) {
-				return (Map<LaraDecisionConfiguration, T>) selectorMap;
-			}
-			if (LaraBOCollector.class.isAssignableFrom(type)) {
-				return (Map<LaraDecisionConfiguration, T>) scannerMap;
-			}
-			if (LaraBOPreselector.class.isAssignableFrom(type)) {
-				return (Map<LaraDecisionConfiguration, T>) checkerMap;
-			}
-			if (LaraBOUtilityUpdater.class.isAssignableFrom(type)) {
-				return (Map<LaraDecisionConfiguration, T>) adapterMap;
-			}
-			if (LaraPreferenceUpdater.class.isAssignableFrom(type)) {
-				return (Map<LaraDecisionConfiguration, T>) prefUpdaterMap;
-			}
-			new AssertionError("Missing case in DefaultConfigurator#getMap()");
-			return null;
-		} catch (ClassCastException e) {
-			throw new ClassCastException(
-					"Agent parameter type did not match requested one!");
-		}
+	public void setBOAdapter(LaraBOUtilityUpdater<A, BO> boAdapter,
+			LaraDecisionConfiguration dConfiguration) {
+		adapterMap.put(dConfiguration, boAdapter);
 	}
 
 	/**
-	 * @see java.lang.Object#clone()
+	 * @see de.cesr.lara.components.preprocessor.LaraPreprocessorConfigurator#setBOCollector(de.cesr.lara.components.preprocessor.LaraBOCollector)
 	 */
 	@Override
-	public LaraPreprocessorConfigurator<A, BO> clone() {
-		LPreprocessorConfigurator<A, BO> clone = new LPreprocessorConfigurator<A, BO>();
-		clone.selectorMap.putAll(this.selectorMap);
-		clone.adapterMap.putAll(this.adapterMap);
-		clone.checkerMap.putAll(this.checkerMap);
-		clone.prefUpdaterMap.putAll(this.prefUpdaterMap);
-		clone.scannerMap.putAll(this.scannerMap);
-		return clone;
+	public void setBOCollector(LaraBOCollector<A, BO> boscanner) {
+		scannerMap.put(null, boscanner);
 	}
 
 	/**
-	 * Checks whether the stored preprocessor matches this configuration and
-	 * return it if true. Builds a new preprocessor of the current configuration
-	 * otherwise.
-	 * 
-	 * @see de.cesr.lara.components.preprocessor.LaraPreprocessorConfigurator#getPreprocessor()
+	 * @see de.cesr.lara.components.preprocessor.LaraPreprocessorConfigurator#setBOCollector(de.cesr.lara.components.preprocessor.LaraBOCollector,
+	 *      de.cesr.lara.components.decision.LaraDecisionConfiguration)
 	 */
 	@Override
-	public LaraPreprocessor<A, BO> getPreprocessor() {
-		if (this.preprocessor == null
-					|| !this.preprocessor.meetsConfiguration(this)) {
-				this.preprocessor = new LPreprocessor<A, BO>(this);
-			}
-		return this.preprocessor;
-	}
-
-	@SuppressWarnings("unchecked")
-	// default components actually do not have any constraints regarding type
-	// parameters. TODO check
-	public static <A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>> LaraPreprocessor<A, BO> getDefaultPreprocessor() {
-		if (defaultPreprocessor == null) {
-			defaultPreprocessor = new LPreprocessor<A, BO>(
-					LPreprocessorConfigurator
-							.<A, BO> getNewPreprocessorConfigurator());
-		}
-		return (LaraPreprocessor<A, BO>) defaultPreprocessor;
+	public void setBOCollector(LaraBOCollector<A, BO> boscanner,
+			LaraDecisionConfiguration dConfiguration) {
+		scannerMap.put(dConfiguration, boscanner);
 	}
 
 	/**
-	 * @param <A>
-	 * @param <BO>
-	 * @return the default configurator
+	 * @see de.cesr.lara.components.preprocessor.LaraPreprocessorConfigurator#setBoPreselector(de.cesr.lara.components.preprocessor.LaraBOPreselector)
 	 */
-	public static <A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>> LPreprocessorConfigurator<A, BO> getNewPreprocessorConfigurator() {
-		return new LPreprocessorConfigurator<A, BO>();
+	@Override
+	public void setBoPreselector(LaraBOPreselector<A, BO> boChecker) {
+		checkerMap.put(null, boChecker);
 	}
 
 	/**
-	 * @see de.cesr.lara.components.preprocessor.LaraPreprocessorConfigurator#getDefaultDecisionModeSelector()
+	 * @see de.cesr.lara.components.preprocessor.LaraPreprocessorConfigurator#setBOPreselector(de.cesr.lara.components.preprocessor.LaraBOPreselector,
+	 *      de.cesr.lara.components.decision.LaraDecisionConfiguration)
 	 */
 	@Override
-	public LaraDecisionModeSelector<A, BO> getDefaultDecisionModeSelector() {
-		return DEFAULT_DECISION_MODE_SELECTOR;
+	public void setBOPreselector(LaraBOPreselector<A, BO> boChecker,
+			LaraDecisionConfiguration dConfiguration) {
+		checkerMap.put(dConfiguration, boChecker);
 	}
 
 	/**
-	 * @see de.cesr.lara.components.preprocessor.LaraPreprocessorConfigurator#getDefaultBoCollector()
+	 * @see de.cesr.lara.components.preprocessor.LaraPreprocessorConfigurator#setDecisionModeSelector(de.cesr.lara.components.preprocessor.LaraDecisionModeSelector)
 	 */
 	@Override
-	public LaraBOCollector<A, BO> getDefaultBoCollector() {
-		return DEFAULT_BO_COLLECTOR;
+	public void setDecisionModeSelector(
+			LaraDecisionModeSelector<A, BO> modeSelector) {
+		selectorMap.put(null, modeSelector);
 	}
 
 	/**
-	 * @see de.cesr.lara.components.preprocessor.LaraPreprocessorConfigurator#getDefaultBoPreselector()
+	 * @see de.cesr.lara.components.preprocessor.LaraPreprocessorConfigurator#setDecisionModeSelector(de.cesr.lara.components.preprocessor.LaraDecisionModeSelector,
+	 *      de.cesr.lara.components.decision.LaraDecisionConfiguration)
 	 */
 	@Override
-	public LaraBOPreselector<A, BO> getDefaultBoPreselector() {
-		return DEFAULT_BO_PRESELECTOR;
+	public void setDecisionModeSelector(
+			LaraDecisionModeSelector<A, BO> modeSelector,
+			LaraDecisionConfiguration dConfiguration) {
+		selectorMap.put(dConfiguration, modeSelector);
 	}
 
 	/**
-	 * @see de.cesr.lara.components.preprocessor.LaraPreprocessorConfigurator#getDefaultBoUtilityUpdater()
+	 * @see de.cesr.lara.components.preprocessor.LaraPreprocessorConfigurator#setPreferenceUpdater(de.cesr.lara.components.preprocessor.LaraPreferenceUpdater)
 	 */
 	@Override
-	public LaraBOUtilityUpdater<A, BO> getDefaultBoUtilityUpdater() {
-		return DEFAULT_BO_UPDATE_BUILDER;
+	public void setPreferenceUpdater(
+			LaraPreferenceUpdater<? extends A, BO> prefUpdater) {
+		prefUpdaterMap.put(null, prefUpdater);
 	}
 
 	/**
-	 * @see de.cesr.lara.components.preprocessor.LaraPreprocessorConfigurator#getDefaultPreferenceUpdater()
+	 * @see de.cesr.lara.components.preprocessor.LaraPreprocessorConfigurator#setPreferenceUpdater(de.cesr.lara.components.preprocessor.LaraPreferenceUpdater,
+	 *      de.cesr.lara.components.decision.LaraDecisionConfiguration)
 	 */
 	@Override
-	public LaraPreferenceUpdater<A, BO> getDefaultPreferenceUpdater() {
-		return DEFAULT_PREFERENCE_UPDATER;
+	public void setPreferenceUpdater(
+			LaraPreferenceUpdater<? extends A, BO> prefUpdater,
+			LaraDecisionConfiguration dConfiguration) {
+		prefUpdaterMap.put(dConfiguration, prefUpdater);
 	}
-	
+
 }

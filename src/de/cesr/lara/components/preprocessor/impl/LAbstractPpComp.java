@@ -32,16 +32,15 @@ import de.cesr.lara.components.preprocessor.event.LaraPpEvent;
 import de.cesr.lara.components.util.logging.impl.LAgentLevel;
 import de.cesr.lara.components.util.logging.impl.Log4jLogger;
 
-
 /**
  * @author Sascha Holzhauer
  * 
  * @param <A>
  * @param <BO>
  */
-public abstract class LAbstractPpComp<A extends LaraAgent<? super A, ?>, BO extends LaraBehaviouralOption<?, ?>> 
+public abstract class LAbstractPpComp<A extends LaraAgent<? super A, ?>, BO extends LaraBehaviouralOption<?, ?>>
 		implements LaraPreprocessorComp<A, BO> {
-	
+
 	/**
 	 * Logger
 	 */

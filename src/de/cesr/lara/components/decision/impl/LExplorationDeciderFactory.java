@@ -19,7 +19,6 @@
  */
 package de.cesr.lara.components.decision.impl;
 
-
 import org.apache.log4j.Logger;
 
 import de.cesr.lara.components.LaraBehaviouralOption;
@@ -44,19 +43,17 @@ import de.cesr.lara.components.util.logging.impl.Log4jLogger;
  * @param <BO>
  *            type of behavioural option
  */
-public class LExplorationDeciderFactory<A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>> implements
-		LaraDeciderFactory<A, BO> {
+public class LExplorationDeciderFactory<A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>>
+		implements LaraDeciderFactory<A, BO> {
 
 	/**
 	 * Logger
 	 */
-	static private Logger			logger	= Log4jLogger.getLogger(LExplorationDeciderFactory.class);
+	static private Logger logger = Log4jLogger
+			.getLogger(LExplorationDeciderFactory.class);
 
-	static LaraDeciderFactory<?, ?>	factory	= null;
-	static Class<?>					clazz;
-
-	private LExplorationDeciderFactory() {
-	}
+	static LaraDeciderFactory<?, ?> factory = null;
+	static Class<?> clazz;
 
 	/**
 	 * The problem: In java, non-static class AgentT (parameter) cannot be
@@ -91,12 +88,16 @@ public class LExplorationDeciderFactory<A extends LaraAgent<A, BO>, BO extends L
 		return (LExplorationDeciderFactory<A, BO>) factory;
 	}
 
+	private LExplorationDeciderFactory() {
+	}
+
 	/**
 	 * @see de.cesr.lara.components.decision.LaraDeciderFactory#getDecider(de.cesr.lara.components.agents.LaraAgent,
 	 *      de.cesr.lara.components.decision.LaraDecisionConfiguration)
 	 */
 	@Override
-	public LaraDecider<BO> getDecider(A agent, LaraDecisionConfiguration dConfiguration) {
+	public LaraDecider<BO> getDecider(A agent,
+			LaraDecisionConfiguration dConfiguration) {
 		return new LExplorationDecider<A, BO>(agent, dConfiguration);
 	}
 }

@@ -19,7 +19,6 @@
  */
 package de.cesr.lara.components.preprocessor.impl;
 
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map.Entry;
@@ -83,7 +82,8 @@ public class LContributingBoCollector<A extends LaraAgent<A, BO>, BO extends Lar
 		A agent = ((A) event.getAgent());
 		for (BO bo : agent.getLaraComp().getBOMemory().recallAllMostRecent()) {
 			boolean contributes = false;
-			for (Entry<Class<? extends LaraPreference>, Double> utility : bo.getValue().entrySet()) {
+			for (Entry<Class<? extends LaraPreference>, Double> utility : bo
+					.getValue().entrySet()) {
 				if (event.getdConfig().getPreferences()
 						.contains(utility.getKey())) {
 					contributes = true;

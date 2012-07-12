@@ -85,6 +85,11 @@ public class LDefaultAgentComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 				LDeliberativeChoiceComp_MaxLineTotal.getInstance());
 	}
 
+	static public LaraDeliberativeChoiceComponent getDefaultDeliberativeChoiceComp(
+			LaraDecisionConfiguration dConfiguration) {
+		return defaultDeliberativeChoiceComponents.get(dConfiguration);
+	}
+
 	/**
 	 * @param dConfiguration
 	 * @param comp
@@ -93,11 +98,6 @@ public class LDefaultAgentComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 			LaraDecisionConfiguration dConfiguration,
 			LaraDeliberativeChoiceComponent comp) {
 		defaultDeliberativeChoiceComponents.put(dConfiguration, comp);
-	}
-
-	static public LaraDeliberativeChoiceComponent getDefaultDeliberativeChoiceComp(
-			LaraDecisionConfiguration dConfiguration) {
-		return defaultDeliberativeChoiceComponents.get(dConfiguration);
 	}
 
 	private final Logger logger = Log4jLogger
@@ -206,6 +206,40 @@ public class LDefaultAgentComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 		eventBus.subscribe(this, LAgentExecutionEvent.class);
 	}
 
+	@Override
+	public void addPreferenceWeights(LPrefEntry... prefEntry) {
+		if (this.preferenceWeights == null) {
+			this.preferenceWeights = new HashMap<Class<? extends LaraPreference>, Double>();
+		}
+		for (LPrefEntry e : prefEntry) {
+			this.preferenceWeights.put(e.getKey(), e.getValue());
+		}
+
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			logger.debug(agent + "> Preferences: " + this.preferenceWeights);
+		}
+		// LOGGING ->
+	}
+
+	/**
+	 * @see de.cesr.lara.components.agents.LaraAgentComponent#addPreferenceWeights(java.util.Map)
+	 */
+	@Override
+	public void addPreferenceWeights(
+			Map<Class<? extends LaraPreference>, Double> preferenceWeights) {
+		if (this.preferenceWeights == null) {
+			this.preferenceWeights = new HashMap<Class<? extends LaraPreference>, Double>();
+		}
+		this.preferenceWeights.putAll(preferenceWeights);
+
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			logger.debug(agent + "> Preferences: " + this.preferenceWeights);
+		}
+		// LOGGING ->
+	}
+
 	/**
 	 * @see de.cesr.lara.components.agents.LaraAgentComponent#decide(de.cesr.lara.components.decision.LaraDecisionConfiguration)
 	 */
@@ -259,6 +293,32 @@ public class LDefaultAgentComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 		return decisionData.get(dConfiguration);
 	}
 
+	/**
+	 * @see de.cesr.lara.components.agents.LaraAgentComponent#getDecisionDataIterable()
+	 */
+	@Override
+	public Iterable<LaraDecisionData<A, BO>> getDecisionDataIterable() {
+		return decisionData.values();
+	}
+
+	/**
+	 * @see de.cesr.lara.components.agents.LaraAgentComponent#getDeliberativeChoiceComp(de.cesr.lara.components.decision.LaraDecisionConfiguration)
+	 */
+	@Override
+	public LaraDeliberativeChoiceComponent getDeliberativeChoiceComp(
+			LaraDecisionConfiguration dConfiguration) {
+		if (deliberativeChoiceCompents.containsKey(dConfiguration)) {
+			return deliberativeChoiceCompents.get(dConfiguration);
+		} else if (defaultDeliberativeChoiceComponents
+				.containsKey(dConfiguration)) {
+			return defaultDeliberativeChoiceComponents.get(dConfiguration);
+		} else if (deliberativeChoiceCompents.containsKey(null)) {
+			return deliberativeChoiceCompents.get(null);
+		} else {
+			return defaultDeliberativeChoiceComponents.get(null);
+		}
+	}
+
 	@Override
 	public double getDoubleProperty(String name) {
 		Double value = doubleProperties.get(name);
@@ -281,6 +341,14 @@ public class LDefaultAgentComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 		return memory;
 	}
 
+	/**
+	 * @see de.cesr.lara.components.agents.LaraAgentComponent#getNumDecisionDataObjects()
+	 */
+	@Override
+	public int getNumDecisionDataObjects() {
+		return decisionData.size();
+	}
+
 	@Override
 	public Double getPreferenceWeight(Class<? extends LaraPreference> preference) {
 		return preferenceWeights.get(preference);
@@ -293,83 +361,6 @@ public class LDefaultAgentComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 	public Map<Class<? extends LaraPreference>, Double> getPreferenceWeights() {
 		return new LinkedHashMap<Class<? extends LaraPreference>, Double>(
 				preferenceWeights);
-	}
-
-	/**
-	 * @see de.cesr.lara.components.agents.LaraAgentComponent#addPreferenceWeights(java.util.Map)
-	 */
-	@Override
-	public void addPreferenceWeights(
-			Map<Class<? extends LaraPreference>, Double> preferenceWeights) {
-		if (this.preferenceWeights == null) {
-			this.preferenceWeights = new HashMap<Class<? extends LaraPreference>, Double>();
-		}
-		this.preferenceWeights.putAll(preferenceWeights);
-
-		// <- LOGGING
-		if (logger.isDebugEnabled()) {
-			logger.debug(agent + "> Preferences: " + this.preferenceWeights);
-		}
-		// LOGGING ->
-	}
-
-	@Override
-	public void addPreferenceWeights(LPrefEntry... prefEntry) {
-		if (this.preferenceWeights == null) {
-			this.preferenceWeights = new HashMap<Class<? extends LaraPreference>, Double>();
-		}
-		for (LPrefEntry e : prefEntry) {
-			this.preferenceWeights.put(e.getKey(), e.getValue());
-		}
-
-		// <- LOGGING
-		if (logger.isDebugEnabled()) {
-			logger.debug(agent + "> Preferences: " + this.preferenceWeights);
-		}
-		// LOGGING ->
-	}
-
-	/**
-	 * @see de.cesr.lara.components.agents.LaraAgentComponent#removeDecisionData(de.cesr.lara.components.decision.LaraDecisionConfiguration)
-	 */
-	@Override
-	public void removeDecisionData(LaraDecisionConfiguration dConfiguration) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("LaraDecisionData for " + agent + " and "
-					+ dConfiguration + " removed");
-		}
-		decisionData.remove(dConfiguration);
-	}
-
-	/**
-	 * @see de.cesr.lara.components.agents.LaraAgentComponent#setBOMemory(de.cesr.lara.components.container.memory.LaraBOMemory)
-	 */
-	@Override
-	public void setBOMemory(LaraBOMemory<BO> boMemory) {
-		this.boMemory = boMemory;
-	}
-
-	@Override
-	public void setDoubleProperty(String name, double value) {
-		doubleProperties.put(name, value);
-	}
-
-	/**
-	 * @see de.cesr.lara.components.agents.LaraAgentComponent#setGeneralMemory(LaraMemory)
-	 */
-	@Override
-	public void setGeneralMemory(LaraMemory<LaraProperty<?, ?>> memory) {
-		this.memory = memory;
-	}
-
-	/**
-	 * 
-	 * @see de.cesr.lara.components.agents.LaraAgentComponent#setPreprocessor(de.cesr.lara.components.preprocessor.LaraPreprocessor)
-	 */
-	@Override
-	public void setPreprocessor(
-LaraPreprocessor<A, BO> preprocessor) {
-		this.preprocessor = preprocessor;
 	}
 
 	/**
@@ -409,8 +400,8 @@ LaraPreprocessor<A, BO> preprocessor) {
 			decide(((LAgentDecideEvent) event).getDecisionConfiguration());
 
 		} else if (event instanceof LAgentPostprocessEvent) {
-			postProcessorComp.postProcess(agent,
- ((LAgentPostprocessEvent) event)
+			postProcessorComp
+					.postProcess(agent, ((LAgentPostprocessEvent) event)
 							.getDecisionConfiguration());
 
 		} else if (event instanceof LAgentExecutionEvent) {
@@ -420,37 +411,23 @@ LaraPreprocessor<A, BO> preprocessor) {
 	}
 
 	/**
-	 * @see de.cesr.lara.components.agents.LaraAgentComponent#getNumDecisionDataObjects()
+	 * @see de.cesr.lara.components.agents.LaraAgentComponent#removeDecisionData(de.cesr.lara.components.decision.LaraDecisionConfiguration)
 	 */
 	@Override
-	public int getNumDecisionDataObjects() {
-		return decisionData.size();
-	}
-
-	/**
-	 * @see de.cesr.lara.components.agents.LaraAgentComponent#getDecisionDataIterable()
-	 */
-	@Override
-	public Iterable<LaraDecisionData<A, BO>> getDecisionDataIterable() {
-		return decisionData.values();
-	}
-
-	/**
-	 * @see de.cesr.lara.components.agents.LaraAgentComponent#getDeliberativeChoiceComp(de.cesr.lara.components.decision.LaraDecisionConfiguration)
-	 */
-	@Override
-	public LaraDeliberativeChoiceComponent getDeliberativeChoiceComp(
-			LaraDecisionConfiguration dConfiguration) {
-		if (deliberativeChoiceCompents.containsKey(dConfiguration)) {
-			return deliberativeChoiceCompents.get(dConfiguration);
-		} else if (defaultDeliberativeChoiceComponents
-				.containsKey(dConfiguration)) {
-			return defaultDeliberativeChoiceComponents.get(dConfiguration);
-		} else if (deliberativeChoiceCompents.containsKey(null)) {
-			return deliberativeChoiceCompents.get(null);
-		} else {
-			return defaultDeliberativeChoiceComponents.get(null);
+	public void removeDecisionData(LaraDecisionConfiguration dConfiguration) {
+		if (logger.isDebugEnabled()) {
+			logger.debug("LaraDecisionData for " + agent + " and "
+					+ dConfiguration + " removed");
 		}
+		decisionData.remove(dConfiguration);
+	}
+
+	/**
+	 * @see de.cesr.lara.components.agents.LaraAgentComponent#setBOMemory(de.cesr.lara.components.container.memory.LaraBOMemory)
+	 */
+	@Override
+	public void setBOMemory(LaraBOMemory<BO> boMemory) {
+		this.boMemory = boMemory;
 	}
 
 	/**
@@ -464,6 +441,19 @@ LaraPreprocessor<A, BO> preprocessor) {
 		deliberativeChoiceCompents.put(dConfiguration, comp);
 	}
 
+	@Override
+	public void setDoubleProperty(String name, double value) {
+		doubleProperties.put(name, value);
+	}
+
+	/**
+	 * @see de.cesr.lara.components.agents.LaraAgentComponent#setGeneralMemory(LaraMemory)
+	 */
+	@Override
+	public void setGeneralMemory(LaraMemory<LaraProperty<?, ?>> memory) {
+		this.memory = memory;
+	}
+
 	/**
 	 * @see de.cesr.lara.components.agents.LaraAgentComponent#setPostProcessor(de.cesr.lara.components.postprocessor.LaraPostprocessorComp)
 	 */
@@ -471,5 +461,14 @@ LaraPreprocessor<A, BO> preprocessor) {
 	public void setPostProcessor(LaraPostprocessorComp<A, BO> postprocesor) {
 		this.postProcessorComp = postprocesor;
 	}
-	
+
+	/**
+	 * 
+	 * @see de.cesr.lara.components.agents.LaraAgentComponent#setPreprocessor(de.cesr.lara.components.preprocessor.LaraPreprocessor)
+	 */
+	@Override
+	public void setPreprocessor(LaraPreprocessor<A, BO> preprocessor) {
+		this.preprocessor = preprocessor;
+	}
+
 }

@@ -19,7 +19,6 @@
  */
 package de.cesr.lara.components.decision.impl;
 
-
 import java.util.Set;
 
 import de.cesr.lara.components.LaraBehaviouralOption;
@@ -44,10 +43,10 @@ import de.cesr.lara.components.decision.LaraDecisionTree;
 public class LTreeDecider<A extends LaraAgent<A, ? super BO>, BO extends LaraBehaviouralOption<?, BO>, P>
 		implements LaraDecider<BO> {
 
-	A							agent;
-	Set<BO>						bos;
-	LaraDecisionTree<A, BO, P>	decisionTree;
-	P							parameter;
+	A agent;
+	Set<BO> bos;
+	LaraDecisionTree<A, BO, P> decisionTree;
+	P parameter;
 
 	/**
 	 * @param decisionTree

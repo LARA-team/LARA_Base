@@ -52,5 +52,5 @@ public class LFloatProperty extends LaraProperty<LFloatProperty, Float> {
 	public Float getValue() {
 		return value;
 	}
-	
+
 }

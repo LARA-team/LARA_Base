@@ -82,5 +82,5 @@ public class LNormalController extends Normal {
 		logger_st.error("Stack trace: ", new LIdentifyCallerException());
 		return rand;
 	}
-	
+
 }

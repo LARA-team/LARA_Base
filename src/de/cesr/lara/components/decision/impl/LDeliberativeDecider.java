@@ -105,7 +105,6 @@ public class LDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? extends 
 
 		situationalUtilityMatrixRows = new ArrayList<LaraBoRow<BO>>();
 
-
 		// // Facilitate comparison of rows:
 		// Collections.<LaraBehaviouralOption>sort((ArrayList<LaraBehaviouralOption>)
 		// selectableBOs,
@@ -122,9 +121,9 @@ public class LDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? extends 
 			for (Entry<Class<? extends LaraPreference>, Double> utility : bo
 					.getValue().entrySet()) {
 				/*
-				 * avoid putting utilities into laraBoRows which are not needed for
-				 * current decision (BOs may be valid for other decisions and
-				 * thus define utility for more preferenceWeights.)
+				 * avoid putting utilities into laraBoRows which are not needed
+				 * for current decision (BOs may be valid for other decisions
+				 * and thus define utility for more preferenceWeights.)
 				 */
 				if (isGoalConsidered(utility.getKey())) {
 					boRow.setIndividualUtilityValue(
@@ -153,120 +152,9 @@ public class LDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? extends 
 		// LOGGING ->
 	}
 
-
 	/******************************************************************************
 	 * HELPER METHODS
 	 ******************************************************************************/
-
-	/**
-	 * Provides the individual preference weight of the given preference.
-	 * 
-	 * @param preference
-	 * @return individual preference weight
-	 */
-	private double getPreferenceForGoal(Class<? extends LaraPreference> goal) {
-		return preferenceWeights.get(goal).doubleValue();
-	}
-
-	/**
-	 * Checks if the given preference is defined, which also means by definition
-	 * whether the specified preference is considered during the decision
-	 * process.
-	 * 
-	 * @param preference
-	 *            the preference to check
-	 * @return true if the given preference is considered
-	 */
-	private boolean isGoalConsidered(Class<? extends LaraPreference> preference) {
-		return preferenceWeights.containsKey(preference);
-	}
-
-	/******************************************************************************
-	 * GETTER & SETTER
-	 ******************************************************************************/
-
-	/**
-	 * @see de.cesr.lara.components.decision.LaraDeliberativeDecider#setDeliberativeChoiceComponent(de.cesr.lara.components.decision.LaraDeliberativeChoiceComponent)
-	 */
-	@Override
-	public void setDeliberativeChoiceComponent(
-			LaraDeliberativeChoiceComponent deliberativeChoiceComponent) {
-		this.deliberativeChoiceComponent = deliberativeChoiceComponent;
-	}
-
-	/**
-	 * Checks if the deliberative choice component has been set and provides it
-	 * true.
-	 * 
-	 * @return deliberative choice component
-	 */
-	protected LaraDeliberativeChoiceComponent getDeliberativeChoiceComp() {
-		if (this.deliberativeChoiceComponent == null) {
-			// <- LOGGING
-			logger.error("Deliberative Choice Component has not been set at "
-					+ this);
-			// LOGGING ->
-			throw new IllegalStateException(
-					"Deliberative Choice Component has not been set at " + this);
-		} else {
-			return this.deliberativeChoiceComponent;
-		}
-	}
-
-	/**
-	 * @see de.cesr.lara.components.decision.LaraDeliberativeDecider#setPreferenceWeights(java.util.Map)
-	 */
-	@Override
-	public void setPreferenceWeights(
-			Map<Class<? extends LaraPreference>, Double> preference) {
-		this.preferenceWeights = preference;
-
-		// <- LOGGING
-		if (logger.isDebugEnabled()) {
-			logger.debug("Received Preferences: " + preferenceWeights);
-		}
-		logger.info("Received " + preference.size() + " preferenceWeights");
-		// LOGGING ->
-	}
-
-	/**
-	 * @see de.cesr.lara.components.decision.LaraDeliberativeDecider#getPreferenceWeights()
-	 */
-	@Override
-	public Map<Class<? extends LaraPreference>, Double> getPreferenceWeights() {
-		return preferenceWeights;
-	}
-
-	/**
-	 * @see de.cesr.lara.components.decision.LaraDeliberativeDecider#setSelectableBos(java.util.Collection)
-	 */
-	@Override
-	public void setSelectableBos(Collection<BO> behaviouralOptions) {
-		this.selectableBOs = behaviouralOptions;
-		// <- LOGGING
-		logger.info(behaviouralOptions != null ? "Received "
-				+ behaviouralOptions.size() + " behavioural options"
-				: "Received set of BOs is empty!");
-		// LOGGING ->
-	}
-
-	/**
-	 * @see de.cesr.lara.components.decision.LaraDeliberativeDecider#getSelectableBos()
-	 */
-	@Override
-	public Collection<BO> getSelectableBos() {
-		return selectableBOs;
-	}
-
-	/**
-	 * @see de.cesr.lara.components.decision.LaraDecider#getSelectedBo()
-	 */
-	@Override
-	public BO getSelectedBo() {
-		return getDeliberativeChoiceComp().getSelectedBo(dConfiguration,
-				situationalUtilityMatrixRows);
-	}
-
 
 	/**
 	 * This method delegates to the deliberative choice component since bos may
@@ -293,6 +181,72 @@ public class LDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? extends 
 		return situationalUtilityMatrixRows.size();
 	}
 
+	/******************************************************************************
+	 * GETTER & SETTER
+	 ******************************************************************************/
+
+	/**
+	 * @see de.cesr.lara.components.decision.LaraDeliberativeDecider#getPreferenceWeights()
+	 */
+	@Override
+	public Map<Class<? extends LaraPreference>, Double> getPreferenceWeights() {
+		return preferenceWeights;
+	}
+
+	/**
+	 * @see de.cesr.lara.components.decision.LaraDeliberativeDecider#getSelectableBos()
+	 */
+	@Override
+	public Collection<BO> getSelectableBos() {
+		return selectableBOs;
+	}
+
+	/**
+	 * @see de.cesr.lara.components.decision.LaraDecider#getSelectedBo()
+	 */
+	@Override
+	public BO getSelectedBo() {
+		return getDeliberativeChoiceComp().getSelectedBo(dConfiguration,
+				situationalUtilityMatrixRows);
+	}
+
+	/**
+	 * @see de.cesr.lara.components.decision.LaraDeliberativeDecider#setDeliberativeChoiceComponent(de.cesr.lara.components.decision.LaraDeliberativeChoiceComponent)
+	 */
+	@Override
+	public void setDeliberativeChoiceComponent(
+			LaraDeliberativeChoiceComponent deliberativeChoiceComponent) {
+		this.deliberativeChoiceComponent = deliberativeChoiceComponent;
+	}
+
+	/**
+	 * @see de.cesr.lara.components.decision.LaraDeliberativeDecider#setPreferenceWeights(java.util.Map)
+	 */
+	@Override
+	public void setPreferenceWeights(
+			Map<Class<? extends LaraPreference>, Double> preference) {
+		this.preferenceWeights = preference;
+
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			logger.debug("Received Preferences: " + preferenceWeights);
+		}
+		logger.info("Received " + preference.size() + " preferenceWeights");
+		// LOGGING ->
+	}
+
+	/**
+	 * @see de.cesr.lara.components.decision.LaraDeliberativeDecider#setSelectableBos(java.util.Collection)
+	 */
+	@Override
+	public void setSelectableBos(Collection<BO> behaviouralOptions) {
+		this.selectableBOs = behaviouralOptions;
+		// <- LOGGING
+		logger.info(behaviouralOptions != null ? "Received "
+				+ behaviouralOptions.size() + " behavioural options"
+				: "Received set of BOs is empty!");
+		// LOGGING ->
+	}
 
 	/**
 	 * Return the name of this decider and the {@link LaraDecisionConfiguration}
@@ -302,5 +256,47 @@ public class LDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? extends 
 	@Override
 	public String toString() {
 		return "LDeliberativeDecider for " + dConfiguration;
+	}
+
+	/**
+	 * Provides the individual preference weight of the given preference.
+	 * 
+	 * @param preference
+	 * @return individual preference weight
+	 */
+	private double getPreferenceForGoal(Class<? extends LaraPreference> goal) {
+		return preferenceWeights.get(goal).doubleValue();
+	}
+
+	/**
+	 * Checks if the given preference is defined, which also means by definition
+	 * whether the specified preference is considered during the decision
+	 * process.
+	 * 
+	 * @param preference
+	 *            the preference to check
+	 * @return true if the given preference is considered
+	 */
+	private boolean isGoalConsidered(Class<? extends LaraPreference> preference) {
+		return preferenceWeights.containsKey(preference);
+	}
+
+	/**
+	 * Checks if the deliberative choice component has been set and provides it
+	 * true.
+	 * 
+	 * @return deliberative choice component
+	 */
+	protected LaraDeliberativeChoiceComponent getDeliberativeChoiceComp() {
+		if (this.deliberativeChoiceComponent == null) {
+			// <- LOGGING
+			logger.error("Deliberative Choice Component has not been set at "
+					+ this);
+			// LOGGING ->
+			throw new IllegalStateException(
+					"Deliberative Choice Component has not been set at " + this);
+		} else {
+			return this.deliberativeChoiceComponent;
+		}
 	}
 }

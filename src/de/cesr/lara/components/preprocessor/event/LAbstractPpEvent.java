@@ -45,19 +45,19 @@ public abstract class LAbstractPpEvent implements LaraPpEvent,
 	}
 
 	/**
-	 * @see de.cesr.lara.components.preprocessor.event.LaraPpEvent#getdConfig()
-	 */
-	@Override
-	public LaraDecisionConfiguration getdConfig() {
-		return dConfig;
-	}
-
-	/**
 	 * @see de.cesr.lara.components.preprocessor.event.LaraPpEvent#getAgent()
 	 */
 	@Override
 	public LaraAgent<?, ?> getAgent() {
 		return agent;
+	}
+
+	/**
+	 * @see de.cesr.lara.components.preprocessor.event.LaraPpEvent#getdConfig()
+	 */
+	@Override
+	public LaraDecisionConfiguration getdConfig() {
+		return dConfig;
 	}
 
 }

@@ -19,7 +19,6 @@
  */
 package de.cesr.lara.testing.components.container;
 
-
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -36,14 +35,19 @@ import de.cesr.lara.components.eventbus.impl.LEventbus;
 import de.cesr.lara.components.util.impl.LCapacityManagers;
 import de.cesr.lara.testing.components.container.LContainerTestUtils.LTestProperty;
 
-
 public class LDefaultLimitedCapacityStorageTest {
 
-	LaraStorage<LTestProperty>	storage;
+	LaraStorage<LTestProperty> storage;
 
 	@Before
 	public void setUp() throws Exception {
-		storage = new LDefaultLimitedCapacityStorage<LTestProperty>(LCapacityManagers.<LTestProperty> makeFIFO(), 7);
+		storage = new LDefaultLimitedCapacityStorage<LTestProperty>(
+				LCapacityManagers.<LTestProperty> makeFIFO(), 7);
+	}
+
+	@After
+	public void tearDown() throws Exception {
+		storage = null;
 	}
 
 	/**
@@ -63,7 +67,6 @@ public class LDefaultLimitedCapacityStorageTest {
 
 		storage.store(new LTestProperty("key08", "value08"));
 		assertTrue(storage.getSize() == 7);
-
 
 		try {
 			storage.fetch("key08");
@@ -101,54 +104,11 @@ public class LDefaultLimitedCapacityStorageTest {
 	 * 
 	 */
 	@Test
-	public void testNINO() {
-		@SuppressWarnings("unchecked")
-		LaraCapacityManageableContainer<LTestProperty> cmStorage = (LaraCapacityManageableContainer<LTestProperty>) storage;
-		cmStorage.setCapacityManager(LCapacityManagers.<LTestProperty> makeNINO());
-		cmStorage.setCapacity(2);
-
-		LTestProperty property01 = new LTestProperty("key01", "value01");
-		storage.store(property01);
-
-		LEventbus.getInstance().publish(new LModelStepEvent());
-
-		LTestProperty property02 = new LTestProperty("key02", "value02");
-		storage.store(property02);
-
-		LEventbus.getInstance().publish(new LModelStepEvent());
-
-		LTestProperty property03 = new LTestProperty("key03", "value03");
-		storage.store(property03);
-
-		try {
-			storage.fetch("key01");
-		} catch (Exception e) {
-			fail("This should not have raised an exception.");
-		}
-
-		try {
-			storage.fetch("key02");
-		} catch (Exception e) {
-			fail("This should not have raised an exception.");
-		}
-
-		try {
-			storage.fetch("key03");
-			fail("This should have raised an exception.");
-		} catch (Exception e) {
-
-		}
-
-	}
-
-	/**
-	 * 
-	 */
-	@Test
 	public void testFIFO() {
 		@SuppressWarnings("unchecked")
 		LaraCapacityManageableContainer<LTestProperty> cmStorage = (LaraCapacityManageableContainer<LTestProperty>) storage;
-		cmStorage.setCapacityManager(LCapacityManagers.<LTestProperty> makeFIFO());
+		cmStorage.setCapacityManager(LCapacityManagers
+				.<LTestProperty> makeFIFO());
 		cmStorage.setCapacity(2);
 
 		LTestProperty property01 = new LTestProperty("key01", "value01");
@@ -192,7 +152,8 @@ public class LDefaultLimitedCapacityStorageTest {
 	public void testFILO() {
 		@SuppressWarnings("unchecked")
 		LaraCapacityManageableContainer<LTestProperty> cmStorage = (LaraCapacityManageableContainer<LTestProperty>) storage;
-		cmStorage.setCapacityManager(LCapacityManagers.<LTestProperty> makeFILO());
+		cmStorage.setCapacityManager(LCapacityManagers
+				.<LTestProperty> makeFILO());
 		cmStorage.setCapacity(2);
 
 		LTestProperty property01 = new LTestProperty("key01", "value01");
@@ -229,8 +190,48 @@ public class LDefaultLimitedCapacityStorageTest {
 
 	}
 
-	@After
-	public void tearDown() throws Exception {
-		storage = null;
+	/**
+	 * 
+	 */
+	@Test
+	public void testNINO() {
+		@SuppressWarnings("unchecked")
+		LaraCapacityManageableContainer<LTestProperty> cmStorage = (LaraCapacityManageableContainer<LTestProperty>) storage;
+		cmStorage.setCapacityManager(LCapacityManagers
+				.<LTestProperty> makeNINO());
+		cmStorage.setCapacity(2);
+
+		LTestProperty property01 = new LTestProperty("key01", "value01");
+		storage.store(property01);
+
+		LEventbus.getInstance().publish(new LModelStepEvent());
+
+		LTestProperty property02 = new LTestProperty("key02", "value02");
+		storage.store(property02);
+
+		LEventbus.getInstance().publish(new LModelStepEvent());
+
+		LTestProperty property03 = new LTestProperty("key03", "value03");
+		storage.store(property03);
+
+		try {
+			storage.fetch("key01");
+		} catch (Exception e) {
+			fail("This should not have raised an exception.");
+		}
+
+		try {
+			storage.fetch("key02");
+		} catch (Exception e) {
+			fail("This should not have raised an exception.");
+		}
+
+		try {
+			storage.fetch("key03");
+			fail("This should have raised an exception.");
+		} catch (Exception e) {
+
+		}
+
 	}
 }

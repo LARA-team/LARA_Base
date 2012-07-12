@@ -32,7 +32,8 @@ import de.cesr.lara.components.container.exceptions.LRemoveException;
  * 
  */
 public interface LaraOverwriteMemory<PropertyType extends LaraProperty<PropertyType, ?>>
-		extends LaraMemory<PropertyType>, LaraCapacityManageableContainer<PropertyType> {
+		extends LaraMemory<PropertyType>,
+		LaraCapacityManageableContainer<PropertyType> {
 
 	/**
 	 * @param key

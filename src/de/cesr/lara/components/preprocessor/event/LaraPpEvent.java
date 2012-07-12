@@ -26,23 +26,26 @@ import de.cesr.lara.components.preprocessor.LaraPreprocessor;
 
 /**
  * (Sub-)Interface for {@link LaraPreprocessor} related event.
+ * 
  * @author Sascha Holzhauer
- *
+ * 
  */
-public interface LaraPpEvent extends LaraEvent{
-	
+public interface LaraPpEvent extends LaraEvent {
+
 	/**
-	 * Provides the {@link LaraDecisionConfiguration} that 
-	 * is currently processed.
-	 * @return current decision configuration
-	 */
-	public LaraDecisionConfiguration getdConfig();
-	
-	/**
-	 * Returns the agent that is currently processed and
-	 * whose event bus triggers this even.
+	 * Returns the agent that is currently processed and whose event bus
+	 * triggers this even.
+	 * 
 	 * @return the agent that is currently processed
 	 */
 	public LaraAgent<?, ?> getAgent();
-	
+
+	/**
+	 * Provides the {@link LaraDecisionConfiguration} that is currently
+	 * processed.
+	 * 
+	 * @return current decision configuration
+	 */
+	public LaraDecisionConfiguration getdConfig();
+
 }

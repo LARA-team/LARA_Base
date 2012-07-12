@@ -86,57 +86,6 @@ public class LaraBehaviouralOptionTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link de.cesr.lara.components.impl.AbstractBO#getAgent()}.
-	 */
-	@Test
-	public final void testGetAgent() {
-		assertEquals("Returned agent should be agent", agent1, bo1.getAgent());
-	}
-
-	/**
-	 * Test method for
-	 * {@link de.cesr.lara.components.impl.AbstractBO#getValue()}.
-	 */
-	@Test(expected = UnsupportedOperationException.class)
-	public final void testGetValue() {
-		assertEquals("Returned value should be utilities1", utilities1,
-				bo1.getValue());
-		bo1.getValue();
-		assertEquals("Returmed map should contain the inserted value for goal",
-				1.0, bo1.getValue().get(goal1), 0.1);
-
-		assertEquals("Returmed map should contain the inserted value for goal",
-				1.0, bo1.getValue().get(TestGoal.class), 0.1);
-
-		bo1.getValue().put(TestGoal.class, new Double(Double.NaN));
-	}
-
-	/**
-	 * 
-	 */
-	@Test(expected = UnsupportedOperationException.class)
-	public final void testModifyEntry() {
-		bo1.getValue().entrySet().iterator().next().setValue(42.0);
-		assertEquals("The utility for 'goal1' should be 1.0", 1.0, bo1
-				.getValue().get(goal1), 0.01);
-	}
-
-	/**
-	 * Test method for
-	 * {@link de.cesr.lara.components.impl.AbstractBO#getModifiableUtilities()}.
-	 */
-	@Test
-	public final void testGetModifiableUtilities() {
-		Map<Class<? extends LaraPreference>, Double> utilities2 = bo1
-				.getModifiableUtilities();
-
-		assertEquals(
-				"Returned map should contain same key-value-mappings as utilities1",
-				utilities1, utilities2);
-	}
-
-	/**
 	 * 
 	 */
 	@Test
@@ -157,22 +106,12 @@ public class LaraBehaviouralOptionTest {
 	}
 
 	/**
-	 * 
+	 * Test method for
+	 * {@link de.cesr.lara.components.impl.AbstractBO#getAgent()}.
 	 */
 	@Test
-	public final void testHashCode() {
-		assertEquals("hash codes of equal objects need to be equal",
-				bo1.hashCode(), bo1.hashCode());
-		LTestBo bo12 = new LTestBo("BO1", agent2, utilities1);
-		assertEquals("hash codes of equal objects need to be equal",
-				bo1.hashCode(),
-				new LTestBo("BO1", agent1, utilities1).hashCode());
-		assertEquals("hash codes of equal objects need to be equal", bo1
-				.getModifiedAgentBO(bo12.getAgent()).hashCode(),
-				bo12.hashCode());
-		assertEquals("hash codes of equal objects need to be equal", bo1
-				.getModifiedBO(bo12.getAgent(), bo12.getValue()).hashCode(),
-				bo12.hashCode());
+	public final void testGetAgent() {
+		assertEquals("Returned agent should be agent", agent1, bo1.getAgent());
 	}
 
 	/**
@@ -181,6 +120,20 @@ public class LaraBehaviouralOptionTest {
 	@Test
 	public final void testGetKey() {
 		assertEquals("Returned key shoud be BO1", "BO1", bo1.getKey());
+	}
+
+	/**
+	 * Test method for
+	 * {@link de.cesr.lara.components.impl.AbstractBO#getModifiableUtilities()}.
+	 */
+	@Test
+	public final void testGetModifiableUtilities() {
+		Map<Class<? extends LaraPreference>, Double> utilities2 = bo1
+				.getModifiableUtilities();
+
+		assertEquals(
+				"Returned map should contain same key-value-mappings as utilities1",
+				utilities1, utilities2);
 	}
 
 	/**
@@ -218,6 +171,53 @@ public class LaraBehaviouralOptionTest {
 				bo2.getValue());
 		assertEquals("utility value of goal of bo2 is 2.0", 2.0, bo2.getValue()
 				.get(TestGoal.class), 0.1);
+	}
+
+	/**
+	 * Test method for
+	 * {@link de.cesr.lara.components.impl.AbstractBO#getValue()}.
+	 */
+	@Test(expected = UnsupportedOperationException.class)
+	public final void testGetValue() {
+		assertEquals("Returned value should be utilities1", utilities1,
+				bo1.getValue());
+		bo1.getValue();
+		assertEquals("Returmed map should contain the inserted value for goal",
+				1.0, bo1.getValue().get(goal1), 0.1);
+
+		assertEquals("Returmed map should contain the inserted value for goal",
+				1.0, bo1.getValue().get(TestGoal.class), 0.1);
+
+		bo1.getValue().put(TestGoal.class, new Double(Double.NaN));
+	}
+
+	/**
+	 * 
+	 */
+	@Test
+	public final void testHashCode() {
+		assertEquals("hash codes of equal objects need to be equal",
+				bo1.hashCode(), bo1.hashCode());
+		LTestBo bo12 = new LTestBo("BO1", agent2, utilities1);
+		assertEquals("hash codes of equal objects need to be equal",
+				bo1.hashCode(),
+				new LTestBo("BO1", agent1, utilities1).hashCode());
+		assertEquals("hash codes of equal objects need to be equal", bo1
+				.getModifiedAgentBO(bo12.getAgent()).hashCode(),
+				bo12.hashCode());
+		assertEquals("hash codes of equal objects need to be equal", bo1
+				.getModifiedBO(bo12.getAgent(), bo12.getValue()).hashCode(),
+				bo12.hashCode());
+	}
+
+	/**
+	 * 
+	 */
+	@Test(expected = UnsupportedOperationException.class)
+	public final void testModifyEntry() {
+		bo1.getValue().entrySet().iterator().next().setValue(42.0);
+		assertEquals("The utility for 'goal1' should be 1.0", 1.0, bo1
+				.getValue().get(goal1), 0.01);
 	}
 
 	/**

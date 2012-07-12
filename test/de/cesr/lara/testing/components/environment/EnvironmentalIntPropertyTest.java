@@ -19,7 +19,6 @@
  */
 package de.cesr.lara.testing.components.environment;
 
-
 import static org.junit.Assert.assertEquals;
 
 import org.junit.After;
@@ -30,7 +29,6 @@ import de.cesr.lara.components.environment.LaraEnvironment;
 import de.cesr.lara.components.environment.impl.LEnvironment;
 import de.cesr.lara.components.environment.impl.LEnvironmentalIntProperty;
 
-
 /**
  * 
  * @author Sascha Holzhauer
@@ -39,12 +37,12 @@ import de.cesr.lara.components.environment.impl.LEnvironmentalIntProperty;
  */
 public class EnvironmentalIntPropertyTest {
 
-	LaraEnvironment	env;
-	LEnvironmentalIntProperty	prop1, prop2, prop3;
+	LaraEnvironment env;
+	LEnvironmentalIntProperty prop1, prop2, prop3;
 
 	/**
 	 * @throws java.lang.Exception
-	 *         Created by Sascha Holzhauer on 22.12.2009
+	 *             Created by Sascha Holzhauer on 22.12.2009
 	 */
 	@Before
 	public void setUp() throws Exception {
@@ -55,8 +53,19 @@ public class EnvironmentalIntPropertyTest {
 	}
 
 	/**
+	 * @throws java.lang.Exception
+	 *             Created by Sascha Holzhauer on 22.12.2009
+	 */
+	@After
+	public void tearDown() throws Exception {
+		env = null;
+		prop1 = prop2 = prop3 = null;
+	}
+
+	/**
 	 * Test method for
-	 * {@link de.cesr.lara.components.environment.impl.LEnvironmentalIntProperty#equals(java.lang.Object)}.
+	 * {@link de.cesr.lara.components.environment.impl.LEnvironmentalIntProperty#equals(java.lang.Object)}
+	 * .
 	 */
 	@Test
 	public final void testEqualsObject() {
@@ -65,14 +74,4 @@ public class EnvironmentalIntPropertyTest {
 		assertEquals("Proeprties are not equal", prop1.equals(prop3), false);
 	}
 
-	/**
-	 * @throws java.lang.Exception
-	 *         Created by Sascha Holzhauer on 22.12.2009
-	 */
-	@After
-	public void tearDown() throws Exception {
-		env = null;
-		prop1 = prop2 = prop3 = null;
-	}
-	
 }

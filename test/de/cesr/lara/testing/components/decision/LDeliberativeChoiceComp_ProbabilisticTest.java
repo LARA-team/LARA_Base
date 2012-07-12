@@ -46,7 +46,7 @@ import de.cesr.lara.testing.LTestUtils.LTestBo;
 
 /**
  * @author Sascha Holzhauer
- *
+ * 
  */
 public class LDeliberativeChoiceComp_ProbabilisticTest {
 
@@ -106,74 +106,9 @@ public class LDeliberativeChoiceComp_ProbabilisticTest {
 	}
 
 	/**
-	 * Test method for {@link de.cesr.lara.components.decision.impl.LDeliberativeChoiceComp_Probabilistic#getSelectedBo(de.cesr.lara.components.decision.LaraDecisionConfiguration, java.util.Collection)}.
-	 */
-	@Test
-	public void testGetSelectedBo() {
-		// Only one BO
-		LTestBo bo1 = new LTestBo(agent);
-		Collection<LaraBoRow<LTestBo>> boRows = new ArrayList<LaraBoRow<LTestBo>>();
-		boRows.add(new LLightBoRow<LTestBo>(bo1, 1.0));
-
-		assertEquals(bo1, choiceComp.getSelectedBo(dConfig, boRows));
-
-		// Test "normal" BOs
-		LTestBo bo2 = new LTestBo(agent);
-		boRows.add(new LLightBoRow<LTestBo>(bo2, 1.0));
-		logger.info("1st selection for one BO.");
-		assertEquals(bo1, choiceComp.getSelectedBo(dConfig, boRows));
-
-		logger.info("2nd selection for one BO.");
-		assertEquals(bo2, choiceComp.getSelectedBo(dConfig, boRows));
-
-		logger.info("2 Bos passed.");
-		boRows.clear();
-		boRows.add(new LLightBoRow<LTestBo>(bo1, 1.0));
-		boRows.add(new LLightBoRow<LTestBo>(bo2, 2.0));
-
-		assertEquals(bo2, choiceComp.getSelectedBo(dConfig, boRows));
-
-		assertEquals(bo1, choiceComp.getSelectedBo(dConfig, boRows));
-
-		// multiple BOs with utility 0.0 only
-		boRows.clear();
-		boRows.add(new LLightBoRow<LTestBo>(bo1, 0.0));
-		boRows.add(new LLightBoRow<LTestBo>(bo2, 0.0));
-		logger.info("2 BoRows with utility sum 0.0 passed.");
-		assertEquals(bo1, choiceComp.getSelectedBo(dConfig, boRows));
-		assertEquals(bo2, choiceComp.getSelectedBo(dConfig, boRows));
-		
-		// BOs with negative utility
-		boRows.clear();
-		logger.info("One BoRow with utility sum 0.0, one with -1.0 passed.");
-		boRows.add(new LLightBoRow<LTestBo>(bo1, -1.0));
-		boRows.add(new LLightBoRow<LTestBo>(bo2, 0.0));
-		
-		assertEquals(bo2, choiceComp.getSelectedBo(dConfig, boRows));
-		assertEquals(bo2, choiceComp.getSelectedBo(dConfig, boRows));
-
-		boRows.clear();
-		logger.info("One BoRow with utility sum 0.0, one with -1.0, one with 0.5 passed.");
-		boRows.add(new LLightBoRow<LTestBo>(bo1, -1.0));
-		boRows.add(new LLightBoRow<LTestBo>(bo2, 0.0));
-		LTestBo bo3 = new LTestBo(agent);
-		boRows.add(new LLightBoRow<LTestBo>(bo3, 0.5));
-
-		assertEquals(bo2, choiceComp.getSelectedBo(dConfig, boRows));
-		assertEquals(bo3, choiceComp.getSelectedBo(dConfig, boRows));
-		assertEquals(bo2, choiceComp.getSelectedBo(dConfig, boRows));
-
-		// empty list of LaraRows (exception!)
-		try {
-			boRows.clear();
-			choiceComp.getSelectedBo(dConfig, boRows);
-			fail("This should have raised an exception.");
-		} catch (IllegalStateException lre) {
-		}
-	}
-
-	/**
-	 * Test method for {@link de.cesr.lara.components.decision.impl.LDeliberativeChoiceComp_Probabilistic#getKSelectedBos(de.cesr.lara.components.decision.LaraDecisionConfiguration, java.util.Collection, int)}.
+	 * Test method for
+	 * {@link de.cesr.lara.components.decision.impl.LDeliberativeChoiceComp_Probabilistic#getKSelectedBos(de.cesr.lara.components.decision.LaraDecisionConfiguration, java.util.Collection, int)}
+	 * .
 	 */
 	@Test
 	public void testGetKSelectedBos() {
@@ -265,6 +200,75 @@ public class LDeliberativeChoiceComp_ProbabilisticTest {
 		try {
 			boRows.clear();
 			choiceComp.getKSelectedBos(dConfig, boRows, 3);
+			fail("This should have raised an exception.");
+		} catch (IllegalStateException lre) {
+		}
+	}
+
+	/**
+	 * Test method for
+	 * {@link de.cesr.lara.components.decision.impl.LDeliberativeChoiceComp_Probabilistic#getSelectedBo(de.cesr.lara.components.decision.LaraDecisionConfiguration, java.util.Collection)}
+	 * .
+	 */
+	@Test
+	public void testGetSelectedBo() {
+		// Only one BO
+		LTestBo bo1 = new LTestBo(agent);
+		Collection<LaraBoRow<LTestBo>> boRows = new ArrayList<LaraBoRow<LTestBo>>();
+		boRows.add(new LLightBoRow<LTestBo>(bo1, 1.0));
+
+		assertEquals(bo1, choiceComp.getSelectedBo(dConfig, boRows));
+
+		// Test "normal" BOs
+		LTestBo bo2 = new LTestBo(agent);
+		boRows.add(new LLightBoRow<LTestBo>(bo2, 1.0));
+		logger.info("1st selection for one BO.");
+		assertEquals(bo1, choiceComp.getSelectedBo(dConfig, boRows));
+
+		logger.info("2nd selection for one BO.");
+		assertEquals(bo2, choiceComp.getSelectedBo(dConfig, boRows));
+
+		logger.info("2 Bos passed.");
+		boRows.clear();
+		boRows.add(new LLightBoRow<LTestBo>(bo1, 1.0));
+		boRows.add(new LLightBoRow<LTestBo>(bo2, 2.0));
+
+		assertEquals(bo2, choiceComp.getSelectedBo(dConfig, boRows));
+
+		assertEquals(bo1, choiceComp.getSelectedBo(dConfig, boRows));
+
+		// multiple BOs with utility 0.0 only
+		boRows.clear();
+		boRows.add(new LLightBoRow<LTestBo>(bo1, 0.0));
+		boRows.add(new LLightBoRow<LTestBo>(bo2, 0.0));
+		logger.info("2 BoRows with utility sum 0.0 passed.");
+		assertEquals(bo1, choiceComp.getSelectedBo(dConfig, boRows));
+		assertEquals(bo2, choiceComp.getSelectedBo(dConfig, boRows));
+
+		// BOs with negative utility
+		boRows.clear();
+		logger.info("One BoRow with utility sum 0.0, one with -1.0 passed.");
+		boRows.add(new LLightBoRow<LTestBo>(bo1, -1.0));
+		boRows.add(new LLightBoRow<LTestBo>(bo2, 0.0));
+
+		assertEquals(bo2, choiceComp.getSelectedBo(dConfig, boRows));
+		assertEquals(bo2, choiceComp.getSelectedBo(dConfig, boRows));
+
+		boRows.clear();
+		logger.info("One BoRow with utility sum 0.0, one with -1.0, one with 0.5 passed.");
+		boRows.add(new LLightBoRow<LTestBo>(bo1, -1.0));
+		boRows.add(new LLightBoRow<LTestBo>(bo2, 0.0));
+		LTestBo bo3 = new LTestBo(agent);
+		boRows.add(new LLightBoRow<LTestBo>(bo3, 0.5));
+
+		assertEquals(bo2, choiceComp.getSelectedBo(dConfig, boRows));
+		assertEquals(bo3, choiceComp.getSelectedBo(dConfig, boRows));
+		assertEquals(bo2, choiceComp.getSelectedBo(dConfig, boRows));
+
+		// empty list of LaraRows (exception!)
+		try {
+			boRows.clear();
+			choiceComp.getSelectedBo(dConfig, boRows);
 			fail("This should have raised an exception.");
 		} catch (IllegalStateException lre) {
 		}

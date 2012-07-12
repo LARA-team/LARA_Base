@@ -19,7 +19,6 @@
  */
 package de.cesr.lara.components.decision;
 
-
 import java.util.Collection;
 import java.util.Set;
 
@@ -29,18 +28,6 @@ import de.cesr.lara.components.LaraBehaviouralOption;
  * Heuristic used for selection of (best) behavioural option
  */
 public interface LaraDeliberativeChoiceComponent {
-
-	/**
-	 * Provides the selected BO for the given decision configuration
-	 * 
-	 * @param dConfig
-	 *            the decision configuration of this decision process
-	 * @param boRows
-	 *            collection of {@link LaraBoRow}s
-	 * @return selected behavioural option
-	 */
-	public <BO extends LaraBehaviouralOption<?, ? extends BO>> BO getSelectedBo(
-			LaraDecisionConfiguration dConfig, Collection<LaraBoRow<BO>> boRows);
 
 	/**
 	 * If k is {@link Integer#MAX_VALUE} all available BOs should be returned!
@@ -58,6 +45,17 @@ public interface LaraDeliberativeChoiceComponent {
 	 */
 	public <BO extends LaraBehaviouralOption<?, ? extends BO>> Set<? extends BO> getKSelectedBos(
 			LaraDecisionConfiguration dConfig,
-			Collection<LaraBoRow<BO>> boRows,
-			int k);
+			Collection<LaraBoRow<BO>> boRows, int k);
+
+	/**
+	 * Provides the selected BO for the given decision configuration
+	 * 
+	 * @param dConfig
+	 *            the decision configuration of this decision process
+	 * @param boRows
+	 *            collection of {@link LaraBoRow}s
+	 * @return selected behavioural option
+	 */
+	public <BO extends LaraBehaviouralOption<?, ? extends BO>> BO getSelectedBo(
+			LaraDecisionConfiguration dConfig, Collection<LaraBoRow<BO>> boRows);
 }

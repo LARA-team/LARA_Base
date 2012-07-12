@@ -19,7 +19,6 @@
  */
 package de.cesr.lara.components.preprocessor.impl;
 
-
 import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
@@ -34,12 +33,11 @@ import de.cesr.lara.components.preprocessor.event.LPpPreferenceUpdaterEvent;
 import de.cesr.lara.components.util.logging.impl.LAgentLevel;
 import de.cesr.lara.components.util.logging.impl.Log4jLogger;
 
-
 /**
  * Does _not_ update any preference.
  * 
  * @param <A>
- *        he type of agents this preference utilityUpdater is intended for
+ *            he type of agents this preference utilityUpdater is intended for
  * 
  * @author Sascha Holzhauer
  * @date 05.02.2010

@@ -73,11 +73,16 @@ public class LDeliberativeChoiceComponent_MaxLineTotalRandomAtTieTest {
 		for (int i = 0; i < 10; i++) {
 			bos[i] = new LTestBo("" + i, agent,
 					new HashMap<Class<? extends LaraPreference>, Double>());
-			laraBoRows
-					.add(new LLightBoRow<LTestBo>(bos[i], valuesSum[i]));
+			laraBoRows.add(new LLightBoRow<LTestBo>(bos[i], valuesSum[i]));
 		}
 	}
 
+	/**
+	 * @throws java.lang.Exception
+	 */
+	@After
+	public void tearDown() throws Exception {
+	}
 
 	/**
 	 * Test method for
@@ -133,12 +138,5 @@ public class LDeliberativeChoiceComponent_MaxLineTotalRandomAtTieTest {
 		assertTrue(bosSet.contains(bos[7]));
 		assertTrue(bosSet.contains(bos[8]));
 		assertTrue(bosSet.contains(bos[9]));
-	}
-
-	/**
-	 * @throws java.lang.Exception
-	 */
-	@After
-	public void tearDown() throws Exception {
 	}
 }

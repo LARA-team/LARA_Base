@@ -37,8 +37,7 @@ import de.cesr.lara.components.container.exceptions.LRetrieveException;
  * 
  */
 public interface LaraBOMemory<BO extends LaraBehaviouralOption<?, ? extends BO>>
-		extends
-		LaraMemory<BO> {
+		extends LaraMemory<BO> {
 
 	/**
 	 * Memorises the given set of behavioural options

@@ -19,7 +19,6 @@
  */
 package de.cesr.lara.components.preprocessor;
 
-
 import java.util.Map;
 
 import de.cesr.lara.components.LaraBehaviouralOption;
@@ -49,131 +48,6 @@ import de.cesr.lara.components.decision.LaraDecisionConfiguration;
 public interface LaraPreprocessorConfigurator<A extends LaraAgent<? super A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>> {
 
 	/**
-	 * Specifying <code>null</code> corresponds to
-	 * {@link LaraPreprocessorConfigurator#setDecisionModeSelector(LaraDecisionModeSelector)
-	 * )} and sets the default.
-	 * 
-	 * @param decisionModeSelector
-	 * @param dConfiguration
-	 *            The {@link LaraDecisionConfiguration} the given mode selector
-	 *            shall be applied to.
-	 */
-	public void setDecisionModeSelector(LaraDecisionModeSelector<A, BO> decisionModeSelector, LaraDecisionConfiguration dConfiguration);
-
-	/**
-	 * @param decisionModeSelector
-	 */
-	public void setDecisionModeSelector(LaraDecisionModeSelector<A, BO> decisionModeSelector);
-
-	/**
-	 * Specifying <code>null</code> corresponds to
-	 * {@link LaraPreprocessorConfigurator#setBOCollector(LaraBOCollector)} and
-	 * sets the default.
-	 * 
-	 * @param bOCollector
-	 * @param dConfiguration
-	 *            The {@link LaraDecisionConfiguration} the given behavioural
-	 *            options collector shall be applied to.
-	 */
-	public void setBOCollector(LaraBOCollector<A, BO> bOCollector, LaraDecisionConfiguration dConfiguration);
-
-	/**
-	 * @param boCollector
-	 */
-	public void setBOCollector(LaraBOCollector<A, BO> boCollector);
-
-	/**
-	 * Specifying <code>null</code> corresponds to
-	 * {@link LaraPreprocessorConfigurator#setBoPreselector(LaraBOPreselector)
-	 * )} and sets the default.
-	 * 
-	 * @param boPreselector
-	 * @param dConfiguration
-	 *            The {@link LaraDecisionConfiguration} the given behavioural
-	 *            options preselector shall be applied to.
-	 */
-	public void setBOPreselector(LaraBOPreselector<A, BO> boPreselector, LaraDecisionConfiguration dConfiguration);
-
-	/**
-	 * @author Sascha Holzhauer
-	 * @param boChecker
-	 * @date 10.11.2009
-	 */
-	public void setBoPreselector(LaraBOPreselector<A, BO> boChecker);
-
-	/**
-	 * Specifying <code>null</code> corresponds to
-	 * {@link LaraPreprocessorConfigurator#setBOAdapter(LaraBOUtilityUpdaterBuilder)}
-	 * and sets the default.
-	 * 
-	 * @param boUpdater
-	 * @param dConfiguration
-	 *            The {@link LaraDecisionConfiguration} the given behavioural
-	 *            options utilityUpdater shall be applied to.
-	 */
-	public void setBOAdapter(LaraBOUtilityUpdater<A, BO> boUpdater,
-			LaraDecisionConfiguration dConfiguration);
-
-	/**
-	 * @param boAdapter
-	 */
-	public void setBOAdapter(LaraBOUtilityUpdater<A, BO> boAdapter);
-
-	/**
-	 * Specifying <code>null</code> corresponds to
-	 * {@link LaraPreprocessorConfigurator#setPreferenceUpdater(LaraPreferenceUpdater)}
-	 * and sets the default.
-	 * 
-	 * @param prefUpdater
-	 * @param dConfiguration
-	 *            The {@link LaraDecisionConfiguration} the given preference
-	 *            utilityUpdater shall be applied to.
-	 */
-	public void setPreferenceUpdater(
-			LaraPreferenceUpdater<? extends A, BO> prefUpdater,
-			LaraDecisionConfiguration dConfiguration);
-
-	/**
-	 * @param prefUpdater
-	 */
-	public void setPreferenceUpdater(
-			LaraPreferenceUpdater<? extends A, BO> prefUpdater);
-
-	/**
-	 * @param <T>
-	 *        the generic type of the agent
-	 * @param <U>
-	 *        the generic type of the requested component
-	 * @param dConfiguration
-	 *        The {@link LaraDecisionConfiguration} the given component shall be applied to.
-	 * @param type
-	 *        the general type of the requested component
-	 * @param value
-	 */
-	public <T extends LaraPreprocessorComp<A, BO>> void set(
-			LaraDecisionConfiguration dConfiguration, Class<? super T> type,
-			T value);
-
-	/**
-	 * @param <T>
-	 *        the general type of the requested component
-	 * @param dConfiguration
-	 *        The {@link LaraDecisionConfiguration} the given component shall be applied to.
-	 * @param type
-	 *        the general type of the requested component
-	 * @return 
-	 */
-	public <T> T get(LaraDecisionConfiguration dConfiguration,
-			Class<? super T> type);
-
-	/**
-	 * Provides the {@link LaraPreprocessor} that matches this configuration.
-	 * 
-	 * @return preprocessor for the given configuration
-	 */
-	public LaraPreprocessor<A, BO> getPreprocessor();
-
-	/**
 	 * Return a new configuration that meets this configuration. This is
 	 * intended for creating new {@link LaraPreprocessor}s with a different
 	 * configuration. I.e. the provided configuration is altered and used to
@@ -184,26 +58,17 @@ public interface LaraPreprocessorConfigurator<A extends LaraAgent<? super A, BO>
 	public LaraPreprocessorConfigurator<A, BO> clone();
 
 	/**
-	 * Provides the map of {@link LaraDecisionConfiguration} to
-	 * {@link LaraPreprocessorComp} as defined by the given component class.
-	 * 
 	 * @param <T>
-	 *            the generic type of the agent
-	 * @param compType
-	 *            the class of component type that is requested
-	 * @return the map of defined components
+	 *            the general type of the requested component
+	 * @param dConfiguration
+	 *            The {@link LaraDecisionConfiguration} the given component
+	 *            shall be applied to.
+	 * @param type
+	 *            the general type of the requested component
+	 * @return
 	 */
-	public <T extends LaraPreprocessorComp<A, BO>> Map<LaraDecisionConfiguration, T> getMap(
-			Class<? super T> compType);
-
-	/*********************************************
-	 * DEFAULT value ACCESSORS
-	 ********************************************/
-
-	/**
-	 * @return the default {@link LaraDecisionConfiguration}
-	 */
-	public LaraDecisionModeSelector<A, BO> getDefaultDecisionModeSelector();
+	public <T> T get(LaraDecisionConfiguration dConfiguration,
+			Class<? super T> type);
 
 	/**
 	 * @return the default {@link LaraBOCollector}
@@ -221,7 +86,148 @@ public interface LaraPreprocessorConfigurator<A extends LaraAgent<? super A, BO>
 	public LaraBOUtilityUpdater<A, BO> getDefaultBoUtilityUpdater();
 
 	/**
+	 * @return the default {@link LaraDecisionConfiguration}
+	 */
+	public LaraDecisionModeSelector<A, BO> getDefaultDecisionModeSelector();
+
+	/**
 	 * @return the default {@link LaraPreferenceUpdater}
 	 */
 	public LaraPreferenceUpdater<A, BO> getDefaultPreferenceUpdater();
+
+	/**
+	 * Provides the map of {@link LaraDecisionConfiguration} to
+	 * {@link LaraPreprocessorComp} as defined by the given component class.
+	 * 
+	 * @param <T>
+	 *            the generic type of the agent
+	 * @param compType
+	 *            the class of component type that is requested
+	 * @return the map of defined components
+	 */
+	public <T extends LaraPreprocessorComp<A, BO>> Map<LaraDecisionConfiguration, T> getMap(
+			Class<? super T> compType);
+
+	/**
+	 * Provides the {@link LaraPreprocessor} that matches this configuration.
+	 * 
+	 * @return preprocessor for the given configuration
+	 */
+	public LaraPreprocessor<A, BO> getPreprocessor();
+
+	/**
+	 * @param <T>
+	 *            the generic type of the agent
+	 * @param <U>
+	 *            the generic type of the requested component
+	 * @param dConfiguration
+	 *            The {@link LaraDecisionConfiguration} the given component
+	 *            shall be applied to.
+	 * @param type
+	 *            the general type of the requested component
+	 * @param value
+	 */
+	public <T extends LaraPreprocessorComp<A, BO>> void set(
+			LaraDecisionConfiguration dConfiguration, Class<? super T> type,
+			T value);
+
+	/**
+	 * @param boAdapter
+	 */
+	public void setBOAdapter(LaraBOUtilityUpdater<A, BO> boAdapter);
+
+	/**
+	 * Specifying <code>null</code> corresponds to
+	 * {@link LaraPreprocessorConfigurator#setBOAdapter(LaraBOUtilityUpdaterBuilder)}
+	 * and sets the default.
+	 * 
+	 * @param boUpdater
+	 * @param dConfiguration
+	 *            The {@link LaraDecisionConfiguration} the given behavioural
+	 *            options utilityUpdater shall be applied to.
+	 */
+	public void setBOAdapter(LaraBOUtilityUpdater<A, BO> boUpdater,
+			LaraDecisionConfiguration dConfiguration);
+
+	/**
+	 * @param boCollector
+	 */
+	public void setBOCollector(LaraBOCollector<A, BO> boCollector);
+
+	/**
+	 * Specifying <code>null</code> corresponds to
+	 * {@link LaraPreprocessorConfigurator#setBOCollector(LaraBOCollector)} and
+	 * sets the default.
+	 * 
+	 * @param bOCollector
+	 * @param dConfiguration
+	 *            The {@link LaraDecisionConfiguration} the given behavioural
+	 *            options collector shall be applied to.
+	 */
+	public void setBOCollector(LaraBOCollector<A, BO> bOCollector,
+			LaraDecisionConfiguration dConfiguration);
+
+	/**
+	 * @author Sascha Holzhauer
+	 * @param boChecker
+	 * @date 10.11.2009
+	 */
+	public void setBoPreselector(LaraBOPreselector<A, BO> boChecker);
+
+	/*********************************************
+	 * DEFAULT value ACCESSORS
+	 ********************************************/
+
+	/**
+	 * Specifying <code>null</code> corresponds to
+	 * {@link LaraPreprocessorConfigurator#setBoPreselector(LaraBOPreselector)
+	 * )} and sets the default.
+	 * 
+	 * @param boPreselector
+	 * @param dConfiguration
+	 *            The {@link LaraDecisionConfiguration} the given behavioural
+	 *            options preselector shall be applied to.
+	 */
+	public void setBOPreselector(LaraBOPreselector<A, BO> boPreselector,
+			LaraDecisionConfiguration dConfiguration);
+
+	/**
+	 * @param decisionModeSelector
+	 */
+	public void setDecisionModeSelector(
+			LaraDecisionModeSelector<A, BO> decisionModeSelector);
+
+	/**
+	 * Specifying <code>null</code> corresponds to
+	 * {@link LaraPreprocessorConfigurator#setDecisionModeSelector(LaraDecisionModeSelector)
+	 * )} and sets the default.
+	 * 
+	 * @param decisionModeSelector
+	 * @param dConfiguration
+	 *            The {@link LaraDecisionConfiguration} the given mode selector
+	 *            shall be applied to.
+	 */
+	public void setDecisionModeSelector(
+			LaraDecisionModeSelector<A, BO> decisionModeSelector,
+			LaraDecisionConfiguration dConfiguration);
+
+	/**
+	 * @param prefUpdater
+	 */
+	public void setPreferenceUpdater(
+			LaraPreferenceUpdater<? extends A, BO> prefUpdater);
+
+	/**
+	 * Specifying <code>null</code> corresponds to
+	 * {@link LaraPreprocessorConfigurator#setPreferenceUpdater(LaraPreferenceUpdater)}
+	 * and sets the default.
+	 * 
+	 * @param prefUpdater
+	 * @param dConfiguration
+	 *            The {@link LaraDecisionConfiguration} the given preference
+	 *            utilityUpdater shall be applied to.
+	 */
+	public void setPreferenceUpdater(
+			LaraPreferenceUpdater<? extends A, BO> prefUpdater,
+			LaraDecisionConfiguration dConfiguration);
 }

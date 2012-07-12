@@ -19,14 +19,12 @@
  */
 package de.cesr.lara.components.decision;
 
-
 import de.cesr.lara.components.LaraBehaviouralOption;
 import de.cesr.lara.components.agents.LaraAgent;
 
-
 /**
  * @param <A>
- *        the agent class
+ *            the agent class
  * @param <BO>
  */
 public interface LaraDeciderFactory<A extends LaraAgent<? super A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>> {
@@ -36,6 +34,7 @@ public interface LaraDeciderFactory<A extends LaraAgent<? super A, BO>, BO exten
 	 * @param dConfiguration
 	 * @return the valid {@link LaraDecider}
 	 */
-	public LaraDecider<BO> getDecider(A agent, LaraDecisionConfiguration dConfiguration);
+	public LaraDecider<BO> getDecider(A agent,
+			LaraDecisionConfiguration dConfiguration);
 
 }

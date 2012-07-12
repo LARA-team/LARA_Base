@@ -123,15 +123,15 @@ public class LTreeDeciderTest {
 
 	static private boolean state = false;
 
-	LTestAgent agent;
-	LTestBo one;
-	LTestBo two;
-
-	LaraDecisionConfiguration dConfig = new LTestDecisionConfig();
-
 	static boolean getState() {
 		return state;
 	}
+	LTestAgent agent;
+	LTestBo one;
+
+	LTestBo two;
+
+	LaraDecisionConfiguration dConfig = new LTestDecisionConfig();
 
 	/**
 	 * @throws java.lang.Exception
@@ -154,6 +154,16 @@ public class LTreeDeciderTest {
 		ppConfig.setDecisionModeSelector(new LTreeDeciderModeSelector());
 		agent.getLaraComp().setPreprocessor(ppConfig.getPreprocessor());
 
+	}
+
+	/**
+	 * @throws java.lang.Exception
+	 */
+	@After
+	public void tearDown() throws Exception {
+		one = null;
+		two = null;
+		agent = null;
 	}
 
 	/**
@@ -191,15 +201,5 @@ public class LTreeDeciderTest {
 						.getClass());
 		assertEquals(one, agent.getLaraComp().getDecisionData(dConfig)
 				.getDecider().getSelectedBo());
-	}
-
-	/**
-	 * @throws java.lang.Exception
-	 */
-	@After
-	public void tearDown() throws Exception {
-		one = null;
-		two = null;
-		agent = null;
 	}
 }

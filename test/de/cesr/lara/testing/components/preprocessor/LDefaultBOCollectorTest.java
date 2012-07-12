@@ -19,7 +19,6 @@
  */
 package de.cesr.lara.testing.components.preprocessor;
 
-
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
@@ -50,7 +49,6 @@ import de.cesr.lara.testing.LTestUtils;
 import de.cesr.lara.testing.LTestUtils.LTestAgent;
 import de.cesr.lara.testing.LTestUtils.LTestBo;
 
-
 /**
  * @author Sascha Holzhauer
  * @date 12.02.2010
@@ -58,12 +56,12 @@ import de.cesr.lara.testing.LTestUtils.LTestBo;
  */
 public class LDefaultBOCollectorTest {
 
-	LTestAgent															agent;
+	LTestAgent agent;
 	LaraBOMemory<LTestBo> memory;
 
-	LaraPreference														goal1;
-	LaraPreference														goal2;
-	LaraPreference														goal3;
+	LaraPreference goal1;
+	LaraPreference goal2;
+	LaraPreference goal3;
 
 	/**
 	 * Does not contribute to any goal
@@ -104,8 +102,7 @@ public class LDefaultBOCollectorTest {
 		bo3 = new LTestBo(agent, utilities);
 
 		memory = new LDefaultLimitedCapacityBOMemory<LTestBo>(
-				LCapacityManagers
-.<LTestBo> makeNINO());
+				LCapacityManagers.<LTestBo> makeNINO());
 		agent.getLaraComp().setBOMemory(memory);
 
 		dBuilder = new LDecisionConfiguration("TestDecision");

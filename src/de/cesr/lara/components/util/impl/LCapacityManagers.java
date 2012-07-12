@@ -100,8 +100,8 @@ public final class LCapacityManagers {
 					LaraCapacityManagementView<PropertyType> view) {
 
 				if (view == null) {
-					throw new NullPointerException(view
-							+ " return null as " + "LaraCapacityManagementView");
+					throw new NullPointerException(view + " return null as "
+							+ "LaraCapacityManagementView");
 				}
 
 				PropertyType firstInProperty = null;
@@ -141,8 +141,8 @@ public final class LCapacityManagers {
 					LaraCapacityManagementView<PropertyType> view) {
 
 				if (view == null) {
-					throw new NullPointerException(view
-							+ " return null as " + "LaraCapacityManagementView");
+					throw new NullPointerException(view + " return null as "
+							+ "LaraCapacityManagementView");
 				}
 
 				PropertyType lastInProperty = null;

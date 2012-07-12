@@ -19,7 +19,6 @@
  */
 package de.cesr.lara.testing.components.impl;
 
-
 /**
  *
  * @author Sascha Holzhauer
@@ -30,14 +29,12 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
-
 /**
  * 
  */
 @RunWith(Suite.class)
 @SuiteClasses({ LDefaultLaraAgentCompTest.class,
-		LaraBehaviouralOptionTest.class, LAbstractAgentTest.class
-})
+		LaraBehaviouralOptionTest.class, LAbstractAgentTest.class })
 public class AllComponentsImplTests {
 
 }

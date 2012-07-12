@@ -19,7 +19,6 @@
  */
 package de.cesr.lara.components.preprocessor.impl;
 
-
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -88,9 +87,10 @@ public class LDefaultBOUpdater<A extends LaraAgent<? super A, BO>, BO extends La
 			logBOs(logger, bos, "after utility updating", agent);
 		}
 		// LOGGING -->
-		//TODO which BOs to set? set updated or the non updated?
-		//TODO what are situational preferences?!
-		agent.getLaraComp().getDecisionData(event.getdConfig()).setBos(updatedBos);
-		//agent.getLaraComp().getDecisionData(event.getdConfig()).setBos(bos);
+		// TODO which BOs to set? set updated or the non updated?
+		// TODO what are situational preferences?!
+		agent.getLaraComp().getDecisionData(event.getdConfig())
+				.setBos(updatedBos);
+		// agent.getLaraComp().getDecisionData(event.getdConfig()).setBos(bos);
 	}
 }

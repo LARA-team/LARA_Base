@@ -37,9 +37,8 @@ import de.cesr.lara.testing.components.preprocessor.AllPreprocessorTests;
  */
 @RunWith(Suite.class)
 @SuiteClasses({ LaraPropertyTest.class, LAllContainerTests.class,
-		AllComponentsImplTests.class,
-		AllDecisionTests.class, AllEnvironmentalTests.class,
-		AllPreprocessorTests.class })
+		AllComponentsImplTests.class, AllDecisionTests.class,
+		AllEnvironmentalTests.class, AllPreprocessorTests.class })
 public class AllComponentTests {
 
 }

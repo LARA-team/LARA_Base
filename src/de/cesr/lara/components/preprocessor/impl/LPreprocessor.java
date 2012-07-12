@@ -19,7 +19,6 @@
  */
 package de.cesr.lara.components.preprocessor.impl;
 
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -47,22 +46,23 @@ import de.cesr.lara.components.preprocessor.event.LPpPreferenceUpdaterEvent;
 import de.cesr.lara.components.preprocessor.event.LPpUnsubscribeEvent;
 import de.cesr.lara.components.util.logging.impl.Log4jLogger;
 
-
 /**
- * The {@link LPreprocessor} class provides immutable (once assigned, the references to preprocessor components are
- * only passed to the preprocessor constructor which is designed to be used only for one agent during a single
+ * The {@link LPreprocessor} class provides immutable (once assigned, the
+ * references to preprocessor components are only passed to the preprocessor
+ * constructor which is designed to be used only for one agent during a single
  * simulation step) instances of {@link LPreprocessor}s.
  * 
- * Default implementation of {@link LaraPreprocessor}. Supports comprehensive logging.
+ * Default implementation of {@link LaraPreprocessor}. Supports comprehensive
+ * logging.
  * 
- * IMPLEMENTATION NOTE: An enum implementation would be nice but fails to deal with different types of pre-process
- * components...
+ * IMPLEMENTATION NOTE: An enum implementation would be nice but fails to deal
+ * with different types of pre-process components...
  * 
  * @author Sascha Holzhauer
  * @param <A>
- *        the type of agents this preprocessor builder is intended for
+ *            the type of agents this preprocessor builder is intended for
  * @param <BO>
- *        the type of behavioural options the preprocessor shall manage
+ *            the type of behavioural options the preprocessor shall manage
  * @date 05.02.2010
  * 
  */
@@ -90,8 +90,7 @@ public final class LPreprocessor<A extends LaraAgent<A, BO>, BO extends LaraBeha
 	 * Uses LPreprocessorConfigurator.<A, BO>getDefaultPreprocessConfigurator().
 	 */
 	protected LPreprocessor() {
-		this(LPreprocessorConfigurator
-				.<A, BO> getNewPreprocessorConfigurator());
+		this(LPreprocessorConfigurator.<A, BO> getNewPreprocessorConfigurator());
 	}
 
 	/**
@@ -147,23 +146,17 @@ public final class LPreprocessor<A extends LaraAgent<A, BO>, BO extends LaraBeha
 	}
 
 	/**
-	 * {@link HashMap#clone()} is not appropriate because default values may not be deleted.
+	 * Checks for equal objects. This is valid in usual cases since then there
+	 * is only one instance per configuration.
 	 * 
-	 * Because this method actually requires to be parameterised by [Component]<AgentT> which is not possible so far it
-	 * is not type save!
-	 * 
-	 * @param instanceMap
-	 * @param configuratorMap
-	 * @param clazz
+	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
-	private <P> void copyComponentMap(
-			Map<LaraDecisionConfiguration, P> instanceMap,
-			Map<LaraDecisionConfiguration, P> configuratorMap,
-			Class<? super P> p) {
-		for (Map.Entry<LaraDecisionConfiguration, P> entry : configuratorMap
-				.entrySet()) {
-			instanceMap.put(entry.getKey(), entry.getValue());
+	@Override
+	public boolean equals(Object preprocessor) {
+		if (this == preprocessor) {
+			return true;
 		}
+		return false;
 	}
 
 	/**
@@ -180,31 +173,33 @@ public final class LPreprocessor<A extends LaraAgent<A, BO>, BO extends LaraBeha
 		LaraPreprocessorConfigurator<A, BO> pConfiguration = LPreprocessorConfigurator
 				.<A, BO> getNewPreprocessorConfigurator();
 
-		fillConfiguration(changeConfiguration, pConfiguration, selectorMap, LaraDecisionModeSelector.class);
-		fillConfiguration(changeConfiguration, pConfiguration, collectorMap, LaraBOCollector.class);
-		fillConfiguration(changeConfiguration, pConfiguration, preSelectorMap, LaraBOPreselector.class);
+		fillConfiguration(changeConfiguration, pConfiguration, selectorMap,
+				LaraDecisionModeSelector.class);
+		fillConfiguration(changeConfiguration, pConfiguration, collectorMap,
+				LaraBOCollector.class);
+		fillConfiguration(changeConfiguration, pConfiguration, preSelectorMap,
+				LaraBOPreselector.class);
 		fillConfiguration(changeConfiguration, pConfiguration, updaterMap,
 				LaraBOUtilityUpdater.class);
-		fillConfiguration(changeConfiguration, pConfiguration, prefUpdaterMap, LaraPreferenceUpdater.class);
+		fillConfiguration(changeConfiguration, pConfiguration, prefUpdaterMap,
+				LaraPreferenceUpdater.class);
 
 		return changeConfiguration;
 	}
 
 	/**
-	 * @param changeConfiguration
-	 * @param dConfiguration
+	 * @see java.lang.Object#toString()
 	 */
-	private <T extends LaraPreprocessorComp<A, BO>, U extends LaraPreprocessorComp<?, ?>> void fillConfiguration(
-			LaraPreprocessorConfigurator<A, BO> changeConfiguration, LaraPreprocessorConfigurator<A, BO> dConfiguration,
-			Map<LaraDecisionConfiguration, T> map, Class<? super T> clazz) {
-		for (Map.Entry<LaraDecisionConfiguration, T> entry : map.entrySet()) {
-			if (!(changeConfiguration.get(entry.getKey(), clazz) == null)) {
-				changeConfiguration.set(entry.getKey(), clazz,
-						changeConfiguration.<T> get(entry.getKey(), clazz));
-			} else {
-				changeConfiguration.set(entry.getKey(), clazz, entry.getValue());
-			}
-		}
+	@Override
+	public String getComponentsString() {
+		StringBuffer text = new StringBuffer();
+		text.append("Preprocessor:\n");
+		text.append("\t ModeSelector:  " + selectorMap.toString() + "\n");
+		text.append("\t BOCollector:   " + collectorMap.toString() + "\n");
+		text.append("\t BOPreSelector: " + preSelectorMap.toString() + "\n");
+		text.append("\t BOUpdater:     " + updaterMap.toString() + "\n");
+		text.append("\t PrefUpdater:   " + prefUpdaterMap.toString() + "\n");
+		return text.toString();
 	}
 
 	/**
@@ -255,62 +250,20 @@ public final class LPreprocessor<A extends LaraAgent<A, BO>, BO extends LaraBeha
 	}
 
 	/**
-	 * Tests whether a certain component map matches the configuration of the
-	 * given {@link DefaultConfigurator}.
-	 * 
-	 * @param dconfigurator
-	 * @param map
-	 * @param defaultComp
-	 * @return true, if the component map matches the given configurator, false
-	 *         else
+	 * @see de.cesr.lara.components.eventbus.LaraInternalEventSubscriber#onInternalEvent(de.cesr.lara.components.eventbus.events.LaraEvent)
 	 */
-	private <T> boolean meetsConfiguration(Map<LaraDecisionConfiguration, ? extends T> configurationMap,
-			Map<LaraDecisionConfiguration, ? extends T> instanceMap, T defaultComp) {
-		// check if all entries of the configurator are included in the builder1 instance (i.e. if the configurator does
-		// not define more):
-		for (Map.Entry<LaraDecisionConfiguration, ? extends T> entry : configurationMap.entrySet()) {
-			if (!instanceMap.containsKey(entry.getKey())) {
-				return false;
-			}
-			if (!entry.getValue().equals(instanceMap.get(entry.getKey()))) {
-				return false;
-			}
+	@Override
+	public void onInternalEvent(LaraEvent event) {
+		if (event instanceof LPpUnsubscribeEvent) {
+			@SuppressWarnings("unchecked")
+			A agent = (A) ((LPpUnsubscribeEvent) event).getAgent();
+			LEventbus eBus = LEventbus.getInstance(agent);
+			eBus.unsubscribe(LPpModeSelectorEvent.class);
+			eBus.unsubscribe(LPpBoCollectorEvent.class);
+			eBus.unsubscribe(LPpBoPreselectorEvent.class);
+			eBus.unsubscribe(LPpBoUtilityUpdaterEvent.class);
+			eBus.unsubscribe(LPpPreferenceUpdaterEvent.class);
 		}
-		// Check if every definition of the builder1 is included in the configurator (i.e. the builder1 does not define
-		// more):
-		for (Map.Entry<LaraDecisionConfiguration, ? extends T> entry : instanceMap.entrySet()) {
-
-			if (entry.getValue() == null && configurationMap.get(entry.getKey()) == null) {
-				// component is set to null (to avoid computation)
-				break;
-			}
-			// when a component is set null the configurator also needs to set this component null
-			// (testing vice verse is not valid since null is returned when key not defined -> default component
-			// defined):
-			if (entry.getValue() == null && configurationMap.get(entry.getKey()) != null) {
-				return false;
-			}
-			if (entry.getValue().equals(configurationMap.get(entry.getKey()))) {
-				break;
-			}
-			if (entry.getKey() == null) {
-				// when default is set to default component, the configurator may not define anything
-				if (entry.getValue() == defaultComp) {
-					if (configurationMap.containsKey(null)) {
-						return false;
-					}
-				}
-			} else {
-				if (!configurationMap.containsKey(entry.getKey())) {
-					return false;
-				} else {
-					if (!entry.getValue().equals(configurationMap.get(entry.getKey()))) {
-						return false;
-					}
-				}
-			}
-		}
-		return true;
 	}
 
 	/**
@@ -354,48 +307,113 @@ public final class LPreprocessor<A extends LaraAgent<A, BO>, BO extends LaraBeha
 	}
 
 	/**
-	 * Checks for equal objects. This is valid in usual cases since then there
-	 * is only one instance per configuration.
+	 * {@link HashMap#clone()} is not appropriate because default values may not
+	 * be deleted.
 	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
+	 * Because this method actually requires to be parameterised by
+	 * [Component]<AgentT> which is not possible so far it is not type save!
+	 * 
+	 * @param instanceMap
+	 * @param configuratorMap
+	 * @param clazz
 	 */
-	@Override
-	public boolean equals(Object preprocessor) {
-		if (this == preprocessor) {
-			return true;
+	private <P> void copyComponentMap(
+			Map<LaraDecisionConfiguration, P> instanceMap,
+			Map<LaraDecisionConfiguration, P> configuratorMap,
+			Class<? super P> p) {
+		for (Map.Entry<LaraDecisionConfiguration, P> entry : configuratorMap
+				.entrySet()) {
+			instanceMap.put(entry.getKey(), entry.getValue());
 		}
-		return false;
 	}
 
 	/**
-	 * @see java.lang.Object#toString()
+	 * @param changeConfiguration
+	 * @param dConfiguration
 	 */
-	@Override
-	public String getComponentsString() {
-		StringBuffer text = new StringBuffer();
-		text.append("Preprocessor:\n");
-		text.append("\t ModeSelector:  " + selectorMap.toString() + "\n");
-		text.append("\t BOCollector:   " + collectorMap.toString() + "\n");
-		text.append("\t BOPreSelector: " + preSelectorMap.toString() + "\n");
-		text.append("\t BOUpdater:     " + updaterMap.toString() + "\n");
-		text.append("\t PrefUpdater:   " + prefUpdaterMap.toString() + "\n");
-		return text.toString();
+	private <T extends LaraPreprocessorComp<A, BO>, U extends LaraPreprocessorComp<?, ?>> void fillConfiguration(
+			LaraPreprocessorConfigurator<A, BO> changeConfiguration,
+			LaraPreprocessorConfigurator<A, BO> dConfiguration,
+			Map<LaraDecisionConfiguration, T> map, Class<? super T> clazz) {
+		for (Map.Entry<LaraDecisionConfiguration, T> entry : map.entrySet()) {
+			if (!(changeConfiguration.get(entry.getKey(), clazz) == null)) {
+				changeConfiguration.set(entry.getKey(), clazz,
+						changeConfiguration.<T> get(entry.getKey(), clazz));
+			} else {
+				changeConfiguration
+						.set(entry.getKey(), clazz, entry.getValue());
+			}
+		}
 	}
 
 	/**
-	 * @see de.cesr.lara.components.eventbus.LaraInternalEventSubscriber#onInternalEvent(de.cesr.lara.components.eventbus.events.LaraEvent)
+	 * Tests whether a certain component map matches the configuration of the
+	 * given {@link DefaultConfigurator}.
+	 * 
+	 * @param dconfigurator
+	 * @param map
+	 * @param defaultComp
+	 * @return true, if the component map matches the given configurator, false
+	 *         else
 	 */
-	@Override
-	public void onInternalEvent(LaraEvent event) {
-		if (event instanceof LPpUnsubscribeEvent) {
-			@SuppressWarnings("unchecked")
-			A agent = (A) ((LPpUnsubscribeEvent) event).getAgent();
-			LEventbus eBus = LEventbus.getInstance(agent);
-			eBus.unsubscribe(LPpModeSelectorEvent.class);
-			eBus.unsubscribe(LPpBoCollectorEvent.class);
-			eBus.unsubscribe(LPpBoPreselectorEvent.class);
-			eBus.unsubscribe(LPpBoUtilityUpdaterEvent.class);
-			eBus.unsubscribe(LPpPreferenceUpdaterEvent.class);
+	private <T> boolean meetsConfiguration(
+			Map<LaraDecisionConfiguration, ? extends T> configurationMap,
+			Map<LaraDecisionConfiguration, ? extends T> instanceMap,
+			T defaultComp) {
+		// check if all entries of the configurator are included in the builder1
+		// instance (i.e. if the configurator does
+		// not define more):
+		for (Map.Entry<LaraDecisionConfiguration, ? extends T> entry : configurationMap
+				.entrySet()) {
+			if (!instanceMap.containsKey(entry.getKey())) {
+				return false;
+			}
+			if (!entry.getValue().equals(instanceMap.get(entry.getKey()))) {
+				return false;
+			}
 		}
+		// Check if every definition of the builder1 is included in the
+		// configurator (i.e. the builder1 does not define
+		// more):
+		for (Map.Entry<LaraDecisionConfiguration, ? extends T> entry : instanceMap
+				.entrySet()) {
+
+			if (entry.getValue() == null
+					&& configurationMap.get(entry.getKey()) == null) {
+				// component is set to null (to avoid computation)
+				break;
+			}
+			// when a component is set null the configurator also needs to set
+			// this component null
+			// (testing vice verse is not valid since null is returned when key
+			// not defined -> default component
+			// defined):
+			if (entry.getValue() == null
+					&& configurationMap.get(entry.getKey()) != null) {
+				return false;
+			}
+			if (entry.getValue().equals(configurationMap.get(entry.getKey()))) {
+				break;
+			}
+			if (entry.getKey() == null) {
+				// when default is set to default component, the configurator
+				// may not define anything
+				if (entry.getValue() == defaultComp) {
+					if (configurationMap.containsKey(null)) {
+						return false;
+					}
+				}
+			} else {
+				if (!configurationMap.containsKey(entry.getKey())) {
+					return false;
+				} else {
+					if (!entry.getValue().equals(
+							configurationMap.get(entry.getKey()))) {
+						return false;
+					}
+				}
+			}
+		}
+		return true;
 	}
 }

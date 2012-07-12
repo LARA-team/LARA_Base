@@ -25,19 +25,22 @@ import de.cesr.lara.components.container.storage.LaraStorage;
 
 /**
  * @author Sascha Holzhauer
- *
+ * 
  */
 public class LContainerTestUtils {
 
-	/**
-	 * counter for labeling properties
-	 */
-	private static int count = 0;
+	public static class LSubTestProperty extends LTestProperty {
 
-	public static class LTestProperty extends LaraProperty<LTestProperty, String> {
+		public LSubTestProperty(String key, String value) {
+			super(key, value);
+		}
+	}
+
+	public static class LTestProperty extends
+			LaraProperty<LTestProperty, String> {
 
 		String value;
-		
+
 		public LTestProperty(String key, String value) {
 			super(key);
 			this.value = value;
@@ -54,12 +57,10 @@ public class LContainerTestUtils {
 		}
 	}
 
-	public static class LSubTestProperty extends LTestProperty {
-
-		public LSubTestProperty(String key, String value) {
-			super(key, value);
-		}
-	}
+	/**
+	 * counter for labeling properties
+	 */
+	private static int count = 0;
 
 	public static void storeSixStandardEntries(
 			LaraMemory<? super LTestProperty> storage) {
@@ -82,8 +83,7 @@ public class LContainerTestUtils {
 	}
 
 	public static void storeSomeEntries(
-			LaraMemory<? super LTestProperty> memory,
-			int num) {
+			LaraMemory<? super LTestProperty> memory, int num) {
 		for (int i = 0; i < num; i++) {
 			memory.memorize(new LTestProperty("key" + count, "value" + count++));
 		}

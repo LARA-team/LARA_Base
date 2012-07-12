@@ -24,7 +24,7 @@ import de.cesr.parma.core.PmParameterManager;
 
 /**
  * @author Sascha Holzhauer
- *
+ * 
  */
 public enum LDecisionMakingPa implements PmParameterDefinition {
 
@@ -53,13 +53,13 @@ public enum LDecisionMakingPa implements PmParameterDefinition {
 	}
 
 	@Override
-	public Class<?> getType() {
-		return type;
+	public Object getDefaultValue() {
+		return defaultValue;
 	}
 
 	@Override
-	public Object getDefaultValue() {
-		return defaultValue;
+	public Class<?> getType() {
+		return type;
 	}
 
 }

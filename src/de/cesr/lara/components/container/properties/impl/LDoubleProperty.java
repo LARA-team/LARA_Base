@@ -52,5 +52,5 @@ public class LDoubleProperty extends LaraProperty<LDoubleProperty, Double> {
 	public Double getValue() {
 		return value;
 	}
-	
+
 }

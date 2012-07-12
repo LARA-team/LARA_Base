@@ -46,7 +46,7 @@ import de.cesr.lara.testing.LTestUtils.LTestBo;
 
 /**
  * @author Sascha Holzhauer
- *
+ * 
  */
 public class LDeliberativeChoiceComp_MaxLineTotalTest {
 
@@ -54,7 +54,6 @@ public class LDeliberativeChoiceComp_MaxLineTotalTest {
 	Collection<LaraBoRow<LTestBo>> laraBoRows;
 	LTestBo[] bos;
 	LaraDecisionConfiguration dConfig;
-
 
 	/**
 	 * @throws java.lang.Exception
@@ -81,16 +80,16 @@ public class LDeliberativeChoiceComp_MaxLineTotalTest {
 	}
 
 	/**
-	 * Test method for {@link de.cesr.lara.components.decision.impl.LDeliberativeChoiceComp_MaxLineTotal#getSelectedBo(de.cesr.lara.components.decision.LaraDecisionConfiguration, java.util.Collection)}.
+	 * @throws java.lang.Exception
 	 */
-	@Test
-	public void testGetSelectedBo() {
-		LTestBo bo = deliberativeChoiceComp.getSelectedBo(dConfig, laraBoRows);
-		assertEquals(bos[9], bo);
+	@After
+	public void tearDown() throws Exception {
 	}
 
 	/**
-	 * Test method for {@link de.cesr.lara.components.decision.impl.LDeliberativeChoiceComp_MaxLineTotal#getKSelectedBos(de.cesr.lara.components.decision.LaraDecisionConfiguration, java.util.Collection, int)}.
+	 * Test method for
+	 * {@link de.cesr.lara.components.decision.impl.LDeliberativeChoiceComp_MaxLineTotal#getKSelectedBos(de.cesr.lara.components.decision.LaraDecisionConfiguration, java.util.Collection, int)}
+	 * .
 	 */
 	@Test
 	public void testGetKSelectedBos() {
@@ -136,9 +135,13 @@ public class LDeliberativeChoiceComp_MaxLineTotalTest {
 	}
 
 	/**
-	 * @throws java.lang.Exception
+	 * Test method for
+	 * {@link de.cesr.lara.components.decision.impl.LDeliberativeChoiceComp_MaxLineTotal#getSelectedBo(de.cesr.lara.components.decision.LaraDecisionConfiguration, java.util.Collection)}
+	 * .
 	 */
-	@After
-	public void tearDown() throws Exception {
+	@Test
+	public void testGetSelectedBo() {
+		LTestBo bo = deliberativeChoiceComp.getSelectedBo(dConfig, laraBoRows);
+		assertEquals(bos[9], bo);
 	}
 }

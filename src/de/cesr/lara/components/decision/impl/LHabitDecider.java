@@ -19,7 +19,6 @@
  */
 package de.cesr.lara.components.decision.impl;
 
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -40,17 +39,17 @@ import de.cesr.lara.components.util.logging.impl.Log4jLogger;
  *            type of behavioural option
  * 
  */
-public class LHabitDecider<A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>> implements
-		LaraDecider<BO> {
+public class LHabitDecider<A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>>
+		implements LaraDecider<BO> {
 
 	/**
 	 * Logger
 	 */
 	static private Logger logger = Log4jLogger.getLogger(LHabitDecider.class);
 
-	A										agent	= null;
-	BO										bo		= null;
-	LaraDecisionConfiguration	dConfiguration;
+	A agent = null;
+	BO bo = null;
+	LaraDecisionConfiguration dConfiguration;
 
 	/**
 	 * @param agent
@@ -76,8 +75,8 @@ public class LHabitDecider<A extends LaraAgent<A, BO>, BO extends LaraBehavioura
 					.getValue();
 		} else {
 			// <- LOGGING
-			logger.warn("Habitual behaviour could not select a behavioural option since the " +
-					"(general) memory does not contain information about previously selected BO!");
+			logger.warn("Habitual behaviour could not select a behavioural option since the "
+					+ "(general) memory does not contain information about previously selected BO!");
 			// LOGGING ->
 		}
 	}
@@ -116,5 +115,5 @@ public class LHabitDecider<A extends LaraAgent<A, BO>, BO extends LaraBehavioura
 	public String toString() {
 		return "LHabitDecider for " + dConfiguration;
 	}
-	
+
 }

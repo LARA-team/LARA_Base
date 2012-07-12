@@ -53,12 +53,6 @@ public class LDeliberativeChoiceComp_MaxLineTotal implements
 	static LDeliberativeChoiceComp_MaxLineTotal instance = null;
 
 	/**
-	 * Private constructor enables singleton
-	 */
-	private LDeliberativeChoiceComp_MaxLineTotal() {
-	}
-
-	/**
 	 * @return LDeliberativeChoiceComp_MaxLineTotal (singleton)
 	 */
 	static public LDeliberativeChoiceComp_MaxLineTotal getInstance() {
@@ -69,44 +63,9 @@ public class LDeliberativeChoiceComp_MaxLineTotal implements
 	}
 
 	/**
-	 * Return the BO with the highest sum of preference fulfillment.
-	 * 
-	 * Tie Rule: In case there are more than one BOs with the highest score, the
-	 * one with highest row number is returned.
-	 * 
-	 * @see de.cesr.lara.components.decision.LaraDeliberativeChoiceComponent#getSelectedBo(de.cesr.lara.components.decision.LaraDecisionConfiguration,
-	 *      java.util.Collection)
+	 * Private constructor enables singleton
 	 */
-	@Override
-	public <BO extends LaraBehaviouralOption<?, ? extends BO>> BO getSelectedBo(
-			LaraDecisionConfiguration dConfiguration,
-			Collection<LaraBoRow<BO>> boRows) {
-		// <- LOGGING
-		logger.info("Determine selected BO...");
-		// LOGGING ->
-
-		if (boRows.size() == 0) {
-			logger.error("The number of BOs passed to LDeliberativeChoiceComp_MaxLineTotal was 0!");
-		}
-
-		// get best row form laraBoRows
-		double bestSum = Float.NEGATIVE_INFINITY;
-		double rSum = Float.NEGATIVE_INFINITY;
-
-		LaraBoRow<BO> bestRow = null;
-		for (LaraBoRow<BO> r : boRows) {
-			rSum = r.getSum();
-			if (rSum >= bestSum) {
-				bestSum = rSum;
-				bestRow = r;
-			}
-			// <- LOGGING
-			logger.info("Score for "
-					+ r.getBehaviouralOption().getClass().getSimpleName()
-					+ ": " + rSum);
-			// LOGGING ->
-		}
-		return bestRow.getBehaviouralOption();
+	private LDeliberativeChoiceComp_MaxLineTotal() {
 	}
 
 	/**
@@ -151,7 +110,7 @@ public class LDeliberativeChoiceComp_MaxLineTotal implements
 					}
 				});
 		sortedRows.addAll(boRows);
-		
+
 		// <- LOGGING
 		if (logger.isDebugEnabled()) {
 			logger.debug("Sorted rows: " + sortedRows);
@@ -163,5 +122,46 @@ public class LDeliberativeChoiceComp_MaxLineTotal implements
 			bos.add(iterator.next().getBehaviouralOption());
 		}
 		return bos;
+	}
+
+	/**
+	 * Return the BO with the highest sum of preference fulfillment.
+	 * 
+	 * Tie Rule: In case there are more than one BOs with the highest score, the
+	 * one with highest row number is returned.
+	 * 
+	 * @see de.cesr.lara.components.decision.LaraDeliberativeChoiceComponent#getSelectedBo(de.cesr.lara.components.decision.LaraDecisionConfiguration,
+	 *      java.util.Collection)
+	 */
+	@Override
+	public <BO extends LaraBehaviouralOption<?, ? extends BO>> BO getSelectedBo(
+			LaraDecisionConfiguration dConfiguration,
+			Collection<LaraBoRow<BO>> boRows) {
+		// <- LOGGING
+		logger.info("Determine selected BO...");
+		// LOGGING ->
+
+		if (boRows.size() == 0) {
+			logger.error("The number of BOs passed to LDeliberativeChoiceComp_MaxLineTotal was 0!");
+		}
+
+		// get best row form laraBoRows
+		double bestSum = Float.NEGATIVE_INFINITY;
+		double rSum = Float.NEGATIVE_INFINITY;
+
+		LaraBoRow<BO> bestRow = null;
+		for (LaraBoRow<BO> r : boRows) {
+			rSum = r.getSum();
+			if (rSum >= bestSum) {
+				bestSum = rSum;
+				bestRow = r;
+			}
+			// <- LOGGING
+			logger.info("Score for "
+					+ r.getBehaviouralOption().getClass().getSimpleName()
+					+ ": " + rSum);
+			// LOGGING ->
+		}
+		return bestRow.getBehaviouralOption();
 	}
 }

@@ -19,7 +19,6 @@
  */
 package de.cesr.lara.components.decision.impl;
 
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -35,12 +34,11 @@ import de.cesr.lara.components.util.LaraRandom;
 import de.cesr.lara.components.util.logging.impl.LAgentLevel;
 import de.cesr.lara.components.util.logging.impl.Log4jLogger;
 
-
 /**
  * @param <A>
- *        type of agent
+ *            type of agent
  * @param <BO>
- *        type of behavioural options
+ *            type of behavioural options
  * 
  */
 public class LExplorationDecider<A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>>
@@ -49,13 +47,13 @@ public class LExplorationDecider<A extends LaraAgent<A, BO>, BO extends LaraBeha
 	/**
 	 * logger
 	 */
-	private Logger		logger		= Log4jLogger.getLogger(LExplorationDecider.class);
-	private Logger		agentLogger	= null;
+	private Logger logger = Log4jLogger.getLogger(LExplorationDecider.class);
+	private Logger agentLogger = null;
 
-	A					agent		= null;
-	BO					bo			= null;
-	LaraDecisionConfiguration	dConfiguration;
-	LaraRandom			random;
+	A agent = null;
+	BO bo = null;
+	LaraDecisionConfiguration dConfiguration;
+	LaraRandom random;
 
 	/**
 	 * @param agent
@@ -68,9 +66,11 @@ public class LExplorationDecider<A extends LaraAgent<A, BO>, BO extends LaraBeha
 		this.random = LModel.getModel().getLRandom();
 
 		// init agent specific logger (agent id is first part of logger name):
-		if (Log4jLogger.getLogger(agent.getAgentId() + "." + LExplorationDecider.class.getName()).isEnabledFor(
-				LAgentLevel.AGENT)) {
-			agentLogger = Log4jLogger.getLogger(agent.getAgentId() + "." + LExplorationDecider.class.getName());
+		if (Log4jLogger.getLogger(
+				agent.getAgentId() + "." + LExplorationDecider.class.getName())
+				.isEnabledFor(LAgentLevel.AGENT)) {
+			agentLogger = Log4jLogger.getLogger(agent.getAgentId() + "."
+					+ LExplorationDecider.class.getName());
 		}
 	}
 
@@ -79,15 +79,19 @@ public class LExplorationDecider<A extends LaraAgent<A, BO>, BO extends LaraBeha
 	 */
 	@Override
 	public void decide() {
-		int randomBOnum = random.getUniform().nextIntFromTo(0,
-				agent.getLaraComp().getDecisionData(dConfiguration).getBos().size() - 1);
+		int randomBOnum = random.getUniform().nextIntFromTo(
+				0,
+				agent.getLaraComp().getDecisionData(dConfiguration).getBos()
+						.size() - 1);
 		// TODO switch to BO lists
-		this.bo = new ArrayList<BO>(agent.getLaraComp().getDecisionData(dConfiguration).getBos()).get(randomBOnum);
+		this.bo = new ArrayList<BO>(agent.getLaraComp()
+				.getDecisionData(dConfiguration).getBos()).get(randomBOnum);
 
 		// <- LOGGING
 		if (logger.isDebugEnabled()) {
 			StringBuffer buffer = new StringBuffer();
-			for (BO bo : agent.getLaraComp().getDecisionData(dConfiguration).getBos()) {
+			for (BO bo : agent.getLaraComp().getDecisionData(dConfiguration)
+					.getBos()) {
 				buffer.append("\t" + bo + "\n");
 			}
 			logger.debug("BOs to explore: " + buffer.toString());
@@ -138,5 +142,5 @@ public class LExplorationDecider<A extends LaraAgent<A, BO>, BO extends LaraBeha
 	public String toString() {
 		return "LExplorationDecider for " + dConfiguration;
 	}
-	
+
 }

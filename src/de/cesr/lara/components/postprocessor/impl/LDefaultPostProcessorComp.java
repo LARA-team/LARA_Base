@@ -31,7 +31,7 @@ import de.cesr.parma.core.PmParameterManager;
 
 /**
  * @author Sascha Holzhauer
- *
+ * 
  */
 public class LDefaultPostProcessorComp<A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>>
 		implements LaraPostprocessorComp<A, BO> {
@@ -44,8 +44,6 @@ public class LDefaultPostProcessorComp<A extends LaraAgent<A, BO>, BO extends La
 
 	@Override
 	public void postProcess(A agent, LaraDecisionConfiguration dConfig) {
-		
-
 
 		// TODO check memories capacity (needs to be truly larger than habit
 		// threshold!)
@@ -62,14 +60,13 @@ public class LDefaultPostProcessorComp<A extends LaraAgent<A, BO>, BO extends La
 				.getGeneralMemory()
 				.memorize(
 						new LSelectedBoProperty<BO>(dConfig, agent
-								.getLaraComp()
-								.getDecisionData(dConfig).getDecider()
-								.getSelectedBo()),
+								.getLaraComp().getDecisionData(dConfig)
+								.getDecider().getSelectedBo()),
 						(Integer) PmParameterManager
 								.getParameter(LDecisionMakingPa.HABIT_TRESHOLD) + 1);
-		System.out.println(dConfig + " " + agent
-				.getLaraComp()
-				.getDecisionData(dConfig).getDecider()
-				.getSelectedBo());
+		System.out.println(dConfig
+				+ " "
+				+ agent.getLaraComp().getDecisionData(dConfig).getDecider()
+						.getSelectedBo());
 	}
 }

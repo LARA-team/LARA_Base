@@ -27,9 +27,12 @@ import de.cesr.lara.components.eventbus.LaraEventSubscriber;
  * requires the type of agent. See Maurice, M. N. & Wadler, P. Java Generics and
  * Collections O'Reilly Media, 2006, p. 133ff.
  * 
- * See also http://java.sun.com/docs/books/jls/third_edition/html/typesValues.html#4.5 A Type parameter cannot be generic.
- * Furthermore, one cannot define more than one type in one ActualTypeArgument (T<S>). So one needs to workaround with
- * two ActualTypeArguments declarations (S extends LaraAgent, T extends Interface<S>).
+ * See also
+ * http://java.sun.com/docs/books/jls/third_edition/html/typesValues.html#4.5 A
+ * Type parameter cannot be generic. Furthermore, one cannot define more than
+ * one type in one ActualTypeArgument (T<S>). So one needs to workaround with
+ * two ActualTypeArguments declarations (S extends LaraAgent, T extends
+ * Interface<S>).
  * 
  * Agents also work with BOs that require (only) a super class of their (agent)
  * class.
@@ -45,16 +48,16 @@ public interface LaraAgent<A extends LaraAgent<A, BO>, BO extends LaraBehavioura
 		extends LaraEventSubscriber {
 
 	/**
-	 * Returns the {@link LaraAgentComponent} of this agent.
-	 * 
-	 * @return component Lara agent component
-	 */
-	public LaraAgentComponent<A, BO> getLaraComp();
-
-	/**
 	 * Get the custom agent id.
 	 * 
 	 * @return agent id string
 	 */
 	public String getAgentId();
+
+	/**
+	 * Returns the {@link LaraAgentComponent} of this agent.
+	 * 
+	 * @return component Lara agent component
+	 */
+	public LaraAgentComponent<A, BO> getLaraComp();
 }

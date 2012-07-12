@@ -35,9 +35,8 @@ import de.cesr.lara.components.util.logging.impl.Log4jLogger;
 /**
  * Uses the {@link MersenneTwister} as generator.
  * 
- * TODO substitute by URaNuS (or clear generators)
- * TODO document (SH) TODO methods to check if given distribution name is of
- * given class
+ * TODO substitute by URaNuS (or clear generators) TODO document (SH) TODO
+ * methods to check if given distribution name is of given class
  */
 public class LRandomService implements LaraRandom {
 
@@ -214,5 +213,5 @@ public class LRandomService implements LaraRandom {
 	private void invalidateDistributions() {
 		distributions.clear();
 	}
-	
+
 }
