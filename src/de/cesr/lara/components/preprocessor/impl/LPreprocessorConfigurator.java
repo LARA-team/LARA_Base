@@ -367,4 +367,5 @@ public class LPreprocessorConfigurator<A extends LaraAgent<A, BO>, BO extends La
 	public LaraPreferenceUpdater<A, BO> getDefaultPreferenceUpdater() {
 		return DEFAULT_PREFERENCE_UPDATER;
 	}
+	
 }

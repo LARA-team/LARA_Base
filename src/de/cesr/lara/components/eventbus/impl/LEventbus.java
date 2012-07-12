@@ -117,9 +117,7 @@ public class LEventbus {
 					+ event.getClass().getSimpleName());
 			// notify subscriber according to event type
 			if (event instanceof LaraSynchronousEvent) {
-				//TODO fix this
-				notifySubscribersSequential(subscribers, event);
-				//notifySubscribersSynchronous(subscribers, event);
+				notifySubscribersSynchronous(subscribers, event);
 			} else if (event instanceof LaraAsynchronousEvent) {
 				notifySubscribersAsynchronous(subscribers, event);
 			} else {
