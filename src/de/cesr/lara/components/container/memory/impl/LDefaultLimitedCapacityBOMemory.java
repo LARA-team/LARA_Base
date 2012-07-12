@@ -95,4 +95,5 @@ public class LDefaultLimitedCapacityBOMemory<BOType extends LaraBehaviouralOptio
 		}
 		return all;
 	}
+	
 }
