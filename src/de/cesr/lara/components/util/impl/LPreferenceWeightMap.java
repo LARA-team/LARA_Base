@@ -51,18 +51,18 @@ public class LPreferenceWeightMap extends
 	/**
 	 * @param map
 	 */
-	public LPreferenceWeightMap(Map<Class<? extends LaraPreference>, Double> map) {
-		super(map);
-	}
-
-	/**
-	 * @param map
-	 */
 	public LPreferenceWeightMap(LPrefEntry... entry) {
 		super();
 		for (LPrefEntry e : entry) {
 			this.put(e.getKey(), e.getValue());
 		}
+	}
+
+	/**
+	 * @param map
+	 */
+	public LPreferenceWeightMap(Map<Class<? extends LaraPreference>, Double> map) {
+		super(map);
 	}
 
 	@Override

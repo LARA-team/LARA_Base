@@ -19,7 +19,6 @@
  */
 package de.cesr.lara.components.decision.impl;
 
-
 import de.cesr.lara.components.LaraBehaviouralOption;
 import de.cesr.lara.components.LaraPreference;
 import de.cesr.lara.components.decision.LaraBoRow;
@@ -43,20 +42,20 @@ public class LLightBoRow<BO extends LaraBehaviouralOption<?, ?>> implements
 	/**
 	 * @param bo
 	 *            behavioural option
+	 */
+	public LLightBoRow(BO bo) {
+		this.bo = bo;
+	}
+
+	/**
+	 * @param bo
+	 *            behavioural option
 	 * @param utilitySum
 	 *            sum of all individual utility values
 	 */
 	public LLightBoRow(BO bo, double utilitySum) {
 		this.bo = bo;
 		this.utilitySum = utilitySum;
-	}
-
-	/**
-	 * @param bo
-	 *            behavioural option
-	 */
-	public LLightBoRow(BO bo) {
-		this.bo = bo;
 	}
 
 	/**
@@ -68,17 +67,22 @@ public class LLightBoRow<BO extends LaraBehaviouralOption<?, ?>> implements
 	}
 
 	/**
+	 * @see de.cesr.lara.components.decision.LaraBoRow#getIndividualUtilityValue(java.lang.Class)
+	 */
+	@Override
+	public double getIndividualUtilityValue(
+			Class<? extends LaraPreference> preference) {
+		throw new UnsupportedOperationException(
+				"This implementation of LaraBoRow "
+						+ "stores only the sum of individual utiltiy values");
+	}
+
+	/**
 	 * @see de.cesr.lara.components.decision.LaraBoRow#getSum()
 	 */
 	@Override
 	public double getSum() {
 		return utilitySum;
-	}
-
-	@Override
-	public String toString() {
-		return "BO: " + bo.toString() + "(utility sum: " + this.utilitySum
-				+ ")";
 	}
 
 	/**
@@ -91,14 +95,9 @@ public class LLightBoRow<BO extends LaraBehaviouralOption<?, ?>> implements
 		this.utilitySum += value;
 	}
 
-	/**
-	 * @see de.cesr.lara.components.decision.LaraBoRow#getIndividualUtilityValue(java.lang.Class)
-	 */
 	@Override
-	public double getIndividualUtilityValue(
-			Class<? extends LaraPreference> preference) {
-		throw new UnsupportedOperationException(
-				"This implementation of LaraBoRow "
-						+ "stores only the sum of individual utiltiy values");
+	public String toString() {
+		return "BO: " + bo.toString() + "(utility sum: " + this.utilitySum
+				+ ")";
 	}
 }

@@ -29,8 +29,7 @@ import de.cesr.lara.components.LaraProperty;
  *            the type of properties this container shall store
  */
 public interface LaraContainer<PropertyType extends LaraProperty<? extends PropertyType, ?>>
-		extends
-		Iterable<PropertyType> {
+		extends Iterable<PropertyType> {
 
 	/**
 	 * A constant to indicate that a storage has (virtually) unlimited capacity.

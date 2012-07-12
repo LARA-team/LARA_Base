@@ -162,6 +162,32 @@ public class LDefaultLimitedCapacityOverwriteMemory<PropertyType extends LaraPro
 	}
 
 	/**
+	 * @see de.cesr.lara.components.container.memory.LaraMemory#contains(java.lang.Class,
+	 *      java.lang.String)
+	 */
+	@Override
+	public boolean contains(Class<?> propertyType, String key) {
+		return storage.contains(propertyType, key);
+	}
+
+	/**
+	 * @see de.cesr.lara.components.container.memory.LaraMemory#contains(de.cesr.lara.components.LaraProperty)
+	 */
+	@Override
+	public boolean contains(PropertyType property) {
+		return storage.contains(property);
+	}
+
+	/**
+	 * @see de.cesr.lara.components.container.memory.LaraMemory#contains(de.cesr.lara.components.LaraProperty,
+	 *      java.lang.String)
+	 */
+	@Override
+	public boolean contains(PropertyType property, String key) {
+		return storage.contains(property, key);
+	}
+
+	/**
 	 * @see de.cesr.lara.components.container.memory.LaraMemory#contains(java.lang.String)
 	 */
 	@Override
@@ -183,33 +209,6 @@ public class LDefaultLimitedCapacityOverwriteMemory<PropertyType extends LaraPro
 		} else {
 			return false;
 		}
-	}
-
-	/**
-	 * @see de.cesr.lara.components.container.memory.LaraMemory#contains(de.cesr.lara.components.LaraProperty)
-	 */
-	@Override
-	public boolean contains(PropertyType property) {
-		return storage.contains(property);
-	}
-
-	/**
-	 * @see de.cesr.lara.components.container.memory.LaraMemory#contains(de.cesr.lara.components.LaraProperty,
-	 *      java.lang.String)
-	 */
-	@Override
-	public boolean contains(PropertyType property, String key) {
-		return storage.contains(property, key);
-	}
-
-	/**
-	 * @see de.cesr.lara.components.container.memory.LaraMemory#contains(java.lang.Class,
-	 *      java.lang.String)
-	 */
-	@Override
-	public boolean contains(Class<?> propertyType,
-			String key) {
-		return storage.contains(propertyType, key);
 	}
 
 	@Override
@@ -317,8 +316,7 @@ public class LDefaultLimitedCapacityOverwriteMemory<PropertyType extends LaraPro
 
 	@Override
 	public void memorize(PropertyType propertyToMemorize)
-			throws LContainerFullException,
-			LInvalidTimestampException {
+			throws LContainerFullException, LInvalidTimestampException {
 		if (logger.isDebugEnabled()) {
 			logger.debug(getName() + ": Memorize property" + propertyToMemorize);
 			logger.debug(this);
@@ -334,11 +332,20 @@ public class LDefaultLimitedCapacityOverwriteMemory<PropertyType extends LaraPro
 	 */
 	@Override
 	public void memorize(PropertyType propertyToMemorize, int retentionTime)
-			throws LContainerFullException,
-			LInvalidTimestampException {
+			throws LContainerFullException, LInvalidTimestampException {
 		storage.store(propertyToMemorize);
 	}
 
+	/**
+	 * @see de.cesr.lara.components.container.memory.LaraMemory#recall(java.lang.Class,
+	 *      java.lang.String)
+	 */
+	@Override
+	public <RequestPropertyType extends PropertyType> RequestPropertyType recall(
+			Class<RequestPropertyType> propertyType, String key)
+			throws LRetrieveException {
+		return storage.fetch(propertyType, key);
+	}
 
 	/**
 	 * @see de.cesr.lara.components.container.memory.LaraMemory#recall(java.lang.Class,
@@ -352,14 +359,22 @@ public class LDefaultLimitedCapacityOverwriteMemory<PropertyType extends LaraPro
 	}
 
 	/**
-	 * @see de.cesr.lara.components.container.memory.LaraMemory#recall(java.lang.Class,
-	 *      java.lang.String)
+	 * @see de.cesr.lara.components.container.memory.LaraMemory#recall(java.lang.String)
 	 */
 	@Override
-	public <RequestPropertyType extends PropertyType> RequestPropertyType recall(
-			Class<RequestPropertyType> propertyType, String key)
-			throws LRetrieveException {
-		return storage.fetch(propertyType, key);
+	public PropertyType recall(String key) throws LRetrieveException {
+		return storage.fetch(key);
+	}
+
+	/**
+	 * Retention time is ignored!
+	 * 
+	 * @see de.cesr.lara.components.container.memory.LaraMemory#recall(java.lang.String,
+	 *      int)
+	 */
+	@Override
+	public PropertyType recall(String key, int step) throws LRetrieveException {
+		return storage.fetch(key);
 	}
 
 	/**
@@ -384,25 +399,6 @@ public class LDefaultLimitedCapacityOverwriteMemory<PropertyType extends LaraPro
 		return properties;
 	}
 
-	/**
-	 * @see de.cesr.lara.components.container.memory.LaraMemory#recall(java.lang.String)
-	 */
-	@Override
-	public PropertyType recall(String key) throws LRetrieveException {
-		return storage.fetch(key);
-	}
-
-	/**
-	 * Retention time is ignored!
-	 * 
-	 * @see de.cesr.lara.components.container.memory.LaraMemory#recall(java.lang.String,
-	 *      int)
-	 */
-	@Override
-	public PropertyType recall(String key, int step) throws LRetrieveException {
-		return storage.fetch(key);
-	}
-
 	@Override
 	public Collection<PropertyType> recallAll(String key)
 			throws LRetrieveException {
@@ -419,14 +415,19 @@ public class LDefaultLimitedCapacityOverwriteMemory<PropertyType extends LaraPro
 	 */
 	@Override
 	public void refresh(PropertyType propertyToMemorize)
-			throws LContainerFullException,
-			LInvalidTimestampException {
+			throws LContainerFullException, LInvalidTimestampException {
 
 		if (!contains(propertyToMemorize.getKey())) {
 			logger.warn("Property " + propertyToMemorize
 					+ " shall be refreshed but is not contained in memory!");
 		}
 		storage.store(propertyToMemorize);
+	}
+
+	@Override
+	public void refresh(PropertyType propertyToMemorize, int retentionTime)
+			throws LInvalidTimestampException, LRemoveException {
+		// nothing to do
 	}
 
 	/**
@@ -456,12 +457,6 @@ public class LDefaultLimitedCapacityOverwriteMemory<PropertyType extends LaraPro
 
 	@Override
 	public void refresh(String key, int step, int retentionTime)
-			throws LInvalidTimestampException, LRemoveException {
-		// nothing to do
-	}
-
-	@Override
-	public void refresh(PropertyType propertyToMemorize, int retentionTime)
 			throws LInvalidTimestampException, LRemoveException {
 		// nothing to do
 	}

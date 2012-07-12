@@ -19,7 +19,6 @@
  */
 package de.cesr.lara.components.decision.impl;
 
-
 import java.util.Collection;
 
 import org.apache.log4j.Logger;
@@ -32,12 +31,11 @@ import de.cesr.lara.components.decision.LaraDecisionConfiguration;
 import de.cesr.lara.components.decision.LaraDeliberativeDecider;
 import de.cesr.lara.components.util.logging.impl.Log4jLogger;
 
-
 /**
  * @param <A>
- *        type of agent
+ *            type of agent
  * @param <BO>
- *        type of behavioural option to deal with
+ *            type of behavioural option to deal with
  */
 public class LDeliberativeDeciderFactory<A extends LaraAgent<? super A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>>
 		implements LaraDeciderFactory<A, BO> {
@@ -45,13 +43,11 @@ public class LDeliberativeDeciderFactory<A extends LaraAgent<? super A, BO>, BO 
 	/**
 	 * Logger
 	 */
-	static private Logger			logger	= Log4jLogger.getLogger(LDeliberativeDeciderFactory.class);
+	static private Logger logger = Log4jLogger
+			.getLogger(LDeliberativeDeciderFactory.class);
 
-	static LaraDeciderFactory<?, ?>	factory	= null;
-	static Class<?>					clazz;
-
-	private LDeliberativeDeciderFactory() {
-	}
+	static LaraDeciderFactory<?, ?> factory = null;
+	static Class<?> clazz;
 
 	/**
 	 * The problem: in java, non-static class AgentT (parameter) cannot be
@@ -76,7 +72,7 @@ public class LDeliberativeDeciderFactory<A extends LaraAgent<? super A, BO>, BO 
 	 * @return an instance of this factory
 	 */
 	@SuppressWarnings("unchecked")
-	public static <A extends LaraAgent<? super A, BO>, BO extends LaraBehaviouralOption<?,? extends BO>> LaraDeciderFactory<A, BO> getFactory(
+	public static <A extends LaraAgent<? super A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>> LaraDeciderFactory<A, BO> getFactory(
 			Class<A> clazz) {
 		if (LDeliberativeDeciderFactory.clazz != clazz || factory == null) {
 			factory = new LDeliberativeDeciderFactory<A, BO>();
@@ -84,14 +80,19 @@ public class LDeliberativeDeciderFactory<A extends LaraAgent<? super A, BO>, BO 
 		return (LDeliberativeDeciderFactory<A, BO>) factory;
 	}
 
+	private LDeliberativeDeciderFactory() {
+	}
+
 	/**
 	 * @see de.cesr.lara.components.decision.LaraDeciderFactory#getDecider(de.cesr.lara.components.agents.LaraAgent,
 	 *      de.cesr.lara.components.decision.LaraDecisionConfiguration)
 	 */
 	@Override
-	public LaraDecider<BO>  getDecider(A agent, LaraDecisionConfiguration dConfiguration) {
+	public LaraDecider<BO> getDecider(A agent,
+			LaraDecisionConfiguration dConfiguration) {
 
-		Collection<BO> bos = agent.getLaraComp().getDecisionData(dConfiguration).getBos();
+		Collection<BO> bos = agent.getLaraComp()
+				.getDecisionData(dConfiguration).getBos();
 		if (bos != null) {
 
 			// <- LOGGING
@@ -104,8 +105,10 @@ public class LDeliberativeDeciderFactory<A extends LaraAgent<? super A, BO>, BO 
 			}
 			// LOGGING ->
 
-			LaraDeliberativeDecider<BO> decider = new LDeliberativeDecider<BO>(dConfiguration);
-			decider.setSelectableBos(agent.getLaraComp().getDecisionData(dConfiguration).getBos());
+			LaraDeliberativeDecider<BO> decider = new LDeliberativeDecider<BO>(
+					dConfiguration);
+			decider.setSelectableBos(agent.getLaraComp()
+					.getDecisionData(dConfiguration).getBos());
 
 			if (agent.getLaraComp().getDeliberativeChoiceComp(dConfiguration) == null) {
 				// <- LOGGING
@@ -116,21 +119,25 @@ public class LDeliberativeDeciderFactory<A extends LaraAgent<? super A, BO>, BO 
 						"Deliberative Choice component has not been set for LaraDecisionConfiguration "
 								+ dConfiguration + " at the agent " + agent);
 			}
-			
-			decider.setDeliberativeChoiceComponent(agent.getLaraComp().getDeliberativeChoiceComp(dConfiguration));
 
-			// send only preferenceWeights that are considered during the decision process:
+			decider.setDeliberativeChoiceComponent(agent.getLaraComp()
+					.getDeliberativeChoiceComp(dConfiguration));
+
+			// send only preferenceWeights that are considered during the
+			// decision process:
 			if (dConfiguration.getPreferences() == null) {
 				// <- LOGGING
 				logger.warn("No preference weights set for LaraDecisionConfiguration "
 						+ dConfiguration);
 				// <- LOGGING
 			}
-			decider.setPreferenceWeights(agent.getLaraComp().getPreferenceWeights());
+			decider.setPreferenceWeights(agent.getLaraComp()
+					.getPreferenceWeights());
 			return decider;
 
 		} else {
-			logger.warn(agent.getAgentId() + "> Decision process for " + dConfiguration.getId()
+			logger.warn(agent.getAgentId() + "> Decision process for "
+					+ dConfiguration.getId()
 					+ " cancelled because of empty set of BOs");
 			return null;
 		}

@@ -35,15 +35,15 @@ public interface LaraCapacityManagementView<PropertyType extends LaraProperty<?,
 		extends Iterable<PropertyType> {
 
 	/**
-	 * @param item
-	 */
-	public void remove(PropertyType property);
-	
-	/**
 	 * Provides an iterator over the underlying container
 	 * 
 	 * @return iterator over underlying container
 	 */
 	@Override
 	public Iterator<PropertyType> iterator();
+
+	/**
+	 * @param item
+	 */
+	public void remove(PropertyType property);
 }

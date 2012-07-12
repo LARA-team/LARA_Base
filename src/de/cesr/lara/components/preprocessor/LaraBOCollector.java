@@ -19,7 +19,6 @@
  */
 package de.cesr.lara.components.preprocessor;
 
-
 import de.cesr.lara.components.LaraBehaviouralOption;
 import de.cesr.lara.components.agents.LaraAgent;
 

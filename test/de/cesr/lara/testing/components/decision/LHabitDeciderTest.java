@@ -62,10 +62,9 @@ public class LHabitDeciderTest {
 
 		agent = new LTestAgent("TestAgent");
 
-		one = new LTestBo("Bo1", agent, new LPrefEntry(
-				LTestPreference1.class, new Double(1.0)));
-		two = new LTestBo("Bo2", agent, new LPrefEntry(
-LTestPreference1.class,
+		one = new LTestBo("Bo1", agent, new LPrefEntry(LTestPreference1.class,
+				new Double(1.0)));
+		two = new LTestBo("Bo2", agent, new LPrefEntry(LTestPreference1.class,
 				new Double(0.5)));
 
 		agent.getLaraComp().getBOMemory().memorize(one);
@@ -83,7 +82,9 @@ LTestPreference1.class,
 	}
 
 	/**
-	 * Test method for {@link de.cesr.lara.components.decision.impl.LHabitDecider#getSelectedBo()}.
+	 * Test method for
+	 * {@link de.cesr.lara.components.decision.impl.LHabitDecider#getSelectedBo()}
+	 * .
 	 */
 	@Test
 	public void testGetSelectedBo() {

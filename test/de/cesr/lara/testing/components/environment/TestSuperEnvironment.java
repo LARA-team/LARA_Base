@@ -34,7 +34,7 @@ import de.cesr.lara.testing.LTestUtils;
 
 /**
  * @author Sascha Holzhauer
- *
+ * 
  */
 public class TestSuperEnvironment {
 
@@ -65,7 +65,9 @@ public class TestSuperEnvironment {
 	}
 
 	/**
-	 * Test method for {@link de.cesr.lara.components.environment.impl.LEnvironment#removePropertySubenv(java.lang.String)}.
+	 * Test method for
+	 * {@link de.cesr.lara.components.environment.impl.LEnvironment#removePropertySubenv(java.lang.String)}
+	 * .
 	 */
 	@Test
 	public void testRemovePropertySubenv() {

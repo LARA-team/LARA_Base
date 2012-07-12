@@ -52,5 +52,5 @@ public class LIntProperty extends LaraProperty<LIntProperty, Integer> {
 	public Integer getValue() {
 		return value;
 	}
-	
+
 }

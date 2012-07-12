@@ -19,21 +19,19 @@
  */
 package de.cesr.lara.components.preprocessor;
 
-
 import de.cesr.lara.components.LaraBehaviouralOption;
 import de.cesr.lara.components.agents.LaraAgent;
 import de.cesr.lara.components.decision.LaraDecisionConfiguration;
 
-
 /**
- * The Pre-process Factory is used to pick the appropriate pre-processor components for the given decision (
- * {@linkLaraDecisionBuilder}).
+ * The Pre-process Factory is used to pick the appropriate pre-processor
+ * components for the given decision ( {@linkLaraDecisionBuilder}).
  * 
  * 
  * @param <A>
- *        the type of agents this pre-process builder is intended for
+ *            the type of agents this pre-process builder is intended for
  * @param <BO>
- *        the type of behavioural options the preprocessor shall manage
+ *            the type of behavioural options the preprocessor shall manage
  * 
  * @author Sascha Holzhauer
  * @date 05.02.2010
@@ -41,10 +39,11 @@ import de.cesr.lara.components.decision.LaraDecisionConfiguration;
 public interface LaraPreprocessor<A extends LaraAgent<? super A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>> {
 
 	/**
-	 * @param accuracy
-	 * @param agent
+	 * Lists all preprocessor components defined in this preprocessor.
+	 * 
+	 * @return String
 	 */
-	public abstract void preprocess(LaraDecisionConfiguration dConfig, A agent);
+	public String getComponentsString();
 
 	/**
 	 * @param configuration
@@ -54,10 +53,9 @@ public interface LaraPreprocessor<A extends LaraAgent<? super A, BO>, BO extends
 			LaraPreprocessorConfigurator<A, BO> configuration);
 
 	/**
-	 * Lists all preprocessor components defined in this preprocessor.
-	 * 
-	 * @return String
+	 * @param accuracy
+	 * @param agent
 	 */
-	public String getComponentsString();
+	public abstract void preprocess(LaraDecisionConfiguration dConfig, A agent);
 
 }

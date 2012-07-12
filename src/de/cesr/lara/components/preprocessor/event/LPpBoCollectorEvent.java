@@ -27,12 +27,13 @@ import de.cesr.lara.components.preprocessor.LaraBOCollector;
 
 /**
  * Triggers selection of behavioural options from the agent's memory.
- * {@link LaraBOCollector}s should register
- * for these events.
+ * {@link LaraBOCollector}s should register for these events.
+ * 
  * @author Sascha Holzhauer
- *
+ * 
  */
-public class LPpBoCollectorEvent extends LAbstractPpEvent implements LaraRequiresPrecedingEvent{
+public class LPpBoCollectorEvent extends LAbstractPpEvent implements
+		LaraRequiresPrecedingEvent {
 
 	/**
 	 * @param dConfig

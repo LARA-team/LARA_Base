@@ -19,7 +19,6 @@
  */
 package de.cesr.lara.components.preprocessor.impl;
 
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map.Entry;
@@ -35,7 +34,6 @@ import de.cesr.lara.components.eventbus.events.LaraEvent;
 import de.cesr.lara.components.preprocessor.LaraBOCollector;
 import de.cesr.lara.components.preprocessor.event.LPpBoCollectorEvent;
 import de.cesr.lara.components.util.logging.impl.Log4jLogger;
-
 
 /**
  * This LaraBoScanner implementation also filters out behavioural option that
@@ -53,7 +51,6 @@ import de.cesr.lara.components.util.logging.impl.Log4jLogger;
  */
 public class LOmitZeroContributingBOCollector<A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<?, BO>>
 		extends LAbstractPpComp<A, BO> implements LaraBOCollector<A, BO> {
-
 
 	/**
 	 * Logger
@@ -85,7 +82,8 @@ public class LOmitZeroContributingBOCollector<A extends LaraAgent<A, BO>, BO ext
 		A agent = ((A) event.getAgent());
 		for (BO bo : agent.getLaraComp().getBOMemory().recallAllMostRecent()) {
 			boolean contributes = false;
-			for (Entry<Class<? extends LaraPreference>, Double> utility : bo.getValue().entrySet()) {
+			for (Entry<Class<? extends LaraPreference>, Double> utility : bo
+					.getValue().entrySet()) {
 
 				if (utility.getValue().doubleValue() > 0.0
 						&& event.getdConfig().getPreferences()

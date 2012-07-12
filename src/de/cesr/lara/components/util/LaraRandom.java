@@ -131,5 +131,5 @@ public interface LaraRandom {
 	 * @param seed
 	 */
 	public void setSeed(int seed);
-	
+
 }

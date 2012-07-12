@@ -19,7 +19,6 @@
  */
 package de.cesr.lara.testing.components.container;
 
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -43,7 +42,6 @@ import de.cesr.lara.components.eventbus.impl.LEventbus;
 import de.cesr.lara.testing.LTestUtils;
 import de.cesr.lara.testing.components.container.LContainerTestUtils.LTestProperty;
 
-
 /**
  * 
  * @author Sascha Holzhauer
@@ -52,7 +50,7 @@ import de.cesr.lara.testing.components.container.LContainerTestUtils.LTestProper
  */
 public class LDefaultStorageTest {
 
-	LaraStorage<LTestProperty>	storage;
+	LaraStorage<LTestProperty> storage;
 
 	/**
 	 * @throws java.lang.Exception
@@ -79,56 +77,6 @@ public class LDefaultStorageTest {
 	public void testClear() {
 		storage.clear();
 		assertTrue(storage.isEmpty());
-	}
-
-	/**
-	 * test store
-	 */
-	@Test
-	public void testStore() {
-		assertTrue(storage.getCapacity() == LaraContainer.UNLIMITED_CAPACITY);
-		assertFalse(storage.isFull());
-		assertTrue(storage.getSize() == 0);
-		assertTrue(storage.isEmpty());
-
-		LTestProperty invalid = new LTestProperty("IBecomeInvalid", "");
-
-		assertTrue(storage.isEmpty());
-
-		LContainerTestUtils.storeSixStandardEntries(storage);
-		// overwrite entries
-		LContainerTestUtils.storeSixStandardEntries(storage);
-
-		assertFalse(storage.isEmpty());
-		assertTrue(storage.getSize() == 6);
-
-		// overwrite one entry with new value
-		storage.store(new LTestProperty("key01", "Haha"));
-		assertTrue(storage.getSize() == 6);
-		assertTrue(storage.fetch("key01", 1).value == "Haha");
-
-		LEventbus.getInstance().publish(new LModelStepEvent());
-
-		try {
-			storage.store(invalid);
-			fail("This should have raised an exception.");
-		} catch (LInvalidTimestampException litse) {
-		}
-
-		LContainerTestUtils.storeSixStandardEntries(storage);
-
-		assertFalse(storage.isFull()); // should always return false (at least for LDefaultStorage), so doesn't
-										// really matter where it's called
-
-		assertTrue(storage.getSize() == 12);
-		LTestProperty property1 = storage.fetch("key06", 1);
-		LTestProperty property2 = storage.fetch("key06", 2);
-		assertNotSame(property1, property2);
-		// assertFalse(property1.equals(property2)); // This actually a test for the property; see comment in
-		// LaraProperty.equals (ME)
-
-		LTestProperty propertyX = storage.fetch("key06");
-		assertSame(property2, propertyX);
 	}
 
 	@Test
@@ -228,11 +176,29 @@ public class LDefaultStorageTest {
 		LEventbus.getInstance().publish(new LModelStepEvent());
 
 		storage.store(new LTestProperty("key05", "lastAdded"));
-		assertEquals("The last added property of key key05 hast value lastAdded", "lastAdded", storage.fetch("key05")
-				.getValue());
+		assertEquals(
+				"The last added property of key key05 hast value lastAdded",
+				"lastAdded", storage.fetch("key05").getValue());
 	}
 
+	/**
+	 * 
+	 */
+	@Test
+	public void testIterator() {
+		LContainerTestUtils.storeSixStandardEntries(storage);
 
+		LEventbus.getInstance().publish(new LModelStepEvent());
+
+		LContainerTestUtils.storeSixStandardEntries(storage);
+
+		int size = 0;
+		for (@SuppressWarnings("unused")
+		LTestProperty property : storage) {
+			size++;
+		}
+		assertTrue("iterator needs to iterate over 12 proeprties", size == 12);
+	}
 
 	/**
 	 * 
@@ -262,21 +228,54 @@ public class LDefaultStorageTest {
 	}
 
 	/**
-	 * 
+	 * test store
 	 */
 	@Test
-	public void testIterator() {
+	public void testStore() {
+		assertTrue(storage.getCapacity() == LaraContainer.UNLIMITED_CAPACITY);
+		assertFalse(storage.isFull());
+		assertTrue(storage.getSize() == 0);
+		assertTrue(storage.isEmpty());
+
+		LTestProperty invalid = new LTestProperty("IBecomeInvalid", "");
+
+		assertTrue(storage.isEmpty());
+
 		LContainerTestUtils.storeSixStandardEntries(storage);
+		// overwrite entries
+		LContainerTestUtils.storeSixStandardEntries(storage);
+
+		assertFalse(storage.isEmpty());
+		assertTrue(storage.getSize() == 6);
+
+		// overwrite one entry with new value
+		storage.store(new LTestProperty("key01", "Haha"));
+		assertTrue(storage.getSize() == 6);
+		assertTrue(storage.fetch("key01", 1).value == "Haha");
 
 		LEventbus.getInstance().publish(new LModelStepEvent());
 
+		try {
+			storage.store(invalid);
+			fail("This should have raised an exception.");
+		} catch (LInvalidTimestampException litse) {
+		}
+
 		LContainerTestUtils.storeSixStandardEntries(storage);
 
-		int size = 0;
-		for (@SuppressWarnings("unused")
-		LTestProperty property : storage) {
-			size++;
-		}
-		assertTrue("iterator needs to iterate over 12 proeprties", size == 12);
+		assertFalse(storage.isFull()); // should always return false (at least
+										// for LDefaultStorage), so doesn't
+										// really matter where it's called
+
+		assertTrue(storage.getSize() == 12);
+		LTestProperty property1 = storage.fetch("key06", 1);
+		LTestProperty property2 = storage.fetch("key06", 2);
+		assertNotSame(property1, property2);
+		// assertFalse(property1.equals(property2)); // This actually a test for
+		// the property; see comment in
+		// LaraProperty.equals (ME)
+
+		LTestProperty propertyX = storage.fetch("key06");
+		assertSame(property2, propertyX);
 	}
 }

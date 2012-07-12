@@ -76,5 +76,5 @@ public interface LaraStorageListener {
 	 */
 	public void storageEventOccured(StorageEvent event,
 			LaraProperty<?, ?> property);
-			
+
 }

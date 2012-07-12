@@ -24,7 +24,7 @@ import java.util.LinkedHashSet;
 
 /**
  * @author Sascha Holzhauer
- *
+ * 
  */
 public class LSet<E> extends LinkedHashSet<E> {
 

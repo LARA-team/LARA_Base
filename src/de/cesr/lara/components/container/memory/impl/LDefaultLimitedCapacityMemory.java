@@ -112,13 +112,13 @@ public class LDefaultLimitedCapacityMemory<PropertyType extends LaraProperty<? e
 		return new LaraCapacityManagementView<PropertyType>() {
 
 			@Override
-			public void remove(PropertyType item) {
-				LDefaultLimitedCapacityMemory.this.forget(item);
+			public Iterator<PropertyType> iterator() {
+				return LDefaultLimitedCapacityMemory.this.iterator();
 			}
 
 			@Override
-			public Iterator<PropertyType> iterator() {
-				return LDefaultLimitedCapacityMemory.this.iterator();
+			public void remove(PropertyType item) {
+				LDefaultLimitedCapacityMemory.this.forget(item);
 			}
 		};
 	}

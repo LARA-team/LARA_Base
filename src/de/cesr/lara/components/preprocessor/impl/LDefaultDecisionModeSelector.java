@@ -93,9 +93,10 @@ public class LDefaultDecisionModeSelector<A extends LaraAgent<A, BO>, BO extends
 				.getParameter(LDecisionMakingPa.HABIT_TRESHOLD)).intValue();
 		int currStep = LModel.getModel().getCurrentStep();
 
-		if (!customIsDelibaterive(event) && currStep > habitTH
+		if (!customIsDelibaterive(event)
+				&& currStep > habitTH
 				&& agent.getLaraComp().getGeneralMemory()
-				.contains(LSelectedBoProperty.class, dConfig.getId())) {
+						.contains(LSelectedBoProperty.class, dConfig.getId())) {
 
 			useDeliberative = false;
 
@@ -161,9 +162,10 @@ public class LDefaultDecisionModeSelector<A extends LaraAgent<A, BO>, BO extends
 					.setDeciderFactory(factory);
 		}
 	}
-	
+
 	/**
 	 * hook method for custom implementations
+	 * 
 	 * @return true if deliberative decision is desired
 	 */
 	protected boolean customIsDelibaterive(LPpModeSelectorEvent event) {

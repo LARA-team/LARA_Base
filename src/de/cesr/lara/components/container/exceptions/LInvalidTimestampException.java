@@ -20,8 +20,8 @@
 package de.cesr.lara.components.container.exceptions;
 
 /**
- * Indicates an invalid time stamp, for instance if properties are to be stored but
- * have assigned an invalid time stamp (e.g. < 0)
+ * Indicates an invalid time stamp, for instance if properties are to be stored
+ * but have assigned an invalid time stamp (e.g. < 0)
  */
 public class LInvalidTimestampException extends RuntimeException {
 

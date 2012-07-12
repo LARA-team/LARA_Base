@@ -82,6 +82,14 @@ public class LDefaultLimitedCapacityStorage<PropertyType extends LaraProperty<Pr
 		return new LaraCapacityManagementView<PropertyType>() {
 
 			/**
+			 * @see de.cesr.lara.components.container.LaraCapacityManagementView#iterator()
+			 */
+			@Override
+			public Iterator<PropertyType> iterator() {
+				return LDefaultLimitedCapacityStorage.this.iterator();
+			}
+
+			/**
 			 * @see de.cesr.lara.components.container.LaraCapacityManagementView#remove(de.cesr.lara.components.LaraProperty)
 			 */
 			@Override
@@ -94,14 +102,6 @@ public class LDefaultLimitedCapacityStorage<PropertyType extends LaraProperty<Pr
 					}
 				}
 				LDefaultLimitedCapacityStorage.this.remove(item);
-			}
-
-			/**
-			 * @see de.cesr.lara.components.container.LaraCapacityManagementView#iterator()
-			 */
-			@Override
-			public Iterator<PropertyType> iterator() {
-				return LDefaultLimitedCapacityStorage.this.iterator();
 			}
 		};
 	}

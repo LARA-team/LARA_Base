@@ -38,8 +38,9 @@ import de.cesr.lara.components.util.logging.impl.Log4jLogger;
  *            the type of behavioural options to manage
  * 
  */
-public class LDefaultLimitedCapacityOverwriteBoMemory<BO extends LaraBehaviouralOption<?, BO>> extends
-		LDefaultLimitedCapacityOverwriteMemory<BO> implements LaraBOMemory<BO> {
+public class LDefaultLimitedCapacityOverwriteBoMemory<BO extends LaraBehaviouralOption<?, BO>>
+		extends LDefaultLimitedCapacityOverwriteMemory<BO> implements
+		LaraBOMemory<BO> {
 
 	/**
 	 * Logger

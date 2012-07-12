@@ -43,7 +43,7 @@ import de.cesr.lara.testing.LTestUtils.LTestPreference2;
 
 /**
  * @author Sascha Holzhauer
- *
+ * 
  */
 public class LDeliberativeDeciderTest {
 
@@ -51,7 +51,6 @@ public class LDeliberativeDeciderTest {
 	LaraDecisionConfiguration dConfig;
 
 	LTestBo bo1, bo2;
-
 
 	/**
 	 * @throws java.lang.Exception
@@ -61,7 +60,7 @@ public class LDeliberativeDeciderTest {
 
 		LTestUtils.initTestModel();
 		agent = new LTestAgent("TestAgent");
-		
+
 		agent.getLaraComp().addPreferenceWeights(
 				new LPrefEntry(LTestPreference1.class, new Double(1.0)),
 				new LPrefEntry(LTestPreference2.class, new Double(0.1)));
@@ -83,7 +82,9 @@ public class LDeliberativeDeciderTest {
 	}
 
 	/**
-	 * Test method for {@link de.cesr.lara.components.decision.impl.LDeliberativeDecider#getSelectedBO()}.
+	 * Test method for
+	 * {@link de.cesr.lara.components.decision.impl.LDeliberativeDecider#getSelectedBO()}
+	 * .
 	 */
 	@Test
 	public void testGetSelectedBO() {

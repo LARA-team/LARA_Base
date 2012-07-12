@@ -19,7 +19,6 @@
  */
 package de.cesr.lara.testing.components.container;
 
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -39,7 +38,6 @@ import de.cesr.lara.components.util.impl.LCapacityManagers;
 import de.cesr.lara.components.util.logging.impl.Log4jLogger;
 import de.cesr.lara.testing.components.container.LContainerTestUtils.LTestProperty;
 
-
 /**
  * Tests the memory functionality with respect to the capacity management
  */
@@ -48,16 +46,26 @@ public class LDefaultLimitedCapacityMemoryTest {
 	/**
 	 * Logger
 	 */
-	static private Logger	logger	= Log4jLogger.getLogger(LDefaultLimitedCapacityMemoryTest.class);
+	static private Logger logger = Log4jLogger
+			.getLogger(LDefaultLimitedCapacityMemoryTest.class);
 
-	LaraMemory<LTestProperty>	memory;
+	LaraMemory<LTestProperty> memory;
 
 	/**
 	 * 
 	 */
 	@Before
 	public void setUp() {
-		memory = new LDefaultLimitedCapacityMemory<LTestProperty>(LCapacityManagers.<LTestProperty> makeFIFO(), 7);
+		memory = new LDefaultLimitedCapacityMemory<LTestProperty>(
+				LCapacityManagers.<LTestProperty> makeFIFO(), 7);
+	}
+
+	/**
+	 * 
+	 */
+	@After
+	public void tearDown() {
+		memory = null;
 	}
 
 	/**
@@ -68,18 +76,21 @@ public class LDefaultLimitedCapacityMemoryTest {
 	public void testCapacity() {
 		LContainerTestUtils.storeSomeEntries(memory, 6);
 
-		assertTrue("memory was initialised with a capacity of 7", memory.getCapacity() == 7);
+		assertTrue("memory was initialised with a capacity of 7",
+				memory.getCapacity() == 7);
 		assertTrue("6 properties were memorised", memory.getSize() == 6);
 
 		LEventbus.getInstance().publish(new LModelStepEvent());
 
 		memory.memorize(new LTestProperty("key07", "value07"));
 		assertTrue("6 + 1 properties were memorised", memory.getSize() == 7);
-		assertTrue("7 properties added at capacity of 7 means full", memory.isFull());
+		assertTrue("7 properties added at capacity of 7 means full",
+				memory.isFull());
 
 		memory.memorize(new LTestProperty("key08", "value08"));
 		assertTrue(memory.getSize() == 7);
-		assertFalse("The first property should have been removed now", memory.contains("key01"));
+		assertFalse("The first property should have been removed now",
+				memory.contains("key01"));
 
 		logger.info(memory);
 
@@ -88,7 +99,9 @@ public class LDefaultLimitedCapacityMemoryTest {
 		assertEquals(propertyX.getValue(), "value08");
 
 		LContainerTestUtils.storeSomeEntries(memory, 6);
-		assertTrue("After inserting several properties memory size should remain 7", memory.getSize() == 7);
+		assertTrue(
+				"After inserting several properties memory size should remain 7",
+				memory.getSize() == 7);
 
 		// change capacity to 0:
 		LaraCapacityManageableContainer<LTestProperty> cmStorage = (LaraCapacityManageableContainer<LTestProperty>) memory;
@@ -96,7 +109,8 @@ public class LDefaultLimitedCapacityMemoryTest {
 
 		assertTrue(memory.getCapacity() == LaraContainer.UNLIMITED_CAPACITY);
 		LContainerTestUtils.storeSomeEntries(memory, 100);
-		assertTrue("7 + 100 (at unlimited capcaity) = 107", memory.getSize() == 107);
+		assertTrue("7 + 100 (at unlimited capcaity) = 107",
+				memory.getSize() == 107);
 
 		logger.info(memory);
 
@@ -104,7 +118,9 @@ public class LDefaultLimitedCapacityMemoryTest {
 		cmStorage.setCapacity(10);
 		logger.info(memory);
 
-		assertTrue("After setting capacity of memory of size 107 to 10 size should be 10", memory.getSize() == 10);
+		assertTrue(
+				"After setting capacity of memory of size 107 to 10 size should be 10",
+				memory.getSize() == 10);
 		assertTrue(memory.getCapacity() == 10);
 		logger.info(memory);
 
@@ -119,13 +135,5 @@ public class LDefaultLimitedCapacityMemoryTest {
 		LContainerTestUtils.storeSomeEntries(memory, 100);
 		assertTrue(memory.getSize() == 100);
 		logger.info(memory);
-	}
-
-	/**
-	 * 
-	 */
-	@After
-	public void tearDown() {
-		memory = null;
 	}
 }

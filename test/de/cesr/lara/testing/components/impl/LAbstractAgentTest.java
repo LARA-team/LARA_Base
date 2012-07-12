@@ -19,7 +19,6 @@
  */
 package de.cesr.lara.testing.components.impl;
 
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 
@@ -30,7 +29,6 @@ import org.junit.Test;
 import de.cesr.lara.components.agents.impl.LAbstractAgent;
 import de.cesr.lara.testing.LTestUtils;
 import de.cesr.lara.testing.LTestUtils.LTestBo;
-
 
 /**
  * Tests hashCode() and equals()...
@@ -61,7 +59,19 @@ public class LAbstractAgentTest {
 	}
 
 	/**
-	 * Test method for {@link de.cesr.lara.components.agents.impl.LAbstractAgent#hashCode()}.
+	 * Test method for
+	 * {@link de.cesr.lara.components.agents.impl.LAbstractAgent#equals(java.lang.Object)}
+	 * .
+	 */
+	@Test
+	public final void testEqualsObject() {
+		assertEquals(agent2, agent3);
+		assertNotSame(agent1, agent2);
+	}
+
+	/**
+	 * Test method for
+	 * {@link de.cesr.lara.components.agents.impl.LAbstractAgent#hashCode()}.
 	 */
 	@Test
 	public final void testHashCode() {
@@ -69,14 +79,5 @@ public class LAbstractAgentTest {
 		assertEquals(agent2.hashCode(), new String("Agent2").hashCode());
 		assertEquals(agent3.hashCode(), new String("Agent2").hashCode());
 		assertEquals(agent2.hashCode(), agent3.hashCode());
-	}
-
-	/**
-	 * Test method for {@link de.cesr.lara.components.agents.impl.LAbstractAgent#equals(java.lang.Object)}.
-	 */
-	@Test
-	public final void testEqualsObject() {
-		assertEquals(agent2, agent3);
-		assertNotSame(agent1, agent2);
 	}
 }

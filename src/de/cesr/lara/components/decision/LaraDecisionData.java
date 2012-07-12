@@ -19,7 +19,6 @@
  */
 package de.cesr.lara.components.decision;
 
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
@@ -32,7 +31,6 @@ import de.cesr.lara.components.LaraPreference;
 import de.cesr.lara.components.agents.LaraAgent;
 import de.cesr.lara.components.preprocessor.LaraDecisionModeSelector;
 import de.cesr.lara.components.util.logging.impl.Log4jLogger;
-
 
 /**
  * 
@@ -52,18 +50,18 @@ public final class LaraDecisionData<A extends LaraAgent<? super A, BO>, BO exten
 	static private Logger logger = Log4jLogger
 			.getLogger(LaraDecisionData.class);
 
-	private final LaraDecisionConfiguration			dConfiguration;
-	private Collection<BO>									bos;
+	private final LaraDecisionConfiguration dConfiguration;
+	private Collection<BO> bos;
 	private Map<Class<? extends LaraPreference>, Double> individualPreferenceWeights;
 
-	private final A												agent;
+	private final A agent;
 
 	/**
 	 * A factory is used to prevent the process from storing LaraDecider objects
 	 * which might cause side effects.
 	 */
-	LaraDeciderFactory<A, BO>								deciderFactory;
-	LaraDecider<BO>											decider;
+	LaraDeciderFactory<A, BO> deciderFactory;
+	LaraDecider<BO> decider;
 
 	/**
 	 * @param dConfiguration
@@ -75,18 +73,36 @@ public final class LaraDecisionData<A extends LaraAgent<? super A, BO>, BO exten
 	}
 
 	/**
-	 * @return the current {@link LaraDecider} for the according decision process
+	 * @return the BOs
+	 */
+	public Collection<BO> getBos() {
+		return bos;
+	}
+
+	/**
+	 * @return the dConfiguration
+	 */
+	public LaraDecisionConfiguration getdConfiguration() {
+		return dConfiguration;
+	}
+
+	/**
+	 * @return the current {@link LaraDecider} for the according decision
+	 *         process
 	 */
 	public LaraDecider<BO> getDecider() {
 		if (deciderFactory == null) {
 			throw new IllegalStateException("DeciderFactory must be set!");
 		}
 		/*
-		 * Since one and the same decider needs to be persistent throughout a decision cycle because it stores important
-		 * data, it may not be overwritten during a decision cycle (furthermore, it is quite costy to initialize it
-		 * again and again). However, to prevent inconsistencies it needs to be guaranteed that the LaraDecisionData
-		 * objects are deleted after the decision cycle. Otherwise, the decider object persists beyond one decision
-		 * cycle which often is not desired, since in the next cycle a different decision mode is to be applied.
+		 * Since one and the same decider needs to be persistent throughout a
+		 * decision cycle because it stores important data, it may not be
+		 * overwritten during a decision cycle (furthermore, it is quite costy
+		 * to initialize it again and again). However, to prevent
+		 * inconsistencies it needs to be guaranteed that the LaraDecisionData
+		 * objects are deleted after the decision cycle. Otherwise, the decider
+		 * object persists beyond one decision cycle which often is not desired,
+		 * since in the next cycle a different decision mode is to be applied.
 		 */
 		if (decider == null) {
 			decider = deciderFactory.getDecider(agent, dConfiguration);
@@ -95,26 +111,10 @@ public final class LaraDecisionData<A extends LaraAgent<? super A, BO>, BO exten
 	}
 
 	/**
-	 * @return the BOs
+	 * @return the deciderFactory
 	 */
-	public Collection<BO> getBos() {
-		return bos;
-	}
-
-	/**
-	 * @param bos
-	 *        the BOs to set
-	 */
-	public void setBos(Collection<BO> bos) {
-		this.bos = bos;
-	}
-
-	/**
-	 * @param bo
-	 *            list of BOs to set
-	 */
-	public void setBos(BO... bo) {
-		this.bos = Arrays.asList(bo);
+	public LaraDeciderFactory<A, BO> getDeciderFactory() {
+		return deciderFactory;
 	}
 
 	/**
@@ -126,32 +126,33 @@ public final class LaraDecisionData<A extends LaraAgent<? super A, BO>, BO exten
 			logger.error(agent + "> Situational preference weights not set!");
 			// LOGGING ->
 
-			throw new IllegalStateException(agent + "> Situational preference weights not set!");
+			throw new IllegalStateException(agent
+					+ "> Situational preference weights not set!");
 		}
 		return UnmodifiableMap.decorate(individualPreferenceWeights);
 	}
 
 	/**
-	 * @param individualPreferenceWeights
-	 *            the currentPreferences to set
+	 * @param bo
+	 *            list of BOs to set
 	 */
-	public void setIndividualPreferences(
-			Map<Class<? extends LaraPreference>, Double> individualPreferenceWeights) {
-		this.individualPreferenceWeights = individualPreferenceWeights;
+	public void setBos(BO... bo) {
+		this.bos = Arrays.asList(bo);
 	}
 
 	/**
-	 * @return the deciderFactory
+	 * @param bos
+	 *            the BOs to set
 	 */
-	public LaraDeciderFactory<A, BO> getDeciderFactory() {
-		return deciderFactory;
+	public void setBos(Collection<BO> bos) {
+		this.bos = bos;
 	}
 
 	/**
 	 * Normally called by a {@link LaraDecisionModeSelector}.
 	 * 
 	 * @param deciderFactory
-	 *        the deciderFactory to set
+	 *            the deciderFactory to set
 	 */
 	public void setDeciderFactory(LaraDeciderFactory<A, BO> deciderFactory) {
 		this.deciderFactory = deciderFactory;
@@ -166,10 +167,12 @@ public final class LaraDecisionData<A extends LaraAgent<? super A, BO>, BO exten
 	}
 
 	/**
-	 * @return the dConfiguration
+	 * @param individualPreferenceWeights
+	 *            the currentPreferences to set
 	 */
-	public LaraDecisionConfiguration getdConfiguration() {
-		return dConfiguration;
+	public void setIndividualPreferences(
+			Map<Class<? extends LaraPreference>, Double> individualPreferenceWeights) {
+		this.individualPreferenceWeights = individualPreferenceWeights;
 	}
 
 	/**
@@ -178,7 +181,8 @@ public final class LaraDecisionData<A extends LaraAgent<? super A, BO>, BO exten
 	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("DecisionData of " + agent + " for " + dConfiguration + ". Selectable BO(s): ");
+		buffer.append("DecisionData of " + agent + " for " + dConfiguration
+				+ ". Selectable BO(s): ");
 		if (bos != null) {
 			for (BO b : bos) {
 				buffer.append("\t" + b + System.getProperty("line.separator"));

@@ -37,7 +37,7 @@ public final class Log4jLogger {
 	 * static reference to the log4j logger
 	 */
 	private static Logger logger = Logger.getRootLogger();
-	
+
 	private static boolean initialised = false;
 
 	/**
@@ -64,12 +64,13 @@ public final class Log4jLogger {
 		if (!initialised) {
 			try {
 				SimpleLayout layout = new SimpleLayout();
-	
+
 				// TODO remove static path?!
 				DateFormat dateFormat = new SimpleDateFormat(
 						"yyyy-MM-dd_HH-mm-ss");
 				FileAppender fileAppender = new FileAppender(layout, "log"
-						+ File.separator + "lara_" + dateFormat.format(Calendar.getInstance().getTime())
+						+ File.separator + "lara_"
+						+ dateFormat.format(Calendar.getInstance().getTime())
 						+ ".log", false);
 				logger.addAppender(fileAppender);
 				// ALL | DEBUG | INFO | WARN | ERROR | FATAL | OFF:
@@ -79,5 +80,5 @@ public final class Log4jLogger {
 			initialised = true;
 		}
 	}
-	
+
 }

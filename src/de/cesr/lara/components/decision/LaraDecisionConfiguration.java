@@ -19,7 +19,6 @@
  */
 package de.cesr.lara.components.decision;
 
-
 import java.util.Collection;
 
 import de.cesr.lara.components.LaraPreference;
@@ -34,11 +33,9 @@ import de.cesr.lara.components.agents.LaraAgentComponent;
 public interface LaraDecisionConfiguration {
 
 	/**
-	 * Set the preferences that are relevant for this decision
-	 * 
-	 * @param preferences
+	 * @return the decision's id
 	 */
-	public void setPreferences(Collection<Class<? extends LaraPreference>> preferences);
+	public String getId();
 
 	/**
 	 * Provides the preferences that are relevant for this decision
@@ -48,7 +45,10 @@ public interface LaraDecisionConfiguration {
 	public Collection<Class<? extends LaraPreference>> getPreferences();
 
 	/**
-	 * @return the decision's id
+	 * Set the preferences that are relevant for this decision
+	 * 
+	 * @param preferences
 	 */
-	public String getId();
+	public void setPreferences(
+			Collection<Class<? extends LaraPreference>> preferences);
 }

@@ -110,6 +110,16 @@ public class LEnvironment implements LaraSuperEnvironment {
 	}
 
 	/**
+	 * Calls update.
+	 * 
+	 * @see de.cesr.lara.components.environment.LaraEnvironment#addProperty(de.cesr.lara.components.environment.impl.LAbstractEnvironmentalProperty)
+	 */
+	@Override
+	public void addProperty(LAbstractEnvironmentalProperty<?> property) {
+		this.updateProperty(property);
+	}
+
+	/**
 	 * 
 	 * @see de.cesr.lara.components.environment.LaraEnvironment#containsProperty(de.cesr.lara.components.environment.impl.LAbstractEnvironmentalProperty)
 	 */
@@ -301,16 +311,6 @@ public class LEnvironment implements LaraSuperEnvironment {
 	}
 
 	/**
-	 * Calls update.
-	 * 
-	 * @see de.cesr.lara.components.environment.LaraEnvironment#addProperty(de.cesr.lara.components.environment.impl.LAbstractEnvironmentalProperty)
-	 */
-	@Override
-	public void addProperty(LAbstractEnvironmentalProperty<?> property) {
-		this.updateProperty(property);
-	}
-
-	/**
 	 * Informs listeners every time a value changed (should listeners be
 	 * informed of an update even if the value has not changed implement a new
 	 * registration function <code>addEnvUpdateListeners()</code>!)
@@ -352,5 +352,5 @@ public class LEnvironment implements LaraSuperEnvironment {
 			}
 		}
 	}
-	
+
 }

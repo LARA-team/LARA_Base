@@ -24,7 +24,7 @@ import de.cesr.lara.components.decision.LaraDecisionConfiguration;
 
 /**
  * @author Sascha Holzhauer
- *
+ * 
  */
 public class LPpUnsubscribeEvent extends LAbstractPpEvent {
 

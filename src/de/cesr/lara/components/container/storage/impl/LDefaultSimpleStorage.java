@@ -120,13 +120,12 @@ public class LDefaultSimpleStorage<PropertyType extends LaraProperty<PropertyTyp
 	}
 
 	/**
-	 * TODO test
-	 * 
-	 * @see de.cesr.lara.components.container.storage.LaraStorage#contains(java.lang.String)
+	 * @see de.cesr.lara.components.container.storage.LaraOverwriteStorage#contains(java.lang.Class,
+	 *      java.lang.String)
 	 */
 	@Override
-	public boolean contains(String key) {
-		return properties.containsKey(key);
+	public boolean contains(Class<?> propertyType, String key) {
+		return propertyType.isInstance(properties.get(key));
 	}
 
 	/**
@@ -147,13 +146,39 @@ public class LDefaultSimpleStorage<PropertyType extends LaraProperty<PropertyTyp
 	}
 
 	/**
-	 * @see de.cesr.lara.components.container.storage.LaraOverwriteStorage#contains(java.lang.Class,
-	 *      java.lang.String)
+	 * TODO test
+	 * 
+	 * @see de.cesr.lara.components.container.storage.LaraStorage#contains(java.lang.String)
 	 */
 	@Override
-	public boolean contains(Class<?> propertyType,
-			String key) {
-		return propertyType.isInstance(properties.get(key));
+	public boolean contains(String key) {
+		return properties.containsKey(key);
+	}
+
+	/**
+	 * @see de.cesr.lara.components.container.storage.LaraOverwriteStorage#fetch(java.lang.Class,
+	 *      java.lang.String)
+	 */
+	@SuppressWarnings("unchecked")
+	// Checked by isInstance
+	@Override
+	public <RequestPropertyType extends PropertyType> RequestPropertyType fetch(
+			Class<RequestPropertyType> propertyType, String key)
+			throws LRetrieveException {
+		if (isEmpty()) {
+			LRetrieveException ex = new LRetrieveException(
+					"No entry found. Memory is empty.");
+			logger.error(ex.getMessage() + ex.getStackTrace());
+			throw ex;
+		}
+
+		PropertyType recalled = properties.get(key);
+		if (propertyType.isInstance(recalled)) {
+			return (RequestPropertyType) recalled;
+		} else {
+			throw new LRetrieveException("No entry found of class "
+					+ propertyType + " with key " + key + ".");
+		}
 	}
 
 	@Override
@@ -181,32 +206,6 @@ public class LDefaultSimpleStorage<PropertyType extends LaraProperty<PropertyTyp
 			}
 		}
 		return propertyToStore;
-	}
-
-	/**
-	 * @see de.cesr.lara.components.container.storage.LaraOverwriteStorage#fetch(java.lang.Class,
-	 *      java.lang.String)
-	 */
-	@SuppressWarnings("unchecked")
-	// Checked by isInstance
-	@Override
-	public <RequestPropertyType extends PropertyType> RequestPropertyType fetch(
-			Class<RequestPropertyType> propertyType, String key)
-			throws LRetrieveException {
-		if (isEmpty()) {
-			LRetrieveException ex = new LRetrieveException(
-					"No entry found. Memory is empty.");
-			logger.error(ex.getMessage() + ex.getStackTrace());
-			throw ex;
-		}
-
-		PropertyType recalled = properties.get(key);
-		if (propertyType.isInstance(recalled)) {
-			return (RequestPropertyType) recalled;
-		} else {
-			throw new LRetrieveException("No entry found of class "
-					+ propertyType + " with key " + key + ".");
-		}
 	}
 
 	/**
@@ -248,6 +247,14 @@ public class LDefaultSimpleStorage<PropertyType extends LaraProperty<PropertyTyp
 		return new LaraCapacityManagementView<PropertyType>() {
 
 			/**
+			 * @see de.cesr.lara.components.container.LaraCapacityManagementView#iterator()
+			 */
+			@Override
+			public Iterator<PropertyType> iterator() {
+				return LDefaultSimpleStorage.this.iterator();
+			}
+
+			/**
 			 * @see de.cesr.lara.components.container.LaraCapacityManagementView#remove(de.cesr.lara.components.LaraProperty)
 			 */
 			@Override
@@ -261,14 +268,6 @@ public class LDefaultSimpleStorage<PropertyType extends LaraProperty<PropertyTyp
 				}
 				LDefaultSimpleStorage.this.removeWithoutNotification(item
 						.getKey());
-			}
-
-			/**
-			 * @see de.cesr.lara.components.container.LaraCapacityManagementView#iterator()
-			 */
-			@Override
-			public Iterator<PropertyType> iterator() {
-				return LDefaultSimpleStorage.this.iterator();
 			}
 		};
 	}

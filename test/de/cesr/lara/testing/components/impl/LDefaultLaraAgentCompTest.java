@@ -19,7 +19,6 @@
  */
 package de.cesr.lara.testing.components.impl;
 
-
 import static org.junit.Assert.assertEquals;
 
 import org.junit.After;
@@ -30,7 +29,6 @@ import de.cesr.lara.components.environment.LaraEnvironment;
 import de.cesr.lara.components.environment.impl.LEnvironment;
 import de.cesr.lara.testing.LTestUtils.LTestAgent;
 
-
 /**
  * 
  * @author Sascha Holzhauer
@@ -40,7 +38,7 @@ import de.cesr.lara.testing.LTestUtils.LTestAgent;
 public class LDefaultLaraAgentCompTest {
 
 	LTestAgent testAgent;
-	LaraEnvironment	env;
+	LaraEnvironment env;
 
 	/**
 	 * @throws java.lang.Exception
@@ -65,14 +63,14 @@ public class LDefaultLaraAgentCompTest {
 	public final void testDoubleProperty() {
 		testAgent.getLaraComp().setDoubleProperty("NewProperty1", 42.0);
 		testAgent.getLaraComp().setDoubleProperty("NewProperty2", 43.0);
-		assertEquals("NewProperty1 should be 42.0", 42.0, testAgent.getLaraComp().getDoubleProperty("NewProperty1"),
-				0.0);
-		assertEquals("NewProperty1 should be 43.0", 43.0, testAgent.getLaraComp().getDoubleProperty("NewProperty2"),
-				0.0);
-		assertEquals("UnknownProperty should yield NaN", Double.NaN, testAgent.getLaraComp().getDoubleProperty(
-				"UnknownProperty"), 0.0);
+		assertEquals("NewProperty1 should be 42.0", 42.0, testAgent
+				.getLaraComp().getDoubleProperty("NewProperty1"), 0.0);
+		assertEquals("NewProperty1 should be 43.0", 43.0, testAgent
+				.getLaraComp().getDoubleProperty("NewProperty2"), 0.0);
+		assertEquals("UnknownProperty should yield NaN", Double.NaN, testAgent
+				.getLaraComp().getDoubleProperty("UnknownProperty"), 0.0);
 		testAgent.getLaraComp().setDoubleProperty("NewProperty2", 40.0);
-		assertEquals("NewProperty2 should no be 40.0", 40.0, testAgent.getLaraComp().getDoubleProperty("NewProperty2"),
-				0.0);
+		assertEquals("NewProperty2 should no be 40.0", 40.0, testAgent
+				.getLaraComp().getDoubleProperty("NewProperty2"), 0.0);
 	}
 }

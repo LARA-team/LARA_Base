@@ -19,7 +19,6 @@
  */
 package de.cesr.lara.components.decision;
 
-
 import java.util.Collection;
 import java.util.Map;
 
@@ -33,24 +32,8 @@ import de.cesr.lara.components.LaraPreference;
  * @param <BO>
  *            type of behavioural options
  */
-public interface LaraDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? extends BO>> extends LaraDecider<BO> {
-
-	/**
-	 * @param deliberativeChoiceComponent
-	 */
-	public void setDeliberativeChoiceComponent(LaraDeliberativeChoiceComponent deliberativeChoiceComponent);
-
-	/**
-	 * @return Returns the behaviouralOption.
-	 */
-	public Collection< BO> getSelectableBos();
-
-	/**
-	 * Set the collection of BOs the decision process decides upon.
-	 * 
-	 * @param selectableBos
-	 */
-	public void setSelectableBos(Collection<BO> selectableBos);
+public interface LaraDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? extends BO>>
+		extends LaraDecider<BO> {
 
 	/**
 	 * Provides the individual preference weights
@@ -60,10 +43,29 @@ public interface LaraDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? e
 	public Map<Class<? extends LaraPreference>, Double> getPreferenceWeights();
 
 	/**
+	 * @return Returns the behaviouralOption.
+	 */
+	public Collection<BO> getSelectableBos();
+
+	/**
+	 * @param deliberativeChoiceComponent
+	 */
+	public void setDeliberativeChoiceComponent(
+			LaraDeliberativeChoiceComponent deliberativeChoiceComponent);
+
+	/**
 	 * Sets the individual preference weights.
 	 * 
 	 * @param preferenceWeights
 	 *            individual preference weights
 	 */
-	public void setPreferenceWeights(Map<Class<? extends LaraPreference>, Double> preferenceWeights);
+	public void setPreferenceWeights(
+			Map<Class<? extends LaraPreference>, Double> preferenceWeights);
+
+	/**
+	 * Set the collection of BOs the decision process decides upon.
+	 * 
+	 * @param selectableBos
+	 */
+	public void setSelectableBos(Collection<BO> selectableBos);
 }

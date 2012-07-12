@@ -19,7 +19,6 @@
  */
 package de.cesr.lara.components.preprocessor.impl;
 
-
 import org.apache.log4j.Logger;
 
 import de.cesr.lara.components.LaraBehaviouralOption;
@@ -36,7 +35,6 @@ import de.cesr.lara.components.preprocessor.event.LPpBoUtilityUpdaterEvent;
 import de.cesr.lara.components.preprocessor.event.LPpModeSelectorEvent;
 import de.cesr.lara.components.preprocessor.event.LPpPreferenceUpdaterEvent;
 import de.cesr.lara.components.util.logging.impl.Log4jLogger;
-
 
 /**
  * Constantly selects {@link LDeliberativeDeciderFactory} as decider factory.

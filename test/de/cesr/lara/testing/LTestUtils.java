@@ -19,7 +19,6 @@
  */
 package de.cesr.lara.testing;
 
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -38,28 +37,11 @@ import de.cesr.lara.components.model.impl.LAbstractStandaloneSynchronisedModel;
 import de.cesr.lara.components.model.impl.LModel;
 import de.cesr.lara.components.util.impl.LPrefEntry;
 
-
 /**
  * @author Sascha Holzhauer
  * 
  */
 public class LTestUtils {
-
-	static public class LTestPreference1 implements LaraPreference {
-	};
-
-	static public class LTestPreference2 implements LaraPreference {
-	};
-
-	static public class LTestDecisionConfig extends LDecisionConfiguration {
-		public LTestDecisionConfig() {
-			Collection<Class<? extends LaraPreference>> prefs = new HashSet<Class<? extends LaraPreference>>();
-			prefs.add(LTestPreference1.class);
-			prefs.add(LTestPreference2.class);
-
-			this.setPreferences(prefs);
-		}
-	}
 
 	/**
 	 * test agent
@@ -76,18 +58,18 @@ public class LTestUtils {
 			super(new LEnvironment(), name);
 		}
 
-		public void laraPerceive(LaraDecisionConfiguration dBuilder) {
-		}
-
 		@Override
 		public LTestAgent getThis() {
 			return this;
 		}
 
+		public void laraPerceive(LaraDecisionConfiguration dBuilder) {
+		}
+
 		@Override
 		public <T extends LaraEvent> void onEvent(T event) {
 		}
-	}
+	};
 
 	/**
 	 * Test behavioural option for LTestAgent
@@ -95,9 +77,11 @@ public class LTestUtils {
 	 * @author Sascha Holzhauer
 	 * 
 	 */
-	public static class LTestBo extends LaraBehaviouralOption<LTestAgent, LTestBo> {
+	public static class LTestBo extends
+			LaraBehaviouralOption<LTestAgent, LTestBo> {
 
 		static int counter = 0;
+
 		public LTestBo(LTestAgent agent) {
 			super("LTestBo"
 					+ LModel.getModel().getIntegerFormat().format(counter++),
@@ -111,11 +95,6 @@ public class LTestUtils {
 					agent, utilities);
 		}
 
-		public LTestBo(String key, LTestAgent agent,
-				Map<Class<? extends LaraPreference>, Double> utilities) {
-			super(key, agent, utilities);
-		}
-
 		/**
 		 * @param key
 		 * @param agent
@@ -125,10 +104,9 @@ public class LTestUtils {
 			super(key, agent, prefEntry);
 		}
 
-		@Override
-		public Map<Class<? extends LaraPreference>, Double> getSituationalUtilities(
-				LaraDecisionConfiguration dBuilder) {
-			return new HashMap<Class<? extends LaraPreference>, Double>();
+		public LTestBo(String key, LTestAgent agent,
+				Map<Class<? extends LaraPreference>, Double> utilities) {
+			super(key, agent, utilities);
 		}
 
 		@Override
@@ -136,6 +114,28 @@ public class LTestUtils {
 				Map<Class<? extends LaraPreference>, Double> preferenceUtilities) {
 			return new LTestBo(this.getKey(), agent, preferenceUtilities);
 		}
+
+		@Override
+		public Map<Class<? extends LaraPreference>, Double> getSituationalUtilities(
+				LaraDecisionConfiguration dBuilder) {
+			return new HashMap<Class<? extends LaraPreference>, Double>();
+		}
+	};
+
+	static public class LTestDecisionConfig extends LDecisionConfiguration {
+		public LTestDecisionConfig() {
+			Collection<Class<? extends LaraPreference>> prefs = new HashSet<Class<? extends LaraPreference>>();
+			prefs.add(LTestPreference1.class);
+			prefs.add(LTestPreference2.class);
+
+			this.setPreferences(prefs);
+		}
+	}
+
+	static public class LTestPreference1 implements LaraPreference {
+	}
+
+	static public class LTestPreference2 implements LaraPreference {
 	}
 
 	/**

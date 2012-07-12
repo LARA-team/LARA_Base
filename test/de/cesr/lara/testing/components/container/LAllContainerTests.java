@@ -25,12 +25,11 @@ import org.junit.runners.Suite.SuiteClasses;
 
 /**
  * @author Sascha Holzhauer
- *
+ * 
  */
 @RunWith(Suite.class)
 @SuiteClasses({ LDefaultStorageTest.class,
-		LDefaultLimitedCapacityStorageTest.class,
-		LDefaultMemoryTest.class,
+		LDefaultLimitedCapacityStorageTest.class, LDefaultMemoryTest.class,
 		LDefaultLimitedCapacityMemoryTest.class,
 		LDefaultLimitedCapacityOverwriteMemoryTest.class })
 public class LAllContainerTests {

@@ -27,5 +27,5 @@ public class LUpdateEnvironmentEvent implements LaraSynchronousEvent {
 	public LUpdateEnvironmentEvent() {
 
 	}
-	
+
 }

@@ -73,5 +73,5 @@ public interface LaraMemoryListener {
 	 */
 	public void memoryEventOccured(MemoryEvent event,
 			LaraProperty<?, ?> property);
-			
+
 }

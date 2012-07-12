@@ -64,6 +64,14 @@ public interface LaraEnvironment {
 			String name);
 
 	/**
+	 * Adds a property in case it does not yet exist or updates it otherwise.
+	 * 
+	 * @param property
+	 *            property to add
+	 */
+	public void addProperty(LAbstractEnvironmentalProperty<?> property);
+
+	/**
 	 * Checks whether a property is in the list or not.
 	 * 
 	 * @param property
@@ -160,14 +168,6 @@ public interface LaraEnvironment {
 	 * @return true if the property was in the list and could be removed
 	 */
 	public boolean removeProperty(String name);
-
-	/**
-	 * Adds a property in case it does not yet exist or updates it otherwise.
-	 * 
-	 * @param property
-	 *            property to add
-	 */
-	public void addProperty(LAbstractEnvironmentalProperty<?> property);
 
 	/**
 	 * Changes an existing property or adds it in case it does not yet exist.

@@ -19,7 +19,6 @@
  */
 package de.cesr.lara.components.preprocessor;
 
-
 import de.cesr.lara.components.LaraBehaviouralOption;
 import de.cesr.lara.components.agents.LaraAgent;
 
@@ -31,5 +30,5 @@ import de.cesr.lara.components.agents.LaraAgent;
  */
 public interface LaraDecisionModeSelector<A extends LaraAgent<? super A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>>
 		extends LaraPreprocessorComp<A, BO> {
-		
+
 }

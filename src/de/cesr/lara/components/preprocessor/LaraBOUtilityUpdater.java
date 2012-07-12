@@ -19,18 +19,17 @@
  */
 package de.cesr.lara.components.preprocessor;
 
-
 import de.cesr.lara.components.LaraBehaviouralOption;
 import de.cesr.lara.components.agents.LaraAgent;
 
-
 /**
- * Updates the utility values for the given behavioural options regarding the decision of the given decision builder.
+ * Updates the utility values for the given behavioural options regarding the
+ * decision of the given decision builder.
  * 
  * @param <A>
- *        the type of agents this BO utilityUpdater is intended for
+ *            the type of agents this BO utilityUpdater is intended for
  * @param <BO>
- *        the type of behavioural options that are updated
+ *            the type of behavioural options that are updated
  * 
  */
 public interface LaraBOUtilityUpdater<A extends LaraAgent<? super A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>>

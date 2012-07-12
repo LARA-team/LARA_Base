@@ -19,7 +19,6 @@
  */
 package de.cesr.lara.components.decision.impl;
 
-
 import java.util.Set;
 
 import de.cesr.lara.components.LaraBehaviouralOption;
@@ -37,8 +36,7 @@ import de.cesr.lara.components.decision.LaraDecisionTree;
  * @param <P>
  *            type of tree parameter
  */
-public abstract class LAbstractBinaryDecisionLeave<A extends LaraAgent<A, BO>,
-	BO extends LaraBehaviouralOption<?, BO>, P>
+public abstract class LAbstractBinaryDecisionLeave<A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<?, BO>, P>
 		implements LaraDecisionTree<A, BO, P> {
 
 	/**

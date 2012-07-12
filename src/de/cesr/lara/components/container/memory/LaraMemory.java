@@ -19,7 +19,6 @@
  */
 package de.cesr.lara.components.container.memory;
 
-
 import java.util.Collection;
 import java.util.Set;
 
@@ -30,12 +29,11 @@ import de.cesr.lara.components.container.exceptions.LInvalidTimestampException;
 import de.cesr.lara.components.container.exceptions.LRemoveException;
 import de.cesr.lara.components.container.exceptions.LRetrieveException;
 
-
 /**
  * Interface for all agent memories in LARA
  * 
  * @param <PropertyType>
- *        the type of properties the memory may memorise
+ *            the type of properties the memory may memorise
  */
 public interface LaraMemory<PropertyType extends LaraProperty<? extends PropertyType, ?>>
 		extends LaraContainer<PropertyType> {
@@ -43,120 +41,82 @@ public interface LaraMemory<PropertyType extends LaraProperty<? extends Property
 	/**
 	 * constant representing unlimited retention time
 	 */
-	public static final int	UNLIMITED_RETENTION	= -2;
+	public static final int UNLIMITED_RETENTION = -2;
+
+	// Observer management:
+	/**
+	 * Adds a given {@link LaraMemoryListener} for the specified
+	 * {@link LaraMemoryListener.MemoryEvent}
+	 * 
+	 * @param eventType
+	 *            the category of memory property events the listeners shall be
+	 *            registered for
+	 * @param listener
+	 *            the listener to be registered
+	 */
+	public void addMemoryPropertyObserver(
+			LaraMemoryListener.MemoryEvent eventType,
+			LaraMemoryListener listener);
 
 	/**
-	 * Sets the default retention time
+	 * Clears the memory, i.e. removes all properties.
 	 * 
-	 * @param defaultRetentionTime
-	 *        the default retention time
+	 * @throws LRemoveException
 	 */
-	public void setDefaultRetentionTime(int defaultRetentionTime);
-
-	/**
-	 * Return the default retention time
-	 * 
-	 * @return the default retention time
-	 */
-	public int getDefaultRetentionTime();
+	public void clear() throws LRemoveException;
 
 	/*
 	 * STORING
 	 */
 
 	/**
-	 * Tries to add the specified property to this memory applying the default
-	 * retention time. In case the memory already contains a property of the
-	 * same key for the same time-stamp the "old" property is overwritten.
+	 * Checks whether the memory contains a property of the given type with the
+	 * given key.
 	 * 
-	 * @param propertyToMemorize
-	 *            the property to be memorised.
-	 * @throws LContainerFullException
-	 * @throws LInvalidTimestampException
+	 * @param key
+	 * @return true if such a property is contained
 	 */
-	public void memorize(PropertyType propertyToMemorize) throws LContainerFullException,
-			LInvalidTimestampException;
+	public boolean contains(Class<?> propertyType, String key);
 
 	/**
-	 * Tries to add the specified property to this memory with the given
-	 * retention time. In case the memory already contains a property of the
-	 * same key for the same time-stamp the "old" property is overwritten.
+	 * Checks whether the memory contains the given {@link LaraProperty}.
 	 * 
-	 * @param propertyToMemorize
-	 *            the property to be memorised.
-	 * @param retentionTime
-	 * @throws LContainerFullException
-	 * @throws LInvalidTimestampException
+	 * @param key
+	 * @return true if such a property is contained
 	 */
-	public void memorize(PropertyType propertyToMemorize, int retentionTime) throws 
-			LContainerFullException, LInvalidTimestampException;
+	public boolean contains(PropertyType property);
 
 	/*
 	 * REFRESHING
 	 */
 
 	/**
-	 * Tries to refresh the specified property in this memory applying the default retention time.
-	 * 
-	 * @param propertyToMemorize
-	 *        the property to be memorised.
-	 * @throws LContainerFullException
-	 * @throws LInvalidTimestampException
-	 */
-	public void refresh(PropertyType propertyToMemorize) throws LContainerFullException,
-			LInvalidTimestampException;
-
-	/**
-	 * Refreshes the property with the specified key that was memorised last from this memory.
+	 * Checks whether the memory contains the given {@link LaraProperty} with
+	 * the given key.
 	 * 
 	 * @param key
-	 *        identifier for the property to be refreshed.
-	 * @throws LRemoveException
+	 * @return true if such a property is contained
 	 */
-	public void refresh(String key) throws LRemoveException;
+	public boolean contains(PropertyType property, String key);
 
 	/**
-	 * Refreshes the property with the specified key that was memorised in <code>step</code> from this memory.
+	 * Checks whether the memory contains a {@link LaraProperty} with the given
+	 * key.
 	 * 
 	 * @param key
-	 *        identifier for the property to be refreshed.
-	 * @param step
-	 *        the step in which the property to be removed was memorised.
-	 * @throws LRemoveException
+	 * @return true if such a property is contained
 	 */
-	public void refresh(String key, int step) throws LRemoveException;
+	public boolean contains(String key);
 
 	/**
-	 * Refreshes the property with the specified key that was memorised last
-	 * from this memory and assigns the given retention time.
+	 * Checks whether the memory contains a {@link LaraProperty} with the given
+	 * key for the given time stamp.
 	 * 
-	 * @param propertyToMemorize
-	 *            the property to be memorised.
-	 * @param retentionTime
-	 *            time the property lasts in memory
-	 * @throws LContainerFullException
-	 * @throws LInvalidTimestampException
+	 * @param key
+	 * @param timestamp
+	 * @return true if such a property is contained
 	 */
-	public void refresh(String key, int step, int retentionTime)
-			throws LInvalidTimestampException, LRemoveException;
-
-	/**
-	 * Refreshes the property from this memory and assigns the given retention
-	 * time.
-	 * 
-	 * @param propertyToMemorize
-	 *            the property to be memorised.
-	 * @param retentionTime
-	 *            time the property lasts in memory
-	 * @throws LContainerFullException
-	 * @throws LInvalidTimestampException
-	 */
-	public void refresh(PropertyType propertyToMemorize, int retentionTime)
-			throws LInvalidTimestampException, LRemoveException;
-
-	/*
-	 * REMOVING
-	 */
+	public boolean contains(String key, int timestamp);
 
 	/**
 	 * Removes the specified property from this memory.
@@ -166,7 +126,8 @@ public interface LaraMemory<PropertyType extends LaraProperty<? extends Property
 	 * @return the property that was forgotten
 	 * @throws LRemoveException
 	 */
-	public PropertyType forget(PropertyType propertyToRemove) throws LRemoveException;
+	public PropertyType forget(PropertyType propertyToRemove)
+			throws LRemoveException;
 
 	/**
 	 * Removes the property with the specified key that was memorised in
@@ -181,16 +142,21 @@ public interface LaraMemory<PropertyType extends LaraProperty<? extends Property
 	 */
 	public PropertyType forget(String key, int step) throws LRemoveException;
 
+	/*
+	 * REMOVING
+	 */
+
 	/**
 	 * Removes all properties in the specified collection from this memory.
 	 * 
 	 * @param propertiesToBeRemoved
-	 *        the properties to be removed
+	 *            the properties to be removed
 	 * @return the properties that were forgotten
 	 * @throws LRemoveException
 	 * 
 	 */
-	public Collection<PropertyType> forgetAll(Collection<PropertyType> propertiesToBeRemoved)
+	public Collection<PropertyType> forgetAll(
+			Collection<PropertyType> propertiesToBeRemoved)
 			throws LRemoveException;
 
 	/**
@@ -201,51 +167,85 @@ public interface LaraMemory<PropertyType extends LaraProperty<? extends Property
 	 * @return the properties that were forgotten
 	 * @throws LRemoveException
 	 */
-	public Collection<PropertyType> forgetAll(String key) throws LRemoveException;
+	public Collection<PropertyType> forgetAll(String key)
+			throws LRemoveException;
 
 	/**
-	 * Clears the memory, i.e. removes all properties.
+	 * Returns a set of Strings that represent the keys of properties memorised
+	 * in the memory such that any property in the memory is represented.
 	 * 
-	 * @throws LRemoveException
+	 * @return set of keys that represent a property memorised in the memory
 	 */
-	public void clear() throws LRemoveException;
+	public Set<String> getAllPropertyKeys();
+
+	/**
+	 * Return the default retention time
+	 * 
+	 * @return the default retention time
+	 */
+	public int getDefaultRetentionTime();
+
+	/**
+	 * Returns the name of this memory
+	 * 
+	 * @return the memory's name
+	 */
+	public String getName();
 
 	/*
 	 * FETCHING
 	 */
 
 	/**
-	 * Generic method that returns the first property that was memorised in {@code step} and identified with {@code key}
-	 * .
+	 * Returns the remaining retention time for the given property.
 	 * 
-	 * @param key
-	 *        identifier for the property to be retrieved.
-	 * @param step
-	 *        step in which the property was memorised.
-	 * @return the first property that was memorised in {@code step} and identified with {@code key}.
-	 * @throws LRetrieveException
+	 * @param property
+	 * @return the remaining retention time for the given property.
 	 */
-	public PropertyType recall(String key, int step) throws LRetrieveException;
+	public int getRetentionTime(PropertyType property);
 
 	/**
-	 * Generic method that returns the most recently memorised property that is identified with {@code key}.
+	 * Tries to add the specified property to this memory applying the default
+	 * retention time. In case the memory already contains a property of the
+	 * same key for the same time-stamp the "old" property is overwritten.
 	 * 
-	 * @param key
-	 *        identifier for the property to be retrieved.
-	 * @return the most recently memorised property that is identified with {@code key}.
-	 * @throws LRetrieveException
+	 * @param propertyToMemorize
+	 *            the property to be memorised.
+	 * @throws LContainerFullException
+	 * @throws LInvalidTimestampException
 	 */
-	public PropertyType recall(String key) throws LRetrieveException;
+	public void memorize(PropertyType propertyToMemorize)
+			throws LContainerFullException, LInvalidTimestampException;
 
 	/**
-	 * Generic method that returns a collection of all properties found that are identified by {@code key}.
+	 * Tries to add the specified property to this memory with the given
+	 * retention time. In case the memory already contains a property of the
+	 * same key for the same time-stamp the "old" property is overwritten.
 	 * 
+	 * @param propertyToMemorize
+	 *            the property to be memorised.
+	 * @param retentionTime
+	 * @throws LContainerFullException
+	 * @throws LInvalidTimestampException
+	 */
+	public void memorize(PropertyType propertyToMemorize, int retentionTime)
+			throws LContainerFullException, LInvalidTimestampException;
+
+	/**
+	 * Generic method that returns the most recently memorised property that is
+	 * of the specified type (including sub types) and identified with
+	 * {@code key}.
+	 * 
+	 * @param propertyType
 	 * @param key
-	 *        identifier for the properties to be retrieved.
-	 * @return the properties of the specified type that were stored in {@code step} and identified with {@code key}.
+	 *            identifier for the property to be retrieved.
+	 * @return the most recently memorised property that is of the specified
+	 *         type and identified with {@code key}.
 	 * @throws LRetrieveException
 	 */
-	public Collection<PropertyType> recallAll(String key) throws LRetrieveException;
+	public <RequestPropertyType extends PropertyType> RequestPropertyType recall(
+			Class<RequestPropertyType> propertyType, String key)
+			throws LRetrieveException;
 
 	/**
 	 * Generic method that returns the first property found that is of the
@@ -262,24 +262,34 @@ public interface LaraMemory<PropertyType extends LaraProperty<? extends Property
 	 * @throws LRetrieveException
 	 */
 	public <RequestPropertyType extends PropertyType> RequestPropertyType recall(
-			Class<RequestPropertyType> propertyType,
-			String key, int step) throws LRetrieveException;
+			Class<RequestPropertyType> propertyType, String key, int step)
+			throws LRetrieveException;
 
 	/**
 	 * Generic method that returns the most recently memorised property that is
-	 * of the specified type (including sub types) and identified with
-	 * {@code key}.
+	 * identified with {@code key}.
 	 * 
-	 * @param propertyType
 	 * @param key
 	 *            identifier for the property to be retrieved.
-	 * @return the most recently memorised property that is of the specified
-	 *         type and identified with {@code key}.
+	 * @return the most recently memorised property that is identified with
+	 *         {@code key}.
 	 * @throws LRetrieveException
 	 */
-	public <RequestPropertyType extends PropertyType> RequestPropertyType recall(
-			Class<RequestPropertyType> propertyType,
-			String key) throws LRetrieveException;
+	public PropertyType recall(String key) throws LRetrieveException;
+
+	/**
+	 * Generic method that returns the first property that was memorised in
+	 * {@code step} and identified with {@code key} .
+	 * 
+	 * @param key
+	 *            identifier for the property to be retrieved.
+	 * @param step
+	 *            step in which the property was memorised.
+	 * @return the first property that was memorised in {@code step} and
+	 *         identified with {@code key}.
+	 * @throws LRetrieveException
+	 */
+	public PropertyType recall(String key, int step) throws LRetrieveException;
 
 	/**
 	 * Generic method that returns a collection of all properties found that are
@@ -310,93 +320,97 @@ public interface LaraMemory<PropertyType extends LaraProperty<? extends Property
 			throws LRetrieveException;
 
 	/**
-	 * Returns the remaining retention time for the given property.
-	 * 
-	 * @param property
-	 * @return the remaining retention time for the given property.
-	 */
-	public int getRetentionTime(PropertyType property);
-
-	/**
-	 * Returns a set of Strings that represent the keys of properties memorised in the memory such that any property in
-	 * the memory is represented.
-	 * 
-	 * @return set of keys that represent a property memorised in the memory
-	 */
-	public Set<String> getAllPropertyKeys();
-
-	/**
-	 * Checks whether the memory contains a {@link LaraProperty} with the given key.
+	 * Generic method that returns a collection of all properties found that are
+	 * identified by {@code key}.
 	 * 
 	 * @param key
-	 * @return true if such a property is contained
+	 *            identifier for the properties to be retrieved.
+	 * @return the properties of the specified type that were stored in
+	 *         {@code step} and identified with {@code key}.
+	 * @throws LRetrieveException
 	 */
-	public boolean contains(String key);
+	public Collection<PropertyType> recallAll(String key)
+			throws LRetrieveException;
 
 	/**
-	 * Checks whether the memory contains a {@link LaraProperty} with the given
-	 * key for the given time stamp.
+	 * Tries to refresh the specified property in this memory applying the
+	 * default retention time.
+	 * 
+	 * @param propertyToMemorize
+	 *            the property to be memorised.
+	 * @throws LContainerFullException
+	 * @throws LInvalidTimestampException
+	 */
+	public void refresh(PropertyType propertyToMemorize)
+			throws LContainerFullException, LInvalidTimestampException;
+
+	/**
+	 * Refreshes the property from this memory and assigns the given retention
+	 * time.
+	 * 
+	 * @param propertyToMemorize
+	 *            the property to be memorised.
+	 * @param retentionTime
+	 *            time the property lasts in memory
+	 * @throws LContainerFullException
+	 * @throws LInvalidTimestampException
+	 */
+	public void refresh(PropertyType propertyToMemorize, int retentionTime)
+			throws LInvalidTimestampException, LRemoveException;
+
+	/**
+	 * Refreshes the property with the specified key that was memorised last
+	 * from this memory.
 	 * 
 	 * @param key
-	 * @param timestamp
-	 * @return true if such a property is contained
+	 *            identifier for the property to be refreshed.
+	 * @throws LRemoveException
 	 */
-	public boolean contains(String key, int timestamp);
+	public void refresh(String key) throws LRemoveException;
 
 	/**
-	 * Checks whether the memory contains the given {@link LaraProperty}.
+	 * Refreshes the property with the specified key that was memorised in
+	 * <code>step</code> from this memory.
 	 * 
 	 * @param key
-	 * @return true if such a property is contained
+	 *            identifier for the property to be refreshed.
+	 * @param step
+	 *            the step in which the property to be removed was memorised.
+	 * @throws LRemoveException
 	 */
-	public boolean contains(PropertyType property);
+	public void refresh(String key, int step) throws LRemoveException;
 
 	/**
-	 * Checks whether the memory contains the given {@link LaraProperty} with
-	 * the given key.
+	 * Refreshes the property with the specified key that was memorised last
+	 * from this memory and assigns the given retention time.
 	 * 
-	 * @param key
-	 * @return true if such a property is contained
+	 * @param propertyToMemorize
+	 *            the property to be memorised.
+	 * @param retentionTime
+	 *            time the property lasts in memory
+	 * @throws LContainerFullException
+	 * @throws LInvalidTimestampException
 	 */
-	public boolean contains(PropertyType property, String key);
+	public void refresh(String key, int step, int retentionTime)
+			throws LInvalidTimestampException, LRemoveException;
 
 	/**
-	 * Checks whether the memory contains a property of the given type with the
-	 * given key.
-	 * 
-	 * @param key
-	 * @return true if such a property is contained
-	 */
-	public boolean contains(Class<?> propertyType,
-			String key);
-
-	// Observer management:
-	/**
-	 * Adds a given {@link LaraMemoryListener} for the specified
-	 * {@link LaraMemoryListener.MemoryEvent}
-	 * 
 	 * @param eventType
-	 *        the category of memory property events the listeners shall be registered for
+	 *            the category of memory property events the listeners shall be
+	 *            removed from
 	 * @param listener
-	 *        the listener to be registered
+	 *            the listener to be removed
 	 */
-	public void addMemoryPropertyObserver(LaraMemoryListener.MemoryEvent eventType,
+	public void removeMemoryPropertyObserver(
+			LaraMemoryListener.MemoryEvent eventType,
 			LaraMemoryListener listener);
 
 	/**
-	 * @param eventType
-	 *        the category of memory property events the listeners shall be removed from
-	 * @param listener
-	 *        the listener to be removed
-	 */
-	public void removeMemoryPropertyObserver(LaraMemoryListener.MemoryEvent eventType,
-			LaraMemoryListener listener);
-
-	/**
-	 * Returns the name of this memory
+	 * Sets the default retention time
 	 * 
-	 * @return the memory's name
+	 * @param defaultRetentionTime
+	 *            the default retention time
 	 */
-	public String getName();
+	public void setDefaultRetentionTime(int defaultRetentionTime);
 
 }

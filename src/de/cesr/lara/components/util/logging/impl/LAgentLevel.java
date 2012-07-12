@@ -55,5 +55,5 @@ public class LAgentLevel extends Level {
 	protected LAgentLevel(int level, String levelStr, int syslogEquivalent) {
 		super(level, levelStr, syslogEquivalent);
 	}
-	
+
 }

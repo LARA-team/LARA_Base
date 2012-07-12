@@ -35,6 +35,11 @@ public class LPrefEntry extends
 		SimpleEntry<Class<? extends LaraPreference>, Double> {
 
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3002322186440419016L;
+
+	/**
 	 * @param prefs
 	 *            preference class
 	 * @param value
@@ -43,9 +48,4 @@ public class LPrefEntry extends
 	public LPrefEntry(Class<? extends LaraPreference> prefs, Double value) {
 		super(prefs, value);
 	}
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -3002322186440419016L;
 }

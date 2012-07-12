@@ -19,7 +19,6 @@
  */
 package de.cesr.lara.testing.components.preprocessor;
 
-
 import static org.junit.Assert.assertEquals;
 
 import java.util.Collection;
@@ -41,7 +40,6 @@ import de.cesr.lara.components.preprocessor.impl.LPreprocessorConfigurator;
 import de.cesr.lara.testing.LTestUtils.LTestAgent;
 import de.cesr.lara.testing.LTestUtils.LTestBo;
 
-
 /**
  * 
  * @author Sascha Holzhauer
@@ -51,18 +49,24 @@ import de.cesr.lara.testing.LTestUtils.LTestBo;
 public class DefaultConfiguratorTest {
 
 	LaraPreprocessorConfigurator<LTestAgent, LTestBo> configurator1;
-	LaraDecisionConfiguration														decision1;
+	LaraDecisionConfiguration decision1;
 
 	LaraBOCollector<LTestAgent, LTestBo> collector;
 
 	/**
 	 * @throws java.lang.Exception
-	 *         Created by Sascha Holzhauer on 08.02.2010
+	 *             Created by Sascha Holzhauer on 08.02.2010
 	 */
 	@Before
 	public void setUp() throws Exception {
-		configurator1 = LPreprocessorConfigurator.getNewPreprocessorConfigurator();
+		configurator1 = LPreprocessorConfigurator
+				.getNewPreprocessorConfigurator();
 		decision1 = new LaraDecisionConfiguration() {
+
+			@Override
+			public String getId() {
+				return "TestDecision";
+			}
 
 			@Override
 			public Collection<Class<? extends LaraPreference>> getPreferences() {
@@ -70,14 +74,10 @@ public class DefaultConfiguratorTest {
 			}
 
 			@Override
-			public void setPreferences(Collection<Class<? extends LaraPreference>> goals) {
+			public void setPreferences(
+					Collection<Class<? extends LaraPreference>> goals) {
 				// TODO Auto-generated method stub
 
-			}
-
-			@Override
-			public String getId() {
-				return "TestDecision";
 			}
 		};
 
@@ -111,11 +111,45 @@ public class DefaultConfiguratorTest {
 
 	/**
 	 * @throws java.lang.Exception
-	 *         Created by Sascha Holzhauer on 08.02.2010
+	 *             Created by Sascha Holzhauer on 08.02.2010
 	 */
 	@After
 	public void tearDown() throws Exception {
 		configurator1 = null;
+	}
+
+	/**
+	 * Test method for
+	 * {@link de.cesr.lara.components.preprocessor.impl.LPreprocessor.DefaultConfigurator#get(de.cesr.lara.components.decision.LaraDecisionConfiguration, java.lang.Class)}
+	 * .
+	 */
+	@Test
+	public final void testGet() {
+		assertEquals(
+				"default preselector needs to be default preselector",
+				((LPreprocessorConfigurator<LTestAgent, LTestBo>) configurator1).DEFAULT_BO_PRESELECTOR,
+				configurator1.get(decision1, LaraBOPreselector.class));
+	}
+
+	/**
+	 * Test method for
+	 * {@link de.cesr.lara.components.preprocessor.impl.LPreprocessor.DefaultConfigurator#getMap(java.lang.Class)}
+	 * .
+	 */
+	@Test
+	public final void testGetMap() {
+		configurator1.set(decision1, LaraBOCollector.class, collector);
+		Map<LaraDecisionConfiguration, LaraBOCollector<LTestAgent, LTestBo>> scannerMap = configurator1
+				.<LaraBOCollector<LTestAgent, LTestBo>> getMap(LaraBOCollector.class);
+		assertEquals("collector map needs to contain collector for decsion1",
+				collector, scannerMap.get(decision1));
+
+		Map<LaraDecisionConfiguration, LaraBOPreselector<LTestAgent, LTestBo>> checkerMap = configurator1
+				.<LaraBOPreselector<LTestAgent, LTestBo>> getMap(LaraBOPreselector.class);
+		assertEquals(
+				"preselector map needs to contain collector for decsion1",
+				((LPreprocessorConfigurator<LTestAgent, LTestBo>) configurator1).DEFAULT_BO_PRESELECTOR,
+				checkerMap.get(decision1));
 	}
 
 	/**
@@ -126,39 +160,8 @@ public class DefaultConfiguratorTest {
 	@Test
 	public final void testSet() {
 		configurator1.set(decision1, LaraBOCollector.class, collector);
-		assertEquals("collector for decision1 needs to be collector", collector, configurator1.get(decision1,
-				LaraBOCollector.class));
+		assertEquals("collector for decision1 needs to be collector",
+				collector, configurator1.get(decision1, LaraBOCollector.class));
 	}
 
-	/**
-	 * Test method for
-	 * {@link de.cesr.lara.components.preprocessor.impl.LPreprocessor.DefaultConfigurator#get(de.cesr.lara.components.decision.LaraDecisionConfiguration, java.lang.Class)}
-	 * .
-	 */
-	@Test
-	public final void testGet() {
-		assertEquals("default preselector needs to be default preselector",
-				((LPreprocessorConfigurator<LTestAgent, LTestBo>) configurator1).DEFAULT_BO_PRESELECTOR,
-				configurator1.get(decision1,
-						LaraBOPreselector.class));
-	}
-
-	/**
-	 * Test method for
-	 * {@link de.cesr.lara.components.preprocessor.impl.LPreprocessor.DefaultConfigurator#getMap(java.lang.Class)}.
-	 */
-	@Test
-	public final void testGetMap() {
-		configurator1.set(decision1, LaraBOCollector.class, collector);
-		Map<LaraDecisionConfiguration, LaraBOCollector<LTestAgent, LTestBo>> scannerMap = configurator1
-				.<LaraBOCollector<LTestAgent, LTestBo>> getMap(LaraBOCollector.class);
-		assertEquals("collector map needs to contain collector for decsion1", collector, scannerMap.get(decision1));
-
-		Map<LaraDecisionConfiguration, LaraBOPreselector<LTestAgent, LTestBo>> checkerMap = configurator1
-				.<LaraBOPreselector<LTestAgent, LTestBo>> getMap(LaraBOPreselector.class);
-		assertEquals("preselector map needs to contain collector for decsion1",
-				((LPreprocessorConfigurator<LTestAgent, LTestBo>) configurator1).DEFAULT_BO_PRESELECTOR,
-				checkerMap.get(decision1));
-	}
-	
 }

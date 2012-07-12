@@ -21,7 +21,6 @@ package de.cesr.lara.components.environment.impl;
 
 import de.cesr.lara.components.environment.LaraEnvironment;
 
-
 /**
  * @author Sascha Holzhauer
  * 

@@ -19,31 +19,30 @@
  */
 package de.cesr.lara.components.agents;
 
-
 import de.cesr.lara.components.LaraBehaviouralOption;
 import de.cesr.lara.components.preprocessor.LaraBOPreselector;
 
-
 /**
  * 
- * The defined method is invoked by {@link LaraBOPreselector} in case of {@link LaraBOPreselector.LAccuracy} =
- * <code>ASK_AGENT.</code>
+ * The defined method is invoked by {@link LaraBOPreselector} in case of
+ * {@link LaraBOPreselector.LAccuracy} = <code>ASK_AGENT.</code>
  * 
  * @author Sascha Holzhauer
  * @param <A>
- *        type of agent
+ *            type of agent
  * @param <BO>
- *        type of behavioural option
+ *            type of behavioural option
  * @date 10.02.2010
  * 
  */
-public interface LaraBOPreselectingAgent<A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<?,BO>> {
+public interface LaraBOPreselectingAgent<A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<?, BO>> {
 
 	/**
-	 * Invoked by {@link LaraBOPreselector} in case of {@link LaraBOPreselector.LAccuracy} = <code>ASK_AGENT.</code>
+	 * Invoked by {@link LaraBOPreselector} in case of
+	 * {@link LaraBOPreselector.LAccuracy} = <code>ASK_AGENT.</code>
 	 * 
 	 * @param option
-	 *        behavioural option to preselect
+	 *            behavioural option to preselect
 	 * @return true if the behavioural option passes the check
 	 */
 	public boolean preselect(BO option);

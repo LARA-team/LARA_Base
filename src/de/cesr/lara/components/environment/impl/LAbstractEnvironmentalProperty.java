@@ -52,7 +52,6 @@ public abstract class LAbstractEnvironmentalProperty<V> extends
 		this.environment = env;
 	}
 
-
 	/**
 	 * Getter of the property <tt>environment</tt>
 	 * 

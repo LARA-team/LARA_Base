@@ -25,7 +25,7 @@ import de.cesr.lara.components.decision.LaraDecisionConfiguration;
 
 /**
  * @author Sascha Holzhauer
- *
+ * 
  */
 public class LSelectedBoProperty<BO extends LaraBehaviouralOption<?, ?>>
 		extends LaraProperty<LSelectedBoProperty<BO>, BO> {
@@ -44,6 +44,13 @@ public class LSelectedBoProperty<BO extends LaraBehaviouralOption<?, ?>>
 	}
 
 	/**
+	 * @return decision configuration of this selected BO property
+	 */
+	public LaraDecisionConfiguration getDConfig() {
+		return this.dConfig;
+	}
+
+	/**
 	 * @see de.cesr.lara.components.LaraProperty#getModifiedProperty(java.lang.Object)
 	 */
 	@Override
@@ -57,12 +64,5 @@ public class LSelectedBoProperty<BO extends LaraBehaviouralOption<?, ?>>
 	@Override
 	public BO getValue() {
 		return this.bo;
-	}
-
-	/**
-	 * @return decision configuration of this selected BO property
-	 */
-	public LaraDecisionConfiguration getDConfig() {
-		return this.dConfig;
 	}
 }

@@ -35,7 +35,6 @@ public class LEnvironmentalListOfStringProperty extends
 	 */
 	protected List<String> listOfString;
 
-
 	/**
 	 * @param key
 	 * @param value
