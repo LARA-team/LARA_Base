@@ -17,30 +17,19 @@
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.cesr.lara.testing.components;
+package de.cesr.lara.testing.components.eventbus;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
-import de.cesr.lara.testing.components.container.LAllContainerTests;
-import de.cesr.lara.testing.components.decision.AllDecisionTests;
-import de.cesr.lara.testing.components.environment.AllEnvironmentalTests;
-import de.cesr.lara.testing.components.eventbus.AllEventbusTests;
-import de.cesr.lara.testing.components.impl.AllComponentsImplTests;
-import de.cesr.lara.testing.components.preprocessor.AllPreprocessorTests;
 
 /**
- * 
  * @author Sascha Holzhauer
- * @date 10.02.2010
- * 
+ *
  */
 @RunWith(Suite.class)
-@SuiteClasses({ LaraPropertyTest.class, LAllContainerTests.class,
-		AllComponentsImplTests.class, AllDecisionTests.class,
-		AllEnvironmentalTests.class, AllPreprocessorTests.class,
-		AllEventbusTests.class})
-public class AllComponentTests {
+@SuiteClasses( { LEventbusTest.class})
+public class AllEventbusTests {
 
 }

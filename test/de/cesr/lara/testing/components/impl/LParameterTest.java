@@ -47,7 +47,7 @@ import de.cesr.lara.components.eventbus.events.LaraEvent;
  * @author Sascha Holzhauer
  * @date 21.02.2011
  */
-public class ParameterTest {
+public class LParameterTest {
 
 	/***********************************************************************************************************
 	 * BEHAVIOURAL OPTIONS

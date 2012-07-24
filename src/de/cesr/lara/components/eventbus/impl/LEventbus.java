@@ -311,11 +311,11 @@ public class LEventbus {
 			Object monitor) {
 		Integer oldValue = eventWaitingCounters.get(event);
 		if (oldValue == null) {
-			logger.error("something went wrong during synchronized event notification of event "
+			logger.error("Something went wrong during synchronized event notification of event "
 					+ event.getClass().getSimpleName());
 		} else {
 			Integer newValue = new Integer(oldValue.intValue() - 1);
-			logger.debug("number of worker threads: " + newValue.intValue());
+			logger.debug("Number of worker threads: " + newValue.intValue());
 			if (newValue.intValue() > 0) {
 				eventWaitingCounters.put(event, newValue);
 			} else {
@@ -352,7 +352,7 @@ public class LEventbus {
 			oldValue = new Integer(0);
 		}
 		Integer newValue = new Integer(oldValue.intValue() + 1);
-		logger.debug("number of worker threads: " + newValue.intValue());
+		logger.debug("Number of worker threads: " + newValue.intValue());
 		eventWaitingCounters.put(event, newValue);
 	}
 
@@ -369,7 +369,7 @@ public class LEventbus {
 		if (logger.isDebugEnabled()) {
 			StringBuffer buffer = new StringBuffer();
 			buffer.append("Notifying subscribers for event "
-					+ event.getClass().getName() + "\n");
+					+ event.getClass().getSimpleName() + "\n");
 			for (LaraAbstractEventSubscriber subscriber : subscribers) {
 				buffer.append("\t" + subscriber + "\n");
 			}
@@ -467,17 +467,22 @@ public class LEventbus {
 			Set<LaraAbstractEventSubscriber> subscribers, final LaraEvent event) {
 		// TODO too much threads at once is highly ineffective. use
 		// taskgroups/max number of concurrent threads
+		
 		// <- LOGGING
 		logger.info("Notifying " + subscribers.size()
-				+ " subscribers synchronously");
+				+ " subscriber(s) synchronously");
 		// LOGGING ->
 
 		// limit number of concurrent tasks by building workgroups
 		int numberOfCores = Runtime.getRuntime().availableProcessors();
 		int numberOfWorkerGroups = numberOfCores * 4;
+		
+		// <- LOGGING
 		if (logger.isDebugEnabled()) {
-			logger.debug("numberOfWorkerGroups: " + numberOfWorkerGroups);
+			logger.debug("Number of Worker Groups: " + numberOfWorkerGroups);
 		}
+		// LOGGING ->
+
 		Map<Integer, Set<LaraAbstractEventSubscriber>> workerGroupSubscriberMap = new HashMap<Integer, Set<LaraAbstractEventSubscriber>>();
 
 		final Object monitor = new Object();
@@ -553,7 +558,7 @@ public class LEventbus {
 			logSubscribers(subscribers, event);
 
 			logger.debug("Notifying " + subscribers.size()
-					+ " subscribers of event of type "
+					+ " subscriber(s) of event of type "
 					+ event.getClass().getSimpleName());
 			// notify subscriber according to event type
 			if (event instanceof LaraSynchronousEvent) {

@@ -87,6 +87,7 @@ public class LHabitDecider<A extends LaraAgent<A, BO>, BO extends LaraBehavioura
 	@Override
 	public Set<BO> getKSelectedBos(int k) {
 		Set<BO> bos = new HashSet<BO>(1);
+		bos.add(bo);
 		return bos;
 	}
 
