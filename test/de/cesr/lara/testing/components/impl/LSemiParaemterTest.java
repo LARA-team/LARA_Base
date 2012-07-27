@@ -30,7 +30,7 @@ import de.cesr.lara.components.agents.LaraAgentComponent;
 import de.cesr.lara.components.decision.LaraDecisionConfiguration;
 import de.cesr.lara.components.decision.impl.LDecisionConfiguration;
 import de.cesr.lara.components.eventbus.events.LaraEvent;
-import de.cesr.lara.testing.components.impl.LParameterTest.AbstractEmployee;
+import de.cesr.lara.testing.components.impl.ParameterTest.AbstractEmployee;
 
 public class LSemiParaemterTest {
 

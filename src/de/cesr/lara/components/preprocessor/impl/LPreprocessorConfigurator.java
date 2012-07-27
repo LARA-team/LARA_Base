@@ -57,6 +57,7 @@ public class LPreprocessorConfigurator<A extends LaraAgent<A, BO>, BO extends La
 		}
 		return (LaraPreprocessor<A, BO>) defaultPreprocessor;
 	}
+
 	/**
 	 * @param <A>
 	 * @param <BO>
@@ -65,6 +66,7 @@ public class LPreprocessorConfigurator<A extends LaraAgent<A, BO>, BO extends La
 	public static <A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>> LPreprocessorConfigurator<A, BO> getNewPreprocessorConfigurator() {
 		return new LPreprocessorConfigurator<A, BO>();
 	}
+
 	private final Map<LaraDecisionConfiguration, LaraDecisionModeSelector<A, BO>> selectorMap;
 	private final Map<LaraDecisionConfiguration, LaraBOCollector<A, ? extends BO>> scannerMap;
 	private final Map<LaraDecisionConfiguration, LaraBOPreselector<A, ? extends BO>> checkerMap;

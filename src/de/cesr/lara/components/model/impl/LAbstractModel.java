@@ -27,12 +27,9 @@ import java.util.Date;
 import org.apache.log4j.Logger;
 
 import de.cesr.lara.components.agents.impl.LAbstractAgent;
+import de.cesr.lara.components.decision.LaraDecisionConfiguration;
 import de.cesr.lara.components.eventbus.LaraInternalEventSubscriber;
-import de.cesr.lara.components.eventbus.events.LAgentDecideEvent;
-import de.cesr.lara.components.eventbus.events.LAgentExecutionEvent;
-import de.cesr.lara.components.eventbus.events.LAgentPerceptionEvent;
-import de.cesr.lara.components.eventbus.events.LAgentPostprocessEvent;
-import de.cesr.lara.components.eventbus.events.LAgentPreprocessEvent;
+import de.cesr.lara.components.eventbus.events.LModelFinishEvent;
 import de.cesr.lara.components.eventbus.events.LModelInitializedEvent;
 import de.cesr.lara.components.eventbus.events.LModelInstantiatedEvent;
 import de.cesr.lara.components.eventbus.events.LModelStepEvent;
@@ -47,15 +44,6 @@ import de.cesr.lara.components.util.logging.impl.Log4jLogger;
  * Since this class does not deal with agents, certain methods regarding agents
  * are abstract
  * 
- * Features:
- * <ul>
- * <li>Sets up eventbus</li>
- * <li>Updating a calendar</li>
- * <li>Updating a simulation state variable</li>
- * </ul>
- * 
- * NOTE: The simulation state is only valid in case of synchronous agent triggering!
- * 
  * @author Sascha Holzhauer
  * @date 10.02.2010
  * 
@@ -63,13 +51,10 @@ import de.cesr.lara.components.util.logging.impl.Log4jLogger;
 public abstract class LAbstractModel implements LaraModel,
 		LaraInternalEventSubscriber {
 
-	private static final Logger logger = Log4jLogger.getLogger(LAbstractModel.class);
+	private final Logger logger = Log4jLogger.getLogger(LAbstractModel.class);
 
-	
-	protected LEventbus eventBus;
-	
 	/**
-	 * Calendar that tracks simulation step
+	 * 
 	 */
 	protected Calendar calendar;
 
@@ -77,6 +62,8 @@ public abstract class LAbstractModel implements LaraModel,
 	 * The simulatsion's current stage
 	 */
 	protected LSimulationStage currentSimStage = LSimulationStage.UNDEFINED;
+
+	protected LEventbus eventBus;
 
 	/**
 	 * {@link NumberFormat} to format floating point numbers
@@ -94,146 +81,30 @@ public abstract class LAbstractModel implements LaraModel,
 	protected LaraRandom randomMan;
 
 	/**
-	 * current time step
+	 * current timestep
 	 */
 	protected int step;
-	
 
 	/**
-	 * Constructor. Registers for events at the event bus.
+	 * Constructor.
 	 */
 	public LAbstractModel() {
 		LAbstractAgent.resetCounter();
 		LModel.setNewModel(this);
-		
+
 		eventBus = LEventbus.getInstance();
 		eventBus.subscribe(this, LModelInstantiatedEvent.class);
 		eventBus.subscribe(this, LModelStepEvent.class);
 	}
 
 	/**
-	 * This method is called every time step.
-	 * Advances the calendar by one day. 
-	 * 
-	 * It should be overridden in case a tick means something
-	 * other than a day.
+	 * Advances the calendar by one day.
 	 */
 	public void advanceCalender() {
+		// TODO day, month? should this be overriden?
 		calendar.add(Calendar.DAY_OF_MONTH, 1);
 	}
 
-	/**
-	 * Methods that override this method must (except you know what you are
-	 * doing) call super.init()! Triggered by ModelInstantiatedEvent.
-	 * 
-	 * 
-	 */
-	public void init() {
-		// <- LOGGING
-		logger.info("LAbstractModel: Initialising/Resetting");
-		// LOGGING ->
-		
-		this.step = 0;
-		this.randomMan = new LRandomService(0);
-		this.integerFormat = new DecimalFormat("0000");
-		this.floatPointFormat = new DecimalFormat("0.0000");
-
-		calendar = Calendar.getInstance();
-		
-		// Causes the calendar for instance to jump from May to April when adding
-		// a day to May, 31th (results in April 1st).
-		calendar.setLenient(true);
-	}
-
-	/**
-	 * When overridden, needs to call <code>super.onInternalEvent(event);</code>!
-	 * 
-	 * @see de.cesr.lara.components.eventbus.LaraInternalEventSubscriber#onInternalEvent(de.cesr.lara.components.eventbus.events.LaraEvent)
-	 */
-	@Override
-	public void onInternalEvent(LaraEvent event) {
-
-		if (event instanceof LModelInstantiatedEvent) {
-			init();
-			eventBus.publish(new LModelInitializedEvent());
-			
-		} else if (event instanceof LModelStepEvent) {
-			step();
-			
-		} else if (event instanceof LAgentPerceptionEvent) {
-			currentSimStage = LSimulationStage.PERCEIVE;
-			// <- LOGGING
-			if (logger.isDebugEnabled()) {
-				logger.debug(">> Perceive: " + getCurrentStep());
-			}
-			// LOGGING ->
-
-		} else if (event instanceof LAgentPreprocessEvent) {
-			currentSimStage = LSimulationStage.PREPROCESS;
-			// <- LOGGING
-			if (logger.isDebugEnabled()) {
-				logger.debug(">> Preprocess: " + getCurrentStep());
-			}
-			// LOGGING ->
-		
-		} else if (event instanceof LAgentDecideEvent) {
-			currentSimStage = LSimulationStage.DECIDE;
-			// <- LOGGING
-			if (logger.isDebugEnabled()) {
-				logger.debug(">> Decide: " + getCurrentStep());
-			}
-			// LOGGING ->
-		
-		} else if (event instanceof LAgentExecutionEvent) {
-			currentSimStage = LSimulationStage.EXECUTE;
-			// <- LOGGING
-			if (logger.isDebugEnabled()) {
-				logger.debug(">> Execute: " + getCurrentStep());
-			}
-			// LOGGING ->
-		
-		} else if (event instanceof LAgentPostprocessEvent) {
-			currentSimStage = LSimulationStage.POSTPROCESS;
-			// <- LOGGING
-			if (logger.isDebugEnabled()) {
-				logger.debug(">> Postprocess: " + getCurrentStep());
-			}
-			// LOGGING ->
-		}
-	}
-
-	/**
-	 * Note: This method is alternative to
-	 * {@link LAbstractModel#step(int stepIncrease)}
-	 * 
-	 * @see de.cesr.lara.components.model.LaraModel#step()
-	 */
-	@Override
-	public final void step() {
-		// <- LOGGING
-		logger.info(">>>>> Simulating timestep " + getCurrentStep() + " <<<<<<");
-		// LOGGING ->
-		
-		this.step++;
-		this.advanceCalender();
-	}
-
-	/**
-	 * Note: This method is alternative to {@link LAbstractModel#step}
-	 * 
-	 * @see de.cesr.lara.components.model.LaraModel#step(int)
-	 */
-	@Override
-	public final void step(int stepIncrease) {
-		this.step = this.step + stepIncrease;
-		this.advanceCalender();
-	}
-	
-
-	/****************************************************
-	 * GETTER and SETTER                                *
-	 ****************************************************/
-	
 	/**
 	 * @see de.cesr.lara.components.model.LaraModel#getCurrentDate()
 	 */
@@ -281,7 +152,102 @@ public abstract class LAbstractModel implements LaraModel,
 	public LaraRandom getLRandom() {
 		return this.randomMan;
 	}
-	
+
+	/**
+	 * Methods that override this method must (except you know what you are
+	 * doing) call super.init()! Triggered by ModelInstantiatedEvent.
+	 * 
+	 * 
+	 */
+	public void init() {
+		logger.info("LAbstractModel: Initialising/Resetting");
+		this.step = 0;
+		this.randomMan = new LRandomService(0);
+		this.integerFormat = new DecimalFormat("0000");
+		this.floatPointFormat = new DecimalFormat("0.0000");
+
+		calendar = Calendar.getInstance();
+		// cases the calendar for instance to jump from May to April when adding
+		// a
+		// day to May, 31th (results in April 1st).
+		calendar.setLenient(true);
+	}
+
+	@Override
+	public void onInternalEvent(LaraEvent event) {
+
+		if (event instanceof LModelInstantiatedEvent) {
+			init();
+			eventBus.publish(new LModelInitializedEvent());
+		} else if (event instanceof LModelStepEvent) {
+			step();
+		} else if (event instanceof LModelFinishEvent) {
+			// TODO outcommented because to early
+			// LEventbus.resetAll();
+		}
+
+	}
+
+	/**
+	 * Processes a given decision (perceive, pre-process, make decision). This
+	 * method may be invoked several times (for each decision).
+	 * 
+	 * Overriding methods need to take care of the simulation stage variable.
+	 * TODO destroyed - needs to be repaired
+	 * 
+	 * @param dConfiguration
+	 *            the {@link LaraDecisionConfiguration} that represents the
+	 *            decision to process.
+	 */
+	public void processConsecutively(LaraDecisionConfiguration dConfiguration) {
+		logger.info(">>>>> Simulating timestep " + getCurrentStep() + " <<<<<<");
+
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			logger.debug(">> Perceive: " + getCurrentStep());
+			// LOGGING ->
+		}
+
+		currentSimStage = LSimulationStage.PERCEIVE;
+		// perceive(dConfiguration);
+
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			logger.debug(">> Preprocess: " + getCurrentStep());
+			// LOGGING ->
+		}
+
+		currentSimStage = LSimulationStage.PREPROCESS;
+		// preProcess(dConfiguration);
+
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			logger.debug(">> Decide: " + getCurrentStep());
+			// LOGGING ->
+		}
+
+		currentSimStage = LSimulationStage.DECIDE;
+		// decide(dConfiguration);
+
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			logger.debug(">> Process: " + getCurrentStep());
+			// LOGGING ->
+		}
+
+		currentSimStage = LSimulationStage.PROCESS;
+
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			logger.debug(">> Postprocess: " + getCurrentStep());
+			// LOGGING ->
+		}
+
+		currentSimStage = LSimulationStage.POSTPROCESS;
+		// postProcess(dConfiguration);
+		// clean(dConfiguration);
+	}
+
 	/**
 	 * @see de.cesr.lara.components.model.LaraModel#setCurrentStep(int)
 	 */
@@ -289,4 +255,28 @@ public abstract class LAbstractModel implements LaraModel,
 	public void setCurrentStep(int step) {
 		this.step = step;
 	}
+
+	/**
+	 * Note: This method is alternative to
+	 * {@link LAbstractModel#step(int stepIncrease)}
+	 * 
+	 * @see de.cesr.lara.components.model.LaraModel#step()
+	 */
+	@Override
+	public final void step() {
+		this.step++;
+		this.advanceCalender();
+	}
+
+	/**
+	 * Note: This method is alternative to {@link LAbstractModel#step}
+	 * 
+	 * @see de.cesr.lara.components.model.LaraModel#step(int)
+	 */
+	@Override
+	public final void step(int stepIncrease) {
+		this.step = this.step + stepIncrease;
+		this.advanceCalender();
+	}
+
 }

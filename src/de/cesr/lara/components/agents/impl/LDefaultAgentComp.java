@@ -43,8 +43,8 @@ import de.cesr.lara.components.decision.impl.LDeliberativeChoiceComp_MaxLineTota
 import de.cesr.lara.components.environment.LaraEnvironment;
 import de.cesr.lara.components.environment.impl.LAbstractEnvironmentalProperty;
 import de.cesr.lara.components.eventbus.events.LAgentDecideEvent;
-import de.cesr.lara.components.eventbus.events.LAgentExecutionEvent;
 import de.cesr.lara.components.eventbus.events.LAgentPerceptionEvent;
+import de.cesr.lara.components.eventbus.events.LAgentPostExecutionEvent;
 import de.cesr.lara.components.eventbus.events.LAgentPostprocessEvent;
 import de.cesr.lara.components.eventbus.events.LAgentPreprocessEvent;
 import de.cesr.lara.components.eventbus.events.LaraEvent;
@@ -203,7 +203,7 @@ public class LDefaultAgentComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 		eventBus.subscribe(this, LAgentPreprocessEvent.class);
 		eventBus.subscribe(this, LAgentDecideEvent.class);
 		eventBus.subscribe(this, LAgentPostprocessEvent.class);
-		eventBus.subscribe(this, LAgentExecutionEvent.class);
+		eventBus.subscribe(this, LAgentPostExecutionEvent.class);
 	}
 
 	@Override
@@ -404,8 +404,8 @@ public class LDefaultAgentComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 					.postProcess(agent, ((LAgentPostprocessEvent) event)
 							.getDecisionConfiguration());
 
-		} else if (event instanceof LAgentExecutionEvent) {
-			removeDecisionData(((LAgentExecutionEvent) event)
+		} else if (event instanceof LAgentPostExecutionEvent) {
+			removeDecisionData(((LAgentPostExecutionEvent) event)
 					.getDecisionConfiguration());
 		}
 	}

@@ -41,13 +41,20 @@ import de.cesr.lara.components.util.logging.impl.Log4jLogger;
 public abstract class LAbstractStandaloneSynchronisedModel extends
 		LAbstractModel {
 
-	private static Logger logger = Log4jLogger
+	private Logger logger = Log4jLogger
 			.getLogger(LAbstractStandaloneSynchronisedModel.class);
 
 	/**
 	 * provides access to the agents via the interface AgentToModel
 	 */
 	protected Collection<LaraAgent<?, ?>> agents = new ArrayList<LaraAgent<?, ?>>();
+
+	/**
+	 * Constructor
+	 */
+	public LAbstractStandaloneSynchronisedModel() {
+		super();
+	}
 
 	/**
 	 * 
@@ -64,7 +71,8 @@ public abstract class LAbstractStandaloneSynchronisedModel extends
 	@Override
 	public void init() {
 		super.init();
-		
+		logger = Log4jLogger
+				.getLogger(LAbstractStandaloneSynchronisedModel.class);
 		agents = new ArrayList<LaraAgent<?, ?>>();
 
 		// <- LOGGING

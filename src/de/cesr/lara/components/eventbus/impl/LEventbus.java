@@ -56,6 +56,7 @@ public class LEventbus {
 	private static LEventbus instance = null;
 	private static Map<Object, LEventbus> instances = new HashMap<Object, LEventbus>();
 	private static Logger logger = Log4jLogger.getLogger(LEventbus.class);
+
 	/**
 	 * returns a reference to the global eventbus
 	 */
@@ -67,6 +68,7 @@ public class LEventbus {
 		}
 		return instance;
 	}
+
 	/**
 	 * returns a reference to a special eventbus
 	 * 
@@ -82,6 +84,7 @@ public class LEventbus {
 		}
 		return theInstance;
 	}
+
 	/**
 	 * Iterates over all instances and calls {@link LEventbus#resetInstance()}.
 	 * Clears collection of instances.
@@ -100,6 +103,7 @@ public class LEventbus {
 		}
 		instances.clear();
 	}
+
 	private final Set<Class<? extends LaraEvent>> eventsThisTimestep = new HashSet<Class<? extends LaraEvent>>();
 
 	private Map<Class<? extends LaraEvent>, Set<LaraAbstractEventSubscriber>> eventSubscriberMap = new HashMap<Class<? extends LaraEvent>, Set<LaraAbstractEventSubscriber>>();
@@ -311,11 +315,11 @@ public class LEventbus {
 			Object monitor) {
 		Integer oldValue = eventWaitingCounters.get(event);
 		if (oldValue == null) {
-			logger.error("Something went wrong during synchronized event notification of event "
+			logger.error("something went wrong during synchronized event notification of event "
 					+ event.getClass().getSimpleName());
 		} else {
 			Integer newValue = new Integer(oldValue.intValue() - 1);
-			logger.debug("Number of worker threads: " + newValue.intValue());
+			logger.debug("number of worker threads: " + newValue.intValue());
 			if (newValue.intValue() > 0) {
 				eventWaitingCounters.put(event, newValue);
 			} else {
@@ -352,7 +356,7 @@ public class LEventbus {
 			oldValue = new Integer(0);
 		}
 		Integer newValue = new Integer(oldValue.intValue() + 1);
-		logger.debug("Number of worker threads: " + newValue.intValue());
+		logger.debug("number of worker threads: " + newValue.intValue());
 		eventWaitingCounters.put(event, newValue);
 	}
 
@@ -369,12 +373,66 @@ public class LEventbus {
 		if (logger.isDebugEnabled()) {
 			StringBuffer buffer = new StringBuffer();
 			buffer.append("Notifying subscribers for event "
-					+ event.getClass().getSimpleName() + "\n");
+					+ event.getClass().getName() + "\n");
 			for (LaraAbstractEventSubscriber subscriber : subscribers) {
 				buffer.append("\t" + subscriber + "\n");
 			}
 			logger.debug(buffer.toString());
 		}
+		// LOGGING ->
+	}
+
+	/**
+	 * Notifies internat subscriber sequential. Subscribers will execute their
+	 * related code sequential. Method finishes after last subscriber finishes.
+	 * 
+	 * @param subscribers
+	 * @param event
+	 */
+	private void notifyInternalSubscribersSequential(
+			Set<LaraAbstractEventSubscriber> subscribers, LaraEvent event) {
+		// <- LOGGING
+		logger.info("Notifying " + subscribers.size()
+				+ " internal subscribers sequentially");
+		// LOGGING ->
+
+		// internal first
+		for (LaraAbstractEventSubscriber s : subscribers) {
+			if (s instanceof LaraInternalEventSubscriber) {
+				((LaraInternalEventSubscriber) s).onInternalEvent(event);
+			}
+		}
+
+		// <- LOGGING
+		logger.info("Notified " + subscribers.size()
+				+ " internal subscribers sequentially");
+		// LOGGING ->
+	}
+
+	/**
+	 * Notifies noninternal subscriber sequential. Subscribers will execute
+	 * their related code sequential. Method finishes after last subscriber
+	 * finishes.
+	 * 
+	 * @param subscribers
+	 * @param event
+	 */
+	private void notifyNoninternalSubscribersSequential(
+			Set<LaraAbstractEventSubscriber> subscribers, LaraEvent event) {
+		// <- LOGGING
+		logger.info("Notifying " + subscribers.size()
+				+ " noninternal subscribers sequentially");
+		// LOGGING ->
+
+		for (LaraAbstractEventSubscriber s : subscribers) {
+			if (s instanceof LaraEventSubscriber) {
+				((LaraEventSubscriber) s).onEvent(event);
+			}
+		}
+
+		// <- LOGGING
+		logger.info("Notified " + subscribers.size()
+				+ " noninternal subscribers sequentially");
 		// LOGGING ->
 	}
 
@@ -434,7 +492,7 @@ public class LEventbus {
 	private void notifySubscribersSequential(
 			Set<LaraAbstractEventSubscriber> subscribers, LaraEvent event) {
 		// <- LOGGING
-		logger.info("Notifying" + subscribers.size()
+		logger.info("Notifying " + subscribers.size()
 				+ " subscribers sequentially");
 		// LOGGING ->
 
@@ -467,22 +525,19 @@ public class LEventbus {
 			Set<LaraAbstractEventSubscriber> subscribers, final LaraEvent event) {
 		// TODO too much threads at once is highly ineffective. use
 		// taskgroups/max number of concurrent threads
-		
+		// TODO make sure ALL internal subscribers are notified before ALL the
+		// others. Seems like this is the problem
 		// <- LOGGING
 		logger.info("Notifying " + subscribers.size()
-				+ " subscriber(s) synchronously");
+				+ " subscribers synchronously");
 		// LOGGING ->
 
 		// limit number of concurrent tasks by building workgroups
 		int numberOfCores = Runtime.getRuntime().availableProcessors();
 		int numberOfWorkerGroups = numberOfCores * 4;
-		
-		// <- LOGGING
 		if (logger.isDebugEnabled()) {
-			logger.debug("Number of Worker Groups: " + numberOfWorkerGroups);
+			logger.debug("numberOfWorkerGroups: " + numberOfWorkerGroups);
 		}
-		// LOGGING ->
-
 		Map<Integer, Set<LaraAbstractEventSubscriber>> workerGroupSubscriberMap = new HashMap<Integer, Set<LaraAbstractEventSubscriber>>();
 
 		final Object monitor = new Object();
@@ -502,13 +557,30 @@ public class LEventbus {
 		}
 
 		// for every worker group start a new thread, that notifies all
-		// subscribers belonging to it sequentially
+		// internal subscribers belonging to it sequentially
 		for (final Entry<Integer, Set<LaraAbstractEventSubscriber>> entry : workerGroupSubscriberMap
 				.entrySet()) {
 			Thread workerThread = new Thread() {
 				@Override
 				public void run() {
-					notifySubscribersSequential(entry.getValue(), event);
+					notifyInternalSubscribersSequential(entry.getValue(), event);
+					decrementWaitingCounter(event, monitor);
+				}
+			};
+			incrementWaitingCounter(event);
+			workerThread.start();
+		}
+		waitUntilWorkDone(monitor);
+
+		// for every worker group start a new thread, that notifies all
+		// noninternal subscribers belonging to it sequentially
+		for (final Entry<Integer, Set<LaraAbstractEventSubscriber>> entry : workerGroupSubscriberMap
+				.entrySet()) {
+			Thread workerThread = new Thread() {
+				@Override
+				public void run() {
+					notifyNoninternalSubscribersSequential(entry.getValue(),
+							event);
 					decrementWaitingCounter(event, monitor);
 				}
 			};
@@ -558,7 +630,7 @@ public class LEventbus {
 			logSubscribers(subscribers, event);
 
 			logger.debug("Notifying " + subscribers.size()
-					+ " subscriber(s) of event of type "
+					+ " subscribers of event of type "
 					+ event.getClass().getSimpleName());
 			// notify subscriber according to event type
 			if (event instanceof LaraSynchronousEvent) {

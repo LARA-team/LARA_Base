@@ -126,6 +126,7 @@ public class LTreeDeciderTest {
 	static boolean getState() {
 		return state;
 	}
+
 	LTestAgent agent;
 	LTestBo one;
 

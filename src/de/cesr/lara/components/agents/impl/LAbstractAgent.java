@@ -46,6 +46,7 @@ public abstract class LAbstractAgent<A extends LaraAgent<A, BO>, BO extends Lara
 		implements LaraAgent<A, BO> {
 
 	static private Logger logger = Log4jLogger.getLogger(LAbstractAgent.class);
+
 	/**
 	 * Resets the counter used to label agents (agentID)
 	 */

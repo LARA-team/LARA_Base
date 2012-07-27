@@ -63,6 +63,7 @@ public class LPpEventBusTest {
 			LPpEventBusTest.timeBOCollector = counter++;
 		}
 	}
+
 	static class LTestBoPreselector<A extends LaraAgent<? super A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>>
 			extends LAbstractPpComp<A, BO> implements LaraBOPreselector<A, BO> {
 
@@ -71,6 +72,7 @@ public class LPpEventBusTest {
 			LPpEventBusTest.timeBoPreselector = counter++;
 		}
 	}
+
 	static class LTestBoUtilityUpdater<A extends LaraAgent<? super A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>>
 			extends LAbstractPpComp<A, BO> implements
 			LaraBOUtilityUpdater<A, BO> {
@@ -80,6 +82,7 @@ public class LPpEventBusTest {
 			LPpEventBusTest.timeBOUtilityUpdater = counter++;
 		}
 	}
+
 	// PP components that allow monitoring:
 	static class LTestDecisionModeSelector<A extends LaraAgent<? super A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>>
 			extends LAbstractPpComp<A, BO> implements
@@ -114,6 +117,7 @@ public class LPpEventBusTest {
 			}
 		}
 	}
+
 	static class LTestPrefenceUpdater<A extends LaraAgent<? super A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>>
 			extends LAbstractPpComp<A, BO> implements
 			LaraPreferenceUpdater<A, BO> {
