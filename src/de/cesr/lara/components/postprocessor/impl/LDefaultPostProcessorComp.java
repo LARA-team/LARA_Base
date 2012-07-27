@@ -64,9 +64,5 @@ public class LDefaultPostProcessorComp<A extends LaraAgent<A, BO>, BO extends La
 								.getDecider().getSelectedBo()),
 						(Integer) PmParameterManager
 								.getParameter(LDecisionMakingPa.HABIT_TRESHOLD) + 1);
-		System.out.println(dConfig
-				+ " "
-				+ agent.getLaraComp().getDecisionData(dConfig).getDecider()
-						.getSelectedBo());
 	}
 }

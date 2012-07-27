@@ -28,9 +28,9 @@ import org.junit.Test;
 
 import de.cesr.lara.components.environment.LaraEnvironment;
 import de.cesr.lara.components.environment.LaraEnvironmentListener;
-import de.cesr.lara.components.environment.impl.LEnvironmentalIntProperty;
-import de.cesr.lara.components.environment.impl.LEnvironment;
 import de.cesr.lara.components.environment.impl.LAbstractEnvironmentalProperty;
+import de.cesr.lara.components.environment.impl.LEnvironment;
+import de.cesr.lara.components.environment.impl.LEnvironmentalIntProperty;
 import de.cesr.lara.components.model.LaraModel;
 
 /**
@@ -47,6 +47,7 @@ public class EnvironmentTest {
 	public static junit.framework.Test suite() {
 		return new JUnit4TestAdapter(EnvironmentTest.class);
 	}
+
 	LaraModel model;
 	LaraEnvironment env;
 	LEnvironmentalIntProperty prop1;
