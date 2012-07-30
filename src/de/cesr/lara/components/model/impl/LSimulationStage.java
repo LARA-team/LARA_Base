@@ -43,14 +43,14 @@ public enum LSimulationStage implements LaraSimulationStage {
 	POSTPROCESS,
 
 	/**
-	 * Simulation is in preprocessing stage.
+	 * Simulation is in pre-processing stage.
 	 */
 	PREPROCESS,
 
 	/**
 	 * Simulation is in process decision stage.
 	 */
-	PROCESS,
+	EXECUTE,
 
 	/**
 	 * Default value if an implementation of {@link LaraModel} does not update
