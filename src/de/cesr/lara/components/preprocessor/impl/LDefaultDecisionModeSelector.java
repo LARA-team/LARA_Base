@@ -90,7 +90,7 @@ public class LDefaultDecisionModeSelector<A extends LaraAgent<A, BO>, BO extends
 
 		// check habits
 		int habitTH = ((Integer) PmParameterManager
-				.getParameter(LDecisionMakingPa.HABIT_TRESHOLD)).intValue();
+				.getParameter(LDecisionMakingPa.HABIT_THRESHOLD)).intValue();
 		int currStep = LModel.getModel().getCurrentStep();
 
 		if (!customIsDelibaterive(event)

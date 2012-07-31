@@ -28,6 +28,9 @@ import org.apache.log4j.FileAppender;
 import org.apache.log4j.Logger;
 import org.apache.log4j.SimpleLayout;
 
+import de.cesr.lara.components.param.LBasicPa;
+import de.cesr.parma.core.PmParameterManager;
+
 /**
  * log4j logger
  */
@@ -68,7 +71,21 @@ public final class Log4jLogger {
 				// TODO remove static path?!
 				DateFormat dateFormat = new SimpleDateFormat(
 						"yyyy-MM-dd_HH-mm-ss");
-				FileAppender fileAppender = new FileAppender(layout, "log"
+
+				// check if path exists and create if not:
+				File outFile = new File(
+						((String) PmParameterManager
+								.getParameter(LBasicPa.LOG_PATH)));
+
+				// <- LOGGING
+				if (logger.isDebugEnabled()) {
+					logger.debug("Write logfile to " + outFile);
+				}
+				// LOGGING ->
+				outFile.mkdirs();
+
+				FileAppender fileAppender = new FileAppender(layout,
+						outFile.getPath()
 						+ File.separator + "lara_"
 						+ dateFormat.format(Calendar.getInstance().getTime())
 						+ ".log", false);

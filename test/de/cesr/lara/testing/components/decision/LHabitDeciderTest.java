@@ -96,7 +96,7 @@ public class LHabitDeciderTest {
 
 		// deliberative decision making for X steps:
 		for (int i = 0; i < (Integer) PmParameterManager
-				.getParameter(LDecisionMakingPa.HABIT_TRESHOLD); i++) {
+				.getParameter(LDecisionMakingPa.HABIT_THRESHOLD); i++) {
 			LEventbus.getInstance().publish(new LModelStepEvent());
 			LEventbus.getInstance().publish(new LAgentPreprocessEvent(dConfig));
 			LEventbus.getInstance().publish(new LAgentDecideEvent(dConfig));
@@ -116,7 +116,7 @@ public class LHabitDeciderTest {
 		LEventbus.getInstance().publish(new LAgentPostprocessEvent(dConfig));
 		assertEquals(
 				(Integer) PmParameterManager
-						.getParameter(LDecisionMakingPa.HABIT_TRESHOLD) + 1,
+						.getParameter(LDecisionMakingPa.HABIT_THRESHOLD) + 1,
 				agent.getLaraComp().getGeneralMemory().getSize());
 		assertEquals(LHabitDecider.class,
 				agent.getLaraComp().getDecisionData(dConfig).getDecider()

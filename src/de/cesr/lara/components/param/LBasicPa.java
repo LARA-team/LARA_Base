@@ -24,37 +24,28 @@ import de.cesr.parma.core.PmParameterManager;
 
 /**
  * @author Sascha Holzhauer
- * 
+ *
  */
-public enum LDecisionMakingPa implements PmParameterDefinition {
+public enum LBasicPa implements PmParameterDefinition {
 
-	/**
-	 * The number of ticks an agent need to select the same BO in order to
-	 * switch to habitual behaviour.
-	 */
-	HABIT_THRESHOLD(Integer.class, 5);
+	LOG_PATH(String.class, "./log");
 
 	private Class<?> type;
 	private Object defaultValue;
 
-	LDecisionMakingPa(Class<?> type) {
+	LBasicPa(Class<?> type) {
 		this(type, null);
 	}
 
-	LDecisionMakingPa(Class<?> type, Object defaultValue) {
+	LBasicPa(Class<?> type, Object defaultValue) {
 		this.type = type;
 		this.defaultValue = defaultValue;
 	}
 
-	LDecisionMakingPa(Class<?> type, PmParameterDefinition defaultDefinition) {
+	LBasicPa(Class<?> type, PmParameterDefinition defaultDefinition) {
 		this.type = type;
 		this.defaultValue = defaultDefinition.getDefaultValue();
 		PmParameterManager.setDefaultParameterDef(this, defaultDefinition);
-	}
-
-	@Override
-	public Object getDefaultValue() {
-		return defaultValue;
 	}
 
 	@Override
@@ -62,4 +53,8 @@ public enum LDecisionMakingPa implements PmParameterDefinition {
 		return type;
 	}
 
+	@Override
+	public Object getDefaultValue() {
+		return defaultValue;
+	}
 }
