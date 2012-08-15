@@ -393,7 +393,7 @@ public class LEventbus {
 			Set<LaraAbstractEventSubscriber> subscribers, LaraEvent event) {
 		// <- LOGGING
 		logger.info("Notifying " + subscribers.size()
-				+ " internal subscribers sequentially");
+				+ " internal subscriber(s) sequentially (" + event.getClass().getSimpleName() + ")");
 		// LOGGING ->
 
 		// internal first
@@ -404,8 +404,8 @@ public class LEventbus {
 		}
 
 		// <- LOGGING
-		logger.info("Notified " + subscribers.size()
-				+ " internal subscribers sequentially");
+		logger.debug("Notified " + subscribers.size()
+				+ " internal subscribers sequentially (" + event.getClass().getSimpleName() + ")");
 		// LOGGING ->
 	}
 
@@ -421,7 +421,7 @@ public class LEventbus {
 			Set<LaraAbstractEventSubscriber> subscribers, LaraEvent event) {
 		// <- LOGGING
 		logger.info("Notifying " + subscribers.size()
-				+ " noninternal subscribers sequentially");
+				+ " noninternal subscribers sequentially (" + event.getClass().getSimpleName() + ")");
 		// LOGGING ->
 
 		for (LaraAbstractEventSubscriber s : subscribers) {
@@ -431,8 +431,8 @@ public class LEventbus {
 		}
 
 		// <- LOGGING
-		logger.info("Notified " + subscribers.size()
-				+ " noninternal subscribers sequentially");
+		logger.debug("Notified " + subscribers.size()
+				+ " noninternal subscribers sequentially (" + event.getClass().getSimpleName() + ")");
 		// LOGGING ->
 	}
 
@@ -448,7 +448,7 @@ public class LEventbus {
 			Set<LaraAbstractEventSubscriber> subscribers, final LaraEvent event) {
 		// <- LOGGING
 		logger.info("Notifying " + subscribers.size()
-				+ " subscribers assynchonously");
+				+ " subscribers assynchonously (" + event.getClass().getSimpleName() + ")");
 		// LOGGING ->
 
 		// internal first
@@ -478,7 +478,7 @@ public class LEventbus {
 
 		// <- LOGGING
 		logger.info("Notified " + subscribers.size()
-				+ " subscribers assynchonously");
+				+ " subscribers assynchonously (" + event.getClass().getSimpleName() + ")");
 		// LOGGING ->
 	}
 
@@ -493,7 +493,7 @@ public class LEventbus {
 			Set<LaraAbstractEventSubscriber> subscribers, LaraEvent event) {
 		// <- LOGGING
 		logger.info("Notifying " + subscribers.size()
-				+ " subscribers sequentially");
+				+ " subscribers sequentially (" + event.getClass().getSimpleName() + ")");
 		// LOGGING ->
 
 		// internal first
@@ -510,7 +510,7 @@ public class LEventbus {
 
 		// <- LOGGING
 		logger.info("Notified " + subscribers.size()
-				+ " subscribers sequentially");
+				+ " subscribers sequentially (" + event.getClass().getSimpleName() + ")");
 		// LOGGING ->
 	}
 
@@ -529,12 +529,13 @@ public class LEventbus {
 		// others. Seems like this is the problem
 		// <- LOGGING
 		logger.info("Notifying " + subscribers.size()
-				+ " subscriber(s) synchronously");
+				+ " subscriber(s) synchronously (" + event.getClass().getSimpleName() + ")");
 		// LOGGING ->
 
 		// limit number of concurrent tasks by building workgroups
 		int numberOfCores = Runtime.getRuntime().availableProcessors();
-		int numberOfWorkerGroups = numberOfCores * 4;
+		// TODO SH
+		int numberOfWorkerGroups = 4; //numberOfCores * 1;
 		if (logger.isDebugEnabled()) {
 			logger.debug("Number of Worker Groups: " + numberOfWorkerGroups);
 		}
@@ -591,7 +592,7 @@ public class LEventbus {
 
 		// <- LOGGING
 		logger.info("Notified " + subscribers.size()
-				+ " subscribers synchronously");
+				+ " subscribers synchronously (" + event.getClass().getSimpleName() + ")");
 		// LOGGING ->
 	}
 

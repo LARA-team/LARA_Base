@@ -60,39 +60,43 @@ public final class Log4jLogger {
 	}
 
 	/**
-	 * initialises the log4j logging system has to be called once before using
-	 * No entry found. Memory is empty. the logging system
+	 * Initialises the log4j logging system and has to be called once before using.
+	 * If {@link LBasicPa#LOG_PATH} is null, no logging is performed.
 	 */
 	public static void init() {
 		if (!initialised) {
-			try {
-				SimpleLayout layout = new SimpleLayout();
-
-				// TODO remove static path?!
-				DateFormat dateFormat = new SimpleDateFormat(
-						"yyyy-MM-dd_HH-mm-ss");
-
-				// check if path exists and create if not:
-				File outFile = new File(
-						((String) PmParameterManager
-								.getParameter(LBasicPa.LOG_PATH)));
-
-				// <- LOGGING
-				if (logger.isDebugEnabled()) {
-					logger.debug("Write logfile to " + outFile);
+			if (PmParameterManager
+								.getParameter(LBasicPa.LOG_PATH) != null) {
+				try {
+					SimpleLayout layout = new SimpleLayout();
+	
+					// TODO remove static path?!
+					DateFormat dateFormat = new SimpleDateFormat(
+							"yyyy-MM-dd_HH-mm-ss");
+	
+					// check if path exists and create if not:
+					File outFile = new File(
+							((String) PmParameterManager
+									.getParameter(LBasicPa.LOG_PATH)));
+	
+					// <- LOGGING
+					if (logger.isDebugEnabled()) {
+						logger.debug("Write logfile to " + outFile);
+					}
+					// LOGGING ->
+					
+					outFile.mkdirs();
+	
+					FileAppender fileAppender = new FileAppender(layout,
+							outFile.getPath()
+							+ File.separator + "lara_"
+							+ dateFormat.format(Calendar.getInstance().getTime())
+							+ ".log", false);
+					logger.addAppender(fileAppender);
+					// ALL | DEBUG | INFO | WARN | ERROR | FATAL | OFF:
+				} catch (Exception ex) {
+					System.err.println(ex);
 				}
-				// LOGGING ->
-				outFile.mkdirs();
-
-				FileAppender fileAppender = new FileAppender(layout,
-						outFile.getPath()
-						+ File.separator + "lara_"
-						+ dateFormat.format(Calendar.getInstance().getTime())
-						+ ".log", false);
-				logger.addAppender(fileAppender);
-				// ALL | DEBUG | INFO | WARN | ERROR | FATAL | OFF:
-			} catch (Exception ex) {
-				System.err.println(ex);
 			}
 			initialised = true;
 		}

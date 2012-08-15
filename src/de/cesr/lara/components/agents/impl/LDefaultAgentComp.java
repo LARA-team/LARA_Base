@@ -397,6 +397,14 @@ public class LDefaultAgentComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 					agent);
 
 		} else if (event instanceof LAgentDecideEvent) {
+			if (((LAgentDecideEvent) event).getDecisionConfiguration() == null) {
+				// <- LOGGING
+				logger.error("Decision configuration in event " + event + " of agent " + this.agent + " not defiend");
+				// LOGGING ->
+				
+				throw new IllegalStateException("Decision configuration in event " + event + 
+						" of agent " + this.agent + " not defiend");
+			}
 			decide(((LAgentDecideEvent) event).getDecisionConfiguration());
 
 		} else if (event instanceof LAgentPostprocessEvent) {

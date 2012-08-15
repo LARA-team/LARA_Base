@@ -32,6 +32,8 @@ import de.cesr.lara.components.LaraPreference;
  * Overrides {@link HashMap#toString()} in order to return an alphabetically
  * ordered list of preferenceWeights and preference values.
  * 
+ * Supports fast instantiation. 
+ * 
  */
 public class LPreferenceWeightMap extends
 		LinkedHashMap<Class<? extends LaraPreference>, Double> {
