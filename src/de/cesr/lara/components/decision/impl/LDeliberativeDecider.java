@@ -126,10 +126,29 @@ public class LDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? extends 
 				 * and thus define utility for more preferenceWeights.)
 				 */
 				if (isGoalConsidered(utility.getKey())) {
+					double preference = getPreferenceForGoal(utility.getKey());
+					// error handling:
+					if (Double.isNaN(utility.getValue())) {
+						// <- LOGGING
+						logger.error("Utility value of goal "  + utility.getKey().getSimpleName() + " is NaN for BO " + bo);
+						// LOGGING ->
+						
+						throw new IllegalStateException("Utility value of utility "  + 
+								utility.getKey().getSimpleName() + " is NaN for BO " + bo);
+					}
+					if (Double.isNaN(preference)) {
+						// <- LOGGING
+						logger.error("Preference value of goal "  + utility.getKey().getSimpleName() + " is NaN.");
+						// LOGGING ->
+						
+						throw new IllegalStateException("Preference value of goal "  + 
+								utility.getKey().getSimpleName() + " is NaN.");
+					}
+					
 					boRow.setIndividualUtilityValue(
 							utility.getKey(),
 							utility.getValue()
-									* getPreferenceForGoal(utility.getKey()));
+									* preference);
 
 					// <- LOGGING
 					if (logger.isDebugEnabled()) {

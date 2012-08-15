@@ -27,10 +27,12 @@ import java.util.Set;
 
 import org.apache.commons.collections15.MultiMap;
 import org.apache.commons.collections15.multimap.MultiHashMap;
+import org.apache.log4j.Logger;
 
 import de.cesr.lara.components.environment.LaraEnvironment;
 import de.cesr.lara.components.environment.LaraEnvironmentListener;
 import de.cesr.lara.components.environment.LaraSuperEnvironment;
+import de.cesr.lara.components.util.logging.impl.Log4jLogger;
 
 /**
  * This default implementation of {@link LaraSuperEnvironment} does not delegate
@@ -54,6 +56,11 @@ import de.cesr.lara.components.environment.LaraSuperEnvironment;
  */
 public class LEnvironment implements LaraSuperEnvironment {
 
+	/**
+	 * Logger
+	 */
+	static private Logger logger = Log4jLogger.getLogger(LEnvironment.class);
+	
 	/**
 	 * @uml.property name="abstractProperty"
 	 * @uml.associationEnd multiplicity="(0 -1)" inverse=
@@ -191,6 +198,13 @@ public class LEnvironment implements LaraSuperEnvironment {
 	public Set<LaraEnvironment> getSubEnvironments(Object category) {
 		if (category == LaraSuperEnvironment.ALL_CATEGORIES) {
 			return new HashSet<LaraEnvironment>(subEnvironments.values());
+		}
+		
+		if (!subEnvironments.containsKey(category)) {
+			// <- LOGGING
+			logger.error("This environment does not contain a sub-environment for category " + category);
+			// LOGGING ->
+			throw new IllegalArgumentException("This environment does not contain a sub-environment for category " + category);
 		}
 		return new HashSet<LaraEnvironment>(subEnvironments.get(category));
 	}

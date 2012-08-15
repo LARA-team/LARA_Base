@@ -412,7 +412,7 @@ public abstract class LaraBehaviouralOption<A extends LaraAgent<? super A, ?>, B
 	/**
 	 * calculate hash code:
 	 * 
-	 * @return the hash code Created by Sascha Holzhauer on 25.02.2011
+	 * @return the hash code
 	 */
 	protected int calculateHashCode() {
 		int result = 17;

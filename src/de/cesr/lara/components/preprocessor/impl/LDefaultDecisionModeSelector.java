@@ -23,9 +23,11 @@ import org.apache.log4j.Logger;
 
 import de.cesr.lara.components.LaraBehaviouralOption;
 import de.cesr.lara.components.agents.LaraAgent;
+import de.cesr.lara.components.agents.LaraDecisionModeProvidingAgent;
 import de.cesr.lara.components.container.exceptions.LContainerException;
 import de.cesr.lara.components.decision.LaraDeciderFactory;
 import de.cesr.lara.components.decision.LaraDecisionConfiguration;
+import de.cesr.lara.components.decision.LaraDecisionModes;
 import de.cesr.lara.components.decision.impl.LDeliberativeDeciderFactory;
 import de.cesr.lara.components.decision.impl.LHabitDeciderFactory;
 import de.cesr.lara.components.eventbus.events.LaraEvent;
@@ -169,7 +171,13 @@ public class LDefaultDecisionModeSelector<A extends LaraAgent<A, BO>, BO extends
 	 * @return true if deliberative decision is desired
 	 */
 	protected boolean customIsDelibaterive(LPpModeSelectorEvent event) {
+		@SuppressWarnings("unchecked")
+		A agent = (A) event.getAgent();
+		
 		// extend the class and place your custom code here
+		if (agent instanceof LaraDecisionModeProvidingAgent) {
+			return ((LaraDecisionModeProvidingAgent)agent).getDecisionMode() == LaraDecisionModes.DELIBERATIVE.getId();
+		}
 		return false;
 	}
 }
