@@ -38,7 +38,9 @@ import de.cesr.lara.components.eventbus.events.LaraEvent;
 import de.cesr.lara.components.eventbus.events.LaraHasConsecutiveEvent;
 import de.cesr.lara.components.eventbus.events.LaraRequiresPrecedingEvent;
 import de.cesr.lara.components.eventbus.events.LaraSynchronousEvent;
+import de.cesr.lara.components.param.LBasicPa;
 import de.cesr.lara.components.util.logging.impl.Log4jLogger;
+import de.cesr.parma.core.PmParameterManager;
 
 /**
  * The LEventbus serves as a communication system between different components,
@@ -56,6 +58,8 @@ public class LEventbus {
 	private static LEventbus instance = null;
 	private static Map<Object, LEventbus> instances = new HashMap<Object, LEventbus>();
 	private static Logger logger = Log4jLogger.getLogger(LEventbus.class);
+
+	private boolean forceSequential;
 
 	/**
 	 * returns a reference to the global eventbus
@@ -106,17 +110,19 @@ public class LEventbus {
 
 	private final Set<Class<? extends LaraEvent>> eventsThisTimestep = new HashSet<Class<? extends LaraEvent>>();
 
-	private Map<Class<? extends LaraEvent>, Set<LaraAbstractEventSubscriber>> eventSubscriberMap = new HashMap<Class<? extends LaraEvent>, Set<LaraAbstractEventSubscriber>>();
+	private final Map<Class<? extends LaraEvent>, Set<LaraAbstractEventSubscriber>> eventSubscriberMap = new HashMap<Class<? extends LaraEvent>, Set<LaraAbstractEventSubscriber>>();
 
-	private Map<LaraEvent, Integer> eventWaitingCounters = new HashMap<LaraEvent, Integer>();
+	private final Map<LaraEvent, Integer> eventWaitingCounters = new HashMap<LaraEvent, Integer>();
 
-	private Map<Class<? extends LaraEvent>, Long> statistics = new HashMap<Class<? extends LaraEvent>, Long>();
+	private final Map<Class<? extends LaraEvent>, Long> statistics = new HashMap<Class<? extends LaraEvent>, Long>();
 
 	/**
 	 * This is a singleton. Use of constructor is permitted. Use getInstance()
 	 * to obtain a reference to the event bus.
 	 */
 	protected LEventbus() {
+		this.forceSequential = (Boolean) PmParameterManager
+				.getParameter(LBasicPa.EVENTBUS_FORCE_SEQUENTIAL);
 	}
 
 	/**
@@ -553,8 +559,9 @@ public class LEventbus {
 			}
 			subscriberGroup.add(s);
 			currentWorkGroup++;
-			if (currentWorkGroup > numberOfWorkerGroups)
+			if (currentWorkGroup > numberOfWorkerGroups) {
 				currentWorkGroup = 0;
+			}
 		}
 
 		// for every worker group start a new thread, that notifies all
@@ -634,12 +641,17 @@ public class LEventbus {
 					+ " subscriber(s) of event of type "
 					+ event.getClass().getSimpleName());
 			// notify subscriber according to event type
-			if (event instanceof LaraSynchronousEvent) {
-				notifySubscribersSynchronous(subscribers, event);
-			} else if (event instanceof LaraAsynchronousEvent) {
-				notifySubscribersAsynchronous(subscribers, event);
-			} else {
+
+			if (this.forceSequential) {
 				notifySubscribersSequential(subscribers, event);
+			} else {
+				if (event instanceof LaraSynchronousEvent) {
+					notifySubscribersSynchronous(subscribers, event);
+				} else if (event instanceof LaraAsynchronousEvent) {
+					notifySubscribersAsynchronous(subscribers, event);
+				} else {
+					notifySubscribersSequential(subscribers, event);
+				}
 			}
 		} else {
 			// no subscribers - log this
@@ -651,6 +663,21 @@ public class LEventbus {
 		if (event instanceof LaraHasConsecutiveEvent) {
 			publish(((LaraHasConsecutiveEvent) event).getConsecutiveEvent());
 		}
+	}
+
+	/**
+	 * @return the forceSequential
+	 */
+	public boolean isForceSequential() {
+		return forceSequential;
+	}
+
+	/**
+	 * @param forceSequential
+	 *            the forceSequential to set
+	 */
+	public void setForceSequential(boolean forceSequential) {
+		this.forceSequential = forceSequential;
 	}
 
 }

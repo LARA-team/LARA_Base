@@ -3,7 +3,8 @@
 <project default="LARA_Base-jar-creation">
 	
 	<property name="dir_target" value="${basedir}/../../../SpreadPrototyp/lib" />
-	
+	<property name="svn_infos" value="358" />
+		
 	<!-- ================================= 
           target: Fetch SVN Revision Number        
               	
@@ -19,7 +20,7 @@
     	<echo>"Last Revision: ${svn.info.rev}"</echo>
     </target>
 
-<target name="LARA_Base-jar-creation" depends="svn_infos" description="creates a jar file from LARA_Base">
+<target name="LARA_Base-jar-creation" description="creates a jar file from LARA_Base">
 	<!--delete file="${dir_taret}/MORe.jar"/-->
 	<echo>"Destination: ${dir_target}/LARA_Base.jar"</echo>
     <jar destfile="${dir_target}/LARA_Base.jar"
