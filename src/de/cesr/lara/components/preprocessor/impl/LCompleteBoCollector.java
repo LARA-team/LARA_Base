@@ -34,8 +34,8 @@ import de.cesr.lara.components.util.logging.impl.Log4jLogger;
 
 /**
  * 
- * Retrieves all recent behavioural options in memory (does _not_ checks for
- * each if any utility > 0.0 contributes to the decision).
+ * Retrieves all recent behavioural options in memory (does _not_ check for each
+ * if any utility > 0.0 contributes to the decision).
  * 
  * NOTE regarding LOGGING: The agent logger for logging BOs is only enabled when
  * the logger for this class is enabled at least for {@link Priority#INFO}!

@@ -28,6 +28,11 @@ import de.cesr.parma.core.PmParameterManager;
  */
 public enum LBasicPa implements PmParameterDefinition {
 
+	/**
+	 * If true, the eventbus is forced to handle events sequentially.
+	 */
+	EVENTBUS_FORCE_SEQUENTIAL(Boolean.class, Boolean.FALSE),
+
 	LOG_PATH(String.class, "./log");
 
 	private Class<?> type;

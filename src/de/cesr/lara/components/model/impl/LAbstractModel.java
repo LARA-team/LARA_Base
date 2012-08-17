@@ -211,12 +211,12 @@ public abstract class LAbstractModel implements LaraModel,
 	 */
 	@Override
 	public final void step() {
+		this.step++;
+		this.advanceCalender();
+
 		// <- LOGGING
 		logger.info(">>>>> Simulating timestep " + getCurrentStep() + " <<<<<<");
 		// LOGGING ->
-		
-		this.step++;
-		this.advanceCalender();
 	}
 
 	/**
