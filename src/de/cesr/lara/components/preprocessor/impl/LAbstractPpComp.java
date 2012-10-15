@@ -94,7 +94,7 @@ public abstract class LAbstractPpComp<A extends LaraAgent<? super A, ?>, BO exte
 		}
 
 		StringBuffer buffer = new StringBuffer();
-		buffer.append(desc + "for " + agent + ":"
+		buffer.append(desc + " for " + agent + ":"
 				+ System.getProperty("line.separator"));
 		int i = 0;
 		for (BO bo : bos) {

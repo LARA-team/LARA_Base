@@ -499,7 +499,8 @@ public class LEventbus {
 			Set<LaraAbstractEventSubscriber> subscribers, LaraEvent event) {
 		// <- LOGGING
 		logger.info("Notifying " + subscribers.size()
-				+ " subscribers sequentially (" + event.getClass().getSimpleName() + ")");
+				+ " subscriber(s) sequentially ("
+				+ event.getClass().getSimpleName() + ")");
 		// LOGGING ->
 
 		// internal first
@@ -516,7 +517,8 @@ public class LEventbus {
 
 		// <- LOGGING
 		logger.info("Notified " + subscribers.size()
-				+ " subscribers sequentially (" + event.getClass().getSimpleName() + ")");
+				+ " subscriber(s) sequentially ("
+				+ event.getClass().getSimpleName() + ")");
 		// LOGGING ->
 	}
 
@@ -541,7 +543,7 @@ public class LEventbus {
 		// limit number of concurrent tasks by building workgroups
 		int numberOfCores = Runtime.getRuntime().availableProcessors();
 		// TODO SH
-		int numberOfWorkerGroups = 4; //numberOfCores * 1;
+		int numberOfWorkerGroups = numberOfCores * 4;
 		if (logger.isDebugEnabled()) {
 			logger.debug("Number of Worker Groups: " + numberOfWorkerGroups);
 		}
@@ -642,16 +644,16 @@ public class LEventbus {
 					+ event.getClass().getSimpleName());
 			// notify subscriber according to event type
 
-			if (this.forceSequential) {
-				notifySubscribersSequential(subscribers, event);
-			} else {
-				if (event instanceof LaraSynchronousEvent) {
-					notifySubscribersSynchronous(subscribers, event);
-				} else if (event instanceof LaraAsynchronousEvent) {
-					notifySubscribersAsynchronous(subscribers, event);
-				} else {
+			if (event instanceof LaraSynchronousEvent) {
+				if (this.forceSequential) {
 					notifySubscribersSequential(subscribers, event);
+				} else {
+					notifySubscribersSynchronous(subscribers, event);
 				}
+			} else if (event instanceof LaraAsynchronousEvent) {
+				notifySubscribersAsynchronous(subscribers, event);
+			} else {
+				notifySubscribersSequential(subscribers, event);
 			}
 		} else {
 			// no subscribers - log this
