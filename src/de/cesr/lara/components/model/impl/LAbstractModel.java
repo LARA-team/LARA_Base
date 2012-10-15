@@ -227,7 +227,9 @@ public abstract class LAbstractModel implements LaraModel,
 	@Override
 	public final void step(int stepIncrease) {
 		this.step = this.step + stepIncrease;
-		this.advanceCalender();
+		for (int i = 0; i < stepIncrease; i++) {
+			this.advanceCalender();
+		}
 	}
 	
 
