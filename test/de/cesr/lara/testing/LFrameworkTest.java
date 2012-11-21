@@ -24,7 +24,7 @@ import de.cesr.lara.components.eventbus.events.LAgentPostExecutionEvent;
 import de.cesr.lara.components.eventbus.events.LAgentPostprocessEvent;
 import de.cesr.lara.components.eventbus.events.LAgentPreprocessEvent;
 import de.cesr.lara.components.eventbus.events.LModelFinishEvent;
-import de.cesr.lara.components.eventbus.events.LModelInitializedEvent;
+import de.cesr.lara.components.eventbus.events.LInternalModelInitializedEvent;
 import de.cesr.lara.components.eventbus.events.LModelInstantiatedEvent;
 import de.cesr.lara.components.eventbus.events.LModelStepEvent;
 import de.cesr.lara.components.eventbus.events.LUpdateEnvironmentEvent;
@@ -46,13 +46,13 @@ public class LFrameworkTest {
 
 		public FrameworkTestModel() {
 			super();
-			eventBus.subscribe(this, LModelInitializedEvent.class);
+			eventBus.subscribe(this, LInternalModelInitializedEvent.class);
 			eventBus.subscribe(this, LModelStepEvent.class);
 		}
 
 		@Override
 		public <T extends LaraEvent> void onEvent(T event) {
-			if (event instanceof LModelInitializedEvent) {
+			if (event instanceof LInternalModelInitializedEvent) {
 				environment = new LEnvironment();
 				environment.updateProperty(new LEnvironmentalIntProperty(
 						KEY_TESTPROPERTY, 0, environment));

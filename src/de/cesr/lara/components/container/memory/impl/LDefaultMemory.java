@@ -356,6 +356,22 @@ public class LDefaultMemory<PropertyType extends LaraProperty<? extends Property
 	public void memorize(PropertyType propertyToMemorize, int retentionTime)
 			throws LContainerFullException, LInvalidTimestampException {
 		checkIfNewStep();
+
+		// check if a prop with that key is already contained:
+		if (contains(propertyToMemorize.getKey(),
+				propertyToMemorize.getTimestamp())) {
+			// <- LOGGING
+			if (logger.isDebugEnabled()) {
+				logger.debug("Overwrite property with key "
+						+ propertyToMemorize.getKey()
+						+ " that is already contained.");
+			}
+			// LOGGING ->
+			PropertyType contained = recall(propertyToMemorize.getKey(),
+					propertyToMemorize.getTimestamp());
+			removeFromMaps(contained);
+		}
+
 		storage.store(propertyToMemorize);
 		if (propertyListeners.containsKey(MemoryEvent.PROPERTY_MEMORIZED)) {
 			for (LaraMemoryListener listener : propertyListeners

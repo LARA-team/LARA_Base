@@ -1,5 +1,5 @@
 /**
- * This file is part of
+  * This file is part of
  * 
  * LARA - Lightweight Architecture for boundedly Rational citizen Agents
  * 

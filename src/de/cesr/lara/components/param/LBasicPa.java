@@ -19,6 +19,7 @@
  */
 package de.cesr.lara.components.param;
 
+import de.cesr.lara.components.eventbus.impl.LEventbus;
 import de.cesr.parma.core.PmParameterDefinition;
 import de.cesr.parma.core.PmParameterManager;
 
@@ -29,7 +30,10 @@ import de.cesr.parma.core.PmParameterManager;
 public enum LBasicPa implements PmParameterDefinition {
 
 	/**
-	 * If true, the eventbus is forced to handle events sequentially.
+	 * If true, the eventbus is forced to handle events sequentially. Note:
+	 * Since the eventbus is initialised very early this parameter needs to be
+	 * set very early. It is therefore recommended to use
+	 * {@link LEventbus#setForceSequential(boolean)}
 	 */
 	EVENTBUS_FORCE_SEQUENTIAL(Boolean.class, Boolean.FALSE),
 
