@@ -136,8 +136,23 @@ public final class LaraDecisionData<A extends LaraAgent<? super A, BO>, BO exten
 	 * @param bo
 	 *            list of BOs to set
 	 */
-	public void setBos(BO... bo) {
-		this.bos = Arrays.asList(bo);
+	public void setBos(BO... bos) {
+		if (logger.isDebugEnabled()) {
+			logger.debug(agent);
+		}
+
+		// // <- LOGGING
+		// if (logger.isDebugEnabled()) {
+		// StringBuffer buffer = new StringBuffer();
+		// buffer.append("Set BOs:" + System.getProperty("line.separator"));
+		// for (BO bo : bos) {
+		// buffer.append(bo + System.getProperty("line.separator"));
+		// }
+		// logger.debug(buffer.toString());
+		// }
+		// // LOGGING ->
+
+		this.bos = Arrays.asList(bos);
 	}
 
 	/**
@@ -145,6 +160,20 @@ public final class LaraDecisionData<A extends LaraAgent<? super A, BO>, BO exten
 	 *            the BOs to set
 	 */
 	public void setBos(Collection<BO> bos) {
+		if (logger.isDebugEnabled()) {
+			logger.debug(agent);
+		}
+		// <- LOGGING
+		// if (logger.isDebugEnabled()) {
+		// StringBuffer buffer = new StringBuffer();
+		// buffer.append("Set BOs:" + System.getProperty("line.separator"));
+		// for (BO bo : bos) {
+		// buffer.append(bo + System.getProperty("line.separator"));
+		// }
+		// logger.debug(buffer.toString());
+		// }
+		// LOGGING ->
+
 		this.bos = bos;
 	}
 
@@ -159,10 +188,10 @@ public final class LaraDecisionData<A extends LaraAgent<? super A, BO>, BO exten
 		this.decider = null;
 
 		// <- LOGGING
-		if (logger.isDebugEnabled()) {
-			logger.debug(this.dConfiguration + "> Set deciderFactory: "
-					+ deciderFactory);
-		}
+		// if (logger.isDebugEnabled()) {
+		// logger.debug(this.dConfiguration + "> Set deciderFactory: "
+		// + deciderFactory);
+		// }
 		// LOGGING ->
 	}
 

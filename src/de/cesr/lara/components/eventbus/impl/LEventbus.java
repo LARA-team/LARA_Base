@@ -59,8 +59,6 @@ public class LEventbus {
 	private static Map<Object, LEventbus> instances = new HashMap<Object, LEventbus>();
 	private static Logger logger = Log4jLogger.getLogger(LEventbus.class);
 
-	private boolean forceSequential;
-
 	/**
 	 * returns a reference to the global eventbus
 	 */
@@ -108,11 +106,13 @@ public class LEventbus {
 		instances.clear();
 	}
 
-	private final Set<Class<? extends LaraEvent>> eventsThisTimestep = new HashSet<Class<? extends LaraEvent>>();
+	private boolean forceSequential;
 
-	private final Map<Class<? extends LaraEvent>, Set<LaraAbstractEventSubscriber>> eventSubscriberMap = new HashMap<Class<? extends LaraEvent>, Set<LaraAbstractEventSubscriber>>();
+	private volatile Set<Class<? extends LaraEvent>> eventsThisTimestep = new HashSet<Class<? extends LaraEvent>>();
 
-	private final Map<LaraEvent, Integer> eventWaitingCounters = new HashMap<LaraEvent, Integer>();
+	private volatile Map<Class<? extends LaraEvent>, Set<LaraAbstractEventSubscriber>> eventSubscriberMap = new HashMap<Class<? extends LaraEvent>, Set<LaraAbstractEventSubscriber>>();
+
+	private volatile Map<LaraEvent, Integer> eventWaitingCounters = new HashMap<LaraEvent, Integer>();
 
 	private final Map<Class<? extends LaraEvent>, Long> statistics = new HashMap<Class<? extends LaraEvent>, Long>();
 
@@ -123,6 +123,377 @@ public class LEventbus {
 	protected LEventbus() {
 		this.forceSequential = (Boolean) PmParameterManager
 				.getParameter(LBasicPa.EVENTBUS_FORCE_SEQUENTIAL);
+
+		// <- LOGGING
+		logger.info("EventBus runs in FORCE_SEQUENTIAL mode? "
+				+ this.forceSequential);
+		// LOGGING ->
+	}
+
+	/**
+	 * Decrements the counter of how many event subscribers are notified but
+	 * have not yet finished their work. If last subscriber finishes the monitor
+	 * stops waiting.
+	 * 
+	 * @param event
+	 * @param monitor
+	 */
+	private void decrementWaitingCounter(LaraEvent event) {
+		synchronized (event) {
+			Integer oldValue = getWaitingCounter(event);
+			if (oldValue == null) {
+				logger.error("Something went wrong during synchronized event notification of event "
+						+ event.getClass().getSimpleName());
+			} else {
+				Integer newValue = new Integer(oldValue.intValue() - 1);
+				logger.debug("Number of worker threads for event "
+						+ event.getClass().getSimpleName() + ": "
+						+ newValue.intValue());
+				if (newValue.intValue() > 0) {
+					eventWaitingCounters.put(event, newValue);
+				} else {
+					// is last worker thread
+					// stop waiting
+					event.notify();
+					// do not waste memory
+					eventWaitingCounters.remove(event);
+				}
+			}
+		}
+	}
+
+	/**
+	 * The counter of how many event subscribers are notified but have not yet
+	 * finished their work.
+	 * 
+	 * @param event
+	 */
+	private Integer getWaitingCounter(LaraEvent event) {
+		synchronized (event) {
+			return eventWaitingCounters.get(event);
+		}
+	}
+
+	/**
+	 * Increments the counter of how many event subscribers are notified but
+	 * have not yet finished their work.
+	 * 
+	 * @param event
+	 */
+	private void incrementWaitingCounter(LaraEvent event) {
+		synchronized (event) {
+			Integer oldValue = getWaitingCounter(event);
+			if (oldValue == null) {
+				oldValue = new Integer(0);
+			}
+			Integer newValue = new Integer(oldValue.intValue() + 1);
+			logger.debug("Number of worker threads for event "
+					+ event.getClass().getSimpleName() + ": "
+					+ newValue.intValue());
+			eventWaitingCounters.put(event, newValue);
+		}
+	}
+
+	/**
+	 * @return the forceSequential
+	 */
+	public boolean isForceSequential() {
+		return forceSequential;
+	}
+
+	/**
+	 * Logs a list of given subscribers (only when {@link Priority#DEBUG} is
+	 * enabled).
+	 * 
+	 * @param subscribers
+	 * @param event
+	 */
+	private void logSubscribers(
+			Collection<LaraAbstractEventSubscriber> subscribers, LaraEvent event) {
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			StringBuffer buffer = new StringBuffer();
+			buffer.append("Notifying subscribers for event "
+					+ event.getClass().getName() + "\n");
+			for (LaraAbstractEventSubscriber subscriber : subscribers) {
+				buffer.append("\t" + subscriber + "\n");
+			}
+			logger.debug(buffer.toString());
+		}
+		// LOGGING ->
+	}
+
+	/**
+	 * Notifies internat subscriber sequential. Subscribers will execute their
+	 * related code sequential. Method finishes after last subscriber finishes.
+	 * 
+	 * @param subscribers
+	 * @param event
+	 */
+	private void notifyInternalSubscribersSequential(
+			Set<LaraAbstractEventSubscriber> subscribers, LaraEvent event) {
+		// <- LOGGING
+		logger.info("Notifying " + subscribers.size()
+				+ " internal subscriber(s) sequentially ("
+				+ event.getClass().getSimpleName() + ")");
+		// LOGGING ->
+
+		// internal first
+		for (LaraAbstractEventSubscriber s : subscribers) {
+			if (s instanceof LaraInternalEventSubscriber) {
+				((LaraInternalEventSubscriber) s).onInternalEvent(event);
+			}
+		}
+
+		// <- LOGGING
+		logger.debug("Notified " + subscribers.size()
+				+ " internal subscribers sequentially ("
+				+ event.getClass().getSimpleName() + ")");
+		// LOGGING ->
+	}
+
+	/**
+	 * Notifies noninternal subscriber sequential. Subscribers will execute
+	 * their related code sequential. Method finishes after last subscriber
+	 * finishes.
+	 * 
+	 * @param subscribers
+	 * @param event
+	 */
+	private void notifyNoninternalSubscribersSequential(
+			Set<LaraAbstractEventSubscriber> subscribers, LaraEvent event) {
+		// <- LOGGING
+		logger.info("Notifying " + subscribers.size()
+				+ " noninternal subscribers sequentially ("
+				+ event.getClass().getSimpleName() + ")");
+		// LOGGING ->
+
+		for (LaraAbstractEventSubscriber s : subscribers) {
+			if (s instanceof LaraEventSubscriber) {
+				((LaraEventSubscriber) s).onEvent(event);
+			}
+		}
+
+		// <- LOGGING
+		logger.debug("Notified " + subscribers.size()
+				+ " noninternal subscribers sequentially ("
+				+ event.getClass().getSimpleName() + ")");
+		// LOGGING ->
+	}
+
+	/**
+	 * TODO search for subscribers to super classes! (Custom PP component
+	 * implementations could publish sub classes of PP-event that other
+	 * components need to recognise)
+	 * 
+	 * @param event
+	 */
+	protected void notifySubscribers(LaraEvent event) {
+		// notify all subscribers
+		if (eventSubscriberMap.containsKey(event.getClass())) {
+			// get subscribers set
+			Set<LaraAbstractEventSubscriber> subscribers = eventSubscriberMap
+					.get(event.getClass());
+
+			logSubscribers(subscribers, event);
+
+			logger.debug("Notifying " + subscribers.size()
+					+ " subscriber(s) of event of type "
+					+ event.getClass().getSimpleName());
+
+			// notify subscriber according to event type
+			if (event instanceof LaraSynchronousEvent) {
+				if (this.forceSequential) {
+					notifySubscribersSequential(subscribers, event);
+				} else {
+					// starts several threads and waits until last one has
+					// finished
+					notifySubscribersSynchronous(subscribers, event);
+				}
+			} else if (event instanceof LaraAsynchronousEvent) {
+				notifySubscribersAsynchronous(subscribers, event);
+			} else {
+				notifySubscribersSequential(subscribers, event);
+			}
+		} else {
+			// no subscribers - log this
+			logger.warn("Event of type "
+					+ event.getClass().getSimpleName()
+					+ " published, but has no subscribers. Maybe you should check if this was intended.");
+		}
+		// if event has consecutive event fire this
+		if (event instanceof LaraHasConsecutiveEvent) {
+			publish(((LaraHasConsecutiveEvent) event).getConsecutiveEvent());
+		}
+	}
+
+	/**
+	 * Notifies all subscribers at once. Subscribers will execute their related
+	 * code in parallel. Method will not wait for subscribers to finish. Method
+	 * will return immediately
+	 * 
+	 * @param subscribers
+	 * @param event
+	 */
+	private void notifySubscribersAsynchronous(
+			Set<LaraAbstractEventSubscriber> subscribers, final LaraEvent event) {
+		// <- LOGGING
+		logger.info("Notifying " + subscribers.size()
+				+ " subscribers assynchonously ("
+				+ event.getClass().getSimpleName() + ")");
+		// LOGGING ->
+
+		// internal first
+		for (final LaraAbstractEventSubscriber s : subscribers) {
+			if (s instanceof LaraInternalEventSubscriber) {
+				Thread workerThread = new Thread() {
+					@Override
+					public void run() {
+						((LaraInternalEventSubscriber) s)
+								.onInternalEvent(event);
+					}
+				};
+				workerThread.start();
+			}
+		}
+		for (final LaraAbstractEventSubscriber s : subscribers) {
+			if (s instanceof LaraEventSubscriber) {
+				Thread workerThread = new Thread() {
+					@Override
+					public void run() {
+						((LaraEventSubscriber) s).onEvent(event);
+					}
+				};
+				workerThread.start();
+			}
+		}
+
+		// <- LOGGING
+		logger.info("Notified " + subscribers.size()
+				+ " subscribers assynchonously ("
+				+ event.getClass().getSimpleName() + ")");
+		// LOGGING ->
+	}
+
+	/**
+	 * Notifies subscriber sequential. Subscribers will execute their related
+	 * code sequential. Method finishes after last subscriber finishes.
+	 * 
+	 * @param subscribers
+	 * @param event
+	 */
+	private void notifySubscribersSequential(
+			Set<LaraAbstractEventSubscriber> subscribers, LaraEvent event) {
+		// <- LOGGING
+		logger.info("Notifying " + subscribers.size()
+				+ " subscriber(s) sequentially ("
+				+ event.getClass().getSimpleName() + ")");
+		// LOGGING ->
+
+		// internal first
+		for (LaraAbstractEventSubscriber s : subscribers) {
+			if (s instanceof LaraInternalEventSubscriber) {
+				((LaraInternalEventSubscriber) s).onInternalEvent(event);
+			}
+		}
+		for (LaraAbstractEventSubscriber s : subscribers) {
+			if (s instanceof LaraEventSubscriber) {
+				((LaraEventSubscriber) s).onEvent(event);
+			}
+		}
+
+		// <- LOGGING
+		logger.info("Notified " + subscribers.size()
+				+ " subscriber(s) sequentially ("
+				+ event.getClass().getSimpleName() + ")");
+		// LOGGING ->
+	}
+
+	/**
+	 * Notifies all subscribers at once. Subscribers will execute their related
+	 * code in parallel. Method will wait until last subscriber finishes.
+	 * 
+	 * @param subscribers
+	 * @param event
+	 */
+	private void notifySubscribersSynchronous(
+			Set<LaraAbstractEventSubscriber> subscribers, final LaraEvent event) {
+		// too much threads at once is highly ineffective. so we use
+		// taskgroups to reduce max number of concurrent threads
+		// we have to make sure ALL internal subscribers are notified before ALL
+		// the others.
+		// <- LOGGING
+		logger.info("Notifying " + subscribers.size()
+				+ " subscriber(s) synchronously ("
+				+ event.getClass().getSimpleName() + ")");
+		// LOGGING ->
+
+		// limit number of concurrent tasks by building workgroups
+		int numberOfCores = Runtime.getRuntime().availableProcessors();
+		// TODO SH
+		int numberOfWorkerGroups = numberOfCores * 4;
+		if (logger.isDebugEnabled()) {
+			logger.debug("Number of Worker Groups for event "
+					+ event.getClass().getSimpleName() + ": "
+					+ numberOfWorkerGroups);
+		}
+
+		Map<Integer, Set<LaraAbstractEventSubscriber>> workerGroupSubscriberMap = new HashMap<Integer, Set<LaraAbstractEventSubscriber>>();
+
+		// required to check if monitor need to wait
+		int currentWorkGroup = 0;
+		for (final LaraAbstractEventSubscriber s : subscribers) {
+			Set<LaraAbstractEventSubscriber> subscriberGroup = workerGroupSubscriberMap
+					.get(currentWorkGroup);
+			if (subscriberGroup == null) {
+				subscriberGroup = new HashSet<LaraAbstractEventSubscriber>();
+				workerGroupSubscriberMap.put(currentWorkGroup, subscriberGroup);
+			}
+			subscriberGroup.add(s);
+			currentWorkGroup++;
+			if (currentWorkGroup > numberOfWorkerGroups) {
+				currentWorkGroup = 0;
+			}
+		}
+
+		// for every worker group start a new thread, that notifies all
+		// internal subscribers belonging to it sequentially
+		for (final Entry<Integer, Set<LaraAbstractEventSubscriber>> entry : workerGroupSubscriberMap
+				.entrySet()) {
+			Thread workerThread = new Thread() {
+				@Override
+				public void run() {
+					notifyInternalSubscribersSequential(entry.getValue(), event);
+					decrementWaitingCounter(event);
+				}
+			};
+			incrementWaitingCounter(event);
+			workerThread.start();
+		}
+		waitUntilWorkDone(event);
+
+		// for every worker group start a new thread, that notifies all
+		// noninternal subscribers belonging to it sequentially
+		for (final Entry<Integer, Set<LaraAbstractEventSubscriber>> entry : workerGroupSubscriberMap
+				.entrySet()) {
+			Thread workerThread = new Thread() {
+				@Override
+				public void run() {
+					notifyNoninternalSubscribersSequential(entry.getValue(),
+							event);
+					decrementWaitingCounter(event);
+				}
+			};
+			incrementWaitingCounter(event);
+			workerThread.start();
+		}
+		waitUntilWorkDone(event);
+
+		// <- LOGGING
+		logger.info("Notified " + subscribers.size()
+				+ " subscribers synchronously ("
+				+ event.getClass().getSimpleName() + ")");
+		// LOGGING ->
 	}
 
 	/**
@@ -188,6 +559,14 @@ public class LEventbus {
 		eventSubscriberMap.clear();
 		eventWaitingCounters.clear();
 		statistics.clear();
+	}
+
+	/**
+	 * @param forceSequential
+	 *            the forceSequential to set
+	 */
+	public void setForceSequential(boolean forceSequential) {
+		this.forceSequential = forceSequential;
 	}
 
 	/**
@@ -310,376 +689,57 @@ public class LEventbus {
 	}
 
 	/**
-	 * Decrements the counter of how many event subscribers are notified but
-	 * have not yet finished their work. If last subscriber finishes the monitor
-	 * stops waiting.
-	 * 
-	 * @param event
-	 * @param monitor
-	 */
-	private synchronized void decrementWaitingCounter(LaraEvent event,
-			Object monitor) {
-		Integer oldValue = eventWaitingCounters.get(event);
-		if (oldValue == null) {
-			logger.error("Something went wrong during synchronized event notification of event "
-					+ event.getClass().getSimpleName());
-		} else {
-			Integer newValue = new Integer(oldValue.intValue() - 1);
-			logger.debug("Number of worker threads: " + newValue.intValue());
-			if (newValue.intValue() > 0) {
-				eventWaitingCounters.put(event, newValue);
-			} else {
-				// is last worker thread
-				synchronized (monitor) {
-					// do not waste memory
-					eventWaitingCounters.remove(event);
-					// stop waiting
-					monitor.notify();
-				}
-			}
-		}
-	}
-
-	/**
-	 * The counter of how many event subscribers are notified but have not yet
-	 * finished their work.
-	 * 
-	 * @param event
-	 */
-	private synchronized int getWaitingCounter(LaraEvent event) {
-		return eventWaitingCounters.get(event);
-	}
-
-	/**
-	 * Increments the counter of how many event subscribers are notified but
-	 * have not yet finished their work.
-	 * 
-	 * @param event
-	 */
-	private synchronized void incrementWaitingCounter(LaraEvent event) {
-		Integer oldValue = eventWaitingCounters.get(event);
-		if (oldValue == null) {
-			oldValue = new Integer(0);
-		}
-		Integer newValue = new Integer(oldValue.intValue() + 1);
-		logger.debug("Number of worker threads: " + newValue.intValue());
-		eventWaitingCounters.put(event, newValue);
-	}
-
-	/**
-	 * Logs a list of given subscribers (only when {@link Priority#DEBUG} is
-	 * enabled).
-	 * 
-	 * @param subscribers
-	 * @param event
-	 */
-	private void logSubscribers(
-			Collection<LaraAbstractEventSubscriber> subscribers, LaraEvent event) {
-		// <- LOGGING
-		if (logger.isDebugEnabled()) {
-			StringBuffer buffer = new StringBuffer();
-			buffer.append("Notifying subscribers for event "
-					+ event.getClass().getName() + "\n");
-			for (LaraAbstractEventSubscriber subscriber : subscribers) {
-				buffer.append("\t" + subscriber + "\n");
-			}
-			logger.debug(buffer.toString());
-		}
-		// LOGGING ->
-	}
-
-	/**
-	 * Notifies internat subscriber sequential. Subscribers will execute their
-	 * related code sequential. Method finishes after last subscriber finishes.
-	 * 
-	 * @param subscribers
-	 * @param event
-	 */
-	private void notifyInternalSubscribersSequential(
-			Set<LaraAbstractEventSubscriber> subscribers, LaraEvent event) {
-		// <- LOGGING
-		logger.info("Notifying " + subscribers.size()
-				+ " internal subscriber(s) sequentially (" + event.getClass().getSimpleName() + ")");
-		// LOGGING ->
-
-		// internal first
-		for (LaraAbstractEventSubscriber s : subscribers) {
-			if (s instanceof LaraInternalEventSubscriber) {
-				((LaraInternalEventSubscriber) s).onInternalEvent(event);
-			}
-		}
-
-		// <- LOGGING
-		logger.debug("Notified " + subscribers.size()
-				+ " internal subscribers sequentially (" + event.getClass().getSimpleName() + ")");
-		// LOGGING ->
-	}
-
-	/**
-	 * Notifies noninternal subscriber sequential. Subscribers will execute
-	 * their related code sequential. Method finishes after last subscriber
-	 * finishes.
-	 * 
-	 * @param subscribers
-	 * @param event
-	 */
-	private void notifyNoninternalSubscribersSequential(
-			Set<LaraAbstractEventSubscriber> subscribers, LaraEvent event) {
-		// <- LOGGING
-		logger.info("Notifying " + subscribers.size()
-				+ " noninternal subscribers sequentially (" + event.getClass().getSimpleName() + ")");
-		// LOGGING ->
-
-		for (LaraAbstractEventSubscriber s : subscribers) {
-			if (s instanceof LaraEventSubscriber) {
-				((LaraEventSubscriber) s).onEvent(event);
-			}
-		}
-
-		// <- LOGGING
-		logger.debug("Notified " + subscribers.size()
-				+ " noninternal subscribers sequentially (" + event.getClass().getSimpleName() + ")");
-		// LOGGING ->
-	}
-
-	/**
-	 * Notifies all subscribers at once. Subscribers will execute their related
-	 * code in parallel. Method will not wait for subscribers to finish. Method
-	 * will return immediately
-	 * 
-	 * @param subscribers
-	 * @param event
-	 */
-	private void notifySubscribersAsynchronous(
-			Set<LaraAbstractEventSubscriber> subscribers, final LaraEvent event) {
-		// <- LOGGING
-		logger.info("Notifying " + subscribers.size()
-				+ " subscribers assynchonously (" + event.getClass().getSimpleName() + ")");
-		// LOGGING ->
-
-		// internal first
-		for (final LaraAbstractEventSubscriber s : subscribers) {
-			if (s instanceof LaraInternalEventSubscriber) {
-				Thread workerThread = new Thread() {
-					@Override
-					public void run() {
-						((LaraInternalEventSubscriber) s)
-								.onInternalEvent(event);
-					}
-				};
-				workerThread.start();
-			}
-		}
-		for (final LaraAbstractEventSubscriber s : subscribers) {
-			if (s instanceof LaraEventSubscriber) {
-				Thread workerThread = new Thread() {
-					@Override
-					public void run() {
-						((LaraEventSubscriber) s).onEvent(event);
-					}
-				};
-				workerThread.start();
-			}
-		}
-
-		// <- LOGGING
-		logger.info("Notified " + subscribers.size()
-				+ " subscribers assynchonously (" + event.getClass().getSimpleName() + ")");
-		// LOGGING ->
-	}
-
-	/**
-	 * Notifies subscriber sequential. Subscribers will execute their related
-	 * code sequential. Method finishes after last subscriber finishes.
-	 * 
-	 * @param subscribers
-	 * @param event
-	 */
-	private void notifySubscribersSequential(
-			Set<LaraAbstractEventSubscriber> subscribers, LaraEvent event) {
-		// <- LOGGING
-		logger.info("Notifying " + subscribers.size()
-				+ " subscriber(s) sequentially ("
-				+ event.getClass().getSimpleName() + ")");
-		// LOGGING ->
-
-		// internal first
-		for (LaraAbstractEventSubscriber s : subscribers) {
-			if (s instanceof LaraInternalEventSubscriber) {
-				((LaraInternalEventSubscriber) s).onInternalEvent(event);
-			}
-		}
-		for (LaraAbstractEventSubscriber s : subscribers) {
-			if (s instanceof LaraEventSubscriber) {
-				((LaraEventSubscriber) s).onEvent(event);
-			}
-		}
-
-		// <- LOGGING
-		logger.info("Notified " + subscribers.size()
-				+ " subscriber(s) sequentially ("
-				+ event.getClass().getSimpleName() + ")");
-		// LOGGING ->
-	}
-
-	/**
-	 * Notifies all subscribers at once. Subscribers will execute their related
-	 * code in parallel. Method will wait until last subscriber finishes.
-	 * 
-	 * @param subscribers
-	 * @param event
-	 */
-	private void notifySubscribersSynchronous(
-			Set<LaraAbstractEventSubscriber> subscribers, final LaraEvent event) {
-		// TODO too much threads at once is highly ineffective. use
-		// taskgroups/max number of concurrent threads
-		// TODO make sure ALL internal subscribers are notified before ALL the
-		// others. Seems like this is the problem
-		// <- LOGGING
-		logger.info("Notifying " + subscribers.size()
-				+ " subscriber(s) synchronously (" + event.getClass().getSimpleName() + ")");
-		// LOGGING ->
-
-		// limit number of concurrent tasks by building workgroups
-		int numberOfCores = Runtime.getRuntime().availableProcessors();
-		// TODO SH
-		int numberOfWorkerGroups = numberOfCores * 4;
-		if (logger.isDebugEnabled()) {
-			logger.debug("Number of Worker Groups: " + numberOfWorkerGroups);
-		}
-		Map<Integer, Set<LaraAbstractEventSubscriber>> workerGroupSubscriberMap = new HashMap<Integer, Set<LaraAbstractEventSubscriber>>();
-
-		final Object monitor = new Object();
-		// required to check if monitor need to wait
-		int currentWorkGroup = 0;
-		for (final LaraAbstractEventSubscriber s : subscribers) {
-			Set<LaraAbstractEventSubscriber> subscriberGroup = workerGroupSubscriberMap
-					.get(currentWorkGroup);
-			if (subscriberGroup == null) {
-				subscriberGroup = new HashSet<LaraAbstractEventSubscriber>();
-				workerGroupSubscriberMap.put(currentWorkGroup, subscriberGroup);
-			}
-			subscriberGroup.add(s);
-			currentWorkGroup++;
-			if (currentWorkGroup > numberOfWorkerGroups) {
-				currentWorkGroup = 0;
-			}
-		}
-
-		// for every worker group start a new thread, that notifies all
-		// internal subscribers belonging to it sequentially
-		for (final Entry<Integer, Set<LaraAbstractEventSubscriber>> entry : workerGroupSubscriberMap
-				.entrySet()) {
-			Thread workerThread = new Thread() {
-				@Override
-				public void run() {
-					notifyInternalSubscribersSequential(entry.getValue(), event);
-					decrementWaitingCounter(event, monitor);
-				}
-			};
-			incrementWaitingCounter(event);
-			workerThread.start();
-		}
-		waitUntilWorkDone(monitor);
-
-		// for every worker group start a new thread, that notifies all
-		// noninternal subscribers belonging to it sequentially
-		for (final Entry<Integer, Set<LaraAbstractEventSubscriber>> entry : workerGroupSubscriberMap
-				.entrySet()) {
-			Thread workerThread = new Thread() {
-				@Override
-				public void run() {
-					notifyNoninternalSubscribersSequential(entry.getValue(),
-							event);
-					decrementWaitingCounter(event, monitor);
-				}
-			};
-			incrementWaitingCounter(event);
-			workerThread.start();
-		}
-		waitUntilWorkDone(monitor);
-
-		// <- LOGGING
-		logger.info("Notified " + subscribers.size()
-				+ " subscribers synchronously (" + event.getClass().getSimpleName() + ")");
-		// LOGGING ->
-	}
-
-	/**
 	 * Wait for worker threads to finish. The last thread that finishes will
 	 * notify the monitor.
 	 * 
 	 * @param monitor
 	 */
-	private void waitUntilWorkDone(Object monitor) {
-		synchronized (monitor) {
+	private void waitUntilWorkDone(final LaraEvent event) {
+		synchronized (event) {
 			try {
-				logger.debug("waiting for worker threads to finish");
-				monitor.wait();
-				logger.debug("all worker threads finished");
-			} catch (InterruptedException e) {
-				logger.error("waiting for worker threads to finished failed", e);
-			}
-		}
-	}
+				logger.debug("waiting for worker threads to finish for event "
+						+ event.getClass().getSimpleName());
+				Thread infothread = new Thread(new Runnable() {
 
-	/**
-	 * TODO search for subscribers to super classes! (Custom PP component
-	 * implementations could publish sub classes of PP-event that other
-	 * components need to recognise)
-	 * 
-	 * @param event
-	 */
-	protected void notifySubscribers(LaraEvent event) {
-		// notify all subscribers
-		if (eventSubscriberMap.containsKey(event.getClass())) {
-			// get subscribers set
-			Set<LaraAbstractEventSubscriber> subscribers = eventSubscriberMap
-					.get(event.getClass());
-
-			logSubscribers(subscribers, event);
-
-			logger.debug("Notifying " + subscribers.size()
-					+ " subscriber(s) of event of type "
-					+ event.getClass().getSimpleName());
-			// notify subscriber according to event type
-
-			if (event instanceof LaraSynchronousEvent) {
-				if (this.forceSequential) {
-					notifySubscribersSequential(subscribers, event);
+					@Override
+					public void run() {
+						while (getWaitingCounter(event) != null) {
+							try {
+								Thread.sleep(1000);
+							} catch (InterruptedException e) {
+							}
+							logger.info("Waiting counter for event "
+									+ event.getClass().getSimpleName()
+									+ ": "
+									+ getWaitingCounter(event)
+									+ " Threads in current thread's thread-group: "
+									+ Thread.activeCount());
+						}
+					}
+				});
+				infothread.start();
+				if (getWaitingCounter(event) != null) {
+					if (getWaitingCounter(event) > 0) {
+						event.wait();
+					} else {
+						// logger.info("not waiting for event " +
+						// event.getClass().getSimpleName() +
+						// " because nothing to wait for");
+					}
 				} else {
-					notifySubscribersSynchronous(subscribers, event);
+					// logger.info("not waiting for event " +
+					// event.getClass().getSimpleName() +
+					// " because nothing to wait for");
 				}
-			} else if (event instanceof LaraAsynchronousEvent) {
-				notifySubscribersAsynchronous(subscribers, event);
-			} else {
-				notifySubscribersSequential(subscribers, event);
+				infothread.stop();
+				logger.debug("All worker threads finished for event "
+						+ event.getClass().getSimpleName());
+			} catch (InterruptedException e) {
+				logger.error(
+						"Waiting for worker threads to finished failed for event "
+								+ event.getClass().getSimpleName(), e);
 			}
-		} else {
-			// no subscribers - log this
-			logger.warn("Event of type "
-					+ event.getClass().getSimpleName()
-					+ " published, but has no subscribers. Maybe you should check if this was intended.");
 		}
-		// if event has consecutive event fire this
-		if (event instanceof LaraHasConsecutiveEvent) {
-			publish(((LaraHasConsecutiveEvent) event).getConsecutiveEvent());
-		}
-	}
-
-	/**
-	 * @return the forceSequential
-	 */
-	public boolean isForceSequential() {
-		return forceSequential;
-	}
-
-	/**
-	 * @param forceSequential
-	 *            the forceSequential to set
-	 */
-	public void setForceSequential(boolean forceSequential) {
-		this.forceSequential = forceSequential;
 	}
 
 }

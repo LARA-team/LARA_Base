@@ -33,7 +33,7 @@ import de.cesr.lara.components.eventbus.events.LAgentExecutionEvent;
 import de.cesr.lara.components.eventbus.events.LAgentPerceptionEvent;
 import de.cesr.lara.components.eventbus.events.LAgentPostprocessEvent;
 import de.cesr.lara.components.eventbus.events.LAgentPreprocessEvent;
-import de.cesr.lara.components.eventbus.events.LModelInitializedEvent;
+import de.cesr.lara.components.eventbus.events.LInternalModelInitializedEvent;
 import de.cesr.lara.components.eventbus.events.LModelInstantiatedEvent;
 import de.cesr.lara.components.eventbus.events.LModelStepEvent;
 import de.cesr.lara.components.eventbus.events.LaraEvent;
@@ -156,7 +156,7 @@ public abstract class LAbstractModel implements LaraModel,
 		if (event instanceof LModelInstantiatedEvent) {
 			init();
 			// TODO modeler's duty...!
-			eventBus.publish(new LModelInitializedEvent());
+			eventBus.publish(new LInternalModelInitializedEvent());
 			
 		} else if (event instanceof LModelStepEvent) {
 			step();

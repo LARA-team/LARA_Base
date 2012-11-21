@@ -24,12 +24,11 @@ package de.cesr.lara.components.eventbus.events;
  * components. Fired after ModelInstantiatedEvent (which signals Model
  * existance).
  */
-public class LModelInitializedEvent implements LaraSynchronousEvent,
+public class LInternalModelInitializedEvent implements LaraSynchronousEvent,
 		LaraRequiresPrecedingEvent {
 
 	@Override
 	public Class<? extends LaraEvent> getRequiredPrecedingEventClass() {
 		return LModelInstantiatedEvent.class;
 	}
-
 }

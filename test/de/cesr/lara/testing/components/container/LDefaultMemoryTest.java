@@ -239,11 +239,11 @@ public class LDefaultMemoryTest {
 		}
 
 		logger.info("step " + LModel.getModel().getCurrentStep());
-		assertTrue(
+		assertEquals(
 				"in step "
 						+ (CUSTOM_RETENTION + 1)
 						+ " properties memorised in step 1 shall be forgotten (12 - 6 = 6)",
-				memory.getSize() == 6);
+				6, memory.getSize());
 
 		LEventbus.getInstance().publish(new LModelStepEvent());
 
@@ -375,6 +375,24 @@ public class LDefaultMemoryTest {
 			fail("This should have raised an exception.");
 		} catch (LInvalidTimestampException litse) {
 		}
+	}
+
+	@Test
+	public void testMemorizeAnew() {
+		memory.memorize(new LTestProperty("key01", "value01"), 2);
+		memory.memorize(new LTestProperty("key01", "value02"), 2);
+
+		LEventbus.getInstance().publish(new LModelStepEvent());
+		memory.recall("key01");
+		memory.memorize(new LTestProperty("key02", "value01"), 2);
+
+		LEventbus.getInstance().publish(new LModelStepEvent());
+		memory.recall("key02");
+		memory.memorize(new LTestProperty("key03", "value01"), 2);
+
+		LEventbus.getInstance().publish(new LModelStepEvent());
+		memory.recall("key03");
+
 	}
 
 	/**

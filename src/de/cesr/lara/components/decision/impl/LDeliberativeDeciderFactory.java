@@ -139,6 +139,8 @@ public class LDeliberativeDeciderFactory<A extends LaraAgent<? super A, BO>, BO 
 			logger.warn(agent.getAgentId() + "> Decision process for "
 					+ dConfiguration.getId()
 					+ " cancelled because of empty set of BOs");
+			// TODO
+
 			return null;
 		}
 	}
