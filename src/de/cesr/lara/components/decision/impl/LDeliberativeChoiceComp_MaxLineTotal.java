@@ -19,6 +19,7 @@
  */
 package de.cesr.lara.components.decision.impl;
 
+
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -35,22 +36,23 @@ import de.cesr.lara.components.decision.LaraDecisionConfiguration;
 import de.cesr.lara.components.decision.LaraDeliberativeChoiceComponent;
 import de.cesr.lara.components.util.logging.impl.Log4jLogger;
 
+
 /**
  * Selects the behavioural option with maximal line total.
  * 
- * Tie Rule: In case there are more than one BOs with the highest score, the one
- * with highest row number is returned.
+ * Tie Rule: In case there are more than one BOs with the highest score, the one with highest row number is returned.
  */
-public class LDeliberativeChoiceComp_MaxLineTotal implements
+public class LDeliberativeChoiceComp_MaxLineTotal
+		implements
 		LaraDeliberativeChoiceComponent {
 
 	/**
 	 * Logger
 	 */
-	static private Logger logger = Log4jLogger
-			.getLogger(LDeliberativeChoiceComp_MaxLineTotal.class);
+	static private Logger						logger		= Log4jLogger
+																	.getLogger(LDeliberativeChoiceComp_MaxLineTotal.class);
 
-	static LDeliberativeChoiceComp_MaxLineTotal instance = null;
+	static LDeliberativeChoiceComp_MaxLineTotal	instance	= null;
 
 	/**
 	 * @return LDeliberativeChoiceComp_MaxLineTotal (singleton)
@@ -71,28 +73,30 @@ public class LDeliberativeChoiceComp_MaxLineTotal implements
 	/**
 	 * Return the k BOs with the highest sum of preference fulfillment.
 	 * 
-	 * Tie Rule: In case there are more than one BOs with the highest score, the
-	 * one with highest row number (i.e. BO's compareTo yields a higher value)
-	 * is returned.
+	 * Tie Rule: In case there are more than one BOs with the highest score, the one with highest row number (i.e. BO's
+	 * compareTo yields a higher value) is returned.
 	 * 
 	 * @see de.cesr.lara.components.decision.LaraDeliberativeChoiceComponent#
-	 *      getKSelectedBos(de.cesr.lara.components.decision.LaraDecisionConfiguration,
-	 *      java.util.Collection, int)
+	 *      getKSelectedBos(de.cesr.lara.components.decision.LaraDecisionConfiguration, java.util.Collection, int)
 	 */
 	@Override
 	public <BO extends LaraBehaviouralOption<?, ? extends BO>> Set<? extends BO> getKSelectedBos(
 			LaraDecisionConfiguration dConfiguration,
-			Collection<LaraBoRow<BO>> boRows, int k) {
-		if (k > boRows.size()) {
+			Collection<LaraBoRow<BO>> boRows,
+			int k) {
+		if (k > boRows
+				.size()) {
 			throw new IllegalArgumentException(
 					"The number of rows in the laraBoRows is below the number of requested behavioural options");
 		}
 
 		Set<BO> bos = new HashSet<BO>();
 
-		if (k == boRows.size()) {
+		if (k == boRows
+				.size()) {
 			for (LaraBoRow<BO> row : boRows) {
-				bos.add(row.getBehaviouralOption());
+				bos.add(row
+						.getBehaviouralOption());
 			}
 			return bos;
 		}
@@ -100,26 +104,40 @@ public class LDeliberativeChoiceComp_MaxLineTotal implements
 		SortedSet<LaraBoRow<BO>> sortedRows = new TreeSet<LaraBoRow<BO>>(
 				new Comparator<LaraBoRow<BO>>() {
 					@Override
-					public int compare(LaraBoRow<BO> row1, LaraBoRow<BO> row2) {
+					public int compare(
+							LaraBoRow<BO> row1,
+							LaraBoRow<BO> row2) {
 						// parameters in Double.compare are exchanged since we
 						// want decreasing order
-						return Double.compare(row2.getSum(), row1.getSum()) != 0 ? Double
-								.compare(row2.getSum(), row1.getSum()) : row2
-								.getBehaviouralOption().compareTo(
-										row1.getBehaviouralOption());
+						return Double
+								.compare(
+										row2.getSum(),
+										row1.getSum()) != 0 ? Double
+								.compare(
+										row2.getSum(),
+										row1.getSum())
+								: row2.getBehaviouralOption()
+										.compareTo(
+												row1.getBehaviouralOption());
 					}
 				});
-		sortedRows.addAll(boRows);
+		sortedRows
+				.addAll(boRows);
 
 		// <- LOGGING
-		if (logger.isDebugEnabled()) {
-			logger.debug("Sorted rows: " + sortedRows);
+		if (logger
+				.isDebugEnabled()) {
+			logger.debug("Sorted rows: "
+					+ sortedRows);
 		}
 		// LOGGING ->
 
-		Iterator<LaraBoRow<BO>> iterator = sortedRows.iterator();
+		Iterator<LaraBoRow<BO>> iterator = sortedRows
+				.iterator();
 		for (int i = 0; i < k; i++) {
-			bos.add(iterator.next().getBehaviouralOption());
+			bos.add(iterator
+					.next()
+					.getBehaviouralOption());
 		}
 		return bos;
 	}
@@ -127,8 +145,8 @@ public class LDeliberativeChoiceComp_MaxLineTotal implements
 	/**
 	 * Return the BO with the highest sum of preference fulfillment.
 	 * 
-	 * Tie Rule: In case there are more than one BOs with the highest score, the
-	 * one with highest row number is returned.
+	 * Tie Rule: In case there are more than one BOs with the highest score, the one with highest row number is
+	 * returned.
 	 * 
 	 * @see de.cesr.lara.components.decision.LaraDeliberativeChoiceComponent#getSelectedBo(de.cesr.lara.components.decision.LaraDecisionConfiguration,
 	 *      java.util.Collection)
@@ -141,7 +159,8 @@ public class LDeliberativeChoiceComp_MaxLineTotal implements
 		logger.info("Determine selected BO...");
 		// LOGGING ->
 
-		if (boRows.size() == 0) {
+		if (boRows
+				.size() == 0) {
 			logger.error("The number of BOs passed to LDeliberativeChoiceComp_MaxLineTotal was 0!");
 		}
 
@@ -158,10 +177,14 @@ public class LDeliberativeChoiceComp_MaxLineTotal implements
 			}
 			// <- LOGGING
 			logger.info("Score for "
-					+ r.getBehaviouralOption().getClass().getSimpleName()
-					+ ": " + rSum);
+					+ r.getBehaviouralOption()
+							.getClass()
+							.getSimpleName()
+					+ ": "
+					+ rSum);
 			// LOGGING ->
 		}
-		return bestRow.getBehaviouralOption();
+		return bestRow
+				.getBehaviouralOption();
 	}
 }

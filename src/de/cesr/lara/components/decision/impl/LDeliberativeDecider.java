@@ -176,23 +176,6 @@ public class LDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? extends 
 	 ******************************************************************************/
 
 	/**
-	 * This method delegates to the deliberative choice component since bos may
-	 * not be stored in this class because k is not finitely defined.
-	 * 
-	 * @see de.cesr.lara.components.decision.LaraDecider#getKSelectedBos(int)
-	 */
-	@Override
-	public Set<? extends BO> getKSelectedBos(int k) {
-		if ((k != Integer.MAX_VALUE) && (k > getNumSelectableBOs())) {
-			throw new IllegalStateException("The number of requested BOs (" + k
-					+ ") is larger than the number of available BOs"
-					+ getNumSelectableBOs() + ")!");
-		}
-		return getDeliberativeChoiceComp().getKSelectedBos(dConfiguration,
-				situationalUtilityMatrixRows, k);
-	}
-
-	/**
 	 * @see de.cesr.lara.components.decision.LaraDeliberativeDecider#getNumSelectableBOs()
 	 */
 	@Override
@@ -225,8 +208,35 @@ public class LDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? extends 
 	 */
 	@Override
 	public BO getSelectedBo() {
-		return getDeliberativeChoiceComp().getSelectedBo(dConfiguration,
-				situationalUtilityMatrixRows);
+		if (selectedBo == null) {
+			// <- LOGGING
+			logger.error((selectableBOs.size() > 0 ? selectableBOs.iterator()
+					.next().getAgent() : "")
+					+ "decide() has not been called for decision '"
+					+ dConfiguration.getId() + "'");
+			// LOGGING ->
+		}
+		return selectedBo;
+	}
+
+	/**
+	 * This method delegates to the deliberative choice component since bos may
+	 * not be stored in this class because k is not finitely defined.
+	 * 
+	 * NOTE: It can not be guaranteed that several calls of this method yields
+	 * identical sets of BOs!
+	 * 
+	 * @see de.cesr.lara.components.decision.LaraDecider#getKSelectedBos(int)
+	 */
+	@Override
+	public Set<? extends BO> getKSelectedBos(int k) {
+		if ((k != Integer.MAX_VALUE) && (k > getNumSelectableBOs())) {
+			throw new IllegalStateException("The number of requested BOs (" + k
+					+ ") is larger than the number of available BOs"
+					+ getNumSelectableBOs() + ")!");
+		}
+		return getDeliberativeChoiceComp().getKSelectedBos(dConfiguration,
+				situationalUtilityMatrixRows, k);
 	}
 
 	/**
@@ -260,6 +270,7 @@ public class LDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? extends 
 	@Override
 	public void setSelectableBos(Collection<BO> behaviouralOptions) {
 		this.selectableBOs = behaviouralOptions;
+
 		// <- LOGGING
 		logger.info(behaviouralOptions != null ? "Received "
 				+ behaviouralOptions.size() + " behavioural options"

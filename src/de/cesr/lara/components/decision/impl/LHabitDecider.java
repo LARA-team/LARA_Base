@@ -68,6 +68,13 @@ public class LHabitDecider<A extends LaraAgent<A, BO>, BO extends LaraBehavioura
 	// BO
 	@Override
 	public void decide() {
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			logger.debug(agent + ">> Memory: "
+					+ agent.getLaraComp().getGeneralMemory().toString());
+		}
+		// LOGGING ->
+
 		if (agent.getLaraComp().getGeneralMemory()
 				.contains(dConfiguration.getId())) {
 			bo = (BO) agent.getLaraComp().getGeneralMemory()
@@ -87,6 +94,7 @@ public class LHabitDecider<A extends LaraAgent<A, BO>, BO extends LaraBehavioura
 	@Override
 	public Set<BO> getKSelectedBos(int k) {
 		Set<BO> bos = new HashSet<BO>(1);
+		bos.add(bo);
 		return bos;
 	}
 
