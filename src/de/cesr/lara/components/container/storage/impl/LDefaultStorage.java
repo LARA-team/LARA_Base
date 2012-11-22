@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
@@ -401,7 +402,8 @@ public class LDefaultStorage<PropertyType extends LaraProperty<? extends Propert
 	 */
 	@Override
 	public Iterator<PropertyType> iterator() {
-		Collection<PropertyType> properties = new HashSet<PropertyType>(size);
+		Collection<PropertyType> properties = new LinkedHashSet<PropertyType>(
+				size);
 		for (Map<String, PropertyType> map : stepwise.values()) {
 			for (PropertyType property : map.values()) {
 				properties.add(property);

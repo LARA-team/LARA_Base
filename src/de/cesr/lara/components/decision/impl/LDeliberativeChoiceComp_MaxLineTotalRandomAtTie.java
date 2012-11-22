@@ -47,7 +47,9 @@ import de.cesr.lara.components.util.logging.impl.Log4jLogger;
 /**
  * Tie Rule: In case there are more than one BOs with the highest score, a random one is chosen among these.
  */
-public class LDeliberativeChoiceComp_MaxLineTotalRandomAtTie implements LaraDeliberativeChoiceComponent {
+public class LDeliberativeChoiceComp_MaxLineTotalRandomAtTie
+		implements
+		LaraDeliberativeChoiceComponent {
 
 	/**
 	 * Logger
@@ -63,14 +65,20 @@ public class LDeliberativeChoiceComp_MaxLineTotalRandomAtTie implements LaraDeli
 	 * @param distribution
 	 * @return
 	 */
-	static public LDeliberativeChoiceComp_MaxLineTotalRandomAtTie getInstance(String distribution) {
+	static public LDeliberativeChoiceComp_MaxLineTotalRandomAtTie getInstance(
+			String distribution) {
 		if (distribution == null) {
 			distribution = LaraRandom.UNIFORM_DEFAULT;
 		}
-		if (instances.get(distribution) == null) {
-			instances.put(distribution, new LDeliberativeChoiceComp_MaxLineTotalRandomAtTie(distribution));
+		if (instances
+				.get(distribution) == null) {
+			instances
+					.put(distribution,
+							new LDeliberativeChoiceComp_MaxLineTotalRandomAtTie(
+									distribution));
 		}
-		return instances.get(distribution);
+		return instances
+				.get(distribution);
 	}
 
 	protected AbstractDistribution	rand;
@@ -81,11 +89,17 @@ public class LDeliberativeChoiceComp_MaxLineTotalRandomAtTie implements LaraDeli
 	 * @param distribution
 	 *        the distribution name to draw random numbers from
 	 */
-	private LDeliberativeChoiceComp_MaxLineTotalRandomAtTie(String distribution) {
-		this.rand = LModel.getModel().getLRandom().getDistribution(distribution);
+	private LDeliberativeChoiceComp_MaxLineTotalRandomAtTie(
+			String distribution) {
+		this.rand = LModel
+				.getModel()
+				.getLRandom()
+				.getDistribution(
+						distribution);
 		if (!(rand instanceof Uniform)) {
 			logger.error("The given random stream name does not belong to a Uniform distribution!");
-			throw new IllegalArgumentException("The given random stream name does not belong to a Uniform distribution!");
+			throw new IllegalArgumentException(
+					"The given random stream name does not belong to a Uniform distribution!");
 		}
 	}
 
@@ -102,48 +116,81 @@ public class LDeliberativeChoiceComp_MaxLineTotalRandomAtTie implements LaraDeli
 	 */
 	@Override
 	public <BO extends LaraBehaviouralOption<?, ? extends BO>> Set<? extends BO> getKSelectedBos(
-			LaraDecisionConfiguration dConfiguration, Collection<LaraBoRow<BO>> boRows, int k) {
+			LaraDecisionConfiguration dConfiguration,
+			Collection<LaraBoRow<BO>> boRows,
+			int k) {
 		// <- LOGGING
-		if (logger.isDebugEnabled()) {
+		if (logger
+				.isDebugEnabled()) {
 			for (LaraBoRow<BO> row : boRows) {
-				logger.debug("\t\t row: " + row.getBehaviouralOption().getKey());
+				logger.debug("\t\t row: "
+						+ row.getBehaviouralOption()
+								.getKey());
 			}
 		}
 		// LOGGING ->
 
-		if (k > boRows.size()) {
+		if (k > boRows
+				.size()) {
 			// <- LOGGING
-			if (logger.isDebugEnabled()) {
-				logger.debug("k (" + k + ") greater thant number of rows: " + boRows.size());
+			if (logger
+					.isDebugEnabled()) {
+				logger.debug("k ("
+						+ k
+						+ ") greater thant number of rows: "
+						+ boRows.size());
 				// LOGGING ->
 			}
 
-			throw new IllegalArgumentException("The number of rows in the laraBoRows is below the number of requested BOs");
+			throw new IllegalArgumentException(
+					"The number of rows in the laraBoRows is below the number of requested BOs");
 		}
 
 		Set<BO> bos = new TreeSet<BO>();
 
 		// add rows to a sorted set:
-		SortedSet<LaraBoRow<BO>> rows = new TreeSet<LaraBoRow<BO>>(new Comparator<LaraBoRow<BO>>() {
-			@Override
-			public int compare(LaraBoRow<BO> row1, LaraBoRow<BO> row2) {
-				return Double.compare(row2.getSum(), row1.getSum()) != 0 ? Double.compare(row2.getSum(), row1.getSum()) :
-				// same sum: compare according to key names:
-						row2.getBehaviouralOption().compareTo(row1.getBehaviouralOption());
-			}
-		});
+		SortedSet<LaraBoRow<BO>> rows = new TreeSet<LaraBoRow<BO>>(
+				new Comparator<LaraBoRow<BO>>() {
+					@Override
+					public int compare(
+							LaraBoRow<BO> row1,
+							LaraBoRow<BO> row2) {
+						return Double
+								.compare(
+										row2.getSum(),
+										row1.getSum()) != 0 ? Double
+								.compare(
+										row2.getSum(),
+										row1.getSum())
+								:
+								// same sum: compare according to key names:
+								row2.getBehaviouralOption()
+										.compareTo(
+												row1.getBehaviouralOption());
+					}
+				});
 		rows.addAll(boRows);
 
-		if (k == boRows.size()) {
+		if (k == boRows
+				.size()) {
 			for (LaraBoRow<BO> row : rows) {
-				bos.add(row.getBehaviouralOption());
+				bos.add(row
+						.getBehaviouralOption());
 			}
 
 			// <- LOGGING
-			if (logger.isDebugEnabled()) {
-				logger.debug("k: " + k + " / number of available rows: " + rows.size() + " rows: " + rows);
+			if (logger
+					.isDebugEnabled()) {
+				logger.debug("k: "
+						+ k
+						+ " / number of available rows: "
+						+ rows.size()
+						+ " rows: "
+						+ rows);
 				for (LaraBoRow<BO> row : rows) {
-					logger.debug("\t\t row: " + row.getBehaviouralOption().getKey());
+					logger.debug("\t\t row: "
+							+ row.getBehaviouralOption()
+									.getKey());
 				}
 			}
 			// LOGGING ->
@@ -151,27 +198,41 @@ public class LDeliberativeChoiceComp_MaxLineTotalRandomAtTie implements LaraDeli
 			return bos;
 		}
 
-		assert (k < boRows.size());
+		assert (k < boRows
+				.size());
 
 		@SuppressWarnings("unchecked")
 		// rows only consist of LaraBoRow<BO>s!
-		LaraBoRow<BO>[] arrayRows = new LaraBoRow[rows.size()];
+		LaraBoRow<BO>[] arrayRows = new LaraBoRow[rows
+				.size()];
 		// arrayRows = sorted BOs in ascending order:
-		arrayRows = rows.toArray(arrayRows);
+		arrayRows = rows
+				.toArray(arrayRows);
 
 		// <- LOGGING
-		if (logger.isDebugEnabled()) {
-			logger.debug("k: " + k + " / number of available rows: " + rows.size() + " rows: " + rows + " array size: "
+		if (logger
+				.isDebugEnabled()) {
+			logger.debug("k: "
+					+ k
+					+ " / number of available rows: "
+					+ rows.size()
+					+ " rows: "
+					+ rows
+					+ " array size: "
 					+ arrayRows.length);
 			for (LaraBoRow<BO> row : rows) {
-				logger.debug("\t\t row: " + row.getBehaviouralOption().getKey());
+				logger.debug("\t\t row: "
+						+ row.getBehaviouralOption()
+								.getKey());
 			}
 		}
 		// LOGGING ->
 
 		// check whether the a row outside the requested range has same sum than
 		// the last row inside the range:
-		if (arrayRows[k - 1].getSum() == arrayRows[k].getSum()) {
+		if (arrayRows[k - 1]
+				.getSum() == arrayRows[k]
+				.getSum()) {
 			// the last row in selected range is equal to the first row outside
 			// the selected range
 
@@ -180,8 +241,11 @@ public class LDeliberativeChoiceComp_MaxLineTotalRandomAtTie implements LaraDeli
 			int numSameSum = 0;
 			int numWithinRange = 0;
 			List<LaraBoRow<BO>> bestBos = new ArrayList<LaraBoRow<BO>>();
-			for (int i = 0; i < rows.size(); i++) {
-				if (arrayRows[i].getSum() == arrayRows[k - 1].getSum()) {
+			for (int i = 0; i < rows
+					.size(); i++) {
+				if (arrayRows[i]
+						.getSum() == arrayRows[k - 1]
+						.getSum()) {
 					bestBos.add(arrayRows[i]);
 					numSameSum++;
 					// check whether there are more rows with best sum than k
@@ -194,7 +258,8 @@ public class LDeliberativeChoiceComp_MaxLineTotalRandomAtTie implements LaraDeli
 			// add behavioural options within range that have different sum
 			// (i.e. higher sum):
 			for (int i = 0; i < (k - numWithinRange); i++) {
-				bos.add(arrayRows[i].getBehaviouralOption());
+				bos.add(arrayRows[i]
+						.getBehaviouralOption());
 			}
 
 			assert numWithinRange <= numSameSum;
@@ -202,25 +267,39 @@ public class LDeliberativeChoiceComp_MaxLineTotalRandomAtTie implements LaraDeli
 			// add remaining BOs from all BOs with same sum:
 			for (int i = 0; i < numWithinRange; i++) {
 				// -i because the size of bestBos decreases!
-				int random = ((Uniform) rand).nextIntFromTo(0, numSameSum - i - 1);
-				bos.add(bestBos.get(random).getBehaviouralOption());
+				int random = ((Uniform) rand)
+						.nextIntFromTo(
+								0,
+								numSameSum
+										- i
+										- 1);
+				bos.add(bestBos
+						.get(random)
+						.getBehaviouralOption());
 
 				// <- LOGGING
-				if (logger.isDebugEnabled()) {
-					logger.debug("random: " + random);
+				if (logger
+						.isDebugEnabled()) {
+					logger.debug("random: "
+							+ random);
 				}
 				// LOGGING ->
 
 				bestBos.remove(random);
 			}
 			// <- LOGGING
-			if (logger.isDebugEnabled()) {
-				logger.debug("number of bos: " + bos.size() + " bos: " + bos);
+			if (logger
+					.isDebugEnabled()) {
+				logger.debug("number of bos: "
+						+ bos.size()
+						+ " bos: "
+						+ bos);
 			}
 			// LOGGING ->
 		} else {
 			for (int i = 0; i < k; i++) {
-				bos.add(arrayRows[i].getBehaviouralOption());
+				bos.add(arrayRows[i]
+						.getBehaviouralOption());
 			}
 		}
 		return bos;
@@ -234,33 +313,42 @@ public class LDeliberativeChoiceComp_MaxLineTotalRandomAtTie implements LaraDeli
 	 * @see de.cesr.lara.components.decision.LaraDeliberativeChoiceComponent#getBestBehaviouralOption(de.cesr.lara.components.decision.LaraUtilityMatrix)
 	 */
 	@Override
-	public <BO extends LaraBehaviouralOption<?, ? extends BO>> BO getSelectedBo(LaraDecisionConfiguration dConfiguration,
+	public <BO extends LaraBehaviouralOption<?, ? extends BO>> BO getSelectedBo(
+			LaraDecisionConfiguration dConfiguration,
 			Collection<LaraBoRow<BO>> boRows) {
 		// <- LOGGING
 		logger.info("getBestBehaviouralOption()");
 		// LOGGING ->
 
-		if (boRows.size() == 0) {
-			throw new IllegalStateException("The laraBoRows does not contain any row to choose from!");
+		if (boRows
+				.size() == 0) {
+			throw new IllegalStateException(
+					"The laraBoRows does not contain any row to choose from!");
 
 		} else {
 			List<LaraBoRow<BO>> bestBos = new ArrayList<LaraBoRow<BO>>();
 			double bestSum = Float.NEGATIVE_INFINITY;
 			double rSum = 0;
 			for (LaraBoRow<BO> r : boRows) {
-				
+
 				// <- LOGGING
-				if (logger.isDebugEnabled()) {
-					logger.debug("Row-sum: " + r.getSum());
+				if (logger
+						.isDebugEnabled()) {
+					logger.debug("Row-sum: "
+							+ r.getSum());
 				}
 				// LOGGING ->
-				
-				if (Double.isNaN(r.getSum())) {
+
+				if (Double
+						.isNaN(r.getSum())) {
 					// <- LOGGING
-					logger.error("BoRow sum is NaN for BO " + r.getBehaviouralOption());
+					logger.error("BoRow sum is NaN for BO "
+							+ r.getBehaviouralOption());
 					// LOGGING ->
-					
-					throw new IllegalStateException("BoRow sum is NaN for BO " + r.getBehaviouralOption());
+
+					throw new IllegalStateException(
+							"BoRow sum is NaN for BO "
+									+ r.getBehaviouralOption());
 				}
 
 				rSum = r.getSum();
@@ -274,24 +362,41 @@ public class LDeliberativeChoiceComp_MaxLineTotalRandomAtTie implements LaraDeli
 					}
 				}
 				// <- LOGGING
-				if (logger.isEnabledFor(Priority.INFO)) {
-					logger.info("Score for " + r.getBehaviouralOption().getClass().getSimpleName() + ": " + rSum);
+				if (logger
+						.isEnabledFor(Priority.INFO)) {
+					logger.info("Score for "
+							+ r.getBehaviouralOption()
+									.getClass()
+									.getSimpleName()
+							+ ": "
+							+ rSum);
 				}
 				// LOGGING ->
 			}
 
-			if (bestBos.size() == 1) {
+			if (bestBos
+					.size() == 1) {
 				// <- LOGGING
 				logger.info("There is one BO with highest score.");
 				// LOGGING ->
 
-				return bestBos.get(0).getBehaviouralOption();
+				return bestBos
+						.get(0)
+						.getBehaviouralOption();
 			} else {
 				// <- LOGGING
-				logger.info("There are " + bestBos.size() + " BOs with highest score.");
+				logger.info("There are "
+						+ bestBos
+								.size()
+						+ " BOs with highest score.");
 				// LOGGING ->
 
-				return bestBos.get(((Uniform) rand).nextIntFromTo(0, bestBos.size() - 1)).getBehaviouralOption();
+				return bestBos
+						.get(((Uniform) rand)
+								.nextIntFromTo(
+										0,
+										bestBos.size() - 1))
+						.getBehaviouralOption();
 			}
 		}
 	}

@@ -108,6 +108,12 @@ public class LDefaultDecisionModeSelector<A extends LaraAgent<A, BO>, BO extends
 					.recall(LSelectedBoProperty.class, dConfig.getId())
 					.getValue();
 
+			// <- LOGGING
+			if (logger.isDebugEnabled()) {
+				logger.debug(agent + ">> Last BO: " + bo);
+			}
+			// LOGGING ->
+
 			// start from the past...
 			for (int i = habitTH; i >= 1; i--) {
 				try {
@@ -135,7 +141,8 @@ public class LDefaultDecisionModeSelector<A extends LaraAgent<A, BO>, BO extends
 
 		// <- LOGGING
 		if (logger.isDebugEnabled()) {
-			logger.debug("Time step: " + currStep + " | habitTH: " + habitTH
+			logger.debug(agent + ">> Time step: " + currStep + " | habitTH: "
+					+ habitTH
 					+ " | deliberative? " + useDeliberative);
 		}
 		// LOGGING ->

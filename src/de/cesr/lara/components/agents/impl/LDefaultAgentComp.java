@@ -39,7 +39,7 @@ import de.cesr.lara.components.decision.LaraDecider;
 import de.cesr.lara.components.decision.LaraDecisionConfiguration;
 import de.cesr.lara.components.decision.LaraDecisionData;
 import de.cesr.lara.components.decision.LaraDeliberativeChoiceComponent;
-import de.cesr.lara.components.decision.impl.LDeliberativeChoiceComp_MaxLineTotal;
+import de.cesr.lara.components.decision.impl.LDeliberativeChoiceComp_MaxLineTotalRandomAtTie;
 import de.cesr.lara.components.environment.LaraEnvironment;
 import de.cesr.lara.components.environment.impl.LAbstractEnvironmentalProperty;
 import de.cesr.lara.components.eventbus.events.LAgentDecideEvent;
@@ -82,7 +82,8 @@ public class LDefaultAgentComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 	static {
 		defaultDeliberativeChoiceComponents = new HashMap<LaraDecisionConfiguration, LaraDeliberativeChoiceComponent>();
 		defaultDeliberativeChoiceComponents.put(null,
-				LDeliberativeChoiceComp_MaxLineTotal.getInstance());
+						LDeliberativeChoiceComp_MaxLineTotalRandomAtTie
+								.getInstance(null));
 	}
 
 	static public LaraDeliberativeChoiceComponent getDefaultDeliberativeChoiceComp(
