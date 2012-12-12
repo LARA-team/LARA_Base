@@ -37,7 +37,9 @@ public enum LBasicPa implements PmParameterDefinition {
 	 */
 	EVENTBUS_FORCE_SEQUENTIAL(Boolean.class, Boolean.FALSE),
 
-	LOG_PATH(String.class, "./log");
+	LOG_PATH(
+			String.class,
+			(Object) null);
 
 	private Class<?> type;
 	private Object defaultValue;

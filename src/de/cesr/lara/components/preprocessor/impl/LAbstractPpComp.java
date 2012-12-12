@@ -108,4 +108,16 @@ public abstract class LAbstractPpComp<A extends LaraAgent<? super A, ?>, BO exte
 			logger.debug(buffer);
 		}
 	}
+
+	/**
+	 * Omits returning the memory address that causes troubles when comparing logfiles.
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return this
+				.getClass()
+				.getName();
+	}
 }

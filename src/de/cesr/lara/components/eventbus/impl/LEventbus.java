@@ -22,6 +22,7 @@ package de.cesr.lara.components.eventbus.impl;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -603,7 +604,7 @@ public class LEventbus {
 			subscribers.add(subscriber);
 		} else {
 			// add to new set
-			Set<LaraAbstractEventSubscriber> subscribers = new HashSet<LaraAbstractEventSubscriber>();
+			Set<LaraAbstractEventSubscriber> subscribers = new LinkedHashSet<LaraAbstractEventSubscriber>();
 			subscribers.add(subscriber);
 			// add to event-subscriber mapping
 			eventSubscriberMap.put(eventClass, subscribers);
