@@ -480,4 +480,17 @@ public class LDefaultAgentComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 		this.preprocessor = preprocessor;
 	}
 
+	/**
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return this
+				.getClass()
+				.getName()
+				+ " ("
+				+ this.agent
+				+ ")";
+	}
+
 }

@@ -416,4 +416,14 @@ public final class LPreprocessor<A extends LaraAgent<A, BO>, BO extends LaraBeha
 		}
 		return true;
 	}
+
+	/**
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return this
+				.getClass()
+				.getName();
+	}
 }
