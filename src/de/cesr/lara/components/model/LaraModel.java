@@ -107,4 +107,9 @@ public interface LaraModel {
 	 *            the number of steps to increase
 	 */
 	public void step(int stepIncrease);
+
+	/**
+	 * Required for batch runs, especially for Repast Simphony when the subclass of LAbstractModel is persistent!
+	 */
+	public void resetLara();
 }

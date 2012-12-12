@@ -231,7 +231,25 @@ public abstract class LAbstractModel implements LaraModel,
 			this.advanceCalender();
 		}
 	}
-	
+
+	/**
+	 * @see de.cesr.lara.components.model.LaraModel#resetLara()
+	 */
+	@Override
+	public void resetLara() {
+		LAbstractAgent
+				.resetCounter();
+		LModel.setNewModel(this);
+
+		eventBus = LEventbus
+				.getInstance();
+		eventBus.subscribe(
+				this,
+				LModelInstantiatedEvent.class);
+		eventBus.subscribe(
+				this,
+				LModelStepEvent.class);
+	}
 
 	/****************************************************
 	 * GETTER and SETTER                                *

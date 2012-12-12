@@ -20,7 +20,6 @@
 package de.cesr.lara.testing;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
@@ -118,7 +117,8 @@ public class LTestUtils {
 		@Override
 		public Map<Class<? extends LaraPreference>, Double> getSituationalUtilities(
 				LaraDecisionConfiguration dBuilder) {
-			return new HashMap<Class<? extends LaraPreference>, Double>();
+			return this
+					.getValue();
 		}
 	};
 
