@@ -40,6 +40,7 @@ import de.cesr.lara.testing.LTestUtils.LTestAgent;
 import de.cesr.lara.testing.LTestUtils.LTestBo;
 import de.cesr.lara.testing.LTestUtils.LTestDecisionConfig;
 import de.cesr.lara.testing.LTestUtils.LTestPreference1;
+import de.cesr.lara.testing.LTestUtils.LTestPreference2;
 import de.cesr.parma.core.PmParameterManager;
 
 /**
@@ -61,6 +62,15 @@ public class LHabitDeciderTest {
 		LTestUtils.initTestModel();
 
 		agent = new LTestAgent("TestAgent");
+
+		agent.getLaraComp()
+				.addPreferenceWeights(
+						new LPrefEntry(
+								LTestPreference1.class,
+								1.0),
+						new LPrefEntry(
+								LTestPreference2.class,
+								1.0));
 
 		one = new LTestBo("Bo1", agent, new LPrefEntry(LTestPreference1.class,
 				new Double(1.0)));
@@ -90,6 +100,7 @@ public class LHabitDeciderTest {
 	public void testGetSelectedBo() {
 		// The default mode selector is LDefaultDecisionModeSelector
 		// which supports habit.
+
 		LEventbus.getInstance().subscribe(agent, LAgentPreprocessEvent.class);
 		LEventbus.getInstance().subscribe(agent, LAgentDecideEvent.class);
 		LEventbus.getInstance().subscribe(agent, LAgentPostprocessEvent.class);
@@ -107,6 +118,16 @@ public class LHabitDeciderTest {
 					.getSize());
 			assertEquals(LDeliberativeDecider.class, agent.getLaraComp()
 					.getDecisionData(dConfig).getDecider().getClass());
+			String bo = agent
+					.getLaraComp()
+					.getDecisionData(
+							dConfig)
+					.getDecider()
+					.getSelectedBo()
+					.getKey();
+			System.out
+					.println(">>>>"
+							+ bo);
 		}
 
 		// X + 1 should be habit:

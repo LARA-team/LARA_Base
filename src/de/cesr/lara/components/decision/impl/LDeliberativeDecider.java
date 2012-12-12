@@ -116,10 +116,37 @@ public class LDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? extends 
 		// }
 		// });
 
+		// <- LOGGING
+		if (logger
+				.isDebugEnabled()) {
+			logger.debug("Selectable BOs: "
+					+ selectableBOs);
+		}
+		// LOGGING ->
+
 		for (BO bo : selectableBOs) {
+
+			// <- LOGGING
+			if (logger
+					.isDebugEnabled()) {
+				logger.debug("Handle BO: "
+						+ bo.getValue()
+								.entrySet());
+			}
+			// LOGGING ->
+
 			LaraBoRow<BO> boRow = new LLightBoRow<BO>(bo);
 			for (Entry<Class<? extends LaraPreference>, Double> utility : bo
 					.getValue().entrySet()) {
+
+				// <- LOGGING
+				if (logger
+						.isDebugEnabled()) {
+					logger.debug("Calculate BoRow for utility "
+							+ utility);
+				}
+				// LOGGING ->
+
 				/*
 				 * avoid putting utilities into laraBoRows which are not needed
 				 * for current decision (BOs may be valid for other decisions

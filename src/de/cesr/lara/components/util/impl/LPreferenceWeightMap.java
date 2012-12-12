@@ -80,6 +80,9 @@ public class LPreferenceWeightMap extends
 					}
 				});
 
+		orderedEntries
+				.addAll(this
+						.entrySet());
 		return orderedEntries.toString();
 	}
 
