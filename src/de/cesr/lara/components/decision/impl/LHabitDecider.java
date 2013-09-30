@@ -19,6 +19,7 @@
  */
 package de.cesr.lara.components.decision.impl;
 
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -28,19 +29,21 @@ import de.cesr.lara.components.LaraBehaviouralOption;
 import de.cesr.lara.components.agents.LaraAgent;
 import de.cesr.lara.components.decision.LaraDecider;
 import de.cesr.lara.components.decision.LaraDecisionConfiguration;
+import de.cesr.lara.components.decision.LaraDecisionModes;
 import de.cesr.lara.components.postprocessor.impl.LSelectedBoProperty;
 import de.cesr.lara.components.util.logging.impl.Log4jLogger;
+
 
 /**
  * 
  * @param <A>
- *            type of agent
+ *        type of agent
  * @param <BO>
- *            type of behavioural option
+ *        type of behavioural option
  * 
  */
-public class LHabitDecider<A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>>
-		implements LaraDecider<BO> {
+public class LHabitDecider<A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>> implements
+		LaraDecider<BO> {
 
 	/**
 	 * Logger
@@ -70,16 +73,14 @@ public class LHabitDecider<A extends LaraAgent<A, BO>, BO extends LaraBehavioura
 	public void decide() {
 		// <- LOGGING
 		if (logger.isDebugEnabled()) {
-			logger.debug(agent + ">> Memory: "
-					+ agent.getLaraComp().getGeneralMemory().toString());
+			logger.debug(agent + ">> Memory: " + agent.getLaraComp().getGeneralMemory().toString());
 		}
 		// LOGGING ->
 
-		if (agent.getLaraComp().getGeneralMemory()
-				.contains(dConfiguration.getId())) {
-			bo = (BO) agent.getLaraComp().getGeneralMemory()
-					.recall(LSelectedBoProperty.class, dConfiguration.getId())
-					.getValue();
+		if (agent.getLaraComp().getGeneralMemory().contains(dConfiguration.getId())) {
+			bo =
+					(BO) agent.getLaraComp().getGeneralMemory()
+							.recall(LSelectedBoProperty.class, dConfiguration.getId()).getValue();
 		} else {
 			// <- LOGGING
 			logger.warn("Habitual behaviour could not select a behavioural option since the "
@@ -112,6 +113,14 @@ public class LHabitDecider<A extends LaraAgent<A, BO>, BO extends LaraBehavioura
 	@Override
 	public BO getSelectedBo() {
 		return bo;
+	}
+
+	/**
+	 * @see de.cesr.lara.components.decision.LaraDecider#getDecisionMode()
+	 */
+	@Override
+	public LaraDecisionModes getDecisionMode() {
+		return LaraDecisionModes.HABIT;
 	}
 
 	/**

@@ -19,6 +19,7 @@
  */
 package de.cesr.lara.components.decision.impl;
 
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
@@ -31,19 +32,21 @@ import de.cesr.lara.components.LaraBehaviouralOption;
 import de.cesr.lara.components.LaraPreference;
 import de.cesr.lara.components.decision.LaraBoRow;
 import de.cesr.lara.components.decision.LaraDecisionConfiguration;
+import de.cesr.lara.components.decision.LaraDecisionModes;
 import de.cesr.lara.components.decision.LaraDeliberativeChoiceComponent;
 import de.cesr.lara.components.decision.LaraDeliberativeDecider;
 import de.cesr.lara.components.util.logging.impl.Log4jLogger;
+
 
 /**
  * 
  * the agents decision module
  * 
  * @param <BO>
- *            type of behavioural option
+ *        type of behavioural option
  */
-public class LDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? extends BO>>
-		implements LaraDeliberativeDecider<BO> {
+public class LDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? extends BO>> implements
+		LaraDeliberativeDecider<BO> {
 
 	/**
 	 * logger
@@ -79,7 +82,7 @@ public class LDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? extends 
 
 	/**
 	 * @param dConfiguration
-	 *            the decision configuration of the current decision process
+	 *        the decision configuration of the current decision process
 	 */
 	public LDeliberativeDecider(LaraDecisionConfiguration dConfiguration) {
 		// <- LOGGING
@@ -96,8 +99,7 @@ public class LDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? extends 
 	public void decide() {
 		// <-- LOGGING
 		if (selectableBOs.size() > 0) {
-			logger.info(selectableBOs.iterator().next().getAgent()
-					+ "> decide()");
+			logger.info(selectableBOs.iterator().next().getAgent() + "> decide()");
 		} else {
 			logger.info("> decide()");
 		}
@@ -117,72 +119,59 @@ public class LDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? extends 
 		// });
 
 		// <- LOGGING
-		if (logger
-				.isDebugEnabled()) {
-			logger.debug("Selectable BOs: "
-					+ selectableBOs);
+		if (logger.isDebugEnabled()) {
+			logger.debug("Selectable BOs: " + selectableBOs);
 		}
 		// LOGGING ->
 
 		for (BO bo : selectableBOs) {
 
 			// <- LOGGING
-			if (logger
-					.isDebugEnabled()) {
-				logger.debug("Handle BO: "
-						+ bo.getValue()
-								.entrySet());
+			if (logger.isDebugEnabled()) {
+				logger.debug("Handle BO: " + bo.getValue().entrySet());
 			}
 			// LOGGING ->
 
 			LaraBoRow<BO> boRow = new LLightBoRow<BO>(bo);
-			for (Entry<Class<? extends LaraPreference>, Double> utility : bo
-					.getValue().entrySet()) {
+			for (Entry<Class<? extends LaraPreference>, Double> utility : bo.getValue().entrySet()) {
 
 				// <- LOGGING
-				if (logger
-						.isDebugEnabled()) {
-					logger.debug("Calculate BoRow for utility "
-							+ utility);
+				if (logger.isDebugEnabled()) {
+					logger.debug("Calculate BoRow for utility " + utility);
 				}
 				// LOGGING ->
 
 				/*
-				 * avoid putting utilities into laraBoRows which are not needed
-				 * for current decision (BOs may be valid for other decisions
-				 * and thus define utility for more preferenceWeights.)
+				 * avoid putting utilities into laraBoRows which are not needed for current decision (BOs may be valid
+				 * for other decisions and thus define utility for more preferenceWeights.)
 				 */
 				if (isGoalConsidered(utility.getKey())) {
 					double preference = getPreferenceForGoal(utility.getKey());
 					// error handling:
 					if (Double.isNaN(utility.getValue())) {
 						// <- LOGGING
-						logger.error("Utility value of goal "  + utility.getKey().getSimpleName() + " is NaN for BO " + bo);
+						logger.error("Utility value of goal " + utility.getKey().getSimpleName() + " is NaN for BO "
+								+ bo);
 						// LOGGING ->
-						
-						throw new IllegalStateException("Utility value of utility "  + 
-								utility.getKey().getSimpleName() + " is NaN for BO " + bo);
+
+						throw new IllegalStateException("Utility value of utility " + utility.getKey().getSimpleName()
+								+ " is NaN for BO " + bo);
 					}
 					if (Double.isNaN(preference)) {
 						// <- LOGGING
-						logger.error("Preference value of goal "  + utility.getKey().getSimpleName() + " is NaN.");
+						logger.error("Preference value of goal " + utility.getKey().getSimpleName() + " is NaN.");
 						// LOGGING ->
-						
-						throw new IllegalStateException("Preference value of goal "  + 
-								utility.getKey().getSimpleName() + " is NaN.");
+
+						throw new IllegalStateException("Preference value of goal " + utility.getKey().getSimpleName()
+								+ " is NaN.");
 					}
-					
-					boRow.setIndividualUtilityValue(
-							utility.getKey(),
-							utility.getValue()
-									* preference);
+
+					boRow.setIndividualUtilityValue(utility.getKey(), utility.getValue() * preference);
 
 					// <- LOGGING
 					if (logger.isDebugEnabled()) {
-						logger.debug("Add situaltional value for "
-								+ utility.getKey() + ": " + utility.getValue()
-								+ " = " + utility.getValue()
-								* getPreferenceForGoal(utility.getKey()));
+						logger.debug("Add situaltional value for " + utility.getKey() + ": " + utility.getValue()
+								+ " = " + utility.getValue() * getPreferenceForGoal(utility.getKey()));
 					}
 					// LOGGING ->
 				}
@@ -190,11 +179,9 @@ public class LDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? extends 
 			situationalUtilityMatrixRows.add(boRow);
 		}
 
-		selectedBo = getDeliberativeChoiceComp().getSelectedBo(dConfiguration,
-				situationalUtilityMatrixRows);
+		selectedBo = getDeliberativeChoiceComp().getSelectedBo(dConfiguration, situationalUtilityMatrixRows);
 		// <- LOGGING
-		logger.info("Post decide: SitautionalMatrix: "
-				+ situationalUtilityMatrixRows);
+		logger.info("Post decide: SitautionalMatrix: " + situationalUtilityMatrixRows);
 		// LOGGING ->
 	}
 
@@ -237,21 +224,18 @@ public class LDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? extends 
 	public BO getSelectedBo() {
 		if (selectedBo == null) {
 			// <- LOGGING
-			logger.error((selectableBOs.size() > 0 ? selectableBOs.iterator()
-					.next().getAgent() : "")
-					+ "decide() has not been called for decision '"
-					+ dConfiguration.getId() + "'");
+			logger.error((selectableBOs.size() > 0 ? selectableBOs.iterator().next().getAgent() : "")
+					+ "decide() has not been called for decision '" + dConfiguration.getId() + "'");
 			// LOGGING ->
 		}
 		return selectedBo;
 	}
 
 	/**
-	 * This method delegates to the deliberative choice component since bos may
-	 * not be stored in this class because k is not finitely defined.
+	 * This method delegates to the deliberative choice component since bos may not be stored in this class because k is
+	 * not finitely defined.
 	 * 
-	 * NOTE: It can not be guaranteed that several calls of this method yields
-	 * identical sets of BOs!
+	 * NOTE: It can not be guaranteed that several calls of this method yields identical sets of BOs!
 	 * 
 	 * @see de.cesr.lara.components.decision.LaraDecider#getKSelectedBos(int)
 	 */
@@ -259,19 +243,16 @@ public class LDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? extends 
 	public Set<? extends BO> getKSelectedBos(int k) {
 		if ((k != Integer.MAX_VALUE) && (k > getNumSelectableBOs())) {
 			throw new IllegalStateException("The number of requested BOs (" + k
-					+ ") is larger than the number of available BOs"
-					+ getNumSelectableBOs() + ")!");
+					+ ") is larger than the number of available BOs" + getNumSelectableBOs() + ")!");
 		}
-		return getDeliberativeChoiceComp().getKSelectedBos(dConfiguration,
-				situationalUtilityMatrixRows, k);
+		return getDeliberativeChoiceComp().getKSelectedBos(dConfiguration, situationalUtilityMatrixRows, k);
 	}
 
 	/**
 	 * @see de.cesr.lara.components.decision.LaraDeliberativeDecider#setDeliberativeChoiceComponent(de.cesr.lara.components.decision.LaraDeliberativeChoiceComponent)
 	 */
 	@Override
-	public void setDeliberativeChoiceComponent(
-			LaraDeliberativeChoiceComponent deliberativeChoiceComponent) {
+	public void setDeliberativeChoiceComponent(LaraDeliberativeChoiceComponent deliberativeChoiceComponent) {
 		this.deliberativeChoiceComponent = deliberativeChoiceComponent;
 	}
 
@@ -279,8 +260,7 @@ public class LDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? extends 
 	 * @see de.cesr.lara.components.decision.LaraDeliberativeDecider#setPreferenceWeights(java.util.Map)
 	 */
 	@Override
-	public void setPreferenceWeights(
-			Map<Class<? extends LaraPreference>, Double> preference) {
+	public void setPreferenceWeights(Map<Class<? extends LaraPreference>, Double> preference) {
 		this.preferenceWeights = preference;
 
 		// <- LOGGING
@@ -299,8 +279,7 @@ public class LDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? extends 
 		this.selectableBOs = behaviouralOptions;
 
 		// <- LOGGING
-		logger.info(behaviouralOptions != null ? "Received "
-				+ behaviouralOptions.size() + " behavioural options"
+		logger.info(behaviouralOptions != null ? "Received " + behaviouralOptions.size() + " behavioural options"
 				: "Received set of BOs is empty!");
 		// LOGGING ->
 	}
@@ -326,12 +305,11 @@ public class LDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? extends 
 	}
 
 	/**
-	 * Checks if the given preference is defined, which also means by definition
-	 * whether the specified preference is considered during the decision
-	 * process.
+	 * Checks if the given preference is defined, which also means by definition whether the specified preference is
+	 * considered during the decision process.
 	 * 
 	 * @param preference
-	 *            the preference to check
+	 *        the preference to check
 	 * @return true if the given preference is considered
 	 */
 	private boolean isGoalConsidered(Class<? extends LaraPreference> preference) {
@@ -339,21 +317,26 @@ public class LDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? extends 
 	}
 
 	/**
-	 * Checks if the deliberative choice component has been set and provides it
-	 * true.
+	 * Checks if the deliberative choice component has been set and provides it true.
 	 * 
 	 * @return deliberative choice component
 	 */
 	protected LaraDeliberativeChoiceComponent getDeliberativeChoiceComp() {
 		if (this.deliberativeChoiceComponent == null) {
 			// <- LOGGING
-			logger.error("Deliberative Choice Component has not been set at "
-					+ this);
+			logger.error("Deliberative Choice Component has not been set at " + this);
 			// LOGGING ->
-			throw new IllegalStateException(
-					"Deliberative Choice Component has not been set at " + this);
+			throw new IllegalStateException("Deliberative Choice Component has not been set at " + this);
 		} else {
 			return this.deliberativeChoiceComponent;
 		}
+	}
+
+	/**
+	 * @see de.cesr.lara.components.decision.LaraDecider#getDecisionMode()
+	 */
+	@Override
+	public LaraDecisionModes getDecisionMode() {
+		return LaraDecisionModes.DELIBERATIVE;
 	}
 }

@@ -28,7 +28,6 @@ import org.junit.Test;
 import de.cesr.lara.components.LaraBehaviouralOption;
 import de.cesr.lara.components.agents.LaraAgent;
 import de.cesr.lara.components.decision.LaraDecisionConfiguration;
-import de.cesr.lara.components.decision.impl.LDecisionConfiguration;
 import de.cesr.lara.components.eventbus.events.LAgentPreprocessEvent;
 import de.cesr.lara.components.eventbus.events.LaraEvent;
 import de.cesr.lara.components.eventbus.impl.LEventbus;
@@ -142,7 +141,7 @@ public class LPpEventBusTest {
 
 	protected LTestAgent agent1, agent2, agent3;
 
-	protected LaraDecisionConfiguration dConfig = new LDecisionConfiguration();
+	protected LaraDecisionConfiguration dConfig = LTestUtils.dConfig;
 
 	/**
 	 * @throws java.lang.Exception
@@ -151,7 +150,7 @@ public class LPpEventBusTest {
 	public void setUp() throws Exception {
 		LEventbus.resetAll();
 
-		LTestUtils.initTestModel();
+		LTestUtils.initTestModel(dConfig);
 
 		// init two agents with different properties to trigger different PP
 		// behaviours
@@ -243,6 +242,9 @@ public class LPpEventBusTest {
 				.contains(testBo));
 	}
 
+	/**
+	 * 
+	 */
 	@Test
 	public void testAgent2() {
 		// subscribe agents at global eventbus

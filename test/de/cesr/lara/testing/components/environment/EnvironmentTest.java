@@ -19,6 +19,7 @@
  */
 package de.cesr.lara.testing.components.environment;
 
+
 import static org.junit.Assert.assertEquals;
 import junit.framework.JUnit4TestAdapter;
 
@@ -32,6 +33,7 @@ import de.cesr.lara.components.environment.impl.LAbstractEnvironmentalProperty;
 import de.cesr.lara.components.environment.impl.LEnvironment;
 import de.cesr.lara.components.environment.impl.LEnvironmentalIntProperty;
 import de.cesr.lara.components.model.LaraModel;
+
 
 /**
  * 
@@ -59,7 +61,6 @@ public class EnvironmentTest {
 
 	/**
 	 * @throws java.lang.Exception
-	 *             Created by Sascha Holzhauer on 18.12.2009
 	 */
 	@Before
 	public void setUp() throws Exception {
@@ -73,8 +74,7 @@ public class EnvironmentTest {
 		this.prop2 = new LEnvironmentalIntProperty("Property2", 2, env);
 		this.listener1 = new LaraEnvironmentListener() {
 			@Override
-			public void envPropertyChanged(
-					LAbstractEnvironmentalProperty<?> envProperty) {
+			public void envPropertyChanged(LAbstractEnvironmentalProperty<?> envProperty) {
 				indicator = 1;
 			}
 		};
@@ -83,8 +83,7 @@ public class EnvironmentTest {
 		this.listener2 = new LaraEnvironmentListener() {
 
 			@Override
-			public void envPropertyChanged(
-					LAbstractEnvironmentalProperty<?> envProperty) {
+			public void envPropertyChanged(LAbstractEnvironmentalProperty<?> envProperty) {
 			}
 		};
 		indicator = 0;
@@ -140,7 +139,6 @@ public class EnvironmentTest {
 
 	/**
 	 * @throws java.lang.Exception
-	 *             Created by Sascha Holzhauer on 18.12.2009
 	 */
 	@After
 	public void tearDown() throws Exception {
@@ -159,8 +157,7 @@ public class EnvironmentTest {
 	@Test
 	public void testAddEnvListenerLaraEnvironmentListener() {
 		env.addEnvListener(listener1);
-		assertEquals("Number of registered listeners should be 1", 1, env
-				.getAllListeners().size());
+		assertEquals("Number of registered listeners should be 1", 1, env.getAllListeners().size());
 	}
 
 	/**
@@ -171,11 +168,9 @@ public class EnvironmentTest {
 	@Test
 	public void testRemoveEnvListener() {
 		env.addEnvListener(listener1);
-		assertEquals("Number of registered listeners should be 1", 1, env
-				.getAllListeners().size());
+		assertEquals("Number of registered listeners should be 1", 1, env.getAllListeners().size());
 		env.removeEnvListener(listener1);
-		assertEquals("Number of registered listeners should be 0", 0, env
-				.getAllListeners().size());
+		assertEquals("Number of registered listeners should be 0", 0, env.getAllListeners().size());
 	}
 
 }

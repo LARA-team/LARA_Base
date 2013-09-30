@@ -19,11 +19,16 @@
  */
 package de.cesr.lara.components.eventbus.events;
 
+
+/**
+ * Interface for events that require another event to be triggered before.
+ * @author Sascha Holzhauer
+ *
+ */
 public interface LaraRequiresPrecedingEvent {
 
 	/**
-	 * The Class.getSimpleName() of the event which should have occurred before
-	 * in the same time step
+	 * The Class.getSimpleName() of the event which should have occurred before in the same time step
 	 * 
 	 * @return required event class
 	 */

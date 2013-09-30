@@ -19,9 +19,9 @@
  */
 package de.cesr.lara.components.model;
 
+
 /**
- * Interface for LARA simulation stage object that identify the current stage of
- * simulation.
+ * Interface for LARA simulation stage object that identify the current stage of simulation.
  */
 public interface LaraSimulationStage {
 

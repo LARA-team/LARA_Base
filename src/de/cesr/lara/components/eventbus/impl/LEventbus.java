@@ -27,6 +27,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.apache.commons.collections15.BidiMap;
+import org.apache.commons.collections15.bidimap.DualHashBidiMap;
 import org.apache.log4j.Logger;
 import org.apache.log4j.Priority;
 
@@ -57,7 +59,7 @@ import de.cesr.parma.core.PmParameterManager;
 public class LEventbus {
 
 	private static LEventbus instance = null;
-	private static Map<Object, LEventbus> instances = new HashMap<Object, LEventbus>();
+	private static BidiMap<Object, LEventbus>	instances	= new DualHashBidiMap<Object, LEventbus>();
 	private static Logger logger = Log4jLogger.getLogger(LEventbus.class);
 
 	/**
@@ -474,7 +476,7 @@ public class LEventbus {
 		waitUntilWorkDone(event);
 
 		// for every worker group start a new thread, that notifies all
-		// noninternal subscribers belonging to it sequentially
+		// non-internal subscribers belonging to it sequentially
 		for (final Entry<Integer, Set<LaraAbstractEventSubscriber>> entry : workerGroupSubscriberMap
 				.entrySet()) {
 			Thread workerThread = new Thread() {
@@ -733,13 +735,27 @@ public class LEventbus {
 					// " because nothing to wait for");
 				}
 				infothread.stop();
-				logger.debug("All worker threads finished for event "
+				logger.debug(this + "> All worker threads finished for event "
 						+ event.getClass().getSimpleName());
 			} catch (InterruptedException e) {
-				logger.error(
-						"Waiting for worker threads to finished failed for event "
+				logger.error(this + "> Waiting for worker threads to finished failed for event "
 								+ event.getClass().getSimpleName(), e);
 			}
+		}
+	}
+
+	/**
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		if (instances
+				.containsKey(this)) {
+			return "LEventbus-"
+					+ instances
+							.getKey(this);
+		} else {
+			return "LEventbus";
 		}
 	}
 

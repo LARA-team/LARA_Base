@@ -56,7 +56,8 @@ public class LDeliberativeChoiceComp_ProbabilisticTest {
 	static private Logger logger = Logger
 			.getLogger(LDeliberativeChoiceComp_ProbabilisticTest.class);
 
-	LaraDecisionConfiguration dConfig = new LTestUtils.LTestDecisionConfig();
+	LaraDecisionConfiguration dConfig = LTestUtils.dConfig;
+
 	LTestAgent agent;
 
 	static int counter = 0;
@@ -68,7 +69,7 @@ public class LDeliberativeChoiceComp_ProbabilisticTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		LTestUtils.initTestModel();
+		LTestUtils.initTestModel(dConfig);
 
 		// set up manipulated random number distribution
 		AbstractDistribution manipulatedDist = new AbstractDistribution() {

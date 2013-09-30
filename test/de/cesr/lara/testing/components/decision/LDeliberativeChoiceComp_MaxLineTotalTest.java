@@ -37,7 +37,6 @@ import de.cesr.lara.components.LaraPreference;
 import de.cesr.lara.components.decision.LaraBoRow;
 import de.cesr.lara.components.decision.LaraDecisionConfiguration;
 import de.cesr.lara.components.decision.LaraDeliberativeChoiceComponent;
-import de.cesr.lara.components.decision.impl.LDecisionConfiguration;
 import de.cesr.lara.components.decision.impl.LDeliberativeChoiceComp_MaxLineTotal;
 import de.cesr.lara.components.decision.impl.LLightBoRow;
 import de.cesr.lara.testing.LTestUtils;
@@ -53,18 +52,17 @@ public class LDeliberativeChoiceComp_MaxLineTotalTest {
 	LaraDeliberativeChoiceComponent deliberativeChoiceComp;
 	Collection<LaraBoRow<LTestBo>> laraBoRows;
 	LTestBo[] bos;
-	LaraDecisionConfiguration dConfig;
+	LaraDecisionConfiguration dConfig = LTestUtils.dConfig;
 
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@Before
 	public void setUp() throws Exception {
-		LTestUtils.initTestModel();
+		LTestUtils.initTestModel(LTestUtils.dConfig);
 		deliberativeChoiceComp = LDeliberativeChoiceComp_MaxLineTotal
 				.getInstance();
 		laraBoRows = new LinkedHashSet<LaraBoRow<LTestBo>>();
-		dConfig = new LDecisionConfiguration();
 
 		// add behavioural options as row to laraBoRows
 		double[] valuesSum = { 0, 1, 2, 3, 5, 5, 5, 7, 8, 9 };

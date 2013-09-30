@@ -19,13 +19,16 @@
  */
 package de.cesr.lara.components.decision.impl;
 
+
 import java.util.Set;
 
 import de.cesr.lara.components.LaraBehaviouralOption;
 import de.cesr.lara.components.agents.LaraAgent;
 import de.cesr.lara.components.decision.LaraDecider;
 import de.cesr.lara.components.decision.LaraDecisionConfiguration;
+import de.cesr.lara.components.decision.LaraDecisionModes;
 import de.cesr.lara.components.decision.LaraDecisionTree;
+
 
 /**
  * @author Sascha Holzhauer
@@ -33,15 +36,15 @@ import de.cesr.lara.components.decision.LaraDecisionTree;
  * 
  *       TODO why no factory for this decider?
  * @param <A>
- *            type of agents
+ *        type of agents
  * @param <BO>
- *            type of behavioural options
+ *        type of behavioural options
  * @param <P>
- *            type of parameter
+ *        type of parameter
  * 
  */
-public class LTreeDecider<A extends LaraAgent<A, ? super BO>, BO extends LaraBehaviouralOption<?, BO>, P>
-		implements LaraDecider<BO> {
+public class LTreeDecider<A extends LaraAgent<A, ? super BO>, BO extends LaraBehaviouralOption<?, BO>, P> implements
+		LaraDecider<BO> {
 
 	A agent;
 	Set<BO> bos;
@@ -53,8 +56,7 @@ public class LTreeDecider<A extends LaraAgent<A, ? super BO>, BO extends LaraBeh
 	 * @param agent
 	 * @param parameter
 	 */
-	public LTreeDecider(LaraDecisionTree<A, BO, P> decisionTree, A agent,
-			P parameter) {
+	public LTreeDecider(LaraDecisionTree<A, BO, P> decisionTree, A agent, P parameter) {
 		this.decisionTree = decisionTree;
 		this.agent = agent;
 		this.parameter = parameter;
@@ -70,16 +72,14 @@ public class LTreeDecider<A extends LaraAgent<A, ? super BO>, BO extends LaraBeh
 		if (bos.size() <= k) {
 			return bos;
 		} else {
-			throw new IllegalStateException(
-					"Number of Bos retrieved from dections tree exeeds k!");
+			throw new IllegalStateException("Number of Bos retrieved from dections tree exeeds k!");
 		}
 	}
 
 	@Override
 	public int getNumSelectableBOs() {
 		if (bos == null) {
-			throw new IllegalStateException(
-					"Decide() needs to be called before getNumAvailableBOs() is called!");
+			throw new IllegalStateException("Decide() needs to be called before getNumAvailableBOs() is called!");
 		}
 		return bos.size();
 	}
@@ -89,9 +89,16 @@ public class LTreeDecider<A extends LaraAgent<A, ? super BO>, BO extends LaraBeh
 		if (bos.size() == 1) {
 			return bos.iterator().next();
 		} else {
-			throw new IllegalStateException(
-					"Number of Bos retrieved from dections tree exeeds 1!");
+			throw new IllegalStateException("Number of Bos retrieved from dections tree exeeds 1!");
 		}
+	}
+
+	/**
+	 * @see de.cesr.lara.components.decision.LaraDecider#getDecisionMode()
+	 */
+	@Override
+	public LaraDecisionModes getDecisionMode() {
+		return LaraDecisionModes.DELIBERATIVE;
 	}
 
 	/**

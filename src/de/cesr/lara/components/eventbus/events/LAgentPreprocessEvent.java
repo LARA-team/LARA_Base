@@ -19,18 +19,27 @@
  */
 package de.cesr.lara.components.eventbus.events;
 
+
 import de.cesr.lara.components.decision.LaraDecisionConfiguration;
+
 
 /**
  * Triggers agents to preprocess.
  */
 public class LAgentPreprocessEvent implements LaraSynchronousEvent {
-	private LaraDecisionConfiguration decisionConfiguration;
+	private LaraDecisionConfiguration	decisionConfiguration;
 
+	/**
+	 * Sets the {@link LaraDecisionConfiguration} of this event
+	 * @param decisionConfiguration
+	 */
 	public LAgentPreprocessEvent(LaraDecisionConfiguration decisionConfiguration) {
 		this.decisionConfiguration = decisionConfiguration;
 	}
 
+	/**
+	 * @return {@link LaraDecisionConfiguration} of this event
+	 */
 	public LaraDecisionConfiguration getDecisionConfiguration() {
 		return decisionConfiguration;
 	}

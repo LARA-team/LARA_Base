@@ -19,6 +19,7 @@
  */
 package de.cesr.lara.testing.components.container;
 
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -52,6 +53,7 @@ import de.cesr.lara.testing.LTestUtils;
 import de.cesr.lara.testing.components.container.LContainerTestUtils.LSubTestProperty;
 import de.cesr.lara.testing.components.container.LContainerTestUtils.LTestProperty;
 
+
 /**
  * @author Sascha Holzhauer
  * @date 16.12.2009
@@ -71,8 +73,7 @@ public class LDefaultMemoryTest {
 		}
 
 		@Override
-		public void memoryEventOccured(MemoryEvent event,
-				LaraProperty<?, ?> property) {
+		public void memoryEventOccured(MemoryEvent event, LaraProperty<?, ?> property) {
 			informed = true;
 		}
 
@@ -87,25 +88,22 @@ public class LDefaultMemoryTest {
 	/**
 	 * Logger
 	 */
-	static private Logger logger = Log4jLogger
-			.getLogger(LDefaultMemoryTest.class);
+	static private Logger logger = Log4jLogger.getLogger(LDefaultMemoryTest.class);
 
 	LaraMemory<LTestProperty> memory;
 
 	/**
 	 * @throws java.lang.Exception
-	 *             Created by Sascha Holzhauer on 16.12.2009
 	 */
 	@Before
 	public void setUp() throws Exception {
 		memory = new LDefaultMemory<LTestProperty>();
-		LTestUtils.initTestModel();
+		LTestUtils.initTestModel(LTestUtils.dConfig);
 		LEventbus.getInstance().publish(new LModelStepEvent());
 	}
 
 	/**
 	 * @throws java.lang.Exception
-	 *             Created by Sascha Holzhauer on 16.12.2009
 	 */
 	@After
 	public void tearDown() throws Exception {
@@ -121,6 +119,9 @@ public class LDefaultMemoryTest {
 		assertTrue(memory.isEmpty());
 	}
 
+	/**
+	 * 
+	 */
 	@Test
 	public void testContainsKey() {
 		LContainerTestUtils.storeSixStandardEntries(memory);
@@ -189,6 +190,9 @@ public class LDefaultMemoryTest {
 		assertFalse(memory.contains("key06"));
 	}
 
+	/**
+	 * 
+	 */
 	@Test
 	public void testContainsProperty() {
 		LTestProperty prop1 = new LTestProperty("Test01", "Value01");
@@ -225,8 +229,7 @@ public class LDefaultMemoryTest {
 		logger.info("Step " + LModel.getModel().getCurrentStep());
 
 		int retentionTime = memory.getRetentionTime(memory.recall("key01"));
-		assertTrue("defautl retention tiem is " + CUSTOM_RETENTION,
-				retentionTime == CUSTOM_RETENTION);
+		assertTrue("defautl retention tiem is " + CUSTOM_RETENTION, retentionTime == CUSTOM_RETENTION);
 
 		LEventbus.getInstance().publish(new LModelStepEvent());
 
@@ -239,18 +242,14 @@ public class LDefaultMemoryTest {
 		}
 
 		logger.info("step " + LModel.getModel().getCurrentStep());
-		assertEquals(
-				"in step "
-						+ (CUSTOM_RETENTION + 1)
-						+ " properties memorised in step 1 shall be forgotten (12 - 6 = 6)",
-				6, memory.getSize());
+		assertEquals("in step " + (CUSTOM_RETENTION + 1)
+				+ " properties memorised in step 1 shall be forgotten (12 - 6 = 6)", 6, memory.getSize());
 
 		LEventbus.getInstance().publish(new LModelStepEvent());
 
 		logger.info("step " + LModel.getModel().getCurrentStep());
-		assertTrue(
-				"all properties memorised in step 1 and 2 shall be forgotten in step "
-						+ (CUSTOM_RETENTION + 2), memory.isEmpty());
+		assertTrue("all properties memorised in step 1 and 2 shall be forgotten in step " + (CUSTOM_RETENTION + 2),
+				memory.isEmpty());
 
 		/* ***** */
 
@@ -273,8 +272,7 @@ public class LDefaultMemoryTest {
 		LContainerTestUtils.storeSixStandardEntries(memory);
 
 		memory.forget("key03", 1);
-		assertTrue("6 proeprties inserted - 1 forgot = 5",
-				memory.getSize() == 5);
+		assertTrue("6 proeprties inserted - 1 forgot = 5", memory.getSize() == 5);
 		memory.forgetAll("key04");
 		assertTrue("5 properties - 1 forgot = 4", memory.getSize() == 4);
 
@@ -336,35 +334,24 @@ public class LDefaultMemoryTest {
 		LContainerTestUtils.storeSixStandardEntries(memory);
 		LTestProperty invalid = new LTestProperty("IBecomeInvalid", "");
 
-		assertFalse(
-				"Memory may not be empty after six properties were inserted",
-				memory.isEmpty());
-		assertTrue("Memory shall contain six inserted proeprties",
-				memory.getSize() == 6);
+		assertFalse("Memory may not be empty after six properties were inserted", memory.isEmpty());
+		assertTrue("Memory shall contain six inserted proeprties", memory.getSize() == 6);
 
 		memory.memorize(new LTestProperty("key01", "Haha"));
-		assertTrue(
-				"since the new property overwrites an exisiting one (same key, same time step) the size is equal",
+		assertTrue("since the new property overwrites an exisiting one (same key, same time step) the size is equal",
 				memory.getSize() == 6);
-		assertTrue("the memory shall recall the recently inserted property",
-				memory.recall("key01", 1).value == "Haha");
+		assertTrue("the memory shall recall the recently inserted property", memory.recall("key01", 1).value == "Haha");
 
 		LEventbus.getInstance().publish(new LModelStepEvent());
 
 		LContainerTestUtils.storeSixStandardEntries(memory);
 
-		assertFalse(
-				"For unlimited capacity, isFull() should always return false",
-				memory.isFull());
+		assertFalse("For unlimited capacity, isFull() should always return false", memory.isFull());
 
-		assertTrue(
-				"Additionally, six properties were added at another time step",
-				memory.getSize() == 12);
+		assertTrue("Additionally, six properties were added at another time step", memory.getSize() == 12);
 		LTestProperty property1 = memory.recall("key06", 1);
 		LTestProperty property2 = memory.recall("key06", 2);
-		assertNotSame(
-				"Proeprties that are inserted at different time steps are not the same",
-				property1, property2);
+		assertNotSame("Proeprties that are inserted at different time steps are not the same", property1, property2);
 
 		LTestProperty propertyX = memory.recall("key06");
 		assertSame(property2, propertyX);
@@ -377,6 +364,9 @@ public class LDefaultMemoryTest {
 		}
 	}
 
+	/**
+	 * 
+	 */
 	@Test
 	public void testMemorizeAnew() {
 		memory.memorize(new LTestProperty("key01", "value01"), 2);
@@ -401,8 +391,7 @@ public class LDefaultMemoryTest {
 	@Test
 	public void testMemoryProeprtyListenerManagement() {
 		MyMemoryPropertyListener listener = new MyMemoryPropertyListener();
-		memory.addMemoryPropertyObserver(
-				LaraMemoryListener.MemoryEvent.PROPERTY_MEMORIZED, listener);
+		memory.addMemoryPropertyObserver(LaraMemoryListener.MemoryEvent.PROPERTY_MEMORIZED, listener);
 		memory.memorize(new LTestProperty("key01", "value01"));
 		assertTrue(listener.isInformed());
 		listener.resetInformed();
@@ -413,10 +402,8 @@ public class LDefaultMemoryTest {
 		memory.forgetAll("key01");
 		assertFalse(listener.isInformed());
 
-		memory.removeMemoryPropertyObserver(
-				LaraMemoryListener.MemoryEvent.PROPERTY_MEMORIZED, listener);
-		memory.addMemoryPropertyObserver(
-				LaraMemoryListener.MemoryEvent.PROPERTY_RECALLED, listener);
+		memory.removeMemoryPropertyObserver(LaraMemoryListener.MemoryEvent.PROPERTY_MEMORIZED, listener);
+		memory.addMemoryPropertyObserver(LaraMemoryListener.MemoryEvent.PROPERTY_RECALLED, listener);
 		memory.memorize(new LTestProperty("key01", "value01"));
 		assertFalse(listener.isInformed());
 
@@ -429,8 +416,8 @@ public class LDefaultMemoryTest {
 		listener.resetInformed();
 
 		/*
-		 * not yet implemented memory.recall(LTestProperty.class, "key01", 1);
-		 * assertTrue(listener.isInformed()); listener.resetInformed();
+		 * not yet implemented memory.recall(LTestProperty.class, "key01", 1); assertTrue(listener.isInformed());
+		 * listener.resetInformed();
 		 */
 
 		memory.recallAll("key01");
@@ -438,17 +425,15 @@ public class LDefaultMemoryTest {
 		listener.resetInformed();
 
 		/*
-		 * not yet implemented memory.recallAll(LTestProperty.class, "key01");
-		 * assertFalse(listener.isInformed()); listener.resetInformed();
+		 * not yet implemented memory.recallAll(LTestProperty.class, "key01"); assertFalse(listener.isInformed());
+		 * listener.resetInformed();
 		 */
 
 		memory.forgetAll("key01");
 		assertFalse(listener.isInformed());
 
-		memory.removeMemoryPropertyObserver(
-				LaraMemoryListener.MemoryEvent.PROPERTY_RECALLED, listener);
-		memory.addMemoryPropertyObserver(
-				LaraMemoryListener.MemoryEvent.PROPERTY_FORGOTTEN, listener);
+		memory.removeMemoryPropertyObserver(LaraMemoryListener.MemoryEvent.PROPERTY_RECALLED, listener);
+		memory.addMemoryPropertyObserver(LaraMemoryListener.MemoryEvent.PROPERTY_FORGOTTEN, listener);
 		memory.memorize(new LTestProperty("key01", "value01"));
 		assertFalse(listener.isInformed());
 
@@ -521,6 +506,9 @@ public class LDefaultMemoryTest {
 		}
 	}
 
+	/**
+	 * 
+	 */
 	@Test
 	public void testRecallAllByClass() {
 		LTestProperty prop1 = new LTestProperty("key01", "value01");
@@ -533,15 +521,13 @@ public class LDefaultMemoryTest {
 		LTestProperty prop3 = new LTestProperty("key01", "value01");
 		memory.memorize(prop3);
 
-		Collection<LTestProperty> properties = memory
-				.recallAll(LTestProperty.class);
+		Collection<LTestProperty> properties = memory.recallAll(LTestProperty.class);
 		assertTrue(properties.contains(prop1));
 		assertTrue(properties.contains(prop3));
 		assertTrue(properties.contains(prop2));
 		assertEquals(3, properties.size());
 
-		Collection<LSubTestProperty> subProperties = memory
-				.recallAll(LSubTestProperty.class);
+		Collection<LSubTestProperty> subProperties = memory.recallAll(LSubTestProperty.class);
 		assertFalse(subProperties.contains(prop1));
 		assertTrue(subProperties.contains(prop2));
 		assertFalse(subProperties.contains(prop3));
@@ -569,15 +555,13 @@ public class LDefaultMemoryTest {
 		LTestProperty prop3 = new LTestProperty("key01", "value01");
 		memory.memorize(prop3);
 
-		Collection<LTestProperty> properties = memory.recallAll(
-				LTestProperty.class, "key01");
+		Collection<LTestProperty> properties = memory.recallAll(LTestProperty.class, "key01");
 		assertTrue(properties.contains(prop1));
 		assertTrue(properties.contains(prop3));
 		assertFalse(properties.contains(prop2));
 		assertEquals(2, properties.size());
 
-		Collection<LSubTestProperty> subProperties = memory.recallAll(
-				LSubTestProperty.class, "key01");
+		Collection<LSubTestProperty> subProperties = memory.recallAll(LSubTestProperty.class, "key01");
 		assertFalse(subProperties.contains(prop1));
 		assertFalse(subProperties.contains(prop3));
 		assertFalse(subProperties.contains(prop2));
@@ -590,6 +574,9 @@ public class LDefaultMemoryTest {
 		assertEquals(1, subProperties.size());
 	}
 
+	/**
+	 * 
+	 */
 	@Test
 	public void testRecallByClass() {
 		LTestProperty prop1 = new LTestProperty("key01", "value01");
@@ -615,6 +602,9 @@ public class LDefaultMemoryTest {
 		}
 	}
 
+	/**
+	 * 
+	 */
 	@Test
 	public void testRecallByClassStep() {
 		LTestProperty prop1 = new LTestProperty("key01", "value01");
@@ -664,9 +654,7 @@ public class LDefaultMemoryTest {
 		memory.memorize(new LTestProperty("key01", "newer"));
 
 		LTestProperty property = memory.recall("key02");
-		assertNotNull(
-				"The racalled property was inserted before and must not be null",
-				property);
+		assertNotNull("The racalled property was inserted before and must not be null", property);
 		assertTrue(property.getKey() == "key02");
 		assertTrue(property.getValue() == "value02");
 		assertTrue(property.getTimestamp() == 1);
@@ -692,9 +680,7 @@ public class LDefaultMemoryTest {
 		memory.memorize(new LTestProperty("key01", "newer"));
 
 		LTestProperty property = memory.recall("key02", 1);
-		assertNotNull(
-				"The racalled property was inserted before and must not be null",
-				property);
+		assertNotNull("The racalled property was inserted before and must not be null", property);
 		assertTrue(property.getKey() == "key02");
 		assertTrue(property.getValue() == "value02");
 		assertTrue(property.getTimestamp() == 1);
@@ -733,6 +719,9 @@ public class LDefaultMemoryTest {
 				"value01", memory.recall("key01", 2).getValue());
 	}
 
+	/**
+	 * 
+	 */
 	@Test
 	public void testRecallLastEntryForKey() {
 		// insert property
@@ -747,15 +736,16 @@ public class LDefaultMemoryTest {
 		memory.memorize(prop2);
 
 		// retrieve last property and check
-		assertEquals("The last added property of key key01 has value value02",
-				prop2, memory.recall("key01"));
+		assertEquals("The last added property of key key01 has value value02", prop2, memory.recall("key01"));
 	}
 
+	/**
+	 * 
+	 */
 	@Test
 	public void testRefreshByKey() {
 		memory.setDefaultRetentionTime(2);
-		assertEquals("Default retention time was set to 2", 2,
-				memory.getDefaultRetentionTime());
+		assertEquals("Default retention time was set to 2", 2, memory.getDefaultRetentionTime());
 
 		LContainerTestUtils.storeSixStandardEntries(memory);
 		assertEquals(6, memory.getSize());
@@ -770,22 +760,18 @@ public class LDefaultMemoryTest {
 		assertEquals("2x 6 properties added", 12, memory.getSize());
 
 		LEventbus.getInstance().publish(new LModelStepEvent());
-		assertEquals(
-				"In step 3, properties memorised in step 1 shall be forgotten "
-						+ "(Refresh should have affected second memorized property) (12 - 6 = 6)",
-				6, memory.getSize());
+		assertEquals("In step 3, properties memorised in step 1 shall be forgotten "
+				+ "(Refresh should have affected second memorized property) (12 - 6 = 6)", 6, memory.getSize());
 		logger.error(memory);
 		memory.refresh("key01");
 		logger.error(memory);
 
 		LEventbus.getInstance().publish(new LModelStepEvent());
-		assertEquals(
-				"all properties memorised in step 1 and 2 shall be forgotten in step 4 except refreshed"
-						+ "property.", 1, memory.getSize());
+		assertEquals("all properties memorised in step 1 and 2 shall be forgotten in step 4 except refreshed"
+				+ "property.", 1, memory.getSize());
 
 		LEventbus.getInstance().publish(new LModelStepEvent());
-		assertTrue(
-				"All properties memorised in step 1 and 2 and refreshed property shall be forgotten in step 5",
+		assertTrue("All properties memorised in step 1 and 2 and refreshed property shall be forgotten in step 5",
 				memory.isEmpty());
 
 		// refreshing props that have not been memorised
@@ -796,6 +782,9 @@ public class LDefaultMemoryTest {
 		}
 	}
 
+	/**
+	 * 
+	 */
 	@Test
 	public void testRefreshByProperty() {
 		LTestProperty prop1 = new LTestProperty("Test1", "value01");
@@ -837,8 +826,7 @@ public class LDefaultMemoryTest {
 	public void testRetention() {
 		assertTrue(memory.getDefaultRetentionTime() == LaraMemory.UNLIMITED_RETENTION);
 		memory.setDefaultRetentionTime(2);
-		assertTrue("Default retention time was set to 2",
-				memory.getDefaultRetentionTime() == 2);
+		assertTrue("Default retention time was set to 2", memory.getDefaultRetentionTime() == 2);
 
 		LContainerTestUtils.storeSixStandardEntries(memory);
 		assertTrue(memory.getSize() == 6);
@@ -857,15 +845,11 @@ public class LDefaultMemoryTest {
 		LEventbus.getInstance().publish(new LModelStepEvent());
 
 		logger.info("step " + LModel.getModel().getCurrentStep());
-		assertTrue(
-				"in step 3 properties memorised in step 1 shall be forgotten (12 - 6 = 6)",
-				memory.getSize() == 6);
+		assertTrue("in step 3 properties memorised in step 1 shall be forgotten (12 - 6 = 6)", memory.getSize() == 6);
 
 		LModel.getModel().step(1);
 		logger.info("step " + LModel.getModel().getCurrentStep());
-		assertTrue(
-				"all properties memorised in step 1 and 2 shall be forgotten in step 4",
-				memory.isEmpty());
+		assertTrue("all properties memorised in step 1 and 2 shall be forgotten in step 4", memory.isEmpty());
 
 		LTestProperty property07 = new LTestProperty("key07", "value07");
 		memory.memorize(property07, 10);

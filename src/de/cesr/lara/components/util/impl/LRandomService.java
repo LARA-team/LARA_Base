@@ -19,6 +19,7 @@
  */
 package de.cesr.lara.components.util.impl;
 
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,11 +33,12 @@ import cern.jet.random.engine.RandomEngine;
 import de.cesr.lara.components.util.LaraRandom;
 import de.cesr.lara.components.util.logging.impl.Log4jLogger;
 
+
 /**
  * Uses the {@link MersenneTwister} as generator.
  * 
- * TODO substitute by URaNuS (or clear generators) TODO document (SH) TODO
- * methods to check if given distribution name is of given class
+ * TODO substitute by URaNuS (or clear generators) TODO document (SH) TODO methods to check if given distribution name
+ * is of given class
  */
 public class LRandomService implements LaraRandom {
 
@@ -64,11 +66,9 @@ public class LRandomService implements LaraRandom {
 		distributions = new HashMap<String, AbstractDistribution>();
 
 		if (logger.isDebugEnabled()) {
-			distributions.put(UNIFORM_DEFAULT, new LUniformController(
-					generators.get(null)));
+			distributions.put(UNIFORM_DEFAULT, new LUniformController(generators.get(null)));
 		} else {
-			distributions.put(UNIFORM_DEFAULT,
-					new Uniform(generators.get(null)));
+			distributions.put(UNIFORM_DEFAULT, new Uniform(generators.get(null)));
 		}
 	}
 
@@ -78,18 +78,15 @@ public class LRandomService implements LaraRandom {
 	@Override
 	public Normal createNormal(double mean, double std) {
 		if (isDebugEnabled()) {
-			distributions.put(NORMAL_DEFAULT, new LNormalController(mean, std,
-					generators.get(null)));
+			distributions.put(NORMAL_DEFAULT, new LNormalController(mean, std, generators.get(null)));
 		} else {
-			distributions.put(NORMAL_DEFAULT,
-					new Normal(mean, std, generators.get(null)));
+			distributions.put(NORMAL_DEFAULT, new Normal(mean, std, generators.get(null)));
 		}
 
 		// <- LOGGING
 		if (logger.isDebugEnabled()) {
-			logger.debug("Create normal distribution with mean " + mean
-					+ " and std.dev. " + std + "(default Generator: "
-					+ generators.get(null).getClass().getName() + ")");
+			logger.debug("Create normal distribution with mean " + mean + " and std.dev. " + std
+					+ "(default Generator: " + generators.get(null).getClass().getName() + ")");
 		}
 		// LOGGING ->
 
@@ -97,16 +94,14 @@ public class LRandomService implements LaraRandom {
 	}
 
 	/**
-	 * @see de.cesr.lara.components.util.LaraRandom#getCustomNormal(double,
-	 *      double, java.lang.String)
+	 * @see de.cesr.lara.components.util.LaraRandom#getCustomNormal(double, double, java.lang.String)
 	 */
 	@Override
 	public Normal getCustomNormal(double mean, double std, String name) {
 		// <- LOGGING
 		if (logger.isDebugEnabled()) {
-			logger.debug("Create custom normal distribution with mean " + mean
-					+ " and std.dev. " + std + "(Generator: "
-					+ generators.get(name).getClass().getName() + ")");
+			logger.debug("Create custom normal distribution with mean " + mean + " and std.dev. " + std
+					+ "(Generator: " + generators.get(name).getClass().getName() + ")");
 		}
 		// LOGGING ->
 
@@ -195,16 +190,14 @@ public class LRandomService implements LaraRandom {
 		invalidateDistributions();
 		generators.put(null, new MersenneTwister(seed));
 		if (logger.isDebugEnabled()) {
-			distributions.put(UNIFORM_DEFAULT, new LUniformController(
-					generators.get(null)));
+			distributions.put(UNIFORM_DEFAULT, new LUniformController(generators.get(null)));
 		} else {
-			distributions.put(UNIFORM_DEFAULT,
-					new Uniform(generators.get(null)));
+			distributions.put(UNIFORM_DEFAULT, new Uniform(generators.get(null)));
 		}
 		// <- LOGGING
 		if (logger.isDebugEnabled()) {
-			logger.debug("Set seed: " + this.seed + "(default generator: "
-					+ generators.get(null).getClass().getName() + ")");
+			logger.debug("Set seed: " + this.seed + "(default generator: " + generators.get(null).getClass().getName()
+					+ ")");
 		}
 		// LOGGING ->
 

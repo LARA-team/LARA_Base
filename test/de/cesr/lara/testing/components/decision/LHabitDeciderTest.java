@@ -21,6 +21,7 @@ package de.cesr.lara.testing.components.decision;
 
 import static org.junit.Assert.assertEquals;
 
+import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,7 +39,6 @@ import de.cesr.lara.components.util.impl.LPrefEntry;
 import de.cesr.lara.testing.LTestUtils;
 import de.cesr.lara.testing.LTestUtils.LTestAgent;
 import de.cesr.lara.testing.LTestUtils.LTestBo;
-import de.cesr.lara.testing.LTestUtils.LTestDecisionConfig;
 import de.cesr.lara.testing.LTestUtils.LTestPreference1;
 import de.cesr.lara.testing.LTestUtils.LTestPreference2;
 import de.cesr.parma.core.PmParameterManager;
@@ -48,18 +48,23 @@ import de.cesr.parma.core.PmParameterManager;
  */
 public class LHabitDeciderTest {
 
+	/**
+	 * Logger
+	 */
+	static private Logger logger = Logger.getLogger(LHabitDeciderTest.class);
+
 	LTestAgent agent;
 	LTestBo one;
 	LTestBo two;
 
-	LaraDecisionConfiguration dConfig = new LTestDecisionConfig();
+	LaraDecisionConfiguration dConfig = LTestUtils.dConfig;
 
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@Before
 	public void setUp() throws Exception {
-		LTestUtils.initTestModel();
+		LTestUtils.initTestModel(dConfig);
 
 		agent = new LTestAgent("TestAgent");
 
@@ -118,16 +123,9 @@ public class LHabitDeciderTest {
 					.getSize());
 			assertEquals(LDeliberativeDecider.class, agent.getLaraComp()
 					.getDecisionData(dConfig).getDecider().getClass());
-			String bo = agent
-					.getLaraComp()
-					.getDecisionData(
-							dConfig)
-					.getDecider()
-					.getSelectedBo()
-					.getKey();
-			System.out
-					.println(">>>>"
-							+ bo);
+			String bo = agent.getLaraComp().getDecisionData(dConfig).getDecider().getSelectedBo().getKey();
+
+			logger.info(">>> " + bo);
 		}
 
 		// X + 1 should be habit:

@@ -19,14 +19,17 @@
  */
 package de.cesr.lara.components.eventbus.events;
 
+
 /**
- * Is fired on initialization of the model. Triggers initialization of
- * components. Fired after ModelInstantiatedEvent (which signals Model
- * existance).
+ * Is fired on initialization of the model. Triggers initialization of components. Fired after ModelInstantiatedEvent
+ * (which signals Model existence).
  */
 public class LInternalModelInitializedEvent implements LaraSynchronousEvent,
 		LaraRequiresPrecedingEvent {
 
+	/**
+	 * @see de.cesr.lara.components.eventbus.events.LaraRequiresPrecedingEvent#getRequiredPrecedingEventClass()
+	 */
 	@Override
 	public Class<? extends LaraEvent> getRequiredPrecedingEventClass() {
 		return LModelInstantiatedEvent.class;

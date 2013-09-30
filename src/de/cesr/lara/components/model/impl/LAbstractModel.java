@@ -27,6 +27,7 @@ import java.util.Date;
 import org.apache.log4j.Logger;
 
 import de.cesr.lara.components.agents.impl.LAbstractAgent;
+import de.cesr.lara.components.eventbus.LaraEventSubscriber;
 import de.cesr.lara.components.eventbus.LaraInternalEventSubscriber;
 import de.cesr.lara.components.eventbus.events.LAgentDecideEvent;
 import de.cesr.lara.components.eventbus.events.LAgentExecutionEvent;
@@ -61,7 +62,7 @@ import de.cesr.lara.components.util.logging.impl.Log4jLogger;
  * 
  */
 public abstract class LAbstractModel implements LaraModel,
-		LaraInternalEventSubscriber {
+ LaraInternalEventSubscriber, LaraEventSubscriber {
 
 	private static final Logger logger = Log4jLogger.getLogger(LAbstractModel.class);
 
@@ -155,7 +156,6 @@ public abstract class LAbstractModel implements LaraModel,
 
 		if (event instanceof LModelInstantiatedEvent) {
 			init();
-			// TODO modeler's duty...!
 			eventBus.publish(new LInternalModelInitializedEvent());
 			
 		} else if (event instanceof LModelStepEvent) {
@@ -163,6 +163,7 @@ public abstract class LAbstractModel implements LaraModel,
 			
 		} else if (event instanceof LAgentPerceptionEvent) {
 			currentSimStage = LSimulationStage.PERCEIVE;
+
 			// <- LOGGING
 			if (logger.isDebugEnabled()) {
 				logger.debug(">> Perceive: " + getCurrentStep());

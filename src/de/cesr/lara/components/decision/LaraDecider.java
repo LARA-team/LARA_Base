@@ -19,15 +19,17 @@
  */
 package de.cesr.lara.components.decision;
 
+
 import java.util.Set;
 
 import de.cesr.lara.components.LaraBehaviouralOption;
+
 
 /**
  * Interface for all components that may execute a decision.
  * 
  * @param <BO>
- *            type of behavioural options the decider is indented for
+ *        type of behavioural options the decider is indented for
  */
 public interface LaraDecider<BO extends LaraBehaviouralOption<?, ?>> {
 
@@ -37,17 +39,13 @@ public interface LaraDecider<BO extends LaraBehaviouralOption<?, ?>> {
 	public void decide();
 
 	/**
-	 * Return the {@link LaraBehaviouralOption}s that were selected in
-	 * {@link LaraDecider#decide()}.
+	 * Return the {@link LaraBehaviouralOption}s that were selected in {@link LaraDecider#decide()}.
 	 * 
-	 * Note: Do not perform the actual selection here since this method might be
-	 * called more than once!
+	 * Note: Do not perform the actual selection here since this method might be called more than once!
 	 * 
 	 * @param k
-	 *            the size of the returned set - Integer.MAX_VALUE if all BOs
-	 *            shall be returned
-	 * @return a set of {@link LaraBehaviouralOption}s as result of the decision
-	 *         process
+	 *        the size of the returned set - Integer.MAX_VALUE if all BOs shall be returned
+	 * @return a set of {@link LaraBehaviouralOption}s as result of the decision process
 	 */
 	public Set<? extends BO> getKSelectedBos(int k);
 
@@ -57,13 +55,16 @@ public interface LaraDecider<BO extends LaraBehaviouralOption<?, ?>> {
 	public int getNumSelectableBOs();
 
 	/**
-	 * Return the {@link LaraBehaviouralOption} that was selected in
-	 * {@link LaraDecider#decide()}.
+	 * Return the {@link LaraBehaviouralOption} that was selected in {@link LaraDecider#decide()}.
 	 * 
-	 * Note: Do not perform the actual selection here since this method might be
-	 * called more than once!
+	 * Note: Do not perform the actual selection here since this method might be called more than once!
 	 * 
 	 * @return a {@link LaraBehaviouralOption} as result of the decision process
 	 */
 	public BO getSelectedBo();
+
+	/**
+	 * @return the decision mode the decider belongs to
+	 */
+	public LaraDecisionModes getDecisionMode();
 }

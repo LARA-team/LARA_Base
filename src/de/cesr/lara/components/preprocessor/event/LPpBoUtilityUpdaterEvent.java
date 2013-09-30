@@ -19,20 +19,20 @@
  */
 package de.cesr.lara.components.preprocessor.event;
 
+
 import de.cesr.lara.components.agents.LaraAgent;
 import de.cesr.lara.components.decision.LaraDecisionConfiguration;
 import de.cesr.lara.components.preprocessor.LaraBOUtilityUpdater;
 
+
 /**
- * Triggers behavioural options' utility updating. {@link LaraBOUtilityUpdater}s
- * should register for these events.
+ * Triggers behavioural options' utility updating. {@link LaraBOUtilityUpdater}s should register for these events.
  * 
  * @author Sascha Holzhauer
  */
 public class LPpBoUtilityUpdaterEvent extends LAbstractPpEvent {
 
-	public LPpBoUtilityUpdaterEvent(LaraAgent<?, ?> agent,
-			LaraDecisionConfiguration dConfig) {
+	public LPpBoUtilityUpdaterEvent(LaraAgent<?, ?> agent, LaraDecisionConfiguration dConfig) {
 		super(agent, dConfig);
 	}
 }

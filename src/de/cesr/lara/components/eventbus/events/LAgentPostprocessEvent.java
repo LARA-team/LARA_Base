@@ -19,7 +19,9 @@
  */
 package de.cesr.lara.components.eventbus.events;
 
+
 import de.cesr.lara.components.decision.LaraDecisionConfiguration;
+
 
 /**
  * Triggers agents to postprocess.
@@ -27,13 +29,18 @@ import de.cesr.lara.components.decision.LaraDecisionConfiguration;
 public class LAgentPostprocessEvent implements LaraSynchronousEvent {
 	private LaraDecisionConfiguration decisionConfiguration;
 
-	public LAgentPostprocessEvent(
-			LaraDecisionConfiguration decisionConfiguration) {
+	/**
+	 * Sets the {@link LaraDecisionConfiguration} of this event
+	 * @param decisionConfiguration
+	 */
+	public LAgentPostprocessEvent(LaraDecisionConfiguration decisionConfiguration) {
 		this.decisionConfiguration = decisionConfiguration;
 	}
 
+	/**
+	 * @return {@link LaraDecisionConfiguration} of this event
+	 */
 	public LaraDecisionConfiguration getDecisionConfiguration() {
 		return decisionConfiguration;
 	}
-
 }

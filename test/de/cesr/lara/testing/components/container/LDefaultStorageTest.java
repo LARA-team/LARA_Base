@@ -19,6 +19,7 @@
  */
 package de.cesr.lara.testing.components.container;
 
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -42,6 +43,7 @@ import de.cesr.lara.components.eventbus.impl.LEventbus;
 import de.cesr.lara.testing.LTestUtils;
 import de.cesr.lara.testing.components.container.LContainerTestUtils.LTestProperty;
 
+
 /**
  * 
  * @author Sascha Holzhauer
@@ -57,7 +59,7 @@ public class LDefaultStorageTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		LTestUtils.initTestModel();
+		LTestUtils.initTestModel(LTestUtils.dConfig);
 		LEventbus.getInstance().publish(new LModelStepEvent());
 		storage = new LDefaultStorage<LTestProperty>();
 	}
@@ -176,9 +178,8 @@ public class LDefaultStorageTest {
 		LEventbus.getInstance().publish(new LModelStepEvent());
 
 		storage.store(new LTestProperty("key05", "lastAdded"));
-		assertEquals(
-				"The last added property of key key05 hast value lastAdded",
-				"lastAdded", storage.fetch("key05").getValue());
+		assertEquals("The last added property of key key05 hast value lastAdded", "lastAdded", storage.fetch("key05")
+				.getValue());
 	}
 
 	/**

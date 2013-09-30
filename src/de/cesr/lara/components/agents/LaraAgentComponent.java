@@ -19,6 +19,7 @@
  */
 package de.cesr.lara.components.agents;
 
+
 import java.util.Map;
 
 import de.cesr.lara.components.LaraBehaviouralOption;
@@ -36,12 +37,14 @@ import de.cesr.lara.components.postprocessor.LaraPostprocessorComp;
 import de.cesr.lara.components.preprocessor.LaraPreprocessor;
 import de.cesr.lara.components.util.impl.LPrefEntry;
 
+
 /**
+ * Agent component for LARA specific processes and properties.
  * 
  * @param <A>
- *            type of agent this LARA component belongs to
+ *        type of agent this LARA component belongs to
  * @param <BO>
- *            type of behavioural options memorised in the BO-memory
+ *        type of behavioural options memorised in the BO-memory
  * 
  * @author Sascha Holzhauer
  * @date 17.12.2009
@@ -60,45 +63,41 @@ public interface LaraAgentComponent<A extends LaraAgent<? super A, BO>, BO exten
 	 * Set the agent's preference weights towards its preferences.
 	 * 
 	 * @param preferenceWeights
-	 *            the preferenceWeights to set
+	 *        the preferenceWeights to set
 	 */
-	public void addPreferenceWeights(
-			Map<Class<? extends LaraPreference>, Double> preferenceWeights);
+	public void addPreferenceWeights(Map<Class<? extends LaraPreference>, Double> preferenceWeights);
 
 	/**
-	 * Executes decision making for the given {@link LaraDecisionConfiguration}:
-	 * Simulates the agent's decision making process.
+	 * Executes decision making for the given {@link LaraDecisionConfiguration}: Simulates the agent's decision making
+	 * process.
 	 * 
 	 * @param dConfiguration
-	 *            decision builder that identifies the decision to execute
+	 *        decision builder that identifies the decision to execute
 	 */
 	public void decide(LaraDecisionConfiguration dConfiguration);
 
-	/**
-	 * Get the {@link LaraBOMemory} (for behavioural options) of this agent.
-	 * 
-	 * @return agent's behavioural option memory
-	 */
-	public LaraBOMemory<BO> getBOMemory();
-
 	/*****************************
-	 * MEMORY MANGEMENT
+	 * DECISION DATA
 	 *****************************/
 
 	/**
-	 * Returns the {@link LaraDecisionData} object associated with the given
-	 * {@link LaraDecisionConfiguration}. If the object does not exist, it is
-	 * created.
+	 * Removes the {@link LaraDecisionData} that is associated with the specified {@link LaraDecisionConfiguration}.
 	 * 
-	 * NOTE: The LDC parameter should not be bounded since it would require the
-	 * LaraBehaviouralOption (which calls this method) to restricts its agent
-	 * parameter's BO parameter.
+	 * @param dConfiguration
+	 */
+	public void removeDecisionData(LaraDecisionConfiguration dConfiguration);
+
+	/**
+	 * Returns the {@link LaraDecisionData} object associated with the given {@link LaraDecisionConfiguration}. If the
+	 * object does not exist, it is created.
+	 * 
+	 * NOTE: The LDC parameter should not be bounded since it would require the LaraBehaviouralOption (which calls this
+	 * method) to restricts its agent parameter's BO parameter.
 	 * 
 	 * @param dConfiguration
 	 * @return the decision data associated with the given decision builder.
 	 */
-	public LaraDecisionData<A, BO> getDecisionData(
-			LaraDecisionConfiguration dConfiguration);
+	public LaraDecisionData<A, BO> getDecisionData(LaraDecisionConfiguration dConfiguration);
 
 	/**
 	 * Returns an iterator that iterates over all {@link LaraDecisionData}s.
@@ -107,27 +106,61 @@ public interface LaraAgentComponent<A extends LaraAgent<? super A, BO>, BO exten
 	 */
 	public Iterable<LaraDecisionData<A, BO>> getDecisionDataIterable();
 
+	/*****************************
+	 * SET COMPONENTS
+	 *****************************/
+
 	/**
-	 * Returns the {@link LaraDeliberativeChoiceComponent} that shall be used
-	 * for the given decision configuration.
+	 * Set the agent's behavioural options memory
+	 * 
+	 * @param boMemory
+	 *        the new BO memory
+	 */
+	public void setBOMemory(LaraBOMemory<BO> boMemory);
+
+	/**
+	 * Sets the {@link LaraDeliberativeChoiceComponent} that shall be used for the given decision configuration.
+	 * 
+	 * Note: if possible, use the same instance of the LaraDeliberativeChoiceComponent for all agents to save memory.
 	 * 
 	 * @param dConfiguration
-	 * @return
+	 * @param comp
 	 */
-	public LaraDeliberativeChoiceComponent getDeliberativeChoiceComp(
-			LaraDecisionConfiguration dConfiguration);
+	public void setDeliberativeChoiceComp(LaraDecisionConfiguration dConfiguration, LaraDeliberativeChoiceComponent comp);
 
 	/**
-	 * @param name
-	 *            the property's name
-	 * @return the double value of that property - NaN if property does not
-	 *         exist
+	 * Set the agent's general property memory
+	 * 
+	 * @param memory
+	 *        agent's general property memory
 	 */
-	public double getDoubleProperty(String name);
+	public void setGeneralMemory(LaraMemory<LaraProperty<?, ?>> memory);
+
+	/**
+	 * Sets the post-processor component.
+	 * 
+	 * @param postprocesor
+	 */
+	public void setPostProcessor(LaraPostprocessorComp<A, BO> postprocesor);
+
+	/**
+	 * Set the agent's pre-processor. Since the preprocessor itself differentiates between
+	 * {@link LaraDecisionConfiguration}s there is only one preprocessor to assign for all decisions.
+	 * 
+	 * @param preprocessor
+	 */
+	public void setPreprocessor(LaraPreprocessor<A, BO> preprocessor);
 
 	/*****************************
-	 * PREFERENCE MANGEMENT
+	 * Further GETTER and SETTER
 	 *****************************/
+	
+	/**
+	 * Get the {@link LaraBOMemory} (for behavioural options) of this agent.
+	 * 
+	 * @return agent's behavioural option memory
+	 */
+	public LaraBOMemory<BO> getBOMemory();
 
 	/**
 	 * Get the environment this agent belongs to by its type
@@ -144,8 +177,7 @@ public interface LaraAgentComponent<A extends LaraAgent<? super A, BO>, BO exten
 	public LaraMemory<LaraProperty<?, ?>> getGeneralMemory();
 
 	/**
-	 * The number of {@link LaraDecisionData} objects currently stored at the
-	 * agent.
+	 * The number of {@link LaraDecisionData} objects currently stored at the agent.
 	 * 
 	 * @return the number of decision data objects
 	 */
@@ -157,10 +189,6 @@ public interface LaraAgentComponent<A extends LaraAgent<? super A, BO>, BO exten
 	 */
 	public Double getPreferenceWeight(Class<? extends LaraPreference> preference);
 
-	/*****************************
-	 * PROPERTY MANGEMENT
-	 *****************************/
-
 	/**
 	 * @return a map of the agents preferenceWeights
 	 * 
@@ -168,66 +196,10 @@ public interface LaraAgentComponent<A extends LaraAgent<? super A, BO>, BO exten
 	public Map<Class<? extends LaraPreference>, Double> getPreferenceWeights();
 
 	/**
-	 * Removes the {@link LaraDecisionData} that is associated with the
-	 * specified {@link LaraDecisionConfiguration}.
+	 * Returns the {@link LaraDeliberativeChoiceComponent} that shall be used for the given decision configuration.
 	 * 
 	 * @param dConfiguration
+	 * @return
 	 */
-	public void removeDecisionData(LaraDecisionConfiguration dConfiguration);
-
-	/*****************************
-	 * DECISION DATA
-	 *****************************/
-
-	/**
-	 * Set the agent's behavioural options memory
-	 * 
-	 * @param boMemory
-	 *            the new BO memory
-	 */
-	public void setBOMemory(LaraBOMemory<BO> boMemory);
-
-	/**
-	 * Sets the {@link LaraDeliberativeChoiceComponent} that shall be used for
-	 * the given decision configuration.
-	 * 
-	 * Note: if possible, use the same instance of the
-	 * LaraDeliberativeChoiceComponent for all agents to save memory.
-	 * 
-	 * @param dConfiguration
-	 * @param comp
-	 */
-	public void setDeliberativeChoiceComp(
-			LaraDecisionConfiguration dConfiguration,
-			LaraDeliberativeChoiceComponent comp);
-
-	/**
-	 * @param name
-	 *            the name of existing or new property
-	 * @param value
-	 *            the property's (new) value
-	 */
-	public void setDoubleProperty(String name, double value);
-
-	/**
-	 * Set the agent's general property memory
-	 * 
-	 * @param memory
-	 *            agent's general property memory
-	 */
-	public void setGeneralMemory(LaraMemory<LaraProperty<?, ?>> memory);
-
-	/**
-	 * Sets the post-processor component.
-	 * 
-	 * @param postprocesor
-	 */
-	public void setPostProcessor(LaraPostprocessorComp<A, BO> postprocesor);
-
-	/**
-	 * Set the agent's pre-processor.
-	 * 
-	 * @param preprocessor
-	 */
-	public void setPreprocessor(LaraPreprocessor<A, BO> preprocessor);
+	public LaraDeliberativeChoiceComponent getDeliberativeChoiceComp(LaraDecisionConfiguration dConfiguration);
 }

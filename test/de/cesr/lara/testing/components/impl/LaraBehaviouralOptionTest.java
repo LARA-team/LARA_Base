@@ -61,7 +61,7 @@ public class LaraBehaviouralOptionTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		LTestUtils.initTestModel();
+		LTestUtils.initTestModel(LTestUtils.dConfig);
 		env = new LEnvironment();
 		agent1 = new LTestUtils.LTestAgent("TestAgent1");
 		agent2 = new LTestUtils.LTestAgent("TestAgent2");

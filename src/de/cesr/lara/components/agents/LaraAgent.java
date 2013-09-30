@@ -19,36 +19,32 @@
  */
 package de.cesr.lara.components.agents;
 
+
 import de.cesr.lara.components.LaraBehaviouralOption;
 import de.cesr.lara.components.eventbus.LaraEventSubscriber;
 
+
 /**
- * The class uses recursive generics since the {@link LaraAgentComponent}
- * requires the type of agent. See Maurice, M. N. & Wadler, P. Java Generics and
- * Collections O'Reilly Media, 2006, p. 133ff.
+ * The class uses recursive generics since the {@link LaraAgentComponent} requires the type of agent. See Maurice, M. N.
+ * & Wadler, P. Java Generics and Collections O'Reilly Media, 2006, p. 133ff.
  * 
- * See also
- * http://java.sun.com/docs/books/jls/third_edition/html/typesValues.html#4.5 A
- * Type parameter cannot be generic. Furthermore, one cannot define more than
- * one type in one ActualTypeArgument (T<S>). So one needs to workaround with
- * two ActualTypeArguments declarations (S extends LaraAgent, T extends
- * Interface<S>).
+ * See also http://java.sun.com/docs/books/jls/third_edition/html/typesValues.html#4.5 A Type parameter cannot be
+ * generic. Furthermore, one cannot define more than one type in one ActualTypeArgument (T&lt;S&gt;). So one needs to
+ * workaround with two ActualTypeArguments declarations (S extends LaraAgent, T extends Interface&lt;S&gt;).
  * 
- * Agents also work with BOs that require (only) a super class of their (agent)
- * class.
+ * Agents also work with BOs that require (only) a super class of their (agent) class.
  * 
  * @param <A>
- *            the agent type of the implementing class
+ *        the agent type of the implementing class
  * @param <BO>
- *            the type of behavioural options the implementing agent class works
- *            with
+ *        the type of behavioural options the implementing agent class works with
  * 
  */
-public interface LaraAgent<A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>>
-		extends LaraEventSubscriber {
+public interface LaraAgent<A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>> extends
+		LaraEventSubscriber {
 
 	/**
-	 * Get the custom agent id.
+	 * Get the custom agent id (should be unique).
 	 * 
 	 * @return agent id string
 	 */

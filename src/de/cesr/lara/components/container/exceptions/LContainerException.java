@@ -19,17 +19,18 @@
  */
 package de.cesr.lara.components.container.exceptions;
 
+
 /**
  * Super class of all LContainer*Exceptions.
  */
 public class LContainerException extends RuntimeException {
 
-	private static final long serialVersionUID = 6700984975941024617L;
+	private static final long	serialVersionUID	= 6700984975941024617L;
 
 	/**
 	 * Exception message
 	 */
-	private String message;
+	private String				message;
 
 	/**
 	 * 

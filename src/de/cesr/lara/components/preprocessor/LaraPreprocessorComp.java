@@ -19,34 +19,35 @@
  */
 package de.cesr.lara.components.preprocessor;
 
+
 import de.cesr.lara.components.LaraBehaviouralOption;
 import de.cesr.lara.components.agents.LaraAgent;
 import de.cesr.lara.components.eventbus.LaraInternalEventSubscriber;
 import de.cesr.lara.components.eventbus.events.LaraEvent;
 import de.cesr.lara.components.preprocessor.event.LaraPpEvent;
 
+
 /**
  * 
- * Interface for all preprocessor components. This is necessary as a common
- * super type for handling generic components in the {@link LaraPreprocessor}.
+ * Interface for all preprocessor components. This is necessary as a common super type for handling generic components
+ * in the {@link LaraPreprocessor}.
  * 
  * @param <A>
- *            agent type
+ *        agent type
  */
 public interface LaraPreprocessorComp<A extends LaraAgent<? super A, ?>, BO extends LaraBehaviouralOption<?, ?>>
 		extends LaraInternalEventSubscriber {
 
 	/**
-	 * Checks whether the given object is assignable to references of the type
-	 * of the given class object. It returns a version of the given object that
-	 * is casted to the given type. Otherwise, it raises an exception.
+	 * Checks whether the given object is assignable to references of the type of the given class object. It returns a
+	 * version of the given object that is casted to the given type. Otherwise, it raises an exception.
 	 * 
 	 * @param <E>
-	 *            The type of event the given event shall be checked for
+	 *        The type of event the given event shall be checked for
 	 * @param clazz
-	 *            class object of the type that shall be checked for
+	 *        class object of the type that shall be checked for
 	 * @param event
-	 *            the event that whose type is checked
+	 *        the event that whose type is checked
 	 * @return the event casted to the given type
 	 */
 	public <E extends LaraPpEvent> E castEvent(Class<E> clazz, LaraEvent event);

@@ -31,7 +31,6 @@ import org.junit.Test;
 import de.cesr.lara.components.LaraPreference;
 import de.cesr.lara.components.decision.LaraDecisionConfiguration;
 import de.cesr.lara.components.decision.LaraDeliberativeDecider;
-import de.cesr.lara.components.decision.impl.LDecisionConfiguration;
 import de.cesr.lara.components.decision.impl.LDeliberativeChoiceComp_MaxLineTotal;
 import de.cesr.lara.components.decision.impl.LDeliberativeDecider;
 import de.cesr.lara.components.util.impl.LPrefEntry;
@@ -48,7 +47,7 @@ import de.cesr.lara.testing.LTestUtils.LTestPreference2;
 public class LDeliberativeDeciderTest {
 
 	LTestAgent agent;
-	LaraDecisionConfiguration dConfig;
+	LaraDecisionConfiguration dConfig = LTestUtils.dConfig;
 
 	LTestBo bo1, bo2;
 
@@ -58,7 +57,7 @@ public class LDeliberativeDeciderTest {
 	@Before
 	public void setUp() throws Exception {
 
-		LTestUtils.initTestModel();
+		LTestUtils.initTestModel(dConfig);
 		agent = new LTestAgent("TestAgent");
 
 		agent.getLaraComp().addPreferenceWeights(
@@ -69,7 +68,6 @@ public class LDeliberativeDeciderTest {
 		prefs.add(LTestPreference1.class);
 		prefs.add(LTestPreference2.class);
 
-		dConfig = new LDecisionConfiguration();
 		dConfig.setPreferences(prefs);
 	}
 

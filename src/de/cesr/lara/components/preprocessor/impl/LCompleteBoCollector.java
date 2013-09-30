@@ -19,6 +19,7 @@
  */
 package de.cesr.lara.components.preprocessor.impl;
 
+
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -32,19 +33,20 @@ import de.cesr.lara.components.preprocessor.LaraBOCollector;
 import de.cesr.lara.components.preprocessor.event.LPpBoCollectorEvent;
 import de.cesr.lara.components.util.logging.impl.Log4jLogger;
 
+
 /**
  * 
- * Retrieves all recent behavioural options in memory (does _not_ check for each
- * if any utility > 0.0 contributes to the decision).
+ * Retrieves all recent behavioural options in memory (does _not_ check for each if any utility > 0.0 contributes to the
+ * decision).
  * 
- * NOTE regarding LOGGING: The agent logger for logging BOs is only enabled when
- * the logger for this class is enabled at least for {@link Priority#INFO}!
+ * NOTE regarding LOGGING: The agent logger for logging BOs is only enabled when the logger for this class is enabled at
+ * least for {@link Priority#INFO}!
  * 
  * @author Sascha Holzhauer
  * @param <A>
- *            the type of agents this BO collector is intended for
+ *        the type of agents this BO collector is intended for
  * @param <BO>
- *            the type of behavioural options the given BO-memory memorises
+ *        the type of behavioural options the given BO-memory memorises
  * @date 23.02.2011
  */
 public class LCompleteBoCollector<A extends LaraAgent<? super A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>>
@@ -53,12 +55,11 @@ public class LCompleteBoCollector<A extends LaraAgent<? super A, BO>, BO extends
 	/**
 	 * Logger
 	 */
-	static private Logger logger = Log4jLogger
-			.getLogger(LCompleteBoCollector.class);
+	static private Logger logger = Log4jLogger.getLogger(LCompleteBoCollector.class);
 
 	/**
-	 * Retrieves all recent behavioural options in memory (does _not_ checks for
-	 * each if any utility > 0.0 contributes to the decision).
+	 * Retrieves all recent behavioural options in memory (does _not_ checks for each if any utility > 0.0 contributes
+	 * to the decision).
 	 * 
 	 * @see de.cesr.lara.components.eventbus.LaraInternalEventSubscriber#onInternalEvent(de.cesr.lara.components.eventbus.events.LaraEvent)
 	 */

@@ -77,7 +77,7 @@ public class OmitZeroContributingBOScannerTest {
 	 */
 	LTestBo bo3;
 
-	LaraDecisionConfiguration dBuilder;
+	LaraDecisionConfiguration dBuilder = new LDecisionConfiguration("TestDecision");
 
 	LaraBOCollector<LTestAgent, LTestBo> scanner;
 
@@ -97,6 +97,10 @@ public class OmitZeroContributingBOScannerTest {
 
 			@Override
 			public void onInternalEvent(LaraEvent event) {
+			}
+
+			@Override
+			public <T extends LaraEvent> void onEvent(T event) {
 			}
 		});
 		((LAbstractModel) LModel.getModel()).init();
@@ -120,7 +124,6 @@ public class OmitZeroContributingBOScannerTest {
 
 		agent.getLaraComp().setBOMemory(memory);
 
-		dBuilder = new LDecisionConfiguration("TestDecision");
 		LDefaultAgentComp.setDefaultDeliberativeChoiceComp(dBuilder,
 				LDeliberativeChoiceComp_MaxLineTotalRandomAtTie
 						.getInstance(null));
