@@ -19,7 +19,9 @@
  */
 package de.cesr.lara.components.environment.impl;
 
+
 import de.cesr.lara.components.environment.LaraEnvironment;
+
 
 /**
  * 
@@ -27,13 +29,12 @@ import de.cesr.lara.components.environment.LaraEnvironment;
  * @date 22.12.2009
  * 
  */
-public class LEnvironmentalIntProperty extends
-		LAbstractEnvironmentalProperty<Integer> {
+public class LEnvironmentalIntProperty extends LAbstractEnvironmentalProperty<Integer> {
 
 	/**
 	 * value
 	 */
-	protected int intValue;
+	protected int	intValue;
 
 	/**
 	 * @param key
@@ -54,8 +55,7 @@ public class LEnvironmentalIntProperty extends
 	public boolean equals(Object o) {
 		if (o instanceof LEnvironmentalIntProperty) {
 			LEnvironmentalIntProperty intProperty = (LEnvironmentalIntProperty) o;
-			return (getKey().equals(intProperty.getKey()) && this.intValue == intProperty
-					.getIntValue());
+			return (getKey().equals(intProperty.getKey()) && this.intValue == intProperty.getIntValue());
 		} else {
 			return false;
 		}

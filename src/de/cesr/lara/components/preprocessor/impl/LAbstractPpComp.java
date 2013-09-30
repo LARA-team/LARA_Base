@@ -19,6 +19,7 @@
  */
 package de.cesr.lara.components.preprocessor.impl;
 
+
 import java.text.DecimalFormat;
 import java.util.Collection;
 
@@ -32,6 +33,7 @@ import de.cesr.lara.components.preprocessor.event.LaraPpEvent;
 import de.cesr.lara.components.util.logging.impl.LAgentLevel;
 import de.cesr.lara.components.util.logging.impl.Log4jLogger;
 
+
 /**
  * @author Sascha Holzhauer
  * 
@@ -44,7 +46,7 @@ public abstract class LAbstractPpComp<A extends LaraAgent<? super A, ?>, BO exte
 	/**
 	 * Logger
 	 */
-	static private Logger logger = Log4jLogger.getLogger(LAbstractPpComp.class);
+	static private Logger	logger	= Log4jLogger.getLogger(LAbstractPpComp.class);
 
 	/**
 	 * @see de.cesr.lara.components.preprocessor.LaraPreprocessorComp#castEvent(java.lang.Class,
@@ -55,13 +57,10 @@ public abstract class LAbstractPpComp<A extends LaraAgent<? super A, ?>, BO exte
 		if (clazz.isInstance(event)) {
 			return clazz.cast(event);
 		} else {
-			logger.error("The preprocessor component (" + this
-					+ "( may not be subscribed for this event: " + event
+			logger.error("The preprocessor component (" + this + "( may not be subscribed for this event: " + event
 					+ "! The component is suitable for events of type " + clazz);
-			throw new IllegalStateException("The preprocessor component ("
-					+ this + "( may not be subscribed " + "for this event: "
-					+ event + "! The component is suitable for events of type "
-					+ clazz);
+			throw new IllegalStateException("The preprocessor component (" + this + "( may not be subscribed "
+					+ "for this event: " + event + "! The component is suitable for events of type " + clazz);
 		}
 	}
 
@@ -69,37 +68,31 @@ public abstract class LAbstractPpComp<A extends LaraAgent<? super A, ?>, BO exte
 	 * 
 	 * TODO check
 	 * 
-	 * Logs BOs to agentLogger
-	 * (<agent>.de.cesr.lara.components.preprocessor.impl.LPreprocessor) if its
-	 * not null and to logger if debug is enabled otherwise.
+	 * Logs BOs to agentLogger (<agent>.de.cesr.lara.components.preprocessor.impl.LPreprocessor) if its not null and to
+	 * logger if debug is enabled otherwise.
 	 * 
 	 * @param bos
-	 *            BOs to log
+	 *        BOs to log
 	 * @param desc
-	 *            description that comments to BOs origin
+	 *        description that comments to BOs origin
 	 * @param agent
 	 */
-	protected void logBOs(Logger logger, Collection<BO> bos, String desc,
-			A agent) {
+	protected void logBOs(Logger logger, Collection<BO> bos, String desc, A agent) {
 
 		Logger agentLogger = null;
 
 		// initialise agent specific logger (agent id is first part of logger
 		// name):
-		if (Log4jLogger.getLogger(
-				agent.getAgentId() + "." + LPreprocessor.class.getName())
-				.isEnabledFor(LAgentLevel.AGENT)) {
-			agentLogger = Log4jLogger.getLogger(agent.getAgentId() + "."
-					+ LPreprocessor.class.getName());
+		if (Log4jLogger.getLogger(agent.getAgentId() + "." + LPreprocessor.class.getName()).isEnabledFor(
+				LAgentLevel.AGENT)) {
+			agentLogger = Log4jLogger.getLogger(agent.getAgentId() + "." + LPreprocessor.class.getName());
 		}
 
 		StringBuffer buffer = new StringBuffer();
-		buffer.append(desc + " for " + agent + ":"
-				+ System.getProperty("line.separator"));
+		buffer.append(desc + " for " + agent + ":" + System.getProperty("line.separator"));
 		int i = 0;
 		for (BO bo : bos) {
-			buffer.append(new DecimalFormat("00").format(i) + "th BO: " + bo
-					+ System.getProperty("line.separator"));
+			buffer.append(new DecimalFormat("00").format(i) + "th BO: " + bo + System.getProperty("line.separator"));
 			i++;
 		}
 		if (agentLogger != null) {
@@ -116,8 +109,6 @@ public abstract class LAbstractPpComp<A extends LaraAgent<? super A, ?>, BO exte
 	 */
 	@Override
 	public String toString() {
-		return this
-				.getClass()
-				.getName();
+		return this.getClass().getName();
 	}
 }

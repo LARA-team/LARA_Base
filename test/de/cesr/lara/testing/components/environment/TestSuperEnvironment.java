@@ -46,7 +46,7 @@ public class TestSuperEnvironment {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		LTestUtils.initTestModel();
+		LTestUtils.initTestModel(LTestUtils.dConfig);
 
 		subEnv = new LEnvironment();
 		subEnv.addProperty(new LEnvironmentalProperty<Object>("Prop1",

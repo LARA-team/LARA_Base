@@ -17,25 +17,20 @@
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.cesr.lara.testing.components.impl;
+package de.cesr.lara.components.decision;
 
 
 /**
- *
- * @author Sascha Holzhauer
- * @date 10.02.2010 
- *
- */
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
-
-
-/**
+ * For enumerations of decision mode identifiers.
  * 
+ * @author Sascha Holzhauer
  */
-@RunWith(Suite.class)
-@SuiteClasses({ LDefaultAgentCompTest.class, LaraBehaviouralOptionTest.class, LAbstractAgentTest.class })
-public class AllComponentsImplTests {
+public interface LaraDecisionMode {
 
+	/**
+	 * Returns the decision mode's numerical representation.
+	 * 
+	 * @return decision mode's numerical representation
+	 */
+	public int getId();
 }

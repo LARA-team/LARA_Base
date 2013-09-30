@@ -19,6 +19,7 @@
  */
 package de.cesr.lara.components.preprocessor.impl;
 
+
 import org.apache.log4j.Logger;
 
 import de.cesr.lara.components.LaraBehaviouralOption;
@@ -36,31 +37,29 @@ import de.cesr.lara.components.preprocessor.event.LPpModeSelectorEvent;
 import de.cesr.lara.components.preprocessor.event.LPpPreferenceUpdaterEvent;
 import de.cesr.lara.components.util.logging.impl.Log4jLogger;
 
+
 /**
  * Constantly selects {@link LDeliberativeDeciderFactory} as decider factory.
  * 
  * @param <A>
- *            the type of agents this preprocessor is intended for
+ *        the type of agents this preprocessor is intended for
  * @param <BO>
- *            type of behavioural options
+ *        type of behavioural options
  * 
  * @author Sascha Holzhauer
  * @date 10.07.2009
  */
 public class LDeliberativeDecisionModeSelector<A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>>
-		extends LAbstractPpComp<A, BO> implements
-		LaraDecisionModeSelector<A, BO> {
+		extends LAbstractPpComp<A, BO> implements LaraDecisionModeSelector<A, BO> {
 
 	/**
 	 * Logger
 	 */
-	static private Logger logger = Log4jLogger
-			.getLogger(LDeliberativeDecisionModeSelector.class);
+	static private Logger logger = Log4jLogger.getLogger(LDeliberativeDecisionModeSelector.class);
 
 	/**
-	 * Always selects the laraBoRows deliberation mode (
-	 * {@link LDeliberativeDeciderFactory}. This default implementation is used
-	 * in {@link LPreprocessor}.
+	 * Always selects the laraBoRows deliberation mode ( {@link LDeliberativeDeciderFactory}. This default
+	 * implementation is used in {@link LPreprocessor}.
 	 * 
 	 * PP component order:
 	 * <ol>
@@ -89,8 +88,7 @@ public class LDeliberativeDecisionModeSelector<A extends LaraAgent<A, BO>, BO ex
 
 		@SuppressWarnings("unchecked")
 		// unchecked cast
-		LaraDeciderFactory<A, BO> factory = LDeliberativeDeciderFactory
-				.getFactory(agent.getClass());
+		LaraDeciderFactory<A, BO> factory = LDeliberativeDeciderFactory.getFactory(agent.getClass());
 		agent.getLaraComp().getDecisionData(dConfig).setDeciderFactory(factory);
 
 		eBus.publish(new LPpBoCollectorEvent(agent, dConfig));

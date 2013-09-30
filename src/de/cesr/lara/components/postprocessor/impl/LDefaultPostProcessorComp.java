@@ -26,10 +26,16 @@ import de.cesr.lara.components.agents.LaraAgent;
 import de.cesr.lara.components.decision.LaraDecisionConfiguration;
 import de.cesr.lara.components.param.LDecisionMakingPa;
 import de.cesr.lara.components.postprocessor.LaraPostprocessorComp;
+import de.cesr.lara.components.preprocessor.impl.LDefaultDecisionModeSelector;
 import de.cesr.lara.components.util.logging.impl.Log4jLogger;
 import de.cesr.parma.core.PmParameterManager;
 
+
 /**
+ * Memorizes selected behavioural option. Models that use a subclass and use the {@link LDefaultDecisionModeSelector} or
+ * a similar decision mode selector that enables habit decision mode need to call the super method in {@link
+ * this#postProcess(LaraAgent, LaraDecisionConfiguration)}.
+ * 
  * @author Sascha Holzhauer
  * 
  */
@@ -42,11 +48,16 @@ public class LDefaultPostProcessorComp<A extends LaraAgent<A, BO>, BO extends La
 	static private Logger logger = Log4jLogger
 			.getLogger(LDefaultPostProcessorComp.class);
 
+	/**
+	 * Models that use a subclass and use the {@link LDefaultDecisionModeSelector} or a similar decision mode selector
+	 * that enables habit decision mode need to call the super method.
+	 * 
+	 * @see de.cesr.lara.components.postprocessor.LaraPostprocessorComp#postProcess(de.cesr.lara.components.agents.LaraAgent,
+	 *      de.cesr.lara.components.decision.LaraDecisionConfiguration)
+	 */
 	@Override
 	public void postProcess(A agent, LaraDecisionConfiguration dConfig) {
 
-		// TODO check memories capacity (needs to be truly larger than habit
-		// threshold!)
 		// <- LOGGING
 		if (logger.isDebugEnabled()) {
 			logger.debug(this

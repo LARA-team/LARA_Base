@@ -46,7 +46,6 @@ import de.cesr.lara.components.util.impl.LSet;
 import de.cesr.lara.testing.LTestUtils;
 import de.cesr.lara.testing.LTestUtils.LTestAgent;
 import de.cesr.lara.testing.LTestUtils.LTestBo;
-import de.cesr.lara.testing.LTestUtils.LTestDecisionConfig;
 import de.cesr.lara.testing.LTestUtils.LTestPreference1;
 
 /**
@@ -132,14 +131,14 @@ public class LTreeDeciderTest {
 
 	LTestBo two;
 
-	LaraDecisionConfiguration dConfig = new LTestDecisionConfig();
+	LaraDecisionConfiguration dConfig = LTestUtils.dConfig;
 
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@Before
 	public void setUp() throws Exception {
-		LTestUtils.initTestModel();
+		LTestUtils.initTestModel(dConfig);
 		agent = new LTestAgent("TestAgent");
 
 		one = new LTestBo("Bo1", agent, new LPrefEntry(LTestPreference1.class,

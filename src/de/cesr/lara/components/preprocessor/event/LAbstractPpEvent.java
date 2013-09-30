@@ -19,27 +19,27 @@
  */
 package de.cesr.lara.components.preprocessor.event;
 
+
 import de.cesr.lara.components.agents.LaraAgent;
 import de.cesr.lara.components.decision.LaraDecisionConfiguration;
 import de.cesr.lara.components.eventbus.events.LaraSynchronousEvent;
+
 
 /**
  * Abstract class that provides basic methods for {@link LaraPpEvent}s.
  * 
  * @author Sascha Holzhauer
  */
-public abstract class LAbstractPpEvent implements LaraPpEvent,
-		LaraSynchronousEvent {
+public abstract class LAbstractPpEvent implements LaraPpEvent, LaraSynchronousEvent {
 
-	protected LaraDecisionConfiguration dConfig;
-	protected LaraAgent<?, ?> agent;
+	protected LaraDecisionConfiguration	dConfig;
+	protected LaraAgent<?, ?>			agent;
 
 	/**
 	 * @param dConfig
 	 * @param agent
 	 */
-	public LAbstractPpEvent(LaraAgent<?, ?> agent,
-			LaraDecisionConfiguration dConfig) {
+	public LAbstractPpEvent(LaraAgent<?, ?> agent, LaraDecisionConfiguration dConfig) {
 		this.dConfig = dConfig;
 		this.agent = agent;
 	}

@@ -19,6 +19,7 @@
  */
 package de.cesr.lara.testing;
 
+
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
@@ -29,6 +30,13 @@ import de.cesr.lara.components.agents.impl.LAbstractAgent;
 import de.cesr.lara.components.decision.LaraDecisionConfiguration;
 import de.cesr.lara.components.decision.impl.LDecisionConfiguration;
 import de.cesr.lara.components.environment.impl.LEnvironment;
+import de.cesr.lara.components.eventbus.events.LAgentDecideEvent;
+import de.cesr.lara.components.eventbus.events.LAgentExecutionEvent;
+import de.cesr.lara.components.eventbus.events.LAgentPerceptionEvent;
+import de.cesr.lara.components.eventbus.events.LAgentPostprocessEvent;
+import de.cesr.lara.components.eventbus.events.LAgentPreprocessEvent;
+import de.cesr.lara.components.eventbus.events.LModelStepEvent;
+import de.cesr.lara.components.eventbus.events.LModelStepFinishedEvent;
 import de.cesr.lara.components.eventbus.events.LaraEvent;
 import de.cesr.lara.components.model.LaraModel;
 import de.cesr.lara.components.model.impl.LAbstractModel;
@@ -36,16 +44,23 @@ import de.cesr.lara.components.model.impl.LAbstractStandaloneSynchronisedModel;
 import de.cesr.lara.components.model.impl.LModel;
 import de.cesr.lara.components.util.impl.LPrefEntry;
 
+
 /**
  * @author Sascha Holzhauer
  * 
  */
 public class LTestUtils {
 
+	static public LaraDecisionConfiguration dConfig = new LTestDecisionConfig();
+
 	/**
 	 * test agent
 	 */
 	public static class LTestAgent extends LAbstractAgent<LTestAgent, LTestBo> {
+
+		static int counter = 0;
+
+		int id;
 
 		/**
 		 * constructor
@@ -55,6 +70,7 @@ public class LTestUtils {
 		 */
 		public LTestAgent(String name) {
 			super(new LEnvironment(), name);
+			this.id = counter++;
 		}
 
 		@Override
@@ -68,6 +84,11 @@ public class LTestUtils {
 		@Override
 		public <T extends LaraEvent> void onEvent(T event) {
 		}
+
+		@Override
+		public String toString() {
+			return "LTestAgent_" + id;
+		}
 	};
 
 	/**
@@ -76,22 +97,16 @@ public class LTestUtils {
 	 * @author Sascha Holzhauer
 	 * 
 	 */
-	public static class LTestBo extends
-			LaraBehaviouralOption<LTestAgent, LTestBo> {
+	public static class LTestBo extends LaraBehaviouralOption<LTestAgent, LTestBo> {
 
 		static int counter = 0;
 
 		public LTestBo(LTestAgent agent) {
-			super("LTestBo"
-					+ LModel.getModel().getIntegerFormat().format(counter++),
-					agent);
+			super("LTestBo" + LModel.getModel().getIntegerFormat().format(counter++), agent);
 		}
 
-		public LTestBo(LTestAgent agent,
-				Map<Class<? extends LaraPreference>, Double> utilities) {
-			super("LTestBo"
-					+ LModel.getModel().getIntegerFormat().format(counter++),
-					agent, utilities);
+		public LTestBo(LTestAgent agent, Map<Class<? extends LaraPreference>, Double> utilities) {
+			super("LTestBo" + LModel.getModel().getIntegerFormat().format(counter++), agent, utilities);
 		}
 
 		/**
@@ -103,22 +118,18 @@ public class LTestUtils {
 			super(key, agent, prefEntry);
 		}
 
-		public LTestBo(String key, LTestAgent agent,
-				Map<Class<? extends LaraPreference>, Double> utilities) {
+		public LTestBo(String key, LTestAgent agent, Map<Class<? extends LaraPreference>, Double> utilities) {
 			super(key, agent, utilities);
 		}
 
 		@Override
-		public LTestBo getModifiedBO(LTestAgent agent,
-				Map<Class<? extends LaraPreference>, Double> preferenceUtilities) {
+		public LTestBo getModifiedBO(LTestAgent agent, Map<Class<? extends LaraPreference>, Double> preferenceUtilities) {
 			return new LTestBo(this.getKey(), agent, preferenceUtilities);
 		}
 
 		@Override
-		public Map<Class<? extends LaraPreference>, Double> getSituationalUtilities(
-				LaraDecisionConfiguration dBuilder) {
-			return this
-					.getValue();
+		public Map<Class<? extends LaraPreference>, Double> getSituationalUtilities(LaraDecisionConfiguration dBuilder) {
+			return this.getValue();
 		}
 	};
 
@@ -141,8 +152,30 @@ public class LTestUtils {
 	/**
 	 * Inits a {@link LaraModel} as test model.
 	 */
-	public static void initTestModel() {
+	public static void initTestModel(final LaraDecisionConfiguration dConfig) {
 		LaraModel model = new LAbstractStandaloneSynchronisedModel() {
+			@Override
+			public void onEvent(LaraEvent event) {
+				if (event instanceof LModelStepEvent) {
+					// perceive
+					eventBus.publish(new LAgentPerceptionEvent(dConfig));
+					// preprocess
+					eventBus.publish(new LAgentPreprocessEvent(dConfig));
+					// decide
+					eventBus.publish(new LAgentDecideEvent(dConfig));
+					// postprocess
+					eventBus.publish(new LAgentPostprocessEvent(dConfig));
+					// execute
+					eventBus.publish(new LAgentExecutionEvent(dConfig));
+					// tell output to output
+					eventBus.publish(new LModelStepFinishedEvent());
+				}
+			}
+
+			@Override
+			public String toString() {
+				return "TestModel";
+			}
 		};
 		((LAbstractModel) model).init();
 	}

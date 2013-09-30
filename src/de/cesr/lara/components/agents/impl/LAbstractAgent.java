@@ -19,42 +19,33 @@
  */
 package de.cesr.lara.components.agents.impl;
 
+
 import org.apache.log4j.Logger;
 
 import de.cesr.lara.components.LaraBehaviouralOption;
 import de.cesr.lara.components.agents.LaraAgent;
 import de.cesr.lara.components.agents.LaraAgentComponent;
-import de.cesr.lara.components.decision.LaraDecisionConfiguration;
-import de.cesr.lara.components.decision.LaraDecisionData;
 import de.cesr.lara.components.environment.LaraEnvironment;
 import de.cesr.lara.components.util.logging.impl.LAgentLevel;
 import de.cesr.lara.components.util.logging.impl.Log4jLogger;
 
+
 /**
- * TODO logging
  * 
  * @param <A>
  * @param <BO>
- *            the type of behavioural options the BO-memory of this agent may
- *            store
+ *        the type of behavioural options the BO-memory of this agent may store
  * 
  * @author Sascha Holzhauer
  * @date 12.02.2010
  */
 @SuppressWarnings("unchecked")
-public abstract class LAbstractAgent<A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<?, BO>>
-		implements LaraAgent<A, BO> {
+public abstract class LAbstractAgent<A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<?, BO>> implements
+		LaraAgent<A, BO> {
 
 	static private Logger logger = Log4jLogger.getLogger(LAbstractAgent.class);
 
-	/**
-	 * Resets the counter used to label agents (agentID)
-	 */
-	public static void resetCounter() {
-		counter = 0;
-	}
-
-	private Logger agentLogger = null;
+	static private int counter = 0;
 
 	/**
 	 * id as String
@@ -66,22 +57,27 @@ public abstract class LAbstractAgent<A extends LaraAgent<A, BO>, BO extends Lara
 	 */
 	protected LaraAgentComponent<A, BO> agentComp;
 
-	private static int counter = 0;
+	/**
+	 * Instance specific logger allows to log a certain agent.
+	 */
+	private Logger agentLogger = null;
 
 	/**
-	 * @param env
+	 * Assigns an ID of the form agent000X where X is substituted by a counter value.
 	 * 
+	 * @param env
+	 *        the environment this agent is associated with
 	 */
 	public LAbstractAgent(LaraEnvironment env) {
 		this(env, "agent" + String.format("%1$04d", counter++));
 	}
 
 	/**
-	 * To initialise the {@link LaraAgentComponent} properly the id needs to
-	 * passed to this constructor.
 	 * 
 	 * @param env
+	 *        the environment this agent is associated with
 	 * @param id
+	 *        the ID this agent is identified with
 	 */
 	public LAbstractAgent(LaraEnvironment env, String id) {
 		super();
@@ -89,50 +85,43 @@ public abstract class LAbstractAgent<A extends LaraAgent<A, BO>, BO extends Lara
 		agentComp = new LDefaultAgentComp<A, BO>(getThis(), env);
 
 		// init agent specific logger (agent id is first part of logger name):
-		if (Log4jLogger.getLogger(
-				getAgentId() + "." + LAbstractAgent.class.getName())
-				.isEnabledFor(LAgentLevel.AGENT)) {
-			agentLogger = Log4jLogger.getLogger(getAgentId() + "."
-					+ LAbstractAgent.class.getName());
+		if (Log4jLogger.getLogger(getAgentId() + "." + LAbstractAgent.class.getName()).isEnabledFor(LAgentLevel.AGENT)) {
+			agentLogger = Log4jLogger.getLogger(getAgentId() + "." + LAbstractAgent.class.getName());
 		}
 
 		// <- LOGGING
 		logger.info("Agent " + id + " initialised");
-		if (Log4jLogger.getLogger(
-				getAgentId() + "." + LAbstractAgent.class.getName())
-				.isEnabledFor(LAgentLevel.AGENT)) {
+		if (Log4jLogger.getLogger(getAgentId() + "." + LAbstractAgent.class.getName()).isEnabledFor(LAgentLevel.AGENT)) {
 			agentLogger.info("Agent " + id + " initialised");
 		}
 		// LOGGING ->
 	}
 
 	// //
-	// Implementing methods of LaraAgent
+	// Static methods
 	// //
 
 	/**
-	 * Removes the {@link LaraDecisionData} according to the specified
-	 * {@link LaraDecisionConfiguration}.
-	 * 
-	 * @see de.cesr.lara.components.agents.LaraAgent#clean(de.cesr.lara.components.decision.LaraDecisionConfiguration)
+	 * Resets the counter used to label agents (agentID)
 	 */
-	public final void clean(LaraDecisionConfiguration dConfiguration) {
-		agentComp.removeDecisionData(dConfiguration);
-		customClean(dConfiguration);
+	public static void resetCounter() {
+		counter = 0;
+	}
+
+	// //
+	// Instance methods
+	// //
+
+	/**
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return getAgentId();
 	}
 
 	/**
-	 * Called by {@link LAbstractAgent#clean(LaraDecisionConfiguration)} Created
-	 * by Sascha Holzhauer on 12.10.2010
-	 * 
-	 * @param dConfiguration
-	 */
-	public void customClean(LaraDecisionConfiguration dConfiguration) {
-		// hook method
-	}
-
-	/**
-	 * Compares the agent IDs
+	 * Compares agent IDs
 	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
@@ -141,46 +130,8 @@ public abstract class LAbstractAgent<A extends LaraAgent<A, BO>, BO extends Lara
 		if (!(o instanceof LAbstractAgent)) {
 			return false;
 		}
-		return this.getAgentId().equals(
-				((LAbstractAgent<A, BO>) o).getAgentId());
+		return this.getAgentId().equals(((LAbstractAgent<A, BO>) o).getAgentId());
 	}
-
-	/**
-	 * @see de.cesr.lara.components.agents.LaraAgent#getAgentId()
-	 */
-	@Override
-	public final String getAgentId() {
-		return this.id;
-	}
-
-	// //
-	// Implementing methods of LaraAgent
-	// //
-
-	/**
-	 * @see de.cesr.lara.components.agents.LaraAgent#getLaraComp()
-	 */
-	@Override
-	public LaraAgentComponent<A, BO> getLaraComp() {
-		try {
-			return agentComp;
-		} catch (ClassCastException e) {
-			throw new ClassCastException(
-					"The Lara Component of this agent was not of requested parameter");
-		}
-	}
-
-	/**
-	 * Must be implemented in subclasses when the agent type parameter gets
-	 * concrete.
-	 * 
-	 * @return reference to this object of the agent parameter's type
-	 */
-	abstract public A getThis();
-
-	// //
-	// Overriding default methods
-	// //
 
 	/**
 	 * @return the agentID's hash code
@@ -191,20 +142,34 @@ public abstract class LAbstractAgent<A extends LaraAgent<A, BO>, BO extends Lara
 		return getAgentId().hashCode();
 	}
 
+	// //
+	// GETTER and SETTER
+	// //
+
 	/**
-	 * hook method...
-	 * 
-	 * @see de.cesr.lara.components.agents.LaraAgent#laraExecute(de.cesr.lara.components.decision.LaraDecisionConfiguration)
+	 * @see de.cesr.lara.components.agents.LaraAgent#getAgentId()
 	 */
-	public void laraExecute(LaraDecisionConfiguration dConfiguration) {
-		// nothing to do since this is a hook method
+	@Override
+	public final String getAgentId() {
+		return this.id;
 	}
 
 	/**
-	 * @see java.lang.Object#toString()
+	 * @see de.cesr.lara.components.agents.LaraAgent#getLaraComp()
 	 */
 	@Override
-	public String toString() {
-		return getAgentId();
+	public LaraAgentComponent<A, BO> getLaraComp() {
+		try {
+			return agentComp;
+		} catch (ClassCastException e) {
+			throw new ClassCastException("The Lara Component of this agent was not of requested parameter");
+		}
 	}
+
+	/**
+	 * Must be implemented in subclasses when the agent type parameter gets concrete.
+	 * 
+	 * @return reference to this object of the agent parameter's type
+	 */
+	abstract public A getThis();
 }

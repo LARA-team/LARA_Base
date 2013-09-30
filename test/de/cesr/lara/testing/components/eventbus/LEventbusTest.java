@@ -19,6 +19,7 @@
  */
 package de.cesr.lara.testing.components.eventbus;
 
+
 import static org.junit.Assert.assertEquals;
 
 import org.junit.After;
@@ -32,27 +33,26 @@ import de.cesr.lara.components.eventbus.events.LaraSequentialEvent;
 import de.cesr.lara.components.eventbus.events.LaraSynchronousEvent;
 import de.cesr.lara.components.eventbus.impl.LEventbus;
 
+
 /**
  * 
  */
 public class LEventbusTest {
 
-	private class TestDecrementEvent_Asynchronous implements
-			LaraAsynchronousEvent {
+	private class TestDecrementEvent_Asynchronous implements LaraAsynchronousEvent {
 	}
 
 	private class TestDecrementEvent_Sequential implements LaraSequentialEvent {
 	}
 
-	private class TestDecrementEvent_Synchronous implements
-			LaraSynchronousEvent {
+	private class TestDecrementEvent_Synchronous implements LaraSynchronousEvent {
 	}
 
 	private class TestEndEvent_Synchronous implements LaraSynchronousEvent {
 	}
 
 	private class TestEnvironment {
-		private int counter = 0;
+		private int	counter	= 0;
 
 		public synchronized void decrementCounter() {
 			counter--;
@@ -67,25 +67,22 @@ public class LEventbusTest {
 		}
 	}
 
-	private class TestIncrementEvent_Asynchronous implements
-			LaraAsynchronousEvent {
+	private class TestIncrementEvent_Asynchronous implements LaraAsynchronousEvent {
 	}
 
 	private class TestIncrementEvent_Sequential implements LaraSequentialEvent {
 	}
 
-	private class TestIncrementEvent_Synchronous implements
-			LaraSynchronousEvent {
+	private class TestIncrementEvent_Synchronous implements LaraSynchronousEvent {
 	}
 
 	private class TestStartEvent_Synchronous implements LaraSynchronousEvent {
 	}
 
 	private class TestSubscriber implements LaraEventSubscriber {
-		private TestEnvironment testEnvironment;
+		private final TestEnvironment	testEnvironment;
 
-		public TestSubscriber(TestEnvironment testEnvironment,
-				LEventbus eventbus) {
+		public TestSubscriber(TestEnvironment testEnvironment, LEventbus eventbus) {
 			this.testEnvironment = testEnvironment;
 			eventbus.subscribe(this, TestDecrementEvent_Synchronous.class);
 			eventbus.subscribe(this, TestDecrementEvent_Sequential.class);
@@ -97,8 +94,7 @@ public class LEventbusTest {
 
 		@Override
 		public <T extends LaraEvent> void onEvent(T event) {
-			if (event instanceof TestDecrementEvent_Asynchronous
-					|| event instanceof TestDecrementEvent_Sequential
+			if (event instanceof TestDecrementEvent_Asynchronous || event instanceof TestDecrementEvent_Sequential
 					|| event instanceof TestDecrementEvent_Synchronous) {
 				wasteCpuTime();
 				testEnvironment.decrementCounter();
@@ -112,7 +108,8 @@ public class LEventbusTest {
 
 		private void wasteCpuTime() {
 			double resultNobodyCaresAbout = 0d;
-			String loremIpsumText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin eleifend convallis magna ut dapibus. Aliquam ornare sagittis sodales. Ut tempus vestibulum ipsum. Integer ut felis quam, sit amet viverra nisl. Fusce ac mi urna, et vestibulum quam. Praesent at dolor mauris, vel condimentum risus. Suspendisse semper ullamcorper imperdiet. Donec vehicula gravida risus, vitae tempus libero sagittis sit amet. Nunc elementum tempus mauris, ut auctor libero aliquam vel. Nullam tempus porta turpis ut elementum. Curabitur id purus massa. Integer massa sem, gravida sed congue sed, placerat quis libero. Aliquam tempor, lacus id venenatis molestie, sem tortor mattis nisl, in scelerisque erat.";
+			String loremIpsumText =
+					"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin eleifend convallis magna ut dapibus. Aliquam ornare sagittis sodales. Ut tempus vestibulum ipsum. Integer ut felis quam, sit amet viverra nisl. Fusce ac mi urna, et vestibulum quam. Praesent at dolor mauris, vel condimentum risus. Suspendisse semper ullamcorper imperdiet. Donec vehicula gravida risus, vitae tempus libero sagittis sit amet. Nunc elementum tempus mauris, ut auctor libero aliquam vel. Nullam tempus porta turpis ut elementum. Curabitur id purus massa. Integer massa sem, gravida sed congue sed, placerat quis libero. Aliquam tempor, lacus id venenatis molestie, sem tortor mattis nisl, in scelerisque erat.";
 
 			for (int i = 0; i < numberOfWasteCpuTimeCycles; i++) {
 				int count = 0;
@@ -123,15 +120,14 @@ public class LEventbusTest {
 				}
 				resultNobodyCaresAbout = (resultNobodyCaresAbout * i) + i;
 				resultNobodyCaresAbout = resultNobodyCaresAbout / i;
-				resultNobodyCaresAbout += count
-						+ loremIpsumText.toLowerCase().indexOf("e");
+				resultNobodyCaresAbout += count + loremIpsumText.toLowerCase().indexOf("e");
 			}
 		}
 	}
 
-	private static final int numberOfSubscribers = 200;
+	private static final int	numberOfSubscribers			= 200;
 
-	private static final int numberOfWasteCpuTimeCycles = 10;
+	private static final int	numberOfWasteCpuTimeCycles	= 10;
 
 	/**
 	 * @throws java.lang.Exception
@@ -161,17 +157,11 @@ public class LEventbusTest {
 		// make every subscriber increment a variable
 		eventbus.publish(new TestIncrementEvent_Sequential());
 		// check if variable has expected value >= 0 <= number of subscribers
-		assertEquals(
-				true,
-				testEnvironment.getCounter() >= 0
-						&& testEnvironment.getCounter() <= numberOfSubscribers);
+		assertEquals(true, testEnvironment.getCounter() >= 0 && testEnvironment.getCounter() <= numberOfSubscribers);
 		// make every subscriber decrement a variable
 		eventbus.publish(new TestDecrementEvent_Sequential());
 		// check if variable has expected value >= 0 <= number of subscribers
-		assertEquals(
-				true,
-				testEnvironment.getCounter() >= 0
-						&& testEnvironment.getCounter() <= numberOfSubscribers);
+		assertEquals(true, testEnvironment.getCounter() >= 0 && testEnvironment.getCounter() <= numberOfSubscribers);
 		eventbus.publish(new TestEndEvent_Synchronous());
 		eventbus = null;
 		testEnvironment = null;

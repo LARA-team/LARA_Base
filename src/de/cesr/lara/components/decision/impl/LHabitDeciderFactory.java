@@ -19,27 +19,27 @@
  */
 package de.cesr.lara.components.decision.impl;
 
+
 import de.cesr.lara.components.LaraBehaviouralOption;
 import de.cesr.lara.components.agents.LaraAgent;
 import de.cesr.lara.components.decision.LaraDecider;
 import de.cesr.lara.components.decision.LaraDeciderFactory;
 import de.cesr.lara.components.decision.LaraDecisionConfiguration;
 
+
 /**
  * 
  * @date 16.08.2010
  * 
- *       This decider factory creates a decider that just fetches the aagent's
- *       preceding behavioural actions and chooses it as new action. TODO when
- *       the model selector is able to define/alter the course of decision
- *       making, this steps of the factory and decider might be omitted.
- *       However, it could be useful to evaluate not only the last but the k
- *       last actions...
+ *       This decider factory creates a decider that just fetches the aagent's preceding behavioural actions and chooses
+ *       it as new action. TODO when the model selector is able to define/alter the course of decision making, this
+ *       steps of the factory and decider might be omitted. However, it could be useful to evaluate not only the last
+ *       but the k last actions...
  * 
  * @param <A>
- *            type of agent
+ *        type of agent
  * @param <BO>
- *            type of behavioural option
+ *        type of behavioural option
  */
 public class LHabitDeciderFactory<A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>>
 		implements LaraDeciderFactory<A, BO> {
@@ -48,17 +48,13 @@ public class LHabitDeciderFactory<A extends LaraAgent<A, BO>, BO extends LaraBeh
 	static Class<?> clazz;
 
 	/**
-	 * The problem: in java, non-static class AgentT (parameter) cannot be
-	 * referenced from a static context, since there is only one class per class
-	 * no matter how many parameters it has. On the other hand, for a singleton
-	 * one needs to assure that it returns an instance of the requested
-	 * parameter. In order to prevent from instancing a map of
-	 * parameter-to-instance pairs we check if the current instance's parameter
-	 * is valid by comparing the class object and create a new instance if not.
-	 * In case of many agent classes the map approach might be more efficient.
-	 * For few agent classes it is unproblematic as long as agents of a certain
-	 * class are executed in line and different agent classes are not mixed to
-	 * often.
+	 * The problem: in java, non-static class AgentT (parameter) cannot be referenced from a static context, since there
+	 * is only one class per class no matter how many parameters it has. On the other hand, for a singleton one needs to
+	 * assure that it returns an instance of the requested parameter. In order to prevent from instancing a map of
+	 * parameter-to-instance pairs we check if the current instance's parameter is valid by comparing the class object
+	 * and create a new instance if not. In case of many agent classes the map approach might be more efficient. For few
+	 * agent classes it is unproblematic as long as agents of a certain class are executed in line and different agent
+	 * classes are not mixed to often.
 	 * 
 	 * @param clazz
 	 * @param <A>
@@ -83,8 +79,7 @@ public class LHabitDeciderFactory<A extends LaraAgent<A, BO>, BO extends LaraBeh
 	 *      de.cesr.lara.components.decision.LaraDecisionConfiguration)
 	 */
 	@Override
-	public LaraDecider<BO> getDecider(A agent,
-			LaraDecisionConfiguration dConfiguration) {
+	public LaraDecider<BO> getDecider(A agent, LaraDecisionConfiguration dConfiguration) {
 		return new LHabitDecider<A, BO>(agent, dConfiguration);
 	}
 

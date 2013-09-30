@@ -34,9 +34,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import cern.jet.random.AbstractDistribution;
 import cern.jet.random.Uniform;
-
 import de.cesr.lara.components.LaraBehaviouralOption;
 import de.cesr.lara.components.LaraPreference;
 import de.cesr.lara.components.decision.LaraBoRow;
@@ -57,7 +55,7 @@ public class LDeliberativeChoiceComponent_MaxLineTotalRandomAtTieTest {
 	LDeliberativeChoiceComp_MaxLineTotalRandomAtTie deliberativeChoiceComp;
 	Collection<LaraBoRow<LTestBo>> laraBoRows;
 	LTestBo[] bos;
-	LaraDecisionConfiguration dConfig;
+	LaraDecisionConfiguration dConfig = LTestUtils.dConfig;
 	LTestAgent agent;
 
 	/**
@@ -65,7 +63,7 @@ public class LDeliberativeChoiceComponent_MaxLineTotalRandomAtTieTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		LTestUtils.initTestModel();
+		LTestUtils.initTestModel(dConfig);
 		deliberativeChoiceComp = LDeliberativeChoiceComp_MaxLineTotalRandomAtTie
 				.getInstance(null);
 		laraBoRows = new LinkedHashSet<LaraBoRow<LTestBo>>();

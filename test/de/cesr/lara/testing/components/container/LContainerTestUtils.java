@@ -19,9 +19,11 @@
  */
 package de.cesr.lara.testing.components.container;
 
+
 import de.cesr.lara.components.LaraProperty;
 import de.cesr.lara.components.container.memory.LaraMemory;
 import de.cesr.lara.components.container.storage.LaraStorage;
+
 
 /**
  * @author Sascha Holzhauer
@@ -36,8 +38,7 @@ public class LContainerTestUtils {
 		}
 	}
 
-	public static class LTestProperty extends
-			LaraProperty<LTestProperty, String> {
+	public static class LTestProperty extends LaraProperty<LTestProperty, String> {
 
 		String value;
 
@@ -62,8 +63,7 @@ public class LContainerTestUtils {
 	 */
 	private static int count = 0;
 
-	public static void storeSixStandardEntries(
-			LaraMemory<? super LTestProperty> storage) {
+	public static void storeSixStandardEntries(LaraMemory<? super LTestProperty> storage) {
 		storage.memorize(new LTestProperty("key01", "value01"));
 		storage.memorize(new LTestProperty("key02", "value02"));
 		storage.memorize(new LTestProperty("key03", "value03"));
@@ -72,8 +72,7 @@ public class LContainerTestUtils {
 		storage.memorize(new LTestProperty("key06", "value06"));
 	}
 
-	public static void storeSixStandardEntries(
-			LaraStorage<? super LTestProperty> storage) {
+	public static void storeSixStandardEntries(LaraStorage<? super LTestProperty> storage) {
 		storage.store(new LTestProperty("key01", "value01"));
 		storage.store(new LTestProperty("key02", "value02"));
 		storage.store(new LTestProperty("key03", "value03"));
@@ -82,15 +81,13 @@ public class LContainerTestUtils {
 		storage.store(new LTestProperty("key06", "value06"));
 	}
 
-	public static void storeSomeEntries(
-			LaraMemory<? super LTestProperty> memory, int num) {
+	public static void storeSomeEntries(LaraMemory<? super LTestProperty> memory, int num) {
 		for (int i = 0; i < num; i++) {
 			memory.memorize(new LTestProperty("key" + count, "value" + count++));
 		}
 	}
 
-	public static void storeSomeEntries(
-			LaraStorage<? super LTestProperty> storage, int num) {
+	public static void storeSomeEntries(LaraStorage<? super LTestProperty> storage, int num) {
 		for (int i = 0; i < num; i++) {
 			storage.store(new LTestProperty("key" + count, "value" + count++));
 		}

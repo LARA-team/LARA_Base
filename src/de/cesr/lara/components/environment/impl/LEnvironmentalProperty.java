@@ -19,29 +19,29 @@
  */
 package de.cesr.lara.components.environment.impl;
 
+
 import de.cesr.lara.components.environment.LaraEnvironment;
+
 
 /**
  * @author Sascha Holzhauer
  * 
  * @param <ValueType>
- *            type of value
+ *        type of value
  */
-public class LEnvironmentalProperty<ValueType> extends
-		LAbstractEnvironmentalProperty<ValueType> {
+public class LEnvironmentalProperty<ValueType> extends LAbstractEnvironmentalProperty<ValueType> {
 
 	/**
 	 * 
 	 */
-	protected ValueType value;
+	protected ValueType	value;
 
 	/**
 	 * @param key
 	 * @param value
 	 * @param env
 	 */
-	public LEnvironmentalProperty(String key, ValueType value,
-			LaraEnvironment env) {
+	public LEnvironmentalProperty(String key, ValueType value, LaraEnvironment env) {
 		super(key, env);
 		this.value = value;
 	}
@@ -51,8 +51,7 @@ public class LEnvironmentalProperty<ValueType> extends
 	 */
 	@Override
 	public LEnvironmentalProperty<ValueType> getModifiedProperty(ValueType value) {
-		return new LEnvironmentalProperty<ValueType>(getKey(), value,
-				environment);
+		return new LEnvironmentalProperty<ValueType>(getKey(), value, environment);
 	}
 
 	/**

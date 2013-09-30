@@ -19,6 +19,7 @@
  */
 package de.cesr.lara.components.container.memory.impl;
 
+
 import java.util.Iterator;
 
 import org.apache.log4j.Logger;
@@ -30,33 +31,33 @@ import de.cesr.lara.components.container.LaraCapacityManager;
 import de.cesr.lara.components.container.exceptions.LContainerFullException;
 import de.cesr.lara.components.util.logging.impl.Log4jLogger;
 
+
 /**
  * @param <PropertyType>
  */
-public class LDefaultLimitedCapacityMemory<PropertyType extends LaraProperty<? extends PropertyType, ?>>
-		extends LDefaultMemory<PropertyType> implements
-		LaraCapacityManageableContainer<PropertyType> {
+public class LDefaultLimitedCapacityMemory<PropertyType extends LaraProperty<? extends PropertyType, ?>> extends
+		LDefaultMemory<PropertyType> implements LaraCapacityManageableContainer<PropertyType> {
 
 	/**
 	 * Logger
 	 */
-	static private Logger logger = Log4jLogger
-			.getLogger(LDefaultLimitedCapacityMemory.class);
+	static private Logger						logger						=
+																					Log4jLogger
+																							.getLogger(LDefaultLimitedCapacityMemory.class);
 
 	/**
 	 * The memory's initial capacity in amount of entries
 	 */
-	public static final int DEFAULT_INITIAL_CAPACITY = 50;
+	public static final int						DEFAULT_INITIAL_CAPACITY	= 50;
 
-	private int capacity = DEFAULT_INITIAL_CAPACITY;
+	private int									capacity					= DEFAULT_INITIAL_CAPACITY;
 
-	private LaraCapacityManager<PropertyType> capacityManager = null;
+	private LaraCapacityManager<PropertyType>	capacityManager				= null;
 
 	/**
 	 * @param capacityManager
 	 */
-	public LDefaultLimitedCapacityMemory(
-			LaraCapacityManager<PropertyType> capacityManager) {
+	public LDefaultLimitedCapacityMemory(LaraCapacityManager<PropertyType> capacityManager) {
 		super();
 		this.capacityManager = capacityManager;
 	}
@@ -65,9 +66,7 @@ public class LDefaultLimitedCapacityMemory<PropertyType extends LaraProperty<? e
 	 * @param capacityManager
 	 * @param initialCapacity
 	 */
-	public LDefaultLimitedCapacityMemory(
-			LaraCapacityManager<PropertyType> capacityManager,
-			int initialCapacity) {
+	public LDefaultLimitedCapacityMemory(LaraCapacityManager<PropertyType> capacityManager, int initialCapacity) {
 		this(capacityManager);
 		this.capacity = initialCapacity;
 	}
@@ -76,11 +75,10 @@ public class LDefaultLimitedCapacityMemory<PropertyType extends LaraProperty<? e
 	 * @param capacityManager
 	 * @param initialCapacity
 	 * @param name
-	 *            the memory's name
+	 *        the memory's name
 	 */
-	public LDefaultLimitedCapacityMemory(
-			LaraCapacityManager<PropertyType> capacityManager,
-			int initialCapacity, String name) {
+	public LDefaultLimitedCapacityMemory(LaraCapacityManager<PropertyType> capacityManager, int initialCapacity,
+			String name) {
 		this(capacityManager, name);
 		this.capacity = initialCapacity;
 	}
@@ -88,10 +86,9 @@ public class LDefaultLimitedCapacityMemory<PropertyType extends LaraProperty<? e
 	/**
 	 * @param capacityManager
 	 * @param name
-	 *            the memory's name
+	 *        the memory's name
 	 */
-	public LDefaultLimitedCapacityMemory(
-			LaraCapacityManager<PropertyType> capacityManager, String name) {
+	public LDefaultLimitedCapacityMemory(LaraCapacityManager<PropertyType> capacityManager, String name) {
 		super(name);
 		this.capacityManager = capacityManager;
 	}

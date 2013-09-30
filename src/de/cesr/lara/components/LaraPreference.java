@@ -19,6 +19,7 @@
  */
 package de.cesr.lara.components;
 
+
 /**
  * Agents' preferenceWeights implement this marker interface.
  */

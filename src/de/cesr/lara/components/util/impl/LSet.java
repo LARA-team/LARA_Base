@@ -19,10 +19,15 @@
  */
 package de.cesr.lara.components.util.impl;
 
+
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 
+
 /**
+ * Enables the filling of a hash set by passing an arbitrary number (> 0) of elements
+ * to the constructor.
+ * 
  * @author Sascha Holzhauer
  * 
  */
@@ -33,11 +38,17 @@ public class LSet<E> extends LinkedHashSet<E> {
 	 */
 	private static final long serialVersionUID = -8698440369878570597L;
 
+	/**
+	 * @param entries
+	 */
 	public LSet(E... entries) {
 		super();
 		addAll(Arrays.asList(entries));
 	}
 
+	/**
+	 * @param entry
+	 */
 	public LSet(E entry) {
 		super();
 		add(entry);

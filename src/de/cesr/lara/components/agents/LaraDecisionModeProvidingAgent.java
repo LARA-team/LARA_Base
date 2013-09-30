@@ -19,20 +19,23 @@
  */
 package de.cesr.lara.components.agents;
 
+
 import de.cesr.lara.components.decision.LaraDecisionModes;
+import de.cesr.lara.components.preprocessor.LaraDecisionModeSelector;
+
 
 /**
  * @author Sascha Holzhauer
- *
+ * 
  */
 public interface LaraDecisionModeProvidingAgent {
-	
+
 	/**
-	 * Provides the decision mode this agent selects according to
-	 * {@link LaraDecisionModes}.
+	 * Provides a suggestion for the decision mode this agent should select in terms of {@link LaraDecisionModes}. It is
+	 * only a suggestion since the {@link LaraDecisionModeSelector} may be forced to select e.g. deliberative decision
+	 * mode if habit is suggested but its preconditions are not fulfilled.
 	 * 
 	 * @return decision mode
 	 */
-	public int getDecisionMode();
-
+	public LaraDecisionModes getDecisionModeSuggestion();
 }

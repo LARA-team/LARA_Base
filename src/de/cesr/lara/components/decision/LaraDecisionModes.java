@@ -19,27 +19,37 @@
  */
 package de.cesr.lara.components.decision;
 
+
 /**
+ * Used to identify applied decision modes. Every {@link LaraDecider} needs to specify the decision mode it represents.
+ * If custom decision modes are added, a custom enumeration which extends this one should be implemented.
+ * 
  * @author Sascha Holzhauer
- *
+ * 
  */
-public enum LaraDecisionModes {
+public enum LaraDecisionModes implements LaraDecisionMode {
 
 	HABIT(1),
 
 	DELIBERATIVE(10),
-	
-	HEURISTICS(20);
 
+	HEURISTICS(20),
 	
-	int id;
+	HEURISTICS_EXPLORATION(21);
 	
+	
+	protected final int id;
+
 	LaraDecisionModes(int id) {
 		this.id = id;
 	}
-	
-	public int getId() {
+
+
+	/**
+	 * @see de.cesr.lara.components.decision.LaraDecisionMode#getId()
+	 */
+	@Override
+	public final int getId() {
 		return this.id;
 	}
-
 }

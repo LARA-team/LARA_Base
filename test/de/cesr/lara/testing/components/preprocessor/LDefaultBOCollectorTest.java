@@ -19,6 +19,7 @@
  */
 package de.cesr.lara.testing.components.preprocessor;
 
+
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
@@ -76,7 +77,7 @@ public class LDefaultBOCollectorTest {
 	 */
 	LTestBo bo3;
 
-	LaraDecisionConfiguration dBuilder;
+	LaraDecisionConfiguration dBuilder = new LDecisionConfiguration("TestDecision");
 
 	LaraBOCollector<LTestAgent, LTestBo> scanner;
 
@@ -85,7 +86,7 @@ public class LDefaultBOCollectorTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		LTestUtils.initTestModel();
+		LTestUtils.initTestModel(dBuilder);
 
 		Class<? extends LaraPreference> goal1 = new LaraPreference() {
 		}.getClass();
@@ -101,22 +102,19 @@ public class LDefaultBOCollectorTest {
 		utilities.put(goal2, 0.0);
 		bo3 = new LTestBo(agent, utilities);
 
-		memory = new LDefaultLimitedCapacityBOMemory<LTestBo>(
-				LCapacityManagers.<LTestBo> makeNINO());
+		memory = new LDefaultLimitedCapacityBOMemory<LTestBo>(LCapacityManagers.<LTestBo> makeNINO());
 		agent.getLaraComp().setBOMemory(memory);
 
 		dBuilder = new LDecisionConfiguration("TestDecision");
 		LDefaultAgentComp.setDefaultDeliberativeChoiceComp(dBuilder,
-				LDeliberativeChoiceComp_MaxLineTotalRandomAtTie
-						.getInstance(null));
+				LDeliberativeChoiceComp_MaxLineTotalRandomAtTie.getInstance(null));
 		List<Class<? extends LaraPreference>> goals = new ArrayList<Class<? extends LaraPreference>>();
 		goals.add(goal1);
 		goals.add(goal2);
 		dBuilder.setPreferences(goals);
 
 		scanner = new LContributingBoCollector<LTestAgent, LTestBo>();
-		LEventbus.getInstance(agent).subscribe(scanner,
-				LPpBoCollectorEvent.class);
+		LEventbus.getInstance(agent).subscribe(scanner, LPpBoCollectorEvent.class);
 	}
 
 	/**
@@ -133,38 +131,27 @@ public class LDefaultBOCollectorTest {
 	@Test
 	public final void testGetBOs() {
 
-		assertEquals(
-				"No BO in memory contributes to the decision's preferenceWeights "
-						+ "(since there is no bo inserted)", 0,
-				getNumOfSelectedBos());
+		assertEquals("No BO in memory contributes to the decision's preferenceWeights "
+				+ "(since there is no bo inserted)", 0, getNumOfSelectedBos());
 		memory.memorize(bo1);
-		assertEquals(
-				"No BO in memory contributes to the decision's preferenceWeights "
-						+ "(since bo1 is inserted but has no utility for any goal)",
-				0, getNumOfSelectedBos());
+		assertEquals("No BO in memory contributes to the decision's preferenceWeights "
+				+ "(since bo1 is inserted but has no utility for any goal)", 0, getNumOfSelectedBos());
 		memory.memorize(bo2);
-		assertEquals(
-				"1 BO in memory contributes to the decision's preferenceWeights "
-						+ "(since bo2 is inserted and has utility 1.0 for goal1)",
-				1, getNumOfSelectedBos());
+		assertEquals("1 BO in memory contributes to the decision's preferenceWeights "
+				+ "(since bo2 is inserted and has utility 1.0 for goal1)", 1, getNumOfSelectedBos());
 		memory.clear();
 		memory.memorize(bo2);
 		memory.memorize(bo3);
-		assertEquals(
-				"2 BO in memory contribute to the decision's preferenceWeights "
-						+ "(since bo2 with utility 0.0 for goal1 and bo3 with 1.0 for "
-						+ "goal1 and 0.0 for goal2 are inserted)", 2,
-				getNumOfSelectedBos());
+		assertEquals("2 BO in memory contribute to the decision's preferenceWeights "
+				+ "(since bo2 with utility 0.0 for goal1 and bo3 with 1.0 for "
+				+ "goal1 and 0.0 for goal2 are inserted)", 2, getNumOfSelectedBos());
 	}
 
 	protected int getNumOfSelectedBos() {
-		agent.getLaraComp().getDecisionData(dBuilder)
-				.setBos(new HashSet<LTestBo>());
+		agent.getLaraComp().getDecisionData(dBuilder).setBos(new HashSet<LTestBo>());
 		// LPpBoCollectorEvent requires LPpModeSelectorEvent!
-		LEventbus.getInstance(agent).publish(
-				new LPpModeSelectorEvent(agent, dBuilder));
-		LEventbus.getInstance(agent).publish(
-				new LPpBoCollectorEvent(agent, dBuilder));
+		LEventbus.getInstance(agent).publish(new LPpModeSelectorEvent(agent, dBuilder));
+		LEventbus.getInstance(agent).publish(new LPpBoCollectorEvent(agent, dBuilder));
 		return agent.getLaraComp().getDecisionData(dBuilder).getBos().size();
 	}
 }

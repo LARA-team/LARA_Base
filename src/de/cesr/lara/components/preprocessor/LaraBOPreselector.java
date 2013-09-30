@@ -19,24 +19,26 @@
  */
 package de.cesr.lara.components.preprocessor;
 
+
 import de.cesr.lara.components.LaraBehaviouralOption;
 import de.cesr.lara.components.agents.LaraAgent;
 import de.cesr.lara.components.agents.LaraBOPreselectingAgent;
+
 
 /**
  * BOChecker
  * 
  * @param <A>
- *            type of agents this BO preselector is intended for
+ *        type of agents this BO preselector is intended for
  * @param <BO>
- *            type of behavioural options that are checked
+ *        type of behavioural options that are checked
  */
-public interface LaraBOPreselector<A extends LaraAgent<? super A, ?>, BO extends LaraBehaviouralOption<?, ?>>
-		extends LaraPreprocessorComp<A, BO> {
+public interface LaraBOPreselector<A extends LaraAgent<? super A, ?>, BO extends LaraBehaviouralOption<?, ?>> extends
+		LaraPreprocessorComp<A, BO> {
 
 	/**
-	 * A common interface for preprocessor accuracy statements which enables the
-	 * user to provide his own set of accuracies.
+	 * A common interface for preprocessor accuracy statements which enables the user to provide his own set of
+	 * accuracies.
 	 * 
 	 * @author Sascha Holzhauer
 	 * @date 10.02.2010
@@ -54,9 +56,8 @@ public interface LaraBOPreselector<A extends LaraAgent<? super A, ?>, BO extends
 	 */
 	public enum LAccuracy implements LaraBOPreselector.Accuracy {
 		/**
-		 * Using ASK_AGENT will cause the preprocessor to step back to the agent
-		 * (this requires the user to implement {@link LaraBOPreselectingAgent}
-		 * ).
+		 * Using ASK_AGENT will cause the preprocessor to step back to the agent (this requires the user to implement
+		 * {@link LaraBOPreselectingAgent} ).
 		 */
 		ASK_AGENT,
 
