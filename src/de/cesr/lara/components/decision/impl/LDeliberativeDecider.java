@@ -86,7 +86,7 @@ public class LDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? extends 
 	 */
 	public LDeliberativeDecider(LaraDecisionConfiguration dConfiguration) {
 		// <- LOGGING
-		logger.info(this.getClass().getSimpleName() + " initialised.");
+		logger.info(this.getClass().getSimpleName() + " initialised for decision " + dConfiguration + ".");
 		// LOGGING ->
 
 		this.dConfiguration = dConfiguration;

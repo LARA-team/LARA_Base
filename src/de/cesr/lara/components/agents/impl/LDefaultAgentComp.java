@@ -203,8 +203,6 @@ public class LDefaultAgentComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 		this.agent = agent;
 		this.environment = env;
 
-		logger.info("Assign preprocessor to agent");
-
 		memory =
 				new LDefaultLimitedCapacityMemory<LaraProperty<?, ?>>(LCapacityManagers.<LaraProperty<?, ?>> makeFIFO());
 
@@ -301,12 +299,12 @@ public class LDefaultAgentComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 			if (logger.isDebugEnabled()) {
 				logger.debug(this.agent + "> preprocess DB "
 						+ ((LAgentPreprocessEvent) event).getDecisionConfiguration().getId());
-				logger.debug("Preprocessor Builder: " + this.preprocessor);
+				logger.debug("(Preprocessor Builder: " + this.preprocessor + ")");
 			}
 			// LOGGING ->
 
 			if (this.preprocessor == null) {
-				logger.warn("The preprocessor has not been set! The default is used.");
+				logger.warn(this.agent + "> The preprocessor has not been set! The default is used.");
 				setPreprocessor(LPreprocessorConfigurator.<A, BO> getNewPreprocessorConfigurator().getPreprocessor());
 			}
 			preprocessor.preprocess(((LAgentPreprocessEvent) event).getDecisionConfiguration(), agent);
@@ -357,7 +355,7 @@ public class LDefaultAgentComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 	 */
 	private void logDecision(LaraDecisionConfiguration dConfig) {
 		if (loggerDecision.isInfoEnabled()) {
-			loggerDecision.info(getDecisionData(dConfig).getDecider().getSelectedBo());
+			loggerDecision.info("Selected BO: " + getDecisionData(dConfig).getDecider().getSelectedBo());
 		}
 	}
 

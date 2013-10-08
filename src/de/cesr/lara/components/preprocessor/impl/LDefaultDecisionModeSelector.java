@@ -102,6 +102,12 @@ public class LDefaultDecisionModeSelector<A extends LaraAgent<A, BO>, BO extends
 		eBus = LEventbus.getInstance(agent);
 
 		LaraDecisionModes mode = this.getDecisionModeSuggestion(event);
+
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			logger.debug(agent + "> Suggested Decision mode from agent: " + mode);
+		}
+		// LOGGING ->
 	
 		if (mode == null) {
 			// check for habit
@@ -111,10 +117,13 @@ public class LDefaultDecisionModeSelector<A extends LaraAgent<A, BO>, BO extends
 
 				case DELIBERATIVE:
 					doDeliberative();
+					break;
 				case HABIT:
 					tryHabit();
+					break;
 				case HEURISTICS_EXPLORATION:
 					doExplorative();
+					break;
 				default:
 					tryHabit();
 			}
@@ -127,7 +136,7 @@ public class LDefaultDecisionModeSelector<A extends LaraAgent<A, BO>, BO extends
 					+ LModel.getModel().getCurrentStep()
 					+ " | habitTH: "
 					+ ((Integer) PmParameterManager.getParameter(LDecisionMakingPa.HABIT_THRESHOLD)).intValue()
-					+ " | Mode: "
+					+ " | Selected Mode: "
 					+ agent.getLaraComp().getDecisionData(dConfig).getDeciderFactory().getDecider(agent, dConfig)
 							.getDecisionMode());
 		}

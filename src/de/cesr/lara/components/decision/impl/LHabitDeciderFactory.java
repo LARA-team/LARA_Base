@@ -28,13 +28,13 @@ import de.cesr.lara.components.decision.LaraDecisionConfiguration;
 
 
 /**
+ * This decider factory creates a decider that just fetches the agent's preceding behavioural action and chooses it as
+ * new action.
+ * 
+ * TODO when the model selector is able to define/alter the course of decision making, this steps of the factory and
+ * decider might be omitted. However, it could be useful to evaluate not only the last but the k last actions...
  * 
  * @date 16.08.2010
- * 
- *       This decider factory creates a decider that just fetches the aagent's preceding behavioural actions and chooses
- *       it as new action. TODO when the model selector is able to define/alter the course of decision making, this
- *       steps of the factory and decider might be omitted. However, it could be useful to evaluate not only the last
- *       but the k last actions...
  * 
  * @param <A>
  *        type of agent
@@ -82,5 +82,4 @@ public class LHabitDeciderFactory<A extends LaraAgent<A, BO>, BO extends LaraBeh
 	public LaraDecider<BO> getDecider(A agent, LaraDecisionConfiguration dConfiguration) {
 		return new LHabitDecider<A, BO>(agent, dConfiguration);
 	}
-
 }
