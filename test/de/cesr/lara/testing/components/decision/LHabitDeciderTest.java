@@ -34,6 +34,7 @@ import de.cesr.lara.components.eventbus.events.LAgentPostprocessEvent;
 import de.cesr.lara.components.eventbus.events.LAgentPreprocessEvent;
 import de.cesr.lara.components.eventbus.events.LModelStepEvent;
 import de.cesr.lara.components.eventbus.impl.LEventbus;
+import de.cesr.lara.components.param.LBasicPa;
 import de.cesr.lara.components.param.LDecisionMakingPa;
 import de.cesr.lara.components.util.impl.LPrefEntry;
 import de.cesr.lara.testing.LTestUtils;
@@ -64,6 +65,7 @@ public class LHabitDeciderTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
+		PmParameterManager.setParameter(LBasicPa.EVENTBUS_FORCE_SEQUENTIAL, true);
 		LTestUtils.initTestModel(dConfig);
 
 		agent = new LTestAgent("TestAgent");

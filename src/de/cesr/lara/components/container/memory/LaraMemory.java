@@ -119,10 +119,20 @@ public interface LaraMemory<PropertyType extends LaraProperty<? extends Property
 	public boolean contains(String key, int timestamp);
 
 	/**
+	 * Checks whether the memory contains a {@link LaraProperty} of the given type with the given key for the given time
+	 * stamp.
+	 * 
+	 * @param key
+	 * @param timestamp
+	 * @return true if such a property is contained
+	 */
+	public boolean contains(Class<?> propertyType, String key, int timestamp);
+
+	/**
 	 * Removes the specified property from this memory.
 	 * 
 	 * @param propertyToRemove
-	 *            the property to be removed.
+	 *        the property to be removed.
 	 * @return the property that was forgotten
 	 * @throws LRemoveException
 	 */

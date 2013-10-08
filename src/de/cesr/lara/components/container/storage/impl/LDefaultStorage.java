@@ -159,6 +159,18 @@ public class LDefaultStorage<PropertyType extends LaraProperty<? extends Propert
 	}
 
 	/**
+	 * TOOD test
+	 * 
+	 * @see de.cesr.lara.components.container.storage.LaraStorage#contains(de.cesr.lara.components.LaraProperty,
+	 *      java.lang.String, int)
+	 */
+	@Override
+	public boolean contains(Class<?> propertyType, String key, int step) {
+		return keywise.get(key) != null && keywise.get(key).values().contains(propertyType)
+				&& keywise.get(key).containsKey(step);
+	}
+
+	/**
 	 * @see de.cesr.lara.components.container.storage.LaraStorage#fetch(java.lang.Class,
 	 *      java.lang.String)
 	 */
