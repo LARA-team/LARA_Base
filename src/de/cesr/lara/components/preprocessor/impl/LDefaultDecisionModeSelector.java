@@ -151,7 +151,7 @@ public class LDefaultDecisionModeSelector<A extends LaraAgent<A, BO>, BO extends
 		int habitTH = ((Integer) PmParameterManager.getParameter(LDecisionMakingPa.HABIT_THRESHOLD)).intValue();
 		int currStep = LModel.getModel().getCurrentStep();
 
-		if (currStep > habitTH
+		if (currStep >= habitTH
 				&& agent.getLaraComp().getGeneralMemory().contains(LSelectedBoProperty.class, dConfig.getId())) {
 
 			@SuppressWarnings("unchecked")
