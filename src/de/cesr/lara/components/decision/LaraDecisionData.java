@@ -92,7 +92,8 @@ public final class LaraDecisionData<A extends LaraAgent<? super A, BO>, BO exten
 	 */
 	public LaraDecider<BO> getDecider() {
 		if (deciderFactory == null) {
-			throw new IllegalStateException("DeciderFactory must be set!");
+			logger.error(agent + "> DeciderFactory must be set for decision " + dConfiguration + "!");
+			throw new IllegalStateException(agent + "> DeciderFactory must be set for decision " + dConfiguration + "!");
 		}
 		/*
 		 * Since one and the same decider needs to be persistent throughout a

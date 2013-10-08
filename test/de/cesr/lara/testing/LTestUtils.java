@@ -53,6 +53,13 @@ public class LTestUtils {
 
 	static public LaraDecisionConfiguration dConfig = new LTestDecisionConfig();
 
+	static {
+		Collection<Class<? extends LaraPreference>> prefs = new HashSet<Class<? extends LaraPreference>>();
+		prefs.add(LTestPreference1.class);
+		prefs.add(LTestPreference2.class);
+		dConfig.setPreferences(prefs);
+	}
+
 	/**
 	 * test agent
 	 */
@@ -83,11 +90,6 @@ public class LTestUtils {
 
 		@Override
 		public <T extends LaraEvent> void onEvent(T event) {
-		}
-
-		@Override
-		public String toString() {
-			return "LTestAgent_" + id;
 		}
 	};
 

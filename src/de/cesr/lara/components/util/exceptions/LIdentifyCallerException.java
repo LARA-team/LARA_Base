@@ -28,11 +28,31 @@ import java.io.PrintWriter;
 public class LIdentifyCallerException extends LaraException {
 
 	private static final int NUM_STACK_TRACE_FRAMES = 6;
+	private static final int START_STACK_TRACE_FRAMES = 1;
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+
+	private int numStackTraceElements = NUM_STACK_TRACE_FRAMES;
+	private int startStackTraceElements = START_STACK_TRACE_FRAMES;
+
+	/**
+	 * 
+	 */
+	public LIdentifyCallerException() {
+		super();
+	}
+
+	/**
+	 * @param numStackTraceElements
+	 */
+	public LIdentifyCallerException(int startStackTraceElements, int numStackTraceElements) {
+		super();
+		this.startStackTraceElements = startStackTraceElements;
+		this.numStackTraceElements = numStackTraceElements;
+	}
 
 	/**
 	 * @see java.lang.Throwable#getStackTrace()
@@ -41,10 +61,10 @@ public class LIdentifyCallerException extends LaraException {
 	public StackTraceElement[] getStackTrace() {
 		StackTraceElement[] result;
 		StackTraceElement[] given = super.getStackTrace();
-		if (given.length >= NUM_STACK_TRACE_FRAMES) {
-			result = new StackTraceElement[NUM_STACK_TRACE_FRAMES];
-			for (int i = 0; i < NUM_STACK_TRACE_FRAMES; i++) {
-				result[i] = given[i];
+		if (given.length >= numStackTraceElements) {
+			result = new StackTraceElement[numStackTraceElements];
+			for (int i = 0; i < numStackTraceElements; i++) {
+				result[i] = given[i + (startStackTraceElements - 1)];
 			}
 			return result;
 		} else {

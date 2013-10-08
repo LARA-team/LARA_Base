@@ -43,7 +43,8 @@ import de.cesr.lara.components.decision.LaraDecisionTree;
  *        type of parameter
  * 
  */
-public class LTreeDecider<A extends LaraAgent<A, ? super BO>, BO extends LaraBehaviouralOption<?, BO>, P> implements
+public class LTreeDecider<A extends LaraAgent<? super A, ? super BO>, BO extends LaraBehaviouralOption<?, ? extends BO>, P>
+		implements
 		LaraDecider<BO> {
 
 	A agent;

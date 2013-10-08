@@ -137,7 +137,7 @@ public class LDeliberativeChoiceComp_MaxLineTotalRandomAtTie
 					.isDebugEnabled()) {
 				logger.debug("k ("
 						+ k
-						+ ") greater thant number of rows: "
+ + ") greater than the number of rows: "
 						+ boRows.size());
 				// LOGGING ->
 			}
@@ -317,7 +317,7 @@ public class LDeliberativeChoiceComp_MaxLineTotalRandomAtTie
 			LaraDecisionConfiguration dConfiguration,
 			Collection<LaraBoRow<BO>> boRows) {
 		// <- LOGGING
-		logger.info("getBestBehaviouralOption()");
+		logger.info("get selected BO for " + dConfiguration);
 		// LOGGING ->
 
 		if (boRows

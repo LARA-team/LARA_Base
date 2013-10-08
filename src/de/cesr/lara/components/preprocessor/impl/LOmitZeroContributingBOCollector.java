@@ -35,19 +35,19 @@ import de.cesr.lara.components.preprocessor.LaraBOCollector;
 import de.cesr.lara.components.preprocessor.event.LPpBoCollectorEvent;
 import de.cesr.lara.components.util.logging.impl.Log4jLogger;
 
+
 /**
- * This LaraBoScanner implementation also filters out behavioural option that
- * indeed define one or more preferenceWeights also defined in the
- * {@link LaraDecisionConfiguration} but whose utility is not above zero. This
- * might be critical for some models since the utility may increase during
- * updating but might be useful for others.
+ * This {@link LaraBOCollector} implementation also filters out behavioural option that indeed define one or more
+ * preferenceWeights also defined in the {@link LaraDecisionConfiguration} but whose utility is not above zero. This
+ * might be critical for some models since the utility may increase during updating. For other models, it might achieve
+ * performance benefits.
  * 
- * NOTE regarding LOGGING: The agent logger for logging BOs is only enabled when
- * the logger for this class is enabled at least for {@link Priority#INFO}!
+ * NOTE regarding LOGGING: The agent logger for logging BOs is only enabled when the logger for this class is enabled at
+ * least for {@link Priority#INFO}!
  * 
  * @param <A>
  * @param <BO>
- *            the type of behavioural options the given BO-memory memorises
+ *        the type of behavioural options the given BO-memory memorises
  */
 public class LOmitZeroContributingBOCollector<A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<?, BO>>
 		extends LAbstractPpComp<A, BO> implements LaraBOCollector<A, BO> {

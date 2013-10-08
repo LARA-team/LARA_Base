@@ -23,6 +23,7 @@ import java.util.Set;
 
 import de.cesr.lara.components.LaraBehaviouralOption;
 import de.cesr.lara.components.agents.LaraAgent;
+import de.cesr.lara.components.decision.LaraBinaryDecisionTree;
 import de.cesr.lara.components.decision.LaraDecisionTree;
 
 /**
@@ -34,18 +35,21 @@ import de.cesr.lara.components.decision.LaraDecisionTree;
  *            the parameter class type
  * 
  */
-public abstract class LAbstractBinaryDecsionTree<A extends LaraAgent<A, ? super BO>, BO extends LaraBehaviouralOption<?, BO>, P>
-		implements LaraDecisionTree<A, BO, P> {
+// public abstract class LAbstractBinaryDecsionTree<A extends LaraAgent<A, ? super BO>, BO extends
+// LaraBehaviouralOption<?, BO>, P>
+// implements LaraBinaryDecisionTree<A, BO, P> {
+public abstract class LAbstractBinaryDecsionTree<A extends LaraAgent<A, ? extends LaraBehaviouralOption<?, ?>>, R, P>
+		implements LaraBinaryDecisionTree<A, R, P> {
 
 	/**
 	 * This decision tree is evaluated in case evaluate() returns false
 	 */
-	protected LaraDecisionTree<A, BO, P> falseTree = null;
+	protected LaraDecisionTree<A, R, P> falseTree = null;
 
 	/**
 	 * This decision tree is evaluated in case evaluate() returns true
 	 */
-	protected LaraDecisionTree<A, BO, P> trueTree = null;
+	protected LaraDecisionTree<A, R, P> trueTree = null;
 
 	/**
 	 * 
@@ -63,14 +67,13 @@ public abstract class LAbstractBinaryDecsionTree<A extends LaraAgent<A, ? super 
 	 *            This decision tree is evaluated in case evaluate() returns
 	 *            false
 	 */
-	public LAbstractBinaryDecsionTree(LaraDecisionTree<A, BO, P> trueTree,
-			LaraDecisionTree<A, BO, P> falseTree) {
+	public LAbstractBinaryDecsionTree(LaraDecisionTree<A, R, P> trueTree, LaraDecisionTree<A, R, P> falseTree) {
 		this.trueTree = trueTree;
 		this.falseTree = falseTree;
 	}
 
 	@Override
-	public Set<BO> getBos(A agent, P parameter) {
+	public Set<R> getBos(A agent, P parameter) {
 		if (evaluate(agent, parameter)) {
 			if (trueTree != null) {
 				return trueTree.getBos(agent, parameter);
@@ -89,18 +92,18 @@ public abstract class LAbstractBinaryDecsionTree<A extends LaraAgent<A, ? super 
 	}
 
 	/**
-	 * @param falseTree
-	 *            the decision tree to evaluate when evaluate() returns false
+	 * @see de.cesr.lara.components.decision.LaraBinaryDecisionTree#setFalseDecisionTree(de.cesr.lara.components.decision.LaraDecisionTree)
 	 */
-	public void setFalseDecisionTree(LaraDecisionTree<A, BO, P> falseTree) {
+	@Override
+	public void setFalseDecisionTree(LaraDecisionTree<A, R, P> falseTree) {
 		this.falseTree = falseTree;
 	}
 
 	/**
-	 * @param trueTree
-	 *            the decision tree to evaluate when evaluate() returns true
+	 * @see de.cesr.lara.components.decision.LaraBinaryDecisionTree#setTrueDecisionTree(de.cesr.lara.components.decision.LaraDecisionTree)
 	 */
-	public void setTrueDecisionTree(LaraDecisionTree<A, BO, P> trueTree) {
+	@Override
+	public void setTrueDecisionTree(LaraDecisionTree<A, R, P> trueTree) {
 		this.trueTree = trueTree;
 	}
 

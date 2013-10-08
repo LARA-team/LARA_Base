@@ -80,8 +80,17 @@ public class LContributingBoCollector<A extends LaraAgent<A, BO>, BO extends Lar
 		@SuppressWarnings("unchecked")
 		// the event will only be published by agents of type A
 		A agent = ((A) event.getAgent());
+
 		for (BO bo : agent.getLaraComp().getBOMemory().recallAllMostRecent()) {
 			boolean contributes = false;
+
+			// <- LOGGING
+			if (event.getdConfig().getPreferences().isEmpty()) {
+				logger.warn("Decision " + event.getdConfig() + " does not define any preference. Consequently,"
+						+ "no BO will contribute to it!");
+			}
+			// LOGGING ->
+
 			for (Entry<Class<? extends LaraPreference>, Double> utility : bo
 					.getValue().entrySet()) {
 				if (event.getdConfig().getPreferences()
@@ -95,6 +104,9 @@ public class LContributingBoCollector<A extends LaraAgent<A, BO>, BO extends Lar
 			}
 		}
 		// <-- LOGGING
+		if (bos.size() == 0) {
+			logger.warn("No BOs have been collected for agent " + agent + "!");
+		}
 		if (logger.isEnabledFor(Priority.INFO)) {
 			logBOs(logger, bos, "after collection", agent);
 		}

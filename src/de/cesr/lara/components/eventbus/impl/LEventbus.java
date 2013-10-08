@@ -42,6 +42,7 @@ import de.cesr.lara.components.eventbus.events.LaraHasConsecutiveEvent;
 import de.cesr.lara.components.eventbus.events.LaraRequiresPrecedingEvent;
 import de.cesr.lara.components.eventbus.events.LaraSynchronousEvent;
 import de.cesr.lara.components.param.LBasicPa;
+import de.cesr.lara.components.util.exceptions.LIdentifyCallerException;
 import de.cesr.lara.components.util.logging.impl.Log4jLogger;
 import de.cesr.parma.core.PmParameterManager;
 
@@ -396,11 +397,22 @@ public class LEventbus {
 		// internal first
 		for (LaraAbstractEventSubscriber s : subscribers) {
 			if (s instanceof LaraInternalEventSubscriber) {
+				// <- LOGGING
+				if (logger.isDebugEnabled()) {
+					logger.debug("Notified subscriber (internal): " + s);
+				}
+				// LOGGING ->
 				((LaraInternalEventSubscriber) s).onInternalEvent(event);
 			}
 		}
 		for (LaraAbstractEventSubscriber s : subscribers) {
 			if (s instanceof LaraEventSubscriber) {
+				// <- LOGGING
+				if (logger.isDebugEnabled()) {
+					logger.debug("Notified subscriber (external): " + s);
+				}
+				// LOGGING ->
+
 				((LaraEventSubscriber) s).onEvent(event);
 			}
 		}
@@ -519,6 +531,10 @@ public class LEventbus {
 	public void publish(LaraEvent event) {
 		// <- LOGGING
 		logger.info(event.getClass().getName() + " published");
+
+		if (logger.isDebugEnabled()) {
+			logger.error("Publisher: ", new LIdentifyCallerException(2, 1));
+		}
 		// LOGGING ->
 
 		// reset set of events which occurred this timestep if new timestep
@@ -615,6 +631,10 @@ public class LEventbus {
 		// <- LOGGING
 		logger.info("Subscribed " + subscriber + " to event "
 				+ eventClass.getName());
+
+		if (logger.isDebugEnabled()) {
+			logger.error("Subscriber: ", new LIdentifyCallerException(2, 1));
+		}
 		// LOGGING ->
 	}
 

@@ -17,22 +17,31 @@
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.cesr.lara.testing.components.preprocessor;
+package de.cesr.lara.components.decision;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+
+import de.cesr.lara.components.LaraBehaviouralOption;
+import de.cesr.lara.components.agents.LaraAgent;
 
 /**
- * 
  * @author Sascha Holzhauer
- * @date 10.02.2010
- * 
+ *
+ * @param <A> agent type
+ * @param <R> type of result object
+ * @param <P> parameter type
  */
-@RunWith(Suite.class)
-@SuiteClasses({ DefaultConfiguratorTest.class, LDefaultBOCollectorTest.class,
- LPpEventBusTest.class,
-		LPreprocessorTest.class, LDefaultDecisionModeSelectorTest.class })
-public class AllPreprocessorTests {
+public interface LaraBinaryDecisionTree<A extends LaraAgent<? super A, ? extends LaraBehaviouralOption<?, ?>>, R, P>
+		extends LaraDecisionTree<A, R, P> {
 
+	/**
+	 * @param falseTree
+	 *        the decision tree to evaluate when evaluate() returns false
+	 */
+	public void setFalseDecisionTree(LaraDecisionTree<A, R, P> falseTree);
+
+	/**
+	 * @param trueTree
+	 *        the decision tree to evaluate when evaluate() returns true
+	 */
+	public void setTrueDecisionTree(LaraDecisionTree<A, R, P> trueTree);
 }

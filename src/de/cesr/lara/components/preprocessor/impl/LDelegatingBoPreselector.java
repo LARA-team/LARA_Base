@@ -80,6 +80,9 @@ public class LDelegatingBoPreselector<A extends LaraAgent<? super A, BO>, BO ext
 			}
 		}
 		// <-- LOGGING
+		if (bos.size() == 0) {
+			logger.warn("No BOs after pre-selection for agent " + agent + "!");
+		}
 		if (logger.isEnabledFor(Priority.INFO)) {
 			logBOs(logger, bos, "after preselection", agent);
 		}
