@@ -188,6 +188,15 @@ public class LDefaultMemory<PropertyType extends LaraProperty<? extends Property
 	}
 
 	/**
+	 * @see de.cesr.lara.components.container.memory.LaraMemory#contains(de.cesr.lara.components.LaraProperty,
+	 *      java.lang.String, int)
+	 */
+	@Override
+	public boolean contains(Class<?> propertyType, String key, int timestamp) {
+		return storage.contains(propertyType, key, timestamp);
+	}
+
+	/**
 	 * @see de.cesr.lara.components.container.memory.LaraMemory#contains(java.lang.String)
 	 */
 	@Override
@@ -222,6 +231,9 @@ public class LDefaultMemory<PropertyType extends LaraProperty<? extends Property
 		return removedProperty;
 	}
 
+	/**
+	 * @see de.cesr.lara.components.container.memory.LaraMemory#forget(java.lang.String, int)
+	 */
 	@Override
 	public PropertyType forget(String key, int step) throws LRemoveException {
 		checkIfNewStep();

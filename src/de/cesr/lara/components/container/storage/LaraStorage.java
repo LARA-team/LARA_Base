@@ -113,12 +113,20 @@ public interface LaraStorage<PropertyType extends LaraProperty<? extends Propert
 	public boolean contains(PropertyType property, String key);
 
 	/**
-	 * Returns <code>true</code>, if, and only if, this storage contains a
-	 * property for the specified {@code key}.
+	 * Checks whether the memory contains a {@link LaraProperty} of the given type with the given key for the given time
+	 * stamp.
 	 * 
 	 * @param key
-	 * @return <code>true</code>, if, and only if, this storage contains a
-	 *         property for the specified {@code key}.
+	 * @param timestamp
+	 * @return true if such a property is contained
+	 */
+	public boolean contains(Class<?> propertyType, String key, int timestamp);
+
+	/**
+	 * Returns <code>true</code>, if, and only if, this storage contains a property for the specified {@code key}.
+	 * 
+	 * @param key
+	 * @return <code>true</code>, if, and only if, this storage contains a property for the specified {@code key}.
 	 * 
 	 */
 	public boolean contains(String key);

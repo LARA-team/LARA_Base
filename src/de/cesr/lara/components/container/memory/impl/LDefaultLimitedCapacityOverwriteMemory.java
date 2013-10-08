@@ -188,6 +188,21 @@ public class LDefaultLimitedCapacityOverwriteMemory<PropertyType extends LaraPro
 	}
 
 	/**
+	 * TODO test
+	 * 
+	 * @see de.cesr.lara.components.container.memory.LaraMemory#contains(de.cesr.lara.components.LaraProperty,
+	 *      java.lang.String, int)
+	 */
+	@Override
+	public boolean contains(Class<?> propertyType, String key, int timestamp) {
+		if (storage.contains(propertyType, key)) {
+			return storage.fetch(key).getTimestamp() == timestamp;
+		} else {
+			return false;
+		}
+	}
+
+	/**
 	 * @see de.cesr.lara.components.container.memory.LaraMemory#contains(java.lang.String)
 	 */
 	@Override
