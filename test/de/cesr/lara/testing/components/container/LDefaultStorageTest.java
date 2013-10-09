@@ -40,6 +40,7 @@ import de.cesr.lara.components.container.storage.LaraStorage;
 import de.cesr.lara.components.container.storage.impl.LDefaultStorage;
 import de.cesr.lara.components.eventbus.events.LModelStepEvent;
 import de.cesr.lara.components.eventbus.impl.LEventbus;
+import de.cesr.lara.components.model.impl.LModel;
 import de.cesr.lara.testing.LTestUtils;
 import de.cesr.lara.testing.components.container.LContainerTestUtils.LTestProperty;
 
@@ -147,6 +148,16 @@ public class LDefaultStorageTest {
 
 		storage.removeAll("key06");
 		assertFalse(storage.contains("key06"));
+	}
+
+	@Test
+	public void testContainsKeyPropertyTypeTimeStamp() {
+		assertEquals(1, LModel.getModel().getCurrentStep());
+		LContainerTestUtils.storeSixStandardEntries(storage);
+		assertTrue(storage.contains(LTestProperty.class, "key01", 1));
+		assertFalse(storage.contains(LTestProperty.class, "notcontained", 1));
+		assertFalse(storage.contains(LTestProperty.class, "key01", 2));
+		assertFalse(storage.contains(LModel.class, "key01", 1));
 	}
 
 	/**
