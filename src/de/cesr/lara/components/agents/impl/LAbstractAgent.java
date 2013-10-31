@@ -65,6 +65,9 @@ public abstract class LAbstractAgent<A extends LaraAgent<A, BO>, BO extends Lara
 	/**
 	 * Assigns an ID of the form agent000X where X is substituted by a counter value.
 	 * 
+	 * NOTE: The LARA implementation does not directly depend on the agent's {@link LaraEnvironment}. Therefore it does
+	 * not cause problems to assign NULL.
+	 * 
 	 * @param env
 	 *        the environment this agent is associated with
 	 */
@@ -73,6 +76,8 @@ public abstract class LAbstractAgent<A extends LaraAgent<A, BO>, BO extends Lara
 	}
 
 	/**
+	 * NOTE: The LARA implementation does not directly depend on the agent's {@link LaraEnvironment}. Therefore it does
+	 * not cause problems to assign NULL.
 	 * 
 	 * @param env
 	 *        the environment this agent is associated with
