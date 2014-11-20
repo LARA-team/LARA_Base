@@ -23,12 +23,14 @@ import java.util.Collection;
 
 import de.cesr.lara.components.LaraPreference;
 import de.cesr.lara.components.agents.LaraAgentComponent;
+import de.cesr.lara.components.preprocessor.LaraPreprocessor;
 
 /**
- * The {@link LaraDecisionConfiguration} is an identifier for certain decision
- * and is passed to {@link LaraAgentComponent#decide(LaraDecisionConfiguration)}
- * . It further defines the set of preferences that are relevant for the
- * decision.
+ * The {@link LaraDecisionConfiguration} is an identifier for a certain decision
+ * and is passed to
+ * {@link LaraPreprocessor#preprocess(LaraDecisionConfiguration, de.cesr.lara.components.agents.LaraAgent)}
+ * and to {@link LaraAgentComponent#decide(LaraDecisionConfiguration)}. It
+ * further defines the set of preferences that are relevant for the decision.
  */
 public interface LaraDecisionConfiguration {
 
