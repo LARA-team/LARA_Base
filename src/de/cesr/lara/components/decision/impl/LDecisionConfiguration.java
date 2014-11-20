@@ -25,21 +25,12 @@ import de.cesr.lara.components.LaraPreference;
 import de.cesr.lara.components.decision.LaraDecisionConfiguration;
 
 /**
- * creates instance of decision for given set of preferenceWeights and
- * deliberativeChoiceComp TODO make immutable (SH) TODO consider id field to
- * make the builder identifiable - to be set in constructor like other fields
- * (SH) sorry - needed these features instantly (SH) > not possible to make
- * static since multiple instances with different goal-definitions are required!
- * (SH)
- * 
+ * Creates instance of decision configuration for given set of preferences
+ *
+ * NOTE: Currently no immutable since preferences could change
  */
 public class LDecisionConfiguration implements LaraDecisionConfiguration {
 
-	/**
-	 * preferenceWeights XXX: why not store hash map (goal, value) of
-	 * preferenceWeights instead of preferenceWeights? cause preferenceWeights
-	 * differ from agent to agent, but preferenceWeights are reusable
-	 */
 	protected Collection<Class<? extends LaraPreference>> preferences = null;
 
 	private final String id;
