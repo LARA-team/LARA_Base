@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
 import de.cesr.lara.components.LaraBehaviouralOption;
 import de.cesr.lara.components.LaraPreference;
 import de.cesr.lara.components.agents.LaraAgent;
@@ -23,8 +25,8 @@ import de.cesr.lara.components.eventbus.events.LAgentPerceptionEvent;
 import de.cesr.lara.components.eventbus.events.LAgentPostExecutionEvent;
 import de.cesr.lara.components.eventbus.events.LAgentPostprocessEvent;
 import de.cesr.lara.components.eventbus.events.LAgentPreprocessEvent;
-import de.cesr.lara.components.eventbus.events.LModelFinishEvent;
 import de.cesr.lara.components.eventbus.events.LInternalModelInitializedEvent;
+import de.cesr.lara.components.eventbus.events.LModelFinishEvent;
 import de.cesr.lara.components.eventbus.events.LModelInstantiatedEvent;
 import de.cesr.lara.components.eventbus.events.LModelStepEvent;
 import de.cesr.lara.components.eventbus.events.LUpdateEnvironmentEvent;
@@ -32,9 +34,16 @@ import de.cesr.lara.components.eventbus.events.LaraEvent;
 import de.cesr.lara.components.eventbus.impl.LEventbus;
 import de.cesr.lara.components.model.LaraModel;
 import de.cesr.lara.components.model.impl.LAbstractStandaloneSynchronisedModel;
+import de.cesr.lara.components.model.impl.LModel;
 import de.cesr.lara.components.util.impl.LPreferenceWeightMap;
 
 public class LFrameworkTest {
+
+	/**
+	 * Logger
+	 */
+	static private Logger logger = Logger
+			.getLogger(LFrameworkTest.FrameworkTestModel.class);
 
 	private class FrameworkTestModel extends
 			LAbstractStandaloneSynchronisedModel implements LaraModel,
@@ -56,14 +65,14 @@ public class LFrameworkTest {
 				environment = new LEnvironment();
 				environment.updateProperty(new LEnvironmentalIntProperty(
 						KEY_TESTPROPERTY, 0, environment));
-				Set<Class<? extends LaraPreference>> goals = new HashSet<Class<? extends LaraPreference>>();
-				goals.add(TestGoal.class);
+				Set<LaraPreference> goals = new HashSet<LaraPreference>();
+				goals.add(LModel.getModel().getPrefRegistry().get("TestGoal"));
 				testDecisionConfiguration = new LDecisionConfiguration(
 						"test decision");
 				testDecisionConfiguration.setPreferences(goals);
 				new TestAgent("TestAgent 1", environment);
 			} else if (event instanceof LModelStepEvent) {
-				System.out.println("step");
+				logger.info("step");
 				eventBus.publish(new LUpdateEnvironmentEvent());
 				eventBus.publish(new LAgentPerceptionEvent(
 						testDecisionConfiguration));
@@ -143,30 +152,28 @@ public class LFrameworkTest {
 	private class TestBehaviouralOption<A extends LaraAgent<? super A, ?>>
 			extends LaraBehaviouralOption<A, TestBehaviouralOption<A>> {
 		public TestBehaviouralOption(String key, A agent,
-				Map<Class<? extends LaraPreference>, Double> preferences) {
+				Map<LaraPreference, Double> preferences) {
 			super(key, agent, preferences);
 		}
 
 		@Override
 		public TestBehaviouralOption<A> getModifiedBO(A agent,
-				Map<Class<? extends LaraPreference>, Double> preferenceUtilities) {
+				Map<LaraPreference, Double> preferenceUtilities) {
 			return new TestBehaviouralOption(this.getKey(), agent,
 					preferenceUtilities);
 		}
 
 		@Override
-		public Map<Class<? extends LaraPreference>, Double> getSituationalUtilities(
+		public Map<LaraPreference, Double> getSituationalUtilities(
 				LaraDecisionConfiguration dBuilder) {
-			Map<Class<? extends LaraPreference>, Double> utilities = new HashMap<Class<? extends LaraPreference>, Double>();
-			utilities.put(TestGoal.class, ((TestAgent) getAgent())
+			Map<LaraPreference, Double> utilities = new HashMap<LaraPreference, Double>();
+			utilities.put(LModel.getModel().getPrefRegistry().get("TestGoal"),
+					((TestAgent) getAgent())
 					.getPerceivedEnvironmentalProperty() + 1d);
 			return utilities;
 		}
 	}
 
-	private class TestGoal implements LaraPreference {
-
-	}
 
 	private static final String KEY_TESTPROPERTY = "TestProperty";
 
@@ -179,6 +186,9 @@ public class LFrameworkTest {
 
 	public LFrameworkTest() {
 		new FrameworkTestModel();
+
+		LModel.getModel().getPrefRegistry().register("TestGoal");
+
 		LEventbus eventBus = LEventbus.getInstance();
 		eventBus.publish(new LModelInstantiatedEvent());
 		for (int step = 1; step <= 3; step++) {

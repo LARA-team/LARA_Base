@@ -38,7 +38,9 @@ import de.cesr.lara.components.decision.impl.LDecisionConfiguration;
 import de.cesr.lara.components.decision.impl.LDeliberativeChoiceComp_MaxLineTotalRandomAtTie;
 import de.cesr.lara.components.eventbus.events.LModelStepEvent;
 import de.cesr.lara.components.eventbus.impl.LEventbus;
+import de.cesr.lara.components.model.impl.LModel;
 import de.cesr.lara.components.postprocessor.LaraPostprocessorComp;
+import de.cesr.lara.components.util.LaraPreferenceRegistry;
 import de.cesr.lara.components.util.impl.LPrefEntry;
 import de.cesr.lara.testing.LTestUtils;
 import de.cesr.lara.testing.LTestUtils.LTestAgent;
@@ -55,7 +57,7 @@ public class LDefaultAgentCompTest {
 
 	LTestAgent agent;
 
-	Class<? extends LaraPreference> goal1;
+	LaraPreference goal1;
 
 	int testInt = 0;
 
@@ -65,7 +67,7 @@ public class LDefaultAgentCompTest {
 	LTestBo bo1;
 
 	LaraDecisionConfiguration dConfig = LTestUtils.dConfig;
-
+	LaraPreferenceRegistry preg;
 	
 	/**
 	 * @throws java.lang.Exception
@@ -75,12 +77,13 @@ public class LDefaultAgentCompTest {
 
 		LTestUtils.initTestModel(dConfig);
 
-		goal1 = new LaraPreference() {
-		}.getClass();
+		preg = LModel.getModel().getPrefRegistry();
+		preg.register("TestGoal1");
+		goal1 = preg.get("TestGoal1");
 
 		agent = new LTestAgent("LTestAgent");
 
-		Map<Class<? extends LaraPreference>, Double> utilities = new HashMap<Class<? extends LaraPreference>, Double>();
+		Map<LaraPreference, Double> utilities = new HashMap<LaraPreference, Double>();
 		bo1 = new LTestBo(agent, utilities);
 		utilities.put(goal1, 0.0);
 
@@ -89,7 +92,7 @@ public class LDefaultAgentCompTest {
 		dConfig = new LDecisionConfiguration("TestDecision");
 		LDefaultAgentComp.setDefaultDeliberativeChoiceComp(dConfig,
 				LDeliberativeChoiceComp_MaxLineTotalRandomAtTie.getInstance(null));
-		List<Class<? extends LaraPreference>> goals = new ArrayList<Class<? extends LaraPreference>>();
+		List<LaraPreference> goals = new ArrayList<LaraPreference>();
 		goals.add(goal1);
 		dConfig.setPreferences(goals);
 	}
@@ -113,8 +116,6 @@ public class LDefaultAgentCompTest {
 
 			@Override
 			public void postProcess(LTestAgent agent, LaraDecisionConfiguration dConfig) {
-				// UNDO
-				System.out.println("----------TEST");
 				LDefaultAgentCompTest.this.testInt = 1;
 			}
 		});

@@ -30,6 +30,8 @@ import de.cesr.lara.components.decision.LaraBoRow;
  * 
  * @author Daniel Klemm
  * @author Sascha Holzhauer
+ * @param <BO>
+ *            behavioural option
  * 
  */
 public class LLightBoRow<BO extends LaraBehaviouralOption<?, ?>> implements
@@ -67,11 +69,11 @@ public class LLightBoRow<BO extends LaraBehaviouralOption<?, ?>> implements
 	}
 
 	/**
-	 * @see de.cesr.lara.components.decision.LaraBoRow#getIndividualUtilityValue(java.lang.Class)
+	 * @see de.cesr.lara.components.decision.LaraBoRow#getIndividualUtilityValue(LaraPreference)
 	 */
 	@Override
 	public double getIndividualUtilityValue(
-			Class<? extends LaraPreference> preference) {
+LaraPreference preference) {
 		throw new UnsupportedOperationException(
 				"This implementation of LaraBoRow "
 						+ "stores only the sum of individual utiltiy values");
@@ -86,12 +88,13 @@ public class LLightBoRow<BO extends LaraBehaviouralOption<?, ?>> implements
 	}
 
 	/**
-	 * @see de.cesr.lara.components.decision.LaraBoRow#setIndividualUtilityValue(java.lang.Class,
+	 * @see de.cesr.lara.components.decision.LaraBoRow#setIndividualUtilityValue(LaraPreference,
 	 *      double)
 	 */
 	@Override
 	public void setIndividualUtilityValue(
-			Class<? extends LaraPreference> preference, double value) {
+LaraPreference preference,
+			double value) {
 		this.utilitySum += value;
 	}
 

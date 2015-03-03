@@ -65,7 +65,8 @@ public interface LaraAgentComponent<A extends LaraAgent<? super A, BO>, BO exten
 	 * @param preferenceWeights
 	 *        the preferenceWeights to set
 	 */
-	public void addPreferenceWeights(Map<Class<? extends LaraPreference>, Double> preferenceWeights);
+	public void addPreferenceWeights(
+			Map<LaraPreference, Double> preferenceWeights);
 
 	/**
 	 * Executes decision making for the given {@link LaraDecisionConfiguration}: Simulates the agent's decision making
@@ -187,19 +188,20 @@ public interface LaraAgentComponent<A extends LaraAgent<? super A, BO>, BO exten
 	 * @param preference
 	 * @return agent's preference weight regarding the given preference
 	 */
-	public Double getPreferenceWeight(Class<? extends LaraPreference> preference);
+	public Double getPreferenceWeight(LaraPreference preference);
 
 	/**
 	 * @return a map of the agents preferenceWeights
 	 * 
 	 */
-	public Map<Class<? extends LaraPreference>, Double> getPreferenceWeights();
+	public Map<LaraPreference, Double> getPreferenceWeights();
 
 	/**
-	 * Returns the {@link LaraDeliberativeChoiceComponent} that shall be used for the given decision configuration.
+	 * Returns the {@link LaraDeliberativeChoiceComponent} that shall be used
+	 * for the given decision configuration.
 	 * 
 	 * @param dConfiguration
-	 * @return
+	 * @return deliberative choice component
 	 */
 	public LaraDeliberativeChoiceComponent getDeliberativeChoiceComp(LaraDecisionConfiguration dConfiguration);
 }

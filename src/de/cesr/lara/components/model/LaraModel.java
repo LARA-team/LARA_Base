@@ -23,6 +23,7 @@ import java.text.NumberFormat;
 import java.util.Date;
 
 import de.cesr.lara.components.model.impl.LSimulationStage;
+import de.cesr.lara.components.util.LaraPreferenceRegistry;
 import de.cesr.lara.components.util.LaraRandom;
 
 /**
@@ -107,6 +108,13 @@ public interface LaraModel {
 	 *            the number of steps to increase
 	 */
 	public void step(int stepIncrease);
+
+	/**
+	 * Access to this model's {@link LaraPreferenceRegistry}.
+	 * 
+	 * @return preference registry
+	 */
+	public LaraPreferenceRegistry getPrefRegistry();
 
 	/**
 	 * Required for batch runs, especially for Repast Simphony when the subclass of LAbstractModel is persistent!

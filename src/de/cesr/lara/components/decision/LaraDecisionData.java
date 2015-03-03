@@ -52,7 +52,7 @@ public final class LaraDecisionData<A extends LaraAgent<? super A, BO>, BO exten
 
 	private final LaraDecisionConfiguration dConfiguration;
 	private Collection<BO> bos;
-	private Map<Class<? extends LaraPreference>, Double> individualPreferenceWeights;
+	private Map<LaraPreference, Double> individualPreferenceWeights;
 
 	private final A agent;
 
@@ -121,7 +121,7 @@ public final class LaraDecisionData<A extends LaraAgent<? super A, BO>, BO exten
 	/**
 	 * @return the currentPreferences
 	 */
-	public Map<Class<? extends LaraPreference>, Double> getIndividualPreferenceWeights() {
+	public Map<LaraPreference, Double> getIndividualPreferenceWeights() {
 		if (individualPreferenceWeights == null) {
 			// <- LOGGING
 			logger.error(agent + "> Situational preference weights not set!");
@@ -201,7 +201,7 @@ public final class LaraDecisionData<A extends LaraAgent<? super A, BO>, BO exten
 	 *            the currentPreferences to set
 	 */
 	public void setIndividualPreferences(
-			Map<Class<? extends LaraPreference>, Double> individualPreferenceWeights) {
+			Map<LaraPreference, Double> individualPreferenceWeights) {
 		this.individualPreferenceWeights = individualPreferenceWeights;
 	}
 

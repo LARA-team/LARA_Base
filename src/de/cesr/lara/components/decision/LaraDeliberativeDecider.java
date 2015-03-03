@@ -40,7 +40,7 @@ public interface LaraDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? e
 	 * 
 	 * @return Returns the preference weights
 	 */
-	public Map<Class<? extends LaraPreference>, Double> getPreferenceWeights();
+	public Map<LaraPreference, Double> getPreferenceWeights();
 
 	/**
 	 * @return Returns the behaviouralOption.
@@ -60,7 +60,7 @@ public interface LaraDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? e
 	 *            individual preference weights
 	 */
 	public void setPreferenceWeights(
-			Map<Class<? extends LaraPreference>, Double> preferenceWeights);
+			Map<LaraPreference, Double> preferenceWeights);
 
 	/**
 	 * Set the collection of BOs the decision process decides upon.

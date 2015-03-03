@@ -72,7 +72,7 @@ public class LDeliberativeChoiceComp_MaxLineTotalTest {
 
 		for (int i = 0; i < 10; i++) {
 			bos[i] = new LTestBo("" + i, agent,
-					new HashMap<Class<? extends LaraPreference>, Double>());
+					new HashMap<LaraPreference, Double>());
 			laraBoRows.add(new LLightBoRow<LTestBo>(bos[i], valuesSum[i]));
 		}
 	}

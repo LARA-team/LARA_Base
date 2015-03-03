@@ -27,6 +27,7 @@ import de.cesr.lara.components.eventbus.events.LAgentPostprocessEvent;
 import de.cesr.lara.components.eventbus.events.LModelStepEvent;
 import de.cesr.lara.components.eventbus.events.LaraEvent;
 import de.cesr.lara.components.eventbus.impl.LEventbus;
+import de.cesr.lara.components.model.impl.LModel;
 import de.cesr.lara.components.param.LBasicPa;
 import de.cesr.lara.components.param.LDecisionMakingPa;
 import de.cesr.lara.components.postprocessor.impl.LSelectedBoProperty;
@@ -38,7 +39,6 @@ import de.cesr.lara.components.util.impl.LCapacityManagers;
 import de.cesr.lara.testing.LTestUtils;
 import de.cesr.lara.testing.LTestUtils.LTestAgent;
 import de.cesr.lara.testing.LTestUtils.LTestBo;
-import de.cesr.lara.testing.LTestUtils.LTestPreference1;
 import de.cesr.parma.core.PmParameterManager;
 
 
@@ -103,7 +103,8 @@ public class LDefaultDecisionModeSelectorTest implements LaraEventSubscriber {
 		LTestUtils.initTestModel(dConfig);
 		LEventbus.getInstance().subscribe(this, LAgentPostprocessEvent.class);
 
-		Class<? extends LaraPreference> goal1 = LTestPreference1.class;
+		LaraPreference goal1 = LModel.getModel().getPrefRegistry()
+				.register("TestPreference1");
 
 		agent = new LTestAgent("LTestAgent");
 		delibAgent = new LDelegateDeliberativeTestAgent("DeliberativeAgent");
@@ -123,7 +124,7 @@ public class LDefaultDecisionModeSelectorTest implements LaraEventSubscriber {
 		habitAgent.getLaraComp().setPreprocessor(ppConfigurator.getPreprocessor());
 		initialHabitAgent.getLaraComp().setPreprocessor(ppConfigurator.getPreprocessor());
 
-		Map<Class<? extends LaraPreference>, Double> utilities = new HashMap<Class<? extends LaraPreference>, Double>();
+		Map<LaraPreference, Double> utilities = new HashMap<LaraPreference, Double>();
 		bo1 = new LTestBo(agent, utilities);
 		bo1D = new LTestBo(delibAgent, utilities);
 		bo1H = new LTestBo(habitAgent, utilities);
@@ -150,7 +151,7 @@ public class LDefaultDecisionModeSelectorTest implements LaraEventSubscriber {
 
 		LDefaultAgentComp.setDefaultDeliberativeChoiceComp(dConfig,
 				LDeliberativeChoiceComp_MaxLineTotalRandomAtTie.getInstance(null));
-		List<Class<? extends LaraPreference>> goals = new ArrayList<Class<? extends LaraPreference>>();
+		List<LaraPreference> goals = new ArrayList<LaraPreference>();
 		goals.add(goal1);
 		dConfig.setPreferences(goals);
 

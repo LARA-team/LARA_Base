@@ -38,10 +38,10 @@ public interface LaraBoRow<BO extends LaraBehaviouralOption<?, ?>> {
 	/**
 	 * Provides the individual utility values regarding the given preference.
 	 * 
+	 * @param preference
 	 * @return individual utility value
 	 */
-	public double getIndividualUtilityValue(
-			Class<? extends LaraPreference> preference);
+	public double getIndividualUtilityValue(LaraPreference preference);
 
 	/**
 	 * @return the sum of all individual utility values
@@ -55,5 +55,6 @@ public interface LaraBoRow<BO extends LaraBehaviouralOption<?, ?>> {
 	 * @param value
 	 */
 	public void setIndividualUtilityValue(
-			Class<? extends LaraPreference> preference, double value);
+LaraPreference preference,
+			double value);
 }

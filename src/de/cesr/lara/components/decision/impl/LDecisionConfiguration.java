@@ -21,6 +21,9 @@ package de.cesr.lara.components.decision.impl;
 
 import java.util.Collection;
 
+import org.simpleframework.xml.Element;
+import org.simpleframework.xml.ElementList;
+
 import de.cesr.lara.components.LaraPreference;
 import de.cesr.lara.components.decision.LaraDecisionConfiguration;
 
@@ -31,8 +34,10 @@ import de.cesr.lara.components.decision.LaraDecisionConfiguration;
  */
 public class LDecisionConfiguration implements LaraDecisionConfiguration {
 
-	protected Collection<Class<? extends LaraPreference>> preferences = null;
+	@ElementList(required=true, entry="preference")
+	protected Collection<LaraPreference> preferences = null;
 
+	@Element(required = true)
 	private final String id;
 
 	/**
@@ -50,11 +55,6 @@ public class LDecisionConfiguration implements LaraDecisionConfiguration {
 	/**
 	 * @param id
 	 */
-	/**
-	 * @param id
-	 * @param deliberativeChoiceComp
-	 *            the mechanism used to fetch best BOs.
-	 */
 	public LDecisionConfiguration(String id) {
 		this.id = id;
 	}
@@ -67,14 +67,20 @@ public class LDecisionConfiguration implements LaraDecisionConfiguration {
 		return id;
 	}
 
+	/**
+	 * @see de.cesr.lara.components.decision.LaraDecisionConfiguration#getPreferences()
+	 */
 	@Override
-	public Collection<Class<? extends LaraPreference>> getPreferences() {
+	public Collection<LaraPreference> getPreferences() {
 		return preferences;
 	}
 
+	/**
+	 * @see de.cesr.lara.components.decision.LaraDecisionConfiguration#setPreferences(java.util.Collection)
+	 */
 	@Override
 	public void setPreferences(
-			Collection<Class<? extends LaraPreference>> preferences) {
+Collection<LaraPreference> preferences) {
 		this.preferences = preferences;
 	}
 

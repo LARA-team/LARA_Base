@@ -39,7 +39,10 @@ import de.cesr.lara.components.util.logging.impl.Log4jLogger;
  * Does _not_ update any preference.
  * 
  * @param <A>
- *        he type of agents this preference utilityUpdater is intended for
+ *            the type of agents this preference utilityUpdater is intended for
+ * 
+ * @param <BO>
+ *            type of behavioural option
  * 
  * @author Sascha Holzhauer
  * @date 05.02.2010
@@ -85,11 +88,10 @@ public class LPseudoPrefereceUpdater<A extends LaraAgent<? super A, ?>, BO exten
 
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Preferences for " + agent + ":" + System.getProperty("line.separator"));
-		int i = 0;
-		for (Entry<Class<? extends LaraPreference>, Double> entry : agent.getLaraComp().getPreferenceWeights()
+		for (Entry<LaraPreference, Double> entry : agent.getLaraComp()
+				.getPreferenceWeights()
 				.entrySet()) {
 			buffer.append(entry.getKey() + ": " + entry.getValue() + System.getProperty("line.separator"));
-			i++;
 		}
 		if (agentLogger != null) {
 			agentLogger.debug(buffer);

@@ -89,7 +89,7 @@ public class LSemiParaemterTest {
 		 */
 		@Override
 		public BO getModifiedBO(A agent,
-				Map<Class<? extends LaraPreference>, Double> utilities) {
+ Map<LaraPreference, Double> utilities) {
 			return null;
 		}
 
@@ -97,7 +97,7 @@ public class LSemiParaemterTest {
 		 * @see de.cesr.lara.components.LaraBehaviouralOption#getSituationalUtilities(de.cesr.lara.components.decision.LaraDecisionConfiguration)
 		 */
 		@Override
-		public Map<Class<? extends LaraPreference>, Double> getSituationalUtilities(
+		public Map<LaraPreference, Double> getSituationalUtilities(
 				LaraDecisionConfiguration dBuilder) {
 			return null;
 		}
@@ -207,7 +207,7 @@ public class LSemiParaemterTest {
 			Employee<Manager<BO>, BO> {
 
 		/**
-		 * @return
+		 * @return instructions utility
 		 */
 		public float getInstructionsUtility() {
 			return 0.5f;
@@ -219,15 +219,15 @@ public class LSemiParaemterTest {
 	 * 
 	 * > requires {@link CompanyBO}s (i.e. may also deal with PowerBos)
 	 * 
-	 * @param <T>
-	 *            The agent type associated BOs work with
-	 * @param <BO>
-	 *            The BO type
+	 * @type <ManagerB> The agent type associated BOs work with
+	 * @type <CompanyBO> The BO type
 	 */
 	static class ManagerB extends Employee<ManagerB, CompanyBO<?, ?>> {
 
 		/**
-		 * @return
+		 * @param bo
+		 *            behavioural option
+		 * @return instructions utility
 		 */
 		public float getInstructionsUtility(CompanyBO<ManagerB, ?> bo) {
 			return 0.5f;

@@ -49,11 +49,12 @@ import de.cesr.parma.core.PmParameterManager;
 
 /**
  * 
- * If the agent is an instance of {@link LaraDecisionModeProvidingAgent} this selector respects the suggested decision
- * mode by the agent.
+ * If the agent is an instance of {@link LaraDecisionModeProvidingAgent} this
+ * selector respects the suggested decision mode by the agent.
  * 
- * Otherwise, it selects habit mode if last {@link LDecisionMakingPa.HABIT_THRESHOLD} BOs are equal and deliberative
- * mode otherwise.
+ * Otherwise, it selects habit mode if last
+ * {@link LDecisionMakingPa#HABIT_THRESHOLD} BOs are equal and deliberative mode
+ * otherwise.
  * 
  * This default implementation is used in {@link LPreprocessor}.
  * 
@@ -66,6 +67,10 @@ import de.cesr.parma.core.PmParameterManager;
  * </ol>
  * 
  * @author Sascha Holzhauer
+ * @param <A>
+ *            Agent Type
+ * @param <BO>
+ *            BO Type
  * 
  */
 public class LDefaultDecisionModeSelector<A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>>
@@ -82,7 +87,7 @@ public class LDefaultDecisionModeSelector<A extends LaraAgent<A, BO>, BO extends
 
 	/**
 	 * 
-	 * @see de.cesr.lara.components.preprocessor.LaraDecisionModeSelector#onInternalEvent(de.cesr.lara.components.preprocessor.event.LPpModeSelectorEvent)
+	 * @see de.cesr.lara.components.preprocessor.LaraDecisionModeSelector#onInternalEvent(LaraEvent)
 	 */
 	@SuppressWarnings("unchecked")
 	// agent: the event will only be published by agents of type A

@@ -44,7 +44,7 @@ public interface LaraDecisionConfiguration {
 	 * 
 	 * @return relevant preferences
 	 */
-	public Collection<Class<? extends LaraPreference>> getPreferences();
+	public Collection<LaraPreference> getPreferences();
 
 	/**
 	 * Set the preferences that are relevant for this decision
@@ -52,5 +52,5 @@ public interface LaraDecisionConfiguration {
 	 * @param preferences
 	 */
 	public void setPreferences(
-			Collection<Class<? extends LaraPreference>> preferences);
+Collection<LaraPreference> preferences);
 }

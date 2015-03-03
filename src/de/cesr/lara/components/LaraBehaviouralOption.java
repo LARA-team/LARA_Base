@@ -68,7 +68,7 @@ import de.cesr.lara.components.util.logging.impl.Log4jLogger;
  * @date 12.02.2010
  */
 public abstract class LaraBehaviouralOption<A extends LaraAgent<? super A, ?>, BO extends LaraBehaviouralOption<?, ?>>
-		extends LaraProperty<BO, Map<Class<? extends LaraPreference>, Double>>
+		extends LaraProperty<BO, Map<LaraPreference, Double>>
 		implements Comparable<LaraBehaviouralOption<A, BO>> {
 
 	/**
@@ -88,7 +88,7 @@ public abstract class LaraBehaviouralOption<A extends LaraAgent<? super A, ?>, B
 	/**
 	 * The BO's collection of utility values
 	 */
-	private final Map<Class<? extends LaraPreference>, Double> preferenceUtilities;
+	private final Map<LaraPreference, Double> preferenceUtilities;
 
 	/**
 	 * Does not call constructor with more parameters above to prevent double
@@ -141,7 +141,7 @@ public abstract class LaraBehaviouralOption<A extends LaraAgent<? super A, ?>, B
 	 * @param preferenceUtilities
 	 */
 	public LaraBehaviouralOption(String key, A agent,
-			Map<Class<? extends LaraPreference>, Double> preferenceUtilities) {
+			Map<LaraPreference, Double> preferenceUtilities) {
 		super(key);
 		this.agent = agent;
 		this.preferenceUtilities = new LPreferenceWeightMap(preferenceUtilities);
@@ -191,7 +191,7 @@ public abstract class LaraBehaviouralOption<A extends LaraAgent<? super A, ?>, B
 			if (getTimestamp() != bo.getTimestamp()) {
 				return false;
 			}
-			for (Entry<Class<? extends LaraPreference>, Double> entry : getValue()
+			for (Entry<LaraPreference, Double> entry : getValue()
 					.entrySet()) {
 				if (!entry.getValue().equals(bo.getValue().get(entry.getKey()))) {
 					return false;
@@ -221,7 +221,7 @@ public abstract class LaraBehaviouralOption<A extends LaraAgent<? super A, ?>, B
 	 * 
 	 * @return an editable copy of the internal utility map
 	 */
-	public Map<Class<? extends LaraPreference>, Double> getModifiableUtilities() {
+	public Map<LaraPreference, Double> getModifiableUtilities() {
 		return new LPreferenceWeightMap(preferenceUtilities);
 	}
 
@@ -243,14 +243,14 @@ public abstract class LaraBehaviouralOption<A extends LaraAgent<? super A, ?>, B
 	 * @return behavioural option
 	 */
 	public abstract BO getModifiedBO(A agent,
-			Map<Class<? extends LaraPreference>, Double> preferenceUtilities);
+			Map<LaraPreference, Double> preferenceUtilities);
 
 	/**
 	 * @see de.cesr.lara.components.LaraProperty#getModifiedProperty(java.lang.Object)
 	 */
 	@Override
 	public BO getModifiedProperty(
-			Map<Class<? extends LaraPreference>, Double> value) {
+Map<LaraPreference, Double> value) {
 		return getModifiedUtilitiesBO(value);
 	}
 
@@ -260,7 +260,7 @@ public abstract class LaraBehaviouralOption<A extends LaraAgent<? super A, ?>, B
 	 * @return new BO that contains the given preferenceUtilities
 	 */
 	public BO getModifiedUtilitiesBO(
-			Map<Class<? extends LaraPreference>, Double> preferenceUtilities) {
+			Map<LaraPreference, Double> preferenceUtilities) {
 		return getModifiedBO(getAgent(), preferenceUtilities);
 	}
 
@@ -272,8 +272,8 @@ public abstract class LaraBehaviouralOption<A extends LaraAgent<? super A, ?>, B
 	 * @param dConfig
 	 * @return the current preferenceUtilities of this behavioural option
 	 */
-	public abstract Map<Class<? extends LaraPreference>, Double> getSituationalUtilities(
-			LaraDecisionConfiguration dBuilder);
+	public abstract Map<LaraPreference, Double> getSituationalUtilities(
+			LaraDecisionConfiguration dConfig);
 
 	/**
 	 * Returns the sum of BO-utility * agent'S situational preference over all
@@ -294,17 +294,17 @@ public abstract class LaraBehaviouralOption<A extends LaraAgent<? super A, ?>, B
 		// float situationalGoalPreference;
 		double situationalGoalPreference;
 
-		Map<Class<? extends LaraPreference>, Double> goals;
+		Map<LaraPreference, Double> goals;
 
 		// <- LOGGING
 		if (agentLogger != null) {
-			goals = new TreeMap<Class<? extends LaraPreference>, Double>(
-					new Comparator<Class<? extends LaraPreference>>() {
+			goals = new TreeMap<LaraPreference, Double>(
+					new Comparator<LaraPreference>() {
 						@Override
 						public int compare(
-								Class<? extends LaraPreference> arg0,
-								Class<? extends LaraPreference> arg1) {
-							return arg0.getName().compareTo(arg1.getName());
+LaraPreference arg0,
+								LaraPreference arg1) {
+							return arg0.getId().compareTo(arg1.getId());
 						}
 					});
 			goals.putAll(this.getValue());
@@ -313,7 +313,7 @@ public abstract class LaraBehaviouralOption<A extends LaraAgent<? super A, ?>, B
 		}
 		// LOGGING ->
 
-		for (Entry<Class<? extends LaraPreference>, Double> utilityEntry : goals
+		for (Entry<LaraPreference, Double> utilityEntry : goals
 				.entrySet()) {
 			situationalGoalPreference = agent.getLaraComp()
 					.getDecisionData(dConfig).getIndividualPreferenceWeights()
@@ -350,7 +350,7 @@ public abstract class LaraBehaviouralOption<A extends LaraAgent<? super A, ?>, B
 	 * 
 	 */
 	@Override
-	public Map<Class<? extends LaraPreference>, Double> getValue() {
+	public Map<LaraPreference, Double> getValue() {
 		return Collections.unmodifiableMap(preferenceUtilities);
 	}
 
@@ -388,19 +388,19 @@ public abstract class LaraBehaviouralOption<A extends LaraAgent<? super A, ?>, B
 		NumberFormat format = LModel.getModel().getFloatPointFormat();
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("[" + getKey() + ", ");
-		TreeSet<Map.Entry<Class<? extends LaraPreference>, Double>> sortedSet = new TreeSet<Map.Entry<Class<? extends LaraPreference>, Double>>(
-				new Comparator<Map.Entry<Class<? extends LaraPreference>, Double>>() {
+		TreeSet<Map.Entry<LaraPreference, Double>> sortedSet = new TreeSet<Map.Entry<LaraPreference, Double>>(
+				new Comparator<Map.Entry<LaraPreference, Double>>() {
 					@Override
 					public int compare(
-							Entry<Class<? extends LaraPreference>, Double> o1,
-							Entry<Class<? extends LaraPreference>, Double> o2) {
-						return o1.getKey().getSimpleName()
-								.compareTo(o2.getKey().getSimpleName());
+Entry<LaraPreference, Double> o1,
+							Entry<LaraPreference, Double> o2) {
+						return o1.getKey().getId()
+								.compareTo(o2.getKey().getId());
 					}
 				});
 		sortedSet.addAll(preferenceUtilities.entrySet());
-		for (Map.Entry<Class<? extends LaraPreference>, Double> entry : sortedSet) {
-			buffer.append(entry.getKey().getSimpleName()
+		for (Map.Entry<LaraPreference, Double> entry : sortedSet) {
+			buffer.append(entry.getKey().getId()
 					+ ": "
 					+ (entry.getValue() != null ? format.format(entry
 							.getValue().doubleValue()) : "null") + "; ");
@@ -421,11 +421,11 @@ public abstract class LaraBehaviouralOption<A extends LaraAgent<? super A, ?>, B
 		result = 31 * result + getTimestamp();
 		int sum = 0;
 		if (getValue() != null) {
-			for (Entry<Class<? extends LaraPreference>, Double> entry : getValue()
+			for (Entry<LaraPreference, Double> entry : getValue()
 					.entrySet()) {
 				// a multiplication is not possible since it would depend on the
 				// order!
-				sum += entry.getKey().getName().hashCode()
+				sum += entry.getKey().getId().hashCode()
 						+ entry.getValue().hashCode();
 			}
 		}
