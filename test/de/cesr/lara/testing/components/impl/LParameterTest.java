@@ -134,7 +134,7 @@ public class LParameterTest {
 		 */
 		@Override
 		public BO getModifiedBO(A agent,
-				Map<Class<? extends LaraPreference>, Double> utilities) {
+ Map<LaraPreference, Double> utilities) {
 			return null;
 		}
 
@@ -142,7 +142,7 @@ public class LParameterTest {
 		 * @see de.cesr.lara.components.LaraBehaviouralOption#getSituationalUtilities(de.cesr.lara.components.decision.LaraDecisionConfiguration)
 		 */
 		@Override
-		public Map<Class<? extends LaraPreference>, Double> getSituationalUtilities(
+		public Map<LaraPreference, Double> getSituationalUtilities(
 				LaraDecisionConfiguration dBuilder) {
 			return null;
 		}
@@ -183,7 +183,7 @@ public class LParameterTest {
 			AbstractEmployee<Manager<BO>, BO> {
 
 		/**
-		 * @return
+		 * @return instructions utility
 		 */
 		public float getInstructionsUtility() {
 			return 0.5f;

@@ -37,6 +37,7 @@ import de.cesr.lara.components.eventbus.events.LAgentDecideEvent;
 import de.cesr.lara.components.eventbus.events.LAgentPreprocessEvent;
 import de.cesr.lara.components.eventbus.events.LaraEvent;
 import de.cesr.lara.components.eventbus.impl.LEventbus;
+import de.cesr.lara.components.model.impl.LModel;
 import de.cesr.lara.components.preprocessor.LaraDecisionModeSelector;
 import de.cesr.lara.components.preprocessor.event.LPpModeSelectorEvent;
 import de.cesr.lara.components.preprocessor.impl.LAbstractPpComp;
@@ -46,7 +47,6 @@ import de.cesr.lara.components.util.impl.LSet;
 import de.cesr.lara.testing.LTestUtils;
 import de.cesr.lara.testing.LTestUtils.LTestAgent;
 import de.cesr.lara.testing.LTestUtils.LTestBo;
-import de.cesr.lara.testing.LTestUtils.LTestPreference1;
 
 /**
  * @author Sascha Holzhauer
@@ -82,7 +82,9 @@ public class LTreeDeciderTest {
 															"Bo1",
 															agent,
 															new LPrefEntry(
-																	LTestPreference1.class,
+																	LModel.getModel()
+																			.getPrefRegistry()
+																			.get("TestPreference1"),
 																	new Double(
 																			1.0))));
 										}
@@ -99,7 +101,9 @@ public class LTreeDeciderTest {
 															"Bo2",
 															agent,
 															new LPrefEntry(
-																	LTestPreference1.class,
+																	LModel.getModel()
+																			.getPrefRegistry()
+																			.get("TestPreference1"),
 																	new Double(
 																			0.5))));
 										}
@@ -141,9 +145,10 @@ public class LTreeDeciderTest {
 		LTestUtils.initTestModel(dConfig);
 		agent = new LTestAgent("TestAgent");
 
-		one = new LTestBo("Bo1", agent, new LPrefEntry(LTestPreference1.class,
+		LModel.getModel().getPrefRegistry().register("TestPreference1");
+		one = new LTestBo("Bo1", agent, new LPrefEntry(LModel.getModel().getPrefRegistry().get("TestPreference1"),
 				new Double(1.0)));
-		two = new LTestBo("Bo2", agent, new LPrefEntry(LTestPreference1.class,
+		two = new LTestBo("Bo2", agent, new LPrefEntry(LModel.getModel().getPrefRegistry().get("TestPreference1"),
 				new Double(0.5)));
 
 		agent.getLaraComp().getBOMemory().memorize(one);

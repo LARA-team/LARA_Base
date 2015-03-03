@@ -34,14 +34,14 @@ import de.cesr.lara.components.eventbus.events.LAgentPostprocessEvent;
 import de.cesr.lara.components.eventbus.events.LAgentPreprocessEvent;
 import de.cesr.lara.components.eventbus.events.LModelStepEvent;
 import de.cesr.lara.components.eventbus.impl.LEventbus;
+import de.cesr.lara.components.model.impl.LModel;
 import de.cesr.lara.components.param.LBasicPa;
 import de.cesr.lara.components.param.LDecisionMakingPa;
+import de.cesr.lara.components.util.LaraPreferenceRegistry;
 import de.cesr.lara.components.util.impl.LPrefEntry;
 import de.cesr.lara.testing.LTestUtils;
 import de.cesr.lara.testing.LTestUtils.LTestAgent;
 import de.cesr.lara.testing.LTestUtils.LTestBo;
-import de.cesr.lara.testing.LTestUtils.LTestPreference1;
-import de.cesr.lara.testing.LTestUtils.LTestPreference2;
 import de.cesr.parma.core.PmParameterManager;
 
 /**
@@ -60,6 +60,8 @@ public class LHabitDeciderTest {
 
 	LaraDecisionConfiguration dConfig = LTestUtils.dConfig;
 
+	LaraPreferenceRegistry preg;
+
 	/**
 	 * @throws java.lang.Exception
 	 */
@@ -70,18 +72,22 @@ public class LHabitDeciderTest {
 
 		agent = new LTestAgent("TestAgent");
 
+		preg = LModel.getModel().getPrefRegistry();
+		preg.register("TestPreference1");
+		preg.register("TestPreference2");
+
 		agent.getLaraComp()
 				.addPreferenceWeights(
-						new LPrefEntry(
-								LTestPreference1.class,
+				new LPrefEntry(preg.get("TestPreference1"),
 								1.0),
-						new LPrefEntry(
-								LTestPreference2.class,
+				new LPrefEntry(preg.get("TestPreference2"),
 								1.0));
 
-		one = new LTestBo("Bo1", agent, new LPrefEntry(LTestPreference1.class,
+		one = new LTestBo("Bo1", agent, new LPrefEntry(
+				preg.get("TestPreference1"),
 				new Double(1.0)));
-		two = new LTestBo("Bo2", agent, new LPrefEntry(LTestPreference1.class,
+		two = new LTestBo("Bo2", agent, new LPrefEntry(
+				preg.get("TestPreference1"),
 				new Double(0.5)));
 
 		agent.getLaraComp().getBOMemory().memorize(one);

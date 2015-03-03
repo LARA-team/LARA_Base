@@ -64,7 +64,9 @@ public class LEventbus {
 	private static Logger logger = Log4jLogger.getLogger(LEventbus.class);
 
 	/**
-	 * returns a reference to the global eventbus
+	 * Returns a reference to the global eventbus
+	 * 
+	 * @return global eventbus
 	 */
 	public static LEventbus getInstance() {
 		if (instance == null) {
@@ -79,7 +81,7 @@ public class LEventbus {
 	 * returns a reference to a special eventbus
 	 * 
 	 * @param id
-	 * @return
+	 * @return eventbus
 	 */
 	public static LEventbus getInstance(Object id) {
 		LEventbus theInstance = instances.get(id);
@@ -611,7 +613,7 @@ public class LEventbus {
 	 * LaraEventSubscriber)
 	 * 
 	 * @param subscriber
-	 * @param event
+	 * @param eventClass
 	 */
 	public void subscribe(LaraAbstractEventSubscriber subscriber,
 			Class<? extends LaraEvent> eventClass) {
@@ -642,7 +644,7 @@ public class LEventbus {
 	 * Unsubscribes all subscribers from the given event class. Note: This
 	 * method is inefficient since it iterates over all registered events.
 	 * 
-	 * @param subscriber
+	 * @param eventClass
 	 */
 	public void unsubscribe(Class<? extends LaraEvent> eventClass) {
 		eventSubscriberMap.remove(eventClass);
@@ -671,10 +673,10 @@ public class LEventbus {
 	}
 
 	/**
-	 * Unsubscribe a subscriber from an event
+	 * Unsubscribe a subscriber from a class of events
 	 * 
 	 * @param subscriber
-	 * @param event
+	 * @param eventClass
 	 */
 	public void unsubscribe(LaraAbstractEventSubscriber subscriber,
 			Class<? extends LaraEvent> eventClass) {
@@ -700,7 +702,8 @@ public class LEventbus {
 	 * Unsubscribes all subscribers from the event class the given event belongs
 	 * to.
 	 * 
-	 * @param subscriber
+	 * @param event
+	 *            to unsubscribe
 	 */
 	public void unsubscribe(LaraEvent event) {
 		eventSubscriberMap.remove(event.getClass());
@@ -754,7 +757,8 @@ public class LEventbus {
 					// event.getClass().getSimpleName() +
 					// " because nothing to wait for");
 				}
-				infothread.stop();
+				// infothread.stop(); // deprecated and not required (because of
+				// condition in run()) !?
 				logger.debug(this + "> All worker threads finished for event "
 						+ event.getClass().getSimpleName());
 			} catch (InterruptedException e) {

@@ -64,7 +64,7 @@ public class LOmitZeroContributingBOCollector<A extends LaraAgent<A, BO>, BO ext
 	 * builder (if its weight is > 0.0). Contributing behavioural options are
 	 * returned. See {@link LContributingBoCollector}.
 	 * 
-	 * @see de.cesr.lara.components.preprocessor.LaraBOCollector#onInternalEvent(de.cesr.lara.components.preprocessor.event.LPpBoCollectorEvent)
+	 * @see de.cesr.lara.components.preprocessor.LaraBOCollector#onInternalEvent(LaraEvent)
 	 */
 	@Override
 	public void onInternalEvent(LaraEvent e) {
@@ -82,7 +82,7 @@ public class LOmitZeroContributingBOCollector<A extends LaraAgent<A, BO>, BO ext
 		A agent = ((A) event.getAgent());
 		for (BO bo : agent.getLaraComp().getBOMemory().recallAllMostRecent()) {
 			boolean contributes = false;
-			for (Entry<Class<? extends LaraPreference>, Double> utility : bo
+			for (Entry<LaraPreference, Double> utility : bo
 					.getValue().entrySet()) {
 
 				if (utility.getValue().doubleValue() > 0.0

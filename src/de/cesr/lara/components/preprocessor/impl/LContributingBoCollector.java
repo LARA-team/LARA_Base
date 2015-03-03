@@ -65,7 +65,7 @@ public class LContributingBoCollector<A extends LaraAgent<A, BO>, BO extends Lar
 	 * builder even if it is 0.0 or below. Contributing behavioural options are
 	 * returned. See {@link LOmitZeroContributingBOCollector}.
 	 * 
-	 * @see de.cesr.lara.components.preprocessor.LaraBOCollector#onInternalEvent(de.cesr.lara.components.preprocessor.event.LPpBoCollectorEvent)
+	 * @see de.cesr.lara.components.preprocessor.LaraBOCollector#onInternalEvent(LaraEvent)
 	 */
 	@Override
 	public void onInternalEvent(LaraEvent e) {
@@ -91,7 +91,7 @@ public class LContributingBoCollector<A extends LaraAgent<A, BO>, BO extends Lar
 			}
 			// LOGGING ->
 
-			for (Entry<Class<? extends LaraPreference>, Double> utility : bo
+			for (Entry<LaraPreference, Double> utility : bo
 					.getValue().entrySet()) {
 				if (event.getdConfig().getPreferences()
 						.contains(utility.getKey())) {

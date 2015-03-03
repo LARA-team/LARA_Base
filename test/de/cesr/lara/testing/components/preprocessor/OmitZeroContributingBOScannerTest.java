@@ -31,7 +31,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import de.cesr.lara.components.LaraPreference;
-import de.cesr.lara.components.agents.LaraAgent;
 import de.cesr.lara.components.agents.impl.LDefaultAgentComp;
 import de.cesr.lara.components.container.memory.LaraBOMemory;
 import de.cesr.lara.components.container.memory.impl.LDefaultLimitedCapacityBOMemory;
@@ -105,13 +104,13 @@ public class OmitZeroContributingBOScannerTest {
 		});
 		((LAbstractModel) LModel.getModel()).init();
 
-		Class<? extends LaraPreference> goal1 = new LaraPreference() {
-		}.getClass();
-		Class<? extends LaraPreference> goal2 = new LaraPreference() {
-		}.getClass();
+		LaraPreference goal1 = LModel.getModel().getPrefRegistry()
+				.register("goal1");
+		LaraPreference goal2 = LModel.getModel().getPrefRegistry()
+				.register("goal2");
 
 		agent = new LTestAgent("LTestAgent");
-		Map<Class<? extends LaraPreference>, Double> utilities = new HashMap<Class<? extends LaraPreference>, Double>();
+		Map<LaraPreference, Double> utilities = new HashMap<LaraPreference, Double>();
 		bo1 = new LTestBo(agent, utilities);
 		utilities.put(goal1, 0.0);
 		bo2 = new LTestBo(agent, utilities);
@@ -127,7 +126,7 @@ public class OmitZeroContributingBOScannerTest {
 		LDefaultAgentComp.setDefaultDeliberativeChoiceComp(dBuilder,
 				LDeliberativeChoiceComp_MaxLineTotalRandomAtTie
 						.getInstance(null));
-		List<Class<? extends LaraPreference>> goals = new ArrayList<Class<? extends LaraPreference>>();
+		List<LaraPreference> goals = new ArrayList<LaraPreference>();
 		goals.add(goal1);
 		goals.add(goal2);
 		dBuilder.setPreferences(goals);
@@ -144,7 +143,7 @@ public class OmitZeroContributingBOScannerTest {
 
 	/**
 	 * Test method for
-	 * {@link de.cesr.lara.components.preprocessor.impl.LContributingBoCollector#collectBOs(LaraAgent, de.cesr.lara.components.container.memory.LaraBOMemory, de.cesr.lara.components.decision.LaraDecisionConfiguration)}
+	 * {@link de.cesr.lara.components.preprocessor.impl.LContributingBoCollector#onInternalEvent(LaraEvent)}
 	 * .
 	 */
 	@Test

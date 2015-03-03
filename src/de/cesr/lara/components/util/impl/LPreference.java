@@ -17,26 +17,42 @@
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.cesr.lara.components;
+package de.cesr.lara.components.util.impl;
 
+import de.cesr.lara.components.LaraPreference;
 
 /**
- * Preferences implement this interface. Valid for all decisions of an agent.
+ * @author Sascha Holzhauer
+ *
  */
-public interface LaraPreference {
+public class LPreference implements LaraPreference {
+
+	private String id;
+
+	private String description = "NOT GIVEN";
+
+	LPreference(String id, String desription) {
+		this.id = id;
+		this.description = desription;
+	}
+
+	LPreference(String id) {
+		this.id = id;
+	}
 
 	/**
-	 * Get this preferences's ID
-	 * 
-	 * @return id
+	 * @see de.cesr.lara.components.LaraPreference#getId()
 	 */
-	public String getId();
+	@Override
+	public String getId() {
+		return this.id;
+	}
 
 	/**
-	 * Full description
-	 * 
-	 * @return description
+	 * @see de.cesr.lara.components.LaraPreference#getDescription()
 	 */
-	public String getDescription();
-
+	@Override
+	public String getDescription() {
+		return this.description;
+	}
 }

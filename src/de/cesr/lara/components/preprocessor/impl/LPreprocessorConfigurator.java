@@ -148,8 +148,7 @@ public class LPreprocessorConfigurator<A extends LaraAgent<A, BO>, BO extends La
 		if (LaraPreferenceUpdater.class.isAssignableFrom(type)) {
 			return (T) prefUpdaterMap.get(dConfiguration);
 		}
-		new AssertionError("Missing case in DefaultConfigurator#get()");
-		return null;
+		throw new AssertionError("Missing case in DefaultConfigurator#get()");
 	}
 
 	/**

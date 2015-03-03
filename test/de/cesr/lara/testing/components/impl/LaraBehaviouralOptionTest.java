@@ -33,6 +33,8 @@ import org.junit.Test;
 import de.cesr.lara.components.LaraPreference;
 import de.cesr.lara.components.environment.LaraEnvironment;
 import de.cesr.lara.components.environment.impl.LEnvironment;
+import de.cesr.lara.components.model.impl.LModel;
+import de.cesr.lara.components.util.LaraPreferenceRegistry;
 import de.cesr.lara.testing.LTestUtils;
 import de.cesr.lara.testing.LTestUtils.LTestAgent;
 import de.cesr.lara.testing.LTestUtils.LTestBo;
@@ -45,16 +47,15 @@ import de.cesr.lara.testing.LTestUtils.LTestBo;
  */
 public class LaraBehaviouralOptionTest {
 
-	private static class TestGoal implements LaraPreference {
-	}
-
 	LTestAgent agent1;
 	LTestAgent agent2;
-	Class<? extends LaraPreference> goal1;
+	LaraPreference goal1;
 	LTestBo bo1;
 	LTestBo bo2;
 	LaraEnvironment env;
-	Map<Class<? extends LaraPreference>, Double> utilities1;
+	Map<LaraPreference, Double> utilities1;
+
+	LaraPreferenceRegistry preg;
 
 	/**
 	 * @throws java.lang.Exception
@@ -65,8 +66,11 @@ public class LaraBehaviouralOptionTest {
 		env = new LEnvironment();
 		agent1 = new LTestUtils.LTestAgent("TestAgent1");
 		agent2 = new LTestUtils.LTestAgent("TestAgent2");
-		utilities1 = new HashMap<Class<? extends LaraPreference>, Double>();
-		goal1 = TestGoal.class;
+		utilities1 = new HashMap<LaraPreference, Double>();
+		preg = LModel.getModel().getPrefRegistry();
+		preg.register("TestGoal");
+		preg.register("TestGoal2");
+		goal1 = preg.get("TestGoal");
 		utilities1.put(goal1, new Double(1.0));
 		bo1 = new LTestBo("BO1", agent1, utilities1);
 		bo2 = new LTestBo("BO2", agent1, utilities1);
@@ -107,7 +111,7 @@ public class LaraBehaviouralOptionTest {
 
 	/**
 	 * Test method for
-	 * {@link de.cesr.lara.components.impl.AbstractBO#getAgent()}.
+	 * {@link de.cesr.lara.components.LaraBehaviouralOption#getAgent()}.
 	 */
 	@Test
 	public final void testGetAgent() {
@@ -115,7 +119,8 @@ public class LaraBehaviouralOptionTest {
 	}
 
 	/**
-	 * Test method for {@link de.cesr.lara.components.impl.AbstractBO#getKey()}.
+	 * Test method for
+	 * {@link de.cesr.lara.components.LaraBehaviouralOption#getKey()}.
 	 */
 	@Test
 	public final void testGetKey() {
@@ -124,11 +129,12 @@ public class LaraBehaviouralOptionTest {
 
 	/**
 	 * Test method for
-	 * {@link de.cesr.lara.components.impl.AbstractBO#getModifiableUtilities()}.
+	 * {@link de.cesr.lara.components.LaraBehaviouralOption#getModifiableUtilities()}
+	 * .
 	 */
 	@Test
 	public final void testGetModifiableUtilities() {
-		Map<Class<? extends LaraPreference>, Double> utilities2 = bo1
+		Map<LaraPreference, Double> utilities2 = bo1
 				.getModifiableUtilities();
 
 		assertEquals(
@@ -138,7 +144,7 @@ public class LaraBehaviouralOptionTest {
 
 	/**
 	 * Test method for
-	 * {@link de.cesr.lara.components.impl.AbstractBO#getModifiedAgentBO(de.cesr.lara.components.agents.LaraAgent)}
+	 * {@link de.cesr.lara.components.LaraBehaviouralOption#getModifiedAgentBO(de.cesr.lara.components.agents.LaraAgent)}
 	 * .
 	 */
 	@Test
@@ -154,14 +160,14 @@ public class LaraBehaviouralOptionTest {
 
 	/**
 	 * Test method for
-	 * {@link de.cesr.lara.components.impl.AbstractBO#getModifiedUtilitiesBO(java.util.Map)}
+	 * {@link de.cesr.lara.components.LaraBehaviouralOption#getModifiedUtilitiesBO(java.util.Map)}
 	 * .
 	 */
 	@Test
 	public final void testGetModifiedUtilitiesBO() {
-		Map<Class<? extends LaraPreference>, Double> utilities2 = bo1
+		Map<LaraPreference, Double> utilities2 = bo1
 				.getModifiableUtilities();
-		utilities2.put(TestGoal.class, new Double(2.0));
+		utilities2.put(preg.get("TestGoal"), new Double(2.0));
 		bo2 = bo1.getModifiedUtilitiesBO(utilities2);
 		assertEquals("Return BO should contain the same agent2",
 				bo1.getAgent(), bo2.getAgent());
@@ -170,12 +176,12 @@ public class LaraBehaviouralOptionTest {
 		assertEquals("The returned BO should contain utilities2", utilities2,
 				bo2.getValue());
 		assertEquals("utility value of goal of bo2 is 2.0", 2.0, bo2.getValue()
-				.get(TestGoal.class), 0.1);
+				.get(preg.get("TestGoal")), 0.1);
 	}
 
 	/**
 	 * Test method for
-	 * {@link de.cesr.lara.components.impl.AbstractBO#getValue()}.
+	 * {@link de.cesr.lara.components.LaraBehaviouralOption#getValue()}.
 	 */
 	@Test(expected = UnsupportedOperationException.class)
 	public final void testGetValue() {
@@ -186,9 +192,9 @@ public class LaraBehaviouralOptionTest {
 				1.0, bo1.getValue().get(goal1), 0.1);
 
 		assertEquals("Returmed map should contain the inserted value for goal",
-				1.0, bo1.getValue().get(TestGoal.class), 0.1);
+				1.0, bo1.getValue().get(preg.get("TestGoal")), 0.1);
 
-		bo1.getValue().put(TestGoal.class, new Double(Double.NaN));
+		bo1.getValue().put(preg.get("TestGoal"), new Double(Double.NaN));
 	}
 
 	/**
@@ -227,7 +233,7 @@ public class LaraBehaviouralOptionTest {
 	public final void testUnauthorizedModification() {
 		assertEquals("The utilities map should contain only one entry", 1, bo1
 				.getValue().size());
-		utilities1.put(LaraPreference.class, new Double(42.0));
+		utilities1.put(preg.get("TestGoal2"), new Double(42.0));
 		assertEquals("The utilities map should contain only one entry", 1, bo1
 				.getValue().size());
 		utilities1.put(goal1, new Double(42.0));

@@ -91,15 +91,13 @@ public class LPreprocessorTest {
 			}
 
 			@Override
-			public Collection<Class<? extends LaraPreference>> getPreferences() {
+			public Collection<LaraPreference> getPreferences() {
 				return null;
 			}
 
 			@Override
 			public void setPreferences(
-					Collection<Class<? extends LaraPreference>> goals) {
-				// TODO Auto-generated method stub
-
+Collection<LaraPreference> goals) {
 			}
 		};
 
@@ -111,15 +109,13 @@ public class LPreprocessorTest {
 			}
 
 			@Override
-			public Collection<Class<? extends LaraPreference>> getPreferences() {
+			public Collection<LaraPreference> getPreferences() {
 				return null;
 			}
 
 			@Override
 			public void setPreferences(
-					Collection<Class<? extends LaraPreference>> goals) {
-				// TODO Auto-generated method stub
-
+Collection<LaraPreference> goals) {
 			}
 		};
 
@@ -191,7 +187,7 @@ public class LPreprocessorTest {
 
 	/**
 	 * Test method for
-	 * {@link de.cesr.lara.components.preprocessor.impl.LPreprocessor#getPreprocessor(de.cesr.lara.components.decision.LaraDecisionConfiguration)}
+	 * {@link de.cesr.lara.components.preprocessor.impl.LPreprocessor#preprocess(LaraDecisionConfiguration, de.cesr.lara.components.agents.LaraAgent)}
 	 * .
 	 */
 	public final void testGetPreprocessor() {

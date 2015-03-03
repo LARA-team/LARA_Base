@@ -17,35 +17,51 @@
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.cesr.lara.components.util.impl;
+package de.cesr.lara.components.util;
 
-import java.util.AbstractMap.SimpleEntry;
-
-import de.cesr.lara.components.LaraBehaviouralOption;
 import de.cesr.lara.components.LaraPreference;
 
 /**
- * Used to specify preference class - value pairs in order to instantiate
- * {@link LaraBehaviouralOption}s more easily.
- * 
  * @author Sascha Holzhauer
- * 
+ *
  */
-public class LPrefEntry extends
- SimpleEntry<LaraPreference, Double> {
+public interface LaraPreferenceRegistry {
 
 	/**
+	 * @param id
+	 * @return registered preference
+	 */
+	public LaraPreference register(String id);
+
+	/**
+	 * @param id
+	 * @param description
+	 * @return registered preference
+	 */
+	public LaraPreference register(String id, String description);
+
+	/**
+	 * @param id
+	 * @return true if the given id is registered
+	 */
+	public boolean isRegistered(String id);
+
+	/**
+	 * @param id
+	 * @return preference associated with given ID
+	 */
+	public LaraPreference get(String id);
+
+	/**
+	 * @param id
+	 * @return true if preference for given ID could be removed
+	 */
+	public boolean remove(String id);
+
+	/**
+	 * Clears list of registered preferences
 	 * 
+	 * @return true
 	 */
-	private static final long serialVersionUID = -3002322186440419016L;
-
-	/**
-	 * @param prefs
-	 *            preference class
-	 * @param value
-	 *            double value
-	 */
-	public LPrefEntry(LaraPreference prefs, Double value) {
-		super(prefs, value);
-	}
+	public boolean reset();
 }

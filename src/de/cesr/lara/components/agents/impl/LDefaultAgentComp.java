@@ -161,12 +161,12 @@ public class LDefaultAgentComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 	/**
 	 * a collection of the agents preferenceWeights
 	 */
-	protected Collection<Class<? extends LaraPreference>> preferences = null;
+	protected Collection<LaraPreference> preferences = null;
 
 	/**
 	 * a collection of the agents preferenceWeights towards preferenceWeights
 	 */
-	protected Map<Class<? extends LaraPreference>, Double> preferenceWeights = null;
+	protected Map<LaraPreference, Double> preferenceWeights = null;
 
 	/**
 	 * Since each agent may have different strategies and modes of action selection, each agent is assigned an instance
@@ -229,7 +229,7 @@ public class LDefaultAgentComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 	@Override
 	public void addPreferenceWeights(LPrefEntry... prefEntry) {
 		if (this.preferenceWeights == null) {
-			this.preferenceWeights = new HashMap<Class<? extends LaraPreference>, Double>();
+			this.preferenceWeights = new HashMap<LaraPreference, Double>();
 		}
 		for (LPrefEntry e : prefEntry) {
 			this.preferenceWeights.put(e.getKey(), e.getValue());
@@ -246,9 +246,10 @@ public class LDefaultAgentComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 	 * @see de.cesr.lara.components.agents.LaraAgentComponent#addPreferenceWeights(java.util.Map)
 	 */
 	@Override
-	public void addPreferenceWeights(Map<Class<? extends LaraPreference>, Double> preferenceWeights) {
+	public void addPreferenceWeights(
+			Map<LaraPreference, Double> preferenceWeights) {
 		if (this.preferenceWeights == null) {
-			this.preferenceWeights = new HashMap<Class<? extends LaraPreference>, Double>();
+			this.preferenceWeights = new HashMap<LaraPreference, Double>();
 		}
 		this.preferenceWeights.putAll(preferenceWeights);
 
@@ -288,7 +289,6 @@ public class LDefaultAgentComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 	 * {@link LAgentPreprocessEvent}: If no {@link LaraPreprocessor} was set, the default preprocessor is set now.
 	 * However, it is recommended to use a global configurator before.
 	 * 
-	 * @param <T>
 	 * @param event
 	 */
 	@Override
@@ -442,7 +442,7 @@ public class LDefaultAgentComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 	}
 
 	@Override
-	public Double getPreferenceWeight(Class<? extends LaraPreference> preference) {
+	public Double getPreferenceWeight(LaraPreference preference) {
 		return preferenceWeights.get(preference);
 	}
 
@@ -450,8 +450,8 @@ public class LDefaultAgentComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 	 * @see de.cesr.lara.components.agents.LaraAgentComponent#getPreferenceWeights()
 	 */
 	@Override
-	public Map<Class<? extends LaraPreference>, Double> getPreferenceWeights() {
-		return new LinkedHashMap<Class<? extends LaraPreference>, Double>(preferenceWeights);
+	public Map<LaraPreference, Double> getPreferenceWeights() {
+		return new LinkedHashMap<LaraPreference, Double>(preferenceWeights);
 	}
 
 	/**

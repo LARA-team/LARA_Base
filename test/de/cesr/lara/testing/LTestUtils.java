@@ -42,6 +42,7 @@ import de.cesr.lara.components.model.LaraModel;
 import de.cesr.lara.components.model.impl.LAbstractModel;
 import de.cesr.lara.components.model.impl.LAbstractStandaloneSynchronisedModel;
 import de.cesr.lara.components.model.impl.LModel;
+import de.cesr.lara.components.util.LaraPreferenceRegistry;
 import de.cesr.lara.components.util.impl.LPrefEntry;
 
 
@@ -51,14 +52,12 @@ import de.cesr.lara.components.util.impl.LPrefEntry;
  */
 public class LTestUtils {
 
-	static public LaraDecisionConfiguration dConfig = new LTestDecisionConfig();
+	static LaraPreferenceRegistry preg;
+	static public LaraDecisionConfiguration dConfig;
 
 	static {
-		Collection<Class<? extends LaraPreference>> prefs = new HashSet<Class<? extends LaraPreference>>();
-		prefs.add(LTestPreference1.class);
-		prefs.add(LTestPreference2.class);
-		dConfig.setPreferences(prefs);
 	}
+
 
 	/**
 	 * test agent
@@ -72,7 +71,6 @@ public class LTestUtils {
 		/**
 		 * constructor
 		 * 
-		 * @param env
 		 * @param name
 		 */
 		public LTestAgent(String name) {
@@ -107,7 +105,7 @@ public class LTestUtils {
 			super("LTestBo" + LModel.getModel().getIntegerFormat().format(counter++), agent);
 		}
 
-		public LTestBo(LTestAgent agent, Map<Class<? extends LaraPreference>, Double> utilities) {
+		public LTestBo(LTestAgent agent, Map<LaraPreference, Double> utilities) {
 			super("LTestBo" + LModel.getModel().getIntegerFormat().format(counter++), agent, utilities);
 		}
 
@@ -120,55 +118,56 @@ public class LTestUtils {
 			super(key, agent, prefEntry);
 		}
 
-		public LTestBo(String key, LTestAgent agent, Map<Class<? extends LaraPreference>, Double> utilities) {
+		public LTestBo(String key, LTestAgent agent,
+				Map<LaraPreference, Double> utilities) {
 			super(key, agent, utilities);
 		}
 
 		@Override
-		public LTestBo getModifiedBO(LTestAgent agent, Map<Class<? extends LaraPreference>, Double> preferenceUtilities) {
+		public LTestBo getModifiedBO(LTestAgent agent,
+				Map<LaraPreference, Double> preferenceUtilities) {
 			return new LTestBo(this.getKey(), agent, preferenceUtilities);
 		}
 
 		@Override
-		public Map<Class<? extends LaraPreference>, Double> getSituationalUtilities(LaraDecisionConfiguration dBuilder) {
+		public Map<LaraPreference, Double> getSituationalUtilities(
+				LaraDecisionConfiguration dBuilder) {
 			return this.getValue();
 		}
 	};
 
 	static public class LTestDecisionConfig extends LDecisionConfiguration {
 		public LTestDecisionConfig() {
-			Collection<Class<? extends LaraPreference>> prefs = new HashSet<Class<? extends LaraPreference>>();
-			prefs.add(LTestPreference1.class);
-			prefs.add(LTestPreference2.class);
+			Collection<LaraPreference> prefs = new HashSet<LaraPreference>();
+			prefs.add(preg.get("LTestPreference1"));
+			prefs.add(preg.get("LTestPreference2"));
 
 			this.setPreferences(prefs);
 		}
 	}
 
-	static public class LTestPreference1 implements LaraPreference {
-	}
-
-	static public class LTestPreference2 implements LaraPreference {
-	}
-
 	/**
 	 * Inits a {@link LaraModel} as test model.
+	 * 
+	 * @param dConfiguration
+	 *            decision configuration
 	 */
-	public static void initTestModel(final LaraDecisionConfiguration dConfig) {
+	public static void initTestModel(
+			final LaraDecisionConfiguration dConfiguration) {
 		LaraModel model = new LAbstractStandaloneSynchronisedModel() {
 			@Override
 			public void onEvent(LaraEvent event) {
 				if (event instanceof LModelStepEvent) {
 					// perceive
-					eventBus.publish(new LAgentPerceptionEvent(dConfig));
+					eventBus.publish(new LAgentPerceptionEvent(dConfiguration));
 					// preprocess
-					eventBus.publish(new LAgentPreprocessEvent(dConfig));
+					eventBus.publish(new LAgentPreprocessEvent(dConfiguration));
 					// decide
-					eventBus.publish(new LAgentDecideEvent(dConfig));
+					eventBus.publish(new LAgentDecideEvent(dConfiguration));
 					// postprocess
-					eventBus.publish(new LAgentPostprocessEvent(dConfig));
+					eventBus.publish(new LAgentPostprocessEvent(dConfiguration));
 					// execute
-					eventBus.publish(new LAgentExecutionEvent(dConfig));
+					eventBus.publish(new LAgentExecutionEvent(dConfiguration));
 					// tell output to output
 					eventBus.publish(new LModelStepFinishedEvent());
 				}
@@ -180,5 +179,15 @@ public class LTestUtils {
 			}
 		};
 		((LAbstractModel) model).init();
+
+		preg = LModel.getModel().getPrefRegistry();
+		preg.register("LTestPreference1");
+		preg.register("LTestPreference2");
+
+		LTestUtils.dConfig = new LTestDecisionConfig();
+		Collection<LaraPreference> prefs = new HashSet<LaraPreference>();
+		prefs.add(preg.get("LTestPreference1"));
+		prefs.add(preg.get("LTestPreference2"));
+		LTestUtils.dConfig.setPreferences(prefs);
 	}
 }

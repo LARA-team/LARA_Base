@@ -69,12 +69,12 @@ public class DefaultConfiguratorTest {
 			}
 
 			@Override
-			public Collection<Class<? extends LaraPreference>> getPreferences() {
+			public Collection<LaraPreference> getPreferences() {
 				return null;
 			}
 
 			@Override
-			public void setPreferences(Collection<Class<? extends LaraPreference>> goals) {
+			public void setPreferences(Collection<LaraPreference> goals) {
 				// nothing to do
 			}
 		};

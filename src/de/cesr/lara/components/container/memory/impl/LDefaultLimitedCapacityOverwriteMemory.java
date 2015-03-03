@@ -29,7 +29,6 @@ import org.apache.commons.collections15.MultiMap;
 import org.apache.commons.collections15.multimap.MultiHashMap;
 import org.apache.log4j.Logger;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import de.cesr.lara.components.LaraProperty;
 import de.cesr.lara.components.container.LaraCapacityManagementView;
 import de.cesr.lara.components.container.LaraCapacityManager;
@@ -296,7 +295,7 @@ public class LDefaultLimitedCapacityOverwriteMemory<PropertyType extends LaraPro
 
 	@Override
 	public int getDefaultRetentionTime() {
-		throw new NotImplementedException();
+		throw new RuntimeException("Method not implemented!");
 	}
 
 	@Override
@@ -306,7 +305,7 @@ public class LDefaultLimitedCapacityOverwriteMemory<PropertyType extends LaraPro
 
 	@Override
 	public int getRetentionTime(PropertyType property) {
-		throw new NotImplementedException();
+		throw new RuntimeException("Method not implemented!");
 	}
 
 	@Override

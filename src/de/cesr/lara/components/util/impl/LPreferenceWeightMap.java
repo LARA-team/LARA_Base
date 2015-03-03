@@ -36,7 +36,7 @@ import de.cesr.lara.components.LaraPreference;
  * 
  */
 public class LPreferenceWeightMap extends
-		LinkedHashMap<Class<? extends LaraPreference>, Double> {
+ LinkedHashMap<LaraPreference, Double> {
 
 	/**
 	 * 
@@ -51,7 +51,7 @@ public class LPreferenceWeightMap extends
 	}
 
 	/**
-	 * @param map
+	 * @param entry
 	 */
 	public LPreferenceWeightMap(LPrefEntry... entry) {
 		super();
@@ -63,20 +63,20 @@ public class LPreferenceWeightMap extends
 	/**
 	 * @param map
 	 */
-	public LPreferenceWeightMap(Map<Class<? extends LaraPreference>, Double> map) {
+	public LPreferenceWeightMap(Map<LaraPreference, Double> map) {
 		super(map);
 	}
 
 	@Override
 	public String toString() {
-		TreeSet<Entry<Class<? extends LaraPreference>, Double>> orderedEntries = new TreeSet<Entry<Class<? extends LaraPreference>, Double>>(
-				new Comparator<Entry<Class<? extends LaraPreference>, Double>>() {
+		TreeSet<Entry<LaraPreference, Double>> orderedEntries = new TreeSet<Entry<LaraPreference, Double>>(
+				new Comparator<Entry<LaraPreference, Double>>() {
 					@Override
 					public int compare(
-							Entry<Class<? extends LaraPreference>, Double> o1,
-							Entry<Class<? extends LaraPreference>, Double> o2) {
-						return o1.getKey().getName()
-								.compareTo(o2.getKey().getName());
+Entry<LaraPreference, Double> o1,
+							Entry<LaraPreference, Double> o2) {
+						return o1.getKey().getId()
+								.compareTo(o2.getKey().getId());
 					}
 				});
 

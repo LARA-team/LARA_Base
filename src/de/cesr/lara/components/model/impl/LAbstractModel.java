@@ -40,7 +40,9 @@ import de.cesr.lara.components.eventbus.events.LModelStepEvent;
 import de.cesr.lara.components.eventbus.events.LaraEvent;
 import de.cesr.lara.components.eventbus.impl.LEventbus;
 import de.cesr.lara.components.model.LaraModel;
+import de.cesr.lara.components.util.LaraPreferenceRegistry;
 import de.cesr.lara.components.util.LaraRandom;
+import de.cesr.lara.components.util.impl.LPreferenceRegistry;
 import de.cesr.lara.components.util.impl.LRandomService;
 import de.cesr.lara.components.util.logging.impl.Log4jLogger;
 
@@ -68,6 +70,7 @@ public abstract class LAbstractModel implements LaraModel,
 
 	
 	protected LEventbus eventBus;
+	protected LaraPreferenceRegistry prefRegistry;
 	
 	/**
 	 * Calendar that tracks simulation step
@@ -110,6 +113,12 @@ public abstract class LAbstractModel implements LaraModel,
 		eventBus = LEventbus.getInstance();
 		eventBus.subscribe(this, LModelInstantiatedEvent.class);
 		eventBus.subscribe(this, LModelStepEvent.class);
+
+		prefRegistry = new LPreferenceRegistry();
+	}
+
+	public LaraPreferenceRegistry getPrefRegistry() {
+		return this.prefRegistry;
 	}
 
 	/**
@@ -250,6 +259,8 @@ public abstract class LAbstractModel implements LaraModel,
 		eventBus.subscribe(
 				this,
 				LModelStepEvent.class);
+
+		this.prefRegistry.reset();
 	}
 
 	/****************************************************

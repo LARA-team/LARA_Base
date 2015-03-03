@@ -33,7 +33,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import de.cesr.lara.components.LaraPreference;
-import de.cesr.lara.components.agents.LaraAgent;
 import de.cesr.lara.components.agents.impl.LDefaultAgentComp;
 import de.cesr.lara.components.container.memory.LaraBOMemory;
 import de.cesr.lara.components.container.memory.impl.LDefaultLimitedCapacityBOMemory;
@@ -41,10 +40,12 @@ import de.cesr.lara.components.decision.LaraDecisionConfiguration;
 import de.cesr.lara.components.decision.impl.LDecisionConfiguration;
 import de.cesr.lara.components.decision.impl.LDeliberativeChoiceComp_MaxLineTotalRandomAtTie;
 import de.cesr.lara.components.eventbus.impl.LEventbus;
+import de.cesr.lara.components.model.impl.LModel;
 import de.cesr.lara.components.preprocessor.LaraBOCollector;
 import de.cesr.lara.components.preprocessor.event.LPpBoCollectorEvent;
 import de.cesr.lara.components.preprocessor.event.LPpModeSelectorEvent;
 import de.cesr.lara.components.preprocessor.impl.LContributingBoCollector;
+import de.cesr.lara.components.util.LaraPreferenceRegistry;
 import de.cesr.lara.components.util.impl.LCapacityManagers;
 import de.cesr.lara.testing.LTestUtils;
 import de.cesr.lara.testing.LTestUtils.LTestAgent;
@@ -65,7 +66,7 @@ public class LDefaultBOCollectorTest {
 	LaraPreference goal3;
 
 	/**
-	 * Does not contribute to any goal
+	 * Does not contribute to any goal Thread.stop()
 	 */
 	LTestBo bo1;
 	/**
@@ -87,14 +88,12 @@ public class LDefaultBOCollectorTest {
 	@Before
 	public void setUp() throws Exception {
 		LTestUtils.initTestModel(dBuilder);
-
-		Class<? extends LaraPreference> goal1 = new LaraPreference() {
-		}.getClass();
-		Class<? extends LaraPreference> goal2 = new LaraPreference() {
-		}.getClass();
+		LaraPreferenceRegistry preg = LModel.getModel().getPrefRegistry();
+		goal1 = preg.register("goal1");
+		goal2 = preg.register("goal2");
 
 		agent = new LTestAgent("LTestAgent");
-		Map<Class<? extends LaraPreference>, Double> utilities = new HashMap<Class<? extends LaraPreference>, Double>();
+		Map<LaraPreference, Double> utilities = new HashMap<LaraPreference, Double>();
 		bo1 = new LTestBo(agent, utilities);
 		utilities.put(goal1, 0.0);
 		bo2 = new LTestBo(agent, utilities);
@@ -108,7 +107,7 @@ public class LDefaultBOCollectorTest {
 		dBuilder = new LDecisionConfiguration("TestDecision");
 		LDefaultAgentComp.setDefaultDeliberativeChoiceComp(dBuilder,
 				LDeliberativeChoiceComp_MaxLineTotalRandomAtTie.getInstance(null));
-		List<Class<? extends LaraPreference>> goals = new ArrayList<Class<? extends LaraPreference>>();
+		List<LaraPreference> goals = new ArrayList<LaraPreference>();
 		goals.add(goal1);
 		goals.add(goal2);
 		dBuilder.setPreferences(goals);
@@ -126,7 +125,7 @@ public class LDefaultBOCollectorTest {
 
 	/**
 	 * Test method for
-	 * {@link de.cesr.lara.components.preprocessor.impl.LContributingBoCollector#collectBOs(LaraAgent, LaraBOMemory, LaraDecisionConfiguration)}
+	 * {@link de.cesr.lara.components.preprocessor.impl.LContributingBoCollector#onInternalEvent(de.cesr.lara.components.eventbus.events.LaraEvent)}
 	 */
 	@Test
 	public final void testGetBOs() {

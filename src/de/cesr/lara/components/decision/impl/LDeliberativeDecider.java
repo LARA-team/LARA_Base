@@ -66,7 +66,7 @@ public class LDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? extends 
 	/**
 	 * preferenceWeights
 	 */
-	protected Map<Class<? extends LaraPreference>, Double> preferenceWeights = null;
+	protected Map<LaraPreference, Double> preferenceWeights = null;
 
 	/**
 	 * behavioural options
@@ -133,7 +133,8 @@ public class LDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? extends 
 			// LOGGING ->
 
 			LaraBoRow<BO> boRow = new LLightBoRow<BO>(bo);
-			for (Entry<Class<? extends LaraPreference>, Double> utility : bo.getValue().entrySet()) {
+			for (Entry<LaraPreference, Double> utility : bo.getValue()
+					.entrySet()) {
 
 				// <- LOGGING
 				if (logger.isDebugEnabled()) {
@@ -150,19 +151,25 @@ public class LDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? extends 
 					// error handling:
 					if (Double.isNaN(utility.getValue())) {
 						// <- LOGGING
-						logger.error("Utility value of goal " + utility.getKey().getSimpleName() + " is NaN for BO "
+						logger.error("Utility value of goal "
+								+ utility.getKey().getId() + " is NaN for BO "
 								+ bo);
 						// LOGGING ->
 
-						throw new IllegalStateException("Utility value of utility " + utility.getKey().getSimpleName()
+						throw new IllegalStateException(
+								"Utility value of utility "
+										+ utility.getKey().getId()
 								+ " is NaN for BO " + bo);
 					}
 					if (Double.isNaN(preference)) {
 						// <- LOGGING
-						logger.error("Preference value of goal " + utility.getKey().getSimpleName() + " is NaN.");
+						logger.error("Preference value of goal "
+								+ utility.getKey().getId() + " is NaN.");
 						// LOGGING ->
 
-						throw new IllegalStateException("Preference value of goal " + utility.getKey().getSimpleName()
+						throw new IllegalStateException(
+								"Preference value of goal "
+										+ utility.getKey().getId()
 								+ " is NaN.");
 					}
 
@@ -205,7 +212,7 @@ public class LDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? extends 
 	 * @see de.cesr.lara.components.decision.LaraDeliberativeDecider#getPreferenceWeights()
 	 */
 	@Override
-	public Map<Class<? extends LaraPreference>, Double> getPreferenceWeights() {
+	public Map<LaraPreference, Double> getPreferenceWeights() {
 		return preferenceWeights;
 	}
 
@@ -260,7 +267,7 @@ public class LDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? extends 
 	 * @see de.cesr.lara.components.decision.LaraDeliberativeDecider#setPreferenceWeights(java.util.Map)
 	 */
 	@Override
-	public void setPreferenceWeights(Map<Class<? extends LaraPreference>, Double> preference) {
+	public void setPreferenceWeights(Map<LaraPreference, Double> preference) {
 		this.preferenceWeights = preference;
 
 		// <- LOGGING
@@ -300,7 +307,7 @@ public class LDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? extends 
 	 * @param preference
 	 * @return individual preference weight
 	 */
-	private double getPreferenceForGoal(Class<? extends LaraPreference> goal) {
+	private double getPreferenceForGoal(LaraPreference goal) {
 		return preferenceWeights.get(goal).doubleValue();
 	}
 
@@ -312,7 +319,7 @@ public class LDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? extends 
 	 *        the preference to check
 	 * @return true if the given preference is considered
 	 */
-	private boolean isGoalConsidered(Class<? extends LaraPreference> preference) {
+	private boolean isGoalConsidered(LaraPreference preference) {
 		return preferenceWeights.containsKey(preference);
 	}
 
