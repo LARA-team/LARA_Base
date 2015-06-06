@@ -35,6 +35,7 @@ import de.cesr.lara.components.container.memory.LaraMemory;
 import de.cesr.lara.components.container.memory.impl.LDefaultLimitedCapacityMemory;
 import de.cesr.lara.components.eventbus.events.LModelStepEvent;
 import de.cesr.lara.components.eventbus.impl.LEventbus;
+import de.cesr.lara.components.model.impl.LModel;
 import de.cesr.lara.components.util.impl.LCapacityManagers;
 import de.cesr.lara.components.util.logging.impl.Log4jLogger;
 import de.cesr.lara.testing.components.container.LContainerTestUtils.LTestProperty;
@@ -57,7 +58,9 @@ public class LDefaultLimitedCapacityMemoryTest {
 	 */
 	@Before
 	public void setUp() {
-		memory = new LDefaultLimitedCapacityMemory<LTestProperty>(LCapacityManagers.<LTestProperty> makeFIFO(), 7);
+		memory = new LDefaultLimitedCapacityMemory<LTestProperty>(
+				LModel.getModel(),
+				LCapacityManagers.<LTestProperty> makeFIFO(), 7);
 	}
 
 	/**
@@ -81,11 +84,11 @@ public class LDefaultLimitedCapacityMemoryTest {
 
 		LEventbus.getInstance().publish(new LModelStepEvent());
 
-		memory.memorize(new LTestProperty("key07", "value07"));
+		memory.memorize(new LTestProperty(LModel.getModel(), "key07", "value07"));
 		assertTrue("6 + 1 properties were memorised", memory.getSize() == 7);
 		assertTrue("7 properties added at capacity of 7 means full", memory.isFull());
 
-		memory.memorize(new LTestProperty("key08", "value08"));
+		memory.memorize(new LTestProperty(LModel.getModel(), "key08", "value08"));
 		assertTrue(memory.getSize() == 7);
 		assertFalse("The first property should have been removed now", memory.contains("key01"));
 

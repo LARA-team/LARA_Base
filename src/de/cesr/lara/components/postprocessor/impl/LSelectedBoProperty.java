@@ -22,9 +22,11 @@ package de.cesr.lara.components.postprocessor.impl;
 import de.cesr.lara.components.LaraBehaviouralOption;
 import de.cesr.lara.components.LaraProperty;
 import de.cesr.lara.components.decision.LaraDecisionConfiguration;
+import de.cesr.lara.components.model.LaraModel;
 
 /**
  * @author Sascha Holzhauer
+ * @param <BO> 
  * 
  */
 public class LSelectedBoProperty<BO extends LaraBehaviouralOption<?, ?>>
@@ -32,15 +34,18 @@ public class LSelectedBoProperty<BO extends LaraBehaviouralOption<?, ?>>
 
 	protected BO bo;
 	protected LaraDecisionConfiguration dConfig;
-
+	protected LaraModel lmodel;
 	/**
+	 * @param lmodel 
 	 * @param dConfig
 	 * @param bo
 	 */
-	public LSelectedBoProperty(LaraDecisionConfiguration dConfig, BO bo) {
-		super(dConfig.getId());
+	public LSelectedBoProperty(LaraModel lmodel,
+			LaraDecisionConfiguration dConfig, BO bo) {
+		super(lmodel, dConfig.getId());
 		this.bo = bo;
 		this.dConfig = dConfig;
+		this.lmodel = lmodel;
 	}
 
 	/**
@@ -55,7 +60,7 @@ public class LSelectedBoProperty<BO extends LaraBehaviouralOption<?, ?>>
 	 */
 	@Override
 	public LSelectedBoProperty<BO> getModifiedProperty(BO value) {
-		return new LSelectedBoProperty<BO>(this.dConfig, bo);
+		return new LSelectedBoProperty<BO>(this.lmodel, this.dConfig, bo);
 	}
 
 	/**

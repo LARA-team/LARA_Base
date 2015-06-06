@@ -26,6 +26,7 @@ import de.cesr.lara.components.LaraBehaviouralOption;
 import de.cesr.lara.components.container.LaraCapacityManager;
 import de.cesr.lara.components.container.exceptions.LRetrieveException;
 import de.cesr.lara.components.container.memory.LaraBOMemory;
+import de.cesr.lara.components.model.LaraModel;
 
 /**
  * @param <BOType>
@@ -36,42 +37,46 @@ public class LDefaultLimitedCapacityBOMemory<BOType extends LaraBehaviouralOptio
 		LaraBOMemory<BOType> {
 
 	/**
+	 * @param lmodel 
 	 * @param capacityManager
 	 */
-	public LDefaultLimitedCapacityBOMemory(
+	public LDefaultLimitedCapacityBOMemory(LaraModel lmodel,
 			LaraCapacityManager<BOType> capacityManager) {
-		super(capacityManager);
+		super(lmodel, capacityManager);
 	}
 
 	/**
+	 * @param lmodel 
 	 * @param capacityManager
 	 * @param initialCapacity
 	 */
-	public LDefaultLimitedCapacityBOMemory(
+	public LDefaultLimitedCapacityBOMemory(LaraModel lmodel,
 			LaraCapacityManager<BOType> capacityManager, int initialCapacity) {
-		super(capacityManager, initialCapacity);
+		super(lmodel, capacityManager, initialCapacity);
 	}
 
 	/**
+	 * @param lmodel 
 	 * @param capacityManager
 	 * @param initialCapacity
 	 * @param name
 	 *            the memory's name
 	 */
-	public LDefaultLimitedCapacityBOMemory(
+	public LDefaultLimitedCapacityBOMemory(LaraModel lmodel,
 			LaraCapacityManager<BOType> capacityManager, int initialCapacity,
 			String name) {
-		super(capacityManager, initialCapacity, name);
+		super(lmodel, capacityManager, initialCapacity, name);
 	}
 
 	/**
+	 * @param lmodel 
 	 * @param capacityManager
 	 * @param name
 	 *            the memory's name
 	 */
-	public LDefaultLimitedCapacityBOMemory(
+	public LDefaultLimitedCapacityBOMemory(LaraModel lmodel,
 			LaraCapacityManager<BOType> capacityManager, String name) {
-		super(capacityManager, name);
+		super(lmodel, capacityManager, name);
 	}
 
 	/**

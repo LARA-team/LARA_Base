@@ -32,11 +32,12 @@ import de.cesr.parma.core.PmParameterManager;
 
 
 /**
- * Memorizes selected behavioural option. Models that use a subclass and use the {@link LDefaultDecisionModeSelector} or
- * a similar decision mode selector that enables habit decision mode need to call the super method in {@link
- * this#postProcess(LaraAgent, LaraDecisionConfiguration)}.
+ * Memorises selected behavioural option. Models that use a subclass and use the {@link LDefaultDecisionModeSelector} or
+ * a similar decision mode selector that enables habit decision mode need to call the super method in {@link LDefaultPostProcessorComp#postProcess(LaraAgent, LaraDecisionConfiguration)}.
  * 
  * @author Sascha Holzhauer
+ * @param <A> 
+ * @param <BO> 
  * 
  */
 public class LDefaultPostProcessorComp<A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>>
@@ -70,7 +71,8 @@ public class LDefaultPostProcessorComp<A extends LaraAgent<A, BO>, BO extends La
 		agent.getLaraComp()
 				.getGeneralMemory()
 				.memorize(
-						new LSelectedBoProperty<BO>(dConfig, agent
+						new LSelectedBoProperty<BO>(agent.getLaraComp()
+								.getLaraModel(), dConfig, agent
 								.getLaraComp().getDecisionData(dConfig)
 								.getDecider().getSelectedBo()),
 						(Integer) PmParameterManager

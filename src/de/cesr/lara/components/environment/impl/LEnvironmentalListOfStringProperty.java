@@ -22,6 +22,7 @@ package de.cesr.lara.components.environment.impl;
 import java.util.List;
 
 import de.cesr.lara.components.environment.LaraEnvironment;
+import de.cesr.lara.components.model.LaraModel;
 
 /**
  * @author Sascha Holzhauer
@@ -36,13 +37,15 @@ public class LEnvironmentalListOfStringProperty extends
 	protected List<String> listOfString;
 
 	/**
+	 * @param lmodel 
 	 * @param key
 	 * @param value
 	 * @param env
 	 */
-	public LEnvironmentalListOfStringProperty(String key, List<String> value,
+	public LEnvironmentalListOfStringProperty(LaraModel lmodel, String key,
+			List<String> value,
 			LaraEnvironment env) {
-		super(key, env);
+		super(lmodel, key, env);
 		this.listOfString = value;
 	}
 
@@ -52,7 +55,7 @@ public class LEnvironmentalListOfStringProperty extends
 	@Override
 	public LEnvironmentalListOfStringProperty getModifiedProperty(
 			List<String> value) {
-		return new LEnvironmentalListOfStringProperty(getKey(), value,
+		return new LEnvironmentalListOfStringProperty(lmodel, getKey(), value,
 				environment);
 	}
 

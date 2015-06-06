@@ -51,6 +51,5 @@ public interface LaraDecisionConfiguration {
 	 * 
 	 * @param preferences
 	 */
-	public void setPreferences(
-Collection<LaraPreference> preferences);
+	public void setPreferences(Collection<LaraPreference> preferences);
 }

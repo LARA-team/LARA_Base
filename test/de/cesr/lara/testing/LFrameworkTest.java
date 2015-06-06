@@ -63,7 +63,8 @@ public class LFrameworkTest {
 		public <T extends LaraEvent> void onEvent(T event) {
 			if (event instanceof LInternalModelInitializedEvent) {
 				environment = new LEnvironment();
-				environment.updateProperty(new LEnvironmentalIntProperty(
+				environment.updateProperty(new LEnvironmentalIntProperty(LModel
+						.getModel(),
 						KEY_TESTPROPERTY, 0, environment));
 				Set<LaraPreference> goals = new HashSet<LaraPreference>();
 				goals.add(LModel.getModel().getPrefRegistry().get("TestGoal"));
@@ -103,7 +104,7 @@ public class LFrameworkTest {
 			laraAgentComponent = new LDefaultAgentComp<TestAgent, TestBehaviouralOption<TestAgent>>(
 					this, environment);
 			Set<TestBehaviouralOption<TestAgent>> behaviouralOptions = new HashSet<TestBehaviouralOption<TestAgent>>();
-			behaviouralOptions.add(new TestBehaviouralOption(
+			behaviouralOptions.add(new TestBehaviouralOption<TestAgent>(
 					"TestBehaviouralOption", this, new LPreferenceWeightMap()));
 			getLaraComp().getBOMemory().memoriseAll(behaviouralOptions);
 			eventBus.subscribe(this, LAgentPerceptionEvent.class);

@@ -19,7 +19,8 @@
  */
 package de.cesr.lara.components;
 
-import de.cesr.lara.components.model.impl.LModel;
+
+import de.cesr.lara.components.model.LaraModel;
 
 /**
  * Common abstract base class for all properties used in environment, memory
@@ -32,21 +33,24 @@ import de.cesr.lara.components.model.impl.LModel;
  * 'ancient' properties.
  * 
  * @author Sascha Holzhauer, Michael Elbers
+ * @param <PropType>
  * @param <ValueType>
  * @date 19.02.2010
  */
 public abstract class LaraProperty<PropType extends LaraProperty<?, ValueType>, ValueType> {
 
 	private final String key;
+
 	private final int timestamp;
 
 	/**
+	 * @param lmodel 
 	 * @param key
 	 *            the property's key
 	 */
-	public LaraProperty(String key) {
+	public LaraProperty(LaraModel lmodel, String key) {
 		this.key = key;
-		this.timestamp = LModel.getModel().getCurrentStep();
+		this.timestamp = lmodel.getCurrentStep();
 	}
 
 	/**
@@ -70,7 +74,7 @@ public abstract class LaraProperty<PropType extends LaraProperty<?, ValueType>, 
 
 	/**
 	 * 
-	 * @return
+	 * @return key
 	 */
 	public final String getKey() {
 		return key;
@@ -91,7 +95,7 @@ public abstract class LaraProperty<PropType extends LaraProperty<?, ValueType>, 
 
 	/**
 	 * 
-	 * @return
+	 * @return timestamp
 	 */
 	public final int getTimestamp() {
 		return timestamp;

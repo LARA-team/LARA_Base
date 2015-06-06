@@ -30,7 +30,8 @@ import org.junit.runners.Suite.SuiteClasses;
  * 
  */
 @RunWith(Suite.class)
-@SuiteClasses({ LRandomTest.class, LPreferenceRegistryTest.class })
+@SuiteClasses({ LRandomTest.class, LPreferenceRegistryTest.class,
+		LDecisionConfigRegistryTest.class })
 public class AllUtilTests {
 
 }

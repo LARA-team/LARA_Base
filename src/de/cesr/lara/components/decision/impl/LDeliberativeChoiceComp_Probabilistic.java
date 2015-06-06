@@ -35,6 +35,7 @@ import de.cesr.lara.components.agents.LaraAgent;
 import de.cesr.lara.components.decision.LaraBoRow;
 import de.cesr.lara.components.decision.LaraDecisionConfiguration;
 import de.cesr.lara.components.decision.LaraDeliberativeChoiceComponent;
+import de.cesr.lara.components.model.LaraModel;
 import de.cesr.lara.components.model.impl.LModel;
 import de.cesr.lara.components.util.logging.impl.LAgentLevel;
 import de.cesr.lara.components.util.logging.impl.Log4jLogger;
@@ -67,17 +68,22 @@ public class LDeliberativeChoiceComp_Probabilistic implements
 	protected Logger logger = Log4jLogger
 			.getLogger(LDeliberativeChoiceComp_Probabilistic.class);
 
+	protected LaraModel lmodel;
+
 	private double eta = 0.0;
 	private final AbstractDistribution rand;
 
 	Logger agentLogger = null;
 
 	/**
+	 * @param lmodel 
 	 * @param eta
 	 *            distinction parameter
-	 * @param rand
+	 * @param distribution 
 	 */
-	public LDeliberativeChoiceComp_Probabilistic(float eta, String distribution) {
+	public LDeliberativeChoiceComp_Probabilistic(LaraModel lmodel, float eta,
+			String distribution) {
+		this.lmodel = lmodel;
 		this.eta = eta;
 		this.rand = LModel.getModel().getLRandom()
 				.getDistribution(distribution);
@@ -86,10 +92,13 @@ public class LDeliberativeChoiceComp_Probabilistic implements
 	/**
 	 * Uses eta = 1.0
 	 * 
+	 * @param lmodel 
+	 * 
 	 * @param distribution
 	 */
-	public LDeliberativeChoiceComp_Probabilistic(String distribution) {
-		this(1.0f, distribution);
+	public LDeliberativeChoiceComp_Probabilistic(LaraModel lmodel,
+			String distribution) {
+		this(lmodel, 1.0f, distribution);
 	}
 
 	/**
@@ -261,11 +270,6 @@ public class LDeliberativeChoiceComp_Probabilistic implements
 		}
 
 		for (LaraBoRow<BO> r : boRows) {
-			BO bo = r.getBehaviouralOption();
-
-			// logging:
-			agent = bo.getAgent();
-
 			// shift to positive range:
 			overall_utility = r.getSum()
 					+ (minValue < 0.0 ? Math.abs(minValue) : 0.0);

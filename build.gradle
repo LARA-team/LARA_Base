@@ -11,6 +11,7 @@ dependencies {
 	compile group: 'commons-collections', name: 'commons-collections', version: '3.2'
 	compile group: 'log4j', name: 'log4j', version: '1.2.8+'
 	compile group: 'org.simpleframework', name: 'simple-xml', version: '2.7.1'
+	compile group: 'de.cesr', name: 'parma', version: '0.9.4+'
 	testCompile group: 'junit', name: 'junit', version: '4.+'
 }
 
@@ -18,5 +19,5 @@ dependencies {
 
 jar {
 	baseName = 'LARA_Base'
-	version =  '0.3.0'
+	version =  '0.3.1'
 }

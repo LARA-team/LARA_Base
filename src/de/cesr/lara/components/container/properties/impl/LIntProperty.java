@@ -20,6 +20,7 @@
 package de.cesr.lara.components.container.properties.impl;
 
 import de.cesr.lara.components.LaraProperty;
+import de.cesr.lara.components.model.LaraModel;
 
 /**
  * 
@@ -28,12 +29,16 @@ public class LIntProperty extends LaraProperty<LIntProperty, Integer> {
 
 	private final Integer value;
 
+	private LaraModel lmodel;
+
 	/**
+	 * @param lmodel 
 	 * @param key
 	 * @param value
 	 */
-	public LIntProperty(String key, int value) {
-		super(key);
+	public LIntProperty(LaraModel lmodel, String key, int value) {
+		super(lmodel, key);
+		this.lmodel = lmodel;
 		this.value = new Integer(value);
 	}
 
@@ -42,7 +47,7 @@ public class LIntProperty extends LaraProperty<LIntProperty, Integer> {
 	 */
 	@Override
 	public LIntProperty getModifiedProperty(Integer value) {
-		return new LIntProperty(this.getKey(), value);
+		return new LIntProperty(this.lmodel, this.getKey(), value);
 	}
 
 	/**

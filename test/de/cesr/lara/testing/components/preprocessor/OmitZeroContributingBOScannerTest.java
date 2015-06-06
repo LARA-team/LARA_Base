@@ -119,13 +119,16 @@ public class OmitZeroContributingBOScannerTest {
 		bo3 = new LTestBo(agent, utilities);
 
 		memory = new LDefaultLimitedCapacityBOMemory<LTestBo>(
+				LModel.getModel(),
 				LCapacityManagers.<LTestBo> makeNINO());
 
 		agent.getLaraComp().setBOMemory(memory);
 
-		LDefaultAgentComp.setDefaultDeliberativeChoiceComp(dBuilder,
+		LDefaultAgentComp.setDefaultDeliberativeChoiceComp(LModel.getModel(),
+				dBuilder,
 				LDeliberativeChoiceComp_MaxLineTotalRandomAtTie
-						.getInstance(null));
+.getInstance(
+						LModel.getModel(), null));
 		List<LaraPreference> goals = new ArrayList<LaraPreference>();
 		goals.add(goal1);
 		goals.add(goal2);

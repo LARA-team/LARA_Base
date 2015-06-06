@@ -26,6 +26,7 @@ import de.cesr.lara.components.LaraBehaviouralOption;
 import de.cesr.lara.components.agents.LaraAgent;
 import de.cesr.lara.components.agents.LaraAgentComponent;
 import de.cesr.lara.components.environment.LaraEnvironment;
+import de.cesr.lara.components.model.LaraModel;
 import de.cesr.lara.components.util.logging.impl.LAgentLevel;
 import de.cesr.lara.components.util.logging.impl.Log4jLogger;
 
@@ -47,6 +48,8 @@ public abstract class LAbstractAgent<A extends LaraAgent<A, BO>, BO extends Lara
 
 	static private int counter = 0;
 
+	protected LaraModel lmodel;
+
 	/**
 	 * id as String
 	 */
@@ -63,31 +66,39 @@ public abstract class LAbstractAgent<A extends LaraAgent<A, BO>, BO extends Lara
 	private Logger agentLogger = null;
 
 	/**
-	 * Assigns an ID of the form agent000X where X is substituted by a counter value.
+	 * Assigns an ID of the form agent000X where X is substituted by a counter
+	 * value.
 	 * 
-	 * NOTE: The LARA implementation does not directly depend on the agent's {@link LaraEnvironment}. Therefore it does
-	 * not cause problems to assign NULL.
+	 * NOTE: The LARA implementation does not directly depend on the agent's
+	 * {@link LaraEnvironment}. Therefore it does not cause problems to assign
+	 * NULL.
 	 * 
+	 * @param lmodel
+	 *            LaraModel
 	 * @param env
-	 *        the environment this agent is associated with
+	 *            the environment this agent is associated with
 	 */
-	public LAbstractAgent(LaraEnvironment env) {
-		this(env, "agent" + String.format("%1$04d", counter++));
+	public LAbstractAgent(LaraModel lmodel, LaraEnvironment env) {
+		this(lmodel, env, "agent" + String.format("%1$04d", counter++));
 	}
 
 	/**
-	 * NOTE: The LARA implementation does not directly depend on the agent's {@link LaraEnvironment}. Therefore it does
-	 * not cause problems to assign NULL.
+	 * NOTE: The LARA implementation does not directly depend on the agent's
+	 * {@link LaraEnvironment}. Therefore it does not cause problems to assign
+	 * NULL.
 	 * 
+	 * @param lmodel
+	 *            LaraModel
 	 * @param env
-	 *        the environment this agent is associated with
+	 *            the environment this agent is associated with
 	 * @param id
-	 *        the ID this agent is identified with
+	 *            the ID this agent is identified with
 	 */
-	public LAbstractAgent(LaraEnvironment env, String id) {
+	public LAbstractAgent(LaraModel lmodel, LaraEnvironment env, String id) {
 		super();
+		this.lmodel = lmodel;
 		this.id = id;
-		agentComp = new LDefaultAgentComp<A, BO>(getThis(), env);
+		agentComp = new LDefaultAgentComp<A, BO>(this.lmodel, getThis(), env);
 
 		// init agent specific logger (agent id is first part of logger name):
 		if (Log4jLogger.getLogger(getAgentId() + "." + LAbstractAgent.class.getName()).isEnabledFor(LAgentLevel.AGENT)) {

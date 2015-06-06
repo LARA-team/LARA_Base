@@ -27,6 +27,8 @@ import de.cesr.lara.components.agents.LaraAgent;
  * 
  * @param <A>
  *            the type of agents this mode selector is intended for
+ * @param <BO>
+ *            type of behavioural options
  */
 public interface LaraDecisionModeSelector<A extends LaraAgent<? super A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>>
 		extends LaraPreprocessorComp<A, BO> {

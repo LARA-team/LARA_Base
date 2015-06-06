@@ -28,6 +28,7 @@ import org.junit.Test;
 
 import de.cesr.lara.components.model.impl.LModel;
 import de.cesr.lara.components.util.LaraPreferenceRegistry;
+import de.cesr.lara.testing.LTestUtils;
 
 /**
  * @author Sascha Holzhauer
@@ -42,6 +43,7 @@ public class LPreferenceRegistryTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
+		LTestUtils.initBareTestModel(null);
 		this.registry = LModel.getModel().getPrefRegistry();
 		this.registry.reset();
 	}

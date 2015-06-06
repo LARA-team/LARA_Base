@@ -22,7 +22,9 @@ package de.cesr.lara.components.model;
 import java.text.NumberFormat;
 import java.util.Date;
 
+import de.cesr.lara.components.eventbus.impl.LEventbus;
 import de.cesr.lara.components.model.impl.LSimulationStage;
+import de.cesr.lara.components.util.LaraDecisionConfigRegistry;
 import de.cesr.lara.components.util.LaraPreferenceRegistry;
 import de.cesr.lara.components.util.LaraRandom;
 
@@ -110,11 +112,23 @@ public interface LaraModel {
 	public void step(int stepIncrease);
 
 	/**
+	 * @return the eventbus associated with this model.
+	 */
+	public LEventbus getLEventbus();
+
+	/**
 	 * Access to this model's {@link LaraPreferenceRegistry}.
 	 * 
 	 * @return preference registry
 	 */
 	public LaraPreferenceRegistry getPrefRegistry();
+
+	/**
+	 * Access to this model's {@link LaraDecisionConfigRegistry}.
+	 * 
+	 * @return decision configuration registry
+	 */
+	public LaraDecisionConfigRegistry getDecisionConfigRegistry();
 
 	/**
 	 * Required for batch runs, especially for Repast Simphony when the subclass of LAbstractModel is persistent!

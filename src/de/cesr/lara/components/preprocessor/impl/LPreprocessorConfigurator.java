@@ -22,6 +22,8 @@ package de.cesr.lara.components.preprocessor.impl;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.simpleframework.xml.ElementMap;
+
 import de.cesr.lara.components.LaraBehaviouralOption;
 import de.cesr.lara.components.agents.LaraAgent;
 import de.cesr.lara.components.decision.LaraDecisionConfiguration;
@@ -67,13 +69,20 @@ public class LPreprocessorConfigurator<A extends LaraAgent<A, BO>, BO extends La
 		return new LPreprocessorConfigurator<A, BO>();
 	}
 
-	private final Map<LaraDecisionConfiguration, LaraDecisionModeSelector<A, BO>> selectorMap;
-	private final Map<LaraDecisionConfiguration, LaraBOCollector<A, ? extends BO>> scannerMap;
-	private final Map<LaraDecisionConfiguration, LaraBOPreselector<A, ? extends BO>> checkerMap;
+	@ElementMap(entry = "selectorEntry", key = "dConfig", value = "selector", attribute = false, inline = true)
+	private Map<LaraDecisionConfiguration, LaraDecisionModeSelector<A, BO>> selectorMap;
 
-	private final Map<LaraDecisionConfiguration, LaraBOUtilityUpdater<A, BO>> adapterMap;
+	@ElementMap(entry = "collectorEntry", key = "dConfig", value = "collector", attribute = false, inline = true)
+	private Map<LaraDecisionConfiguration, LaraBOCollector<A, ? extends BO>> scannerMap;
 
-	private final Map<LaraDecisionConfiguration, LaraPreferenceUpdater<? extends A, BO>> prefUpdaterMap;
+	@ElementMap(entry = "checkerEntry", key = "dConfig", value = "checker", attribute = false, inline = true)
+	private Map<LaraDecisionConfiguration, LaraBOPreselector<A, ? extends BO>> checkerMap;
+
+	@ElementMap(entry = "boUpdaterEntry", key = "dConfig", value = "updater", attribute = false, inline = true)
+	private Map<LaraDecisionConfiguration, LaraBOUtilityUpdater<A, BO>> adapterMap;
+
+	@ElementMap(entry = "prefUpdaterEntry", key = "dConfig", value = "updater", attribute = false, inline = true)
+	private Map<LaraDecisionConfiguration, LaraPreferenceUpdater<? extends A, BO>> prefUpdaterMap;
 
 	private LaraPreprocessor<A, BO> preprocessor = null;
 	private static LaraPreprocessor<?, ?> defaultPreprocessor = null;
@@ -85,6 +94,7 @@ public class LPreprocessorConfigurator<A extends LaraAgent<A, BO>, BO extends La
 	 * 
 	 */
 	public final LaraBOCollector<A, BO> DEFAULT_BO_COLLECTOR = new LCompleteBoCollector<A, BO>();
+
 	/**
 	 * 
 	 */
@@ -214,8 +224,8 @@ public class LPreprocessorConfigurator<A extends LaraAgent<A, BO>, BO extends La
 			if (LaraPreferenceUpdater.class.isAssignableFrom(type)) {
 				return (Map<LaraDecisionConfiguration, T>) prefUpdaterMap;
 			}
-			new AssertionError("Missing case in DefaultConfigurator#getMap()");
-			return null;
+			throw new AssertionError(
+					"Missing case in DefaultConfigurator#getMap()");
 		} catch (ClassCastException e) {
 			throw new ClassCastException(
 					"Agent parameter type did not match requested one!");
@@ -242,8 +252,6 @@ public class LPreprocessorConfigurator<A extends LaraAgent<A, BO>, BO extends La
 	 * @param <T>
 	 *            the component type regarding agent type of the requested
 	 *            component
-	 * @param <U>
-	 *            the general type of the requested component
 	 * @param dConfiguration
 	 *            The {@link LaraDecisionConfiguration} the given component
 	 *            shall be applied to.

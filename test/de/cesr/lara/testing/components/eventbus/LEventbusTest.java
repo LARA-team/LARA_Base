@@ -22,10 +22,13 @@ package de.cesr.lara.testing.components.eventbus;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.HashMap;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import de.cesr.lara.components.decision.LaraDecisionConfiguration;
 import de.cesr.lara.components.eventbus.LaraEventSubscriber;
 import de.cesr.lara.components.eventbus.events.LaraAsynchronousEvent;
 import de.cesr.lara.components.eventbus.events.LaraEvent;
@@ -39,19 +42,22 @@ import de.cesr.lara.components.eventbus.impl.LEventbus;
  */
 public class LEventbusTest {
 
-	private class TestDecrementEvent_Asynchronous implements LaraAsynchronousEvent {
+	protected class TestDecrementEvent_Asynchronous implements
+			LaraAsynchronousEvent {
 	}
 
-	private class TestDecrementEvent_Sequential implements LaraSequentialEvent {
+	protected class TestDecrementEvent_Sequential implements
+			LaraSequentialEvent {
 	}
 
-	private class TestDecrementEvent_Synchronous implements LaraSynchronousEvent {
+	protected class TestDecrementEvent_Synchronous implements
+			LaraSynchronousEvent {
 	}
 
-	private class TestEndEvent_Synchronous implements LaraSynchronousEvent {
+	protected class TestEndEvent_Synchronous implements LaraSynchronousEvent {
 	}
 
-	private class TestEnvironment {
+	protected class TestEnvironment {
 		private int	counter	= 0;
 
 		public synchronized void decrementCounter() {
@@ -67,19 +73,47 @@ public class LEventbusTest {
 		}
 	}
 
-	private class TestIncrementEvent_Asynchronous implements LaraAsynchronousEvent {
+	protected class TestEnvironmentDcSpecific {
+		private HashMap<LaraDecisionConfiguration, Integer> counters = new HashMap<LaraDecisionConfiguration, Integer>();
+
+		public synchronized void decrementCounter(LaraDecisionConfiguration dc) {
+			checkMap(dc);
+			counters.put(dc, counters.get(dc).intValue() - 1);
+		}
+
+		public synchronized int getCounter(LaraDecisionConfiguration dc) {
+			checkMap(dc);
+			return counters.get(dc);
+		}
+
+		public synchronized void incrementCounter(LaraDecisionConfiguration dc) {
+			checkMap(dc);
+			counters.put(dc, counters.get(dc).intValue() + 1);
+		}
+
+		protected void checkMap(LaraDecisionConfiguration dc) {
+			if (!counters.containsKey(dc)) {
+				counters.put(dc, new Integer(0));
+			}
+		}
 	}
 
-	private class TestIncrementEvent_Sequential implements LaraSequentialEvent {
+	protected class TestIncrementEvent_Asynchronous implements
+			LaraAsynchronousEvent {
 	}
 
-	private class TestIncrementEvent_Synchronous implements LaraSynchronousEvent {
+	protected class TestIncrementEvent_Sequential implements
+			LaraSequentialEvent {
 	}
 
-	private class TestStartEvent_Synchronous implements LaraSynchronousEvent {
+	protected class TestIncrementEvent_Synchronous implements
+			LaraSynchronousEvent {
 	}
 
-	private class TestSubscriber implements LaraEventSubscriber {
+	protected class TestStartEvent_Synchronous implements LaraSynchronousEvent {
+	}
+
+	protected class TestSubscriber implements LaraEventSubscriber {
 		private final TestEnvironment	testEnvironment;
 
 		public TestSubscriber(TestEnvironment testEnvironment, LEventbus eventbus) {
@@ -125,9 +159,9 @@ public class LEventbusTest {
 		}
 	}
 
-	private static final int	numberOfSubscribers			= 200;
+	protected static final int numberOfSubscribers = 200;
 
-	private static final int	numberOfWasteCpuTimeCycles	= 10;
+	protected static final int numberOfWasteCpuTimeCycles = 10;
 
 	/**
 	 * @throws java.lang.Exception
@@ -146,6 +180,7 @@ public class LEventbusTest {
 	/**
 	 * asynch means, there might be increments/decrements after(!) assertEquals
 	 */
+	@SuppressWarnings("unused")
 	@Test
 	public void testCountAsynchronous() {
 		LEventbus eventbus = LEventbus.getInstance("asynchronous");
@@ -155,11 +190,11 @@ public class LEventbusTest {
 			new TestSubscriber(testEnvironment, eventbus);
 		}
 		// make every subscriber increment a variable
-		eventbus.publish(new TestIncrementEvent_Sequential());
+		eventbus.publish(new TestIncrementEvent_Asynchronous());
 		// check if variable has expected value >= 0 <= number of subscribers
 		assertEquals(true, testEnvironment.getCounter() >= 0 && testEnvironment.getCounter() <= numberOfSubscribers);
 		// make every subscriber decrement a variable
-		eventbus.publish(new TestDecrementEvent_Sequential());
+		eventbus.publish(new TestDecrementEvent_Asynchronous());
 		// check if variable has expected value >= 0 <= number of subscribers
 		assertEquals(true, testEnvironment.getCounter() >= 0 && testEnvironment.getCounter() <= numberOfSubscribers);
 		eventbus.publish(new TestEndEvent_Synchronous());
@@ -167,6 +202,7 @@ public class LEventbusTest {
 		testEnvironment = null;
 	}
 
+	@SuppressWarnings("unused")
 	@Test
 	public void testCountSequential() {
 		LEventbus eventbus = LEventbus.getInstance("sequential");
@@ -188,6 +224,7 @@ public class LEventbusTest {
 		testEnvironment = null;
 	}
 
+	@SuppressWarnings("unused")
 	@Test
 	public void testCountSynchronous() {
 		LEventbus eventbus = LEventbus.getInstance("synchronous");

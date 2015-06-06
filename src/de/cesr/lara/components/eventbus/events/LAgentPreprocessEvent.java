@@ -26,7 +26,8 @@ import de.cesr.lara.components.decision.LaraDecisionConfiguration;
 /**
  * Triggers agents to preprocess.
  */
-public class LAgentPreprocessEvent implements LaraSynchronousEvent {
+public class LAgentPreprocessEvent implements LaraSynchronousEvent,
+		LaraDcSpecificEvent {
 	private LaraDecisionConfiguration	decisionConfiguration;
 
 	/**

@@ -70,16 +70,7 @@ public class LPreprocessorTest {
 	static boolean preprocessCalled = false;
 
 	/**
-	 * @throws java.lang.Exception
-	 *             Created by Sascha Holzhauer on 05.02.2010
-	 */
-	/**
 	 * @throws Exception
-	 *             Created by Sascha Holzhauer on 08.02.2010
-	 */
-	/**
-	 * @throws Exception
-	 *             Created by Sascha Holzhauer on 08.02.2010
 	 */
 	@Before
 	public void setUp() throws Exception {
@@ -96,8 +87,7 @@ public class LPreprocessorTest {
 			}
 
 			@Override
-			public void setPreferences(
-Collection<LaraPreference> goals) {
+			public void setPreferences(Collection<LaraPreference> goals) {
 			}
 		};
 
@@ -114,8 +104,7 @@ Collection<LaraPreference> goals) {
 			}
 
 			@Override
-			public void setPreferences(
-Collection<LaraPreference> goals) {
+			public void setPreferences(Collection<LaraPreference> goals) {
 			}
 		};
 

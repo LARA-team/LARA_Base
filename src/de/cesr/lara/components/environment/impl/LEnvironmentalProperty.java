@@ -21,6 +21,7 @@ package de.cesr.lara.components.environment.impl;
 
 
 import de.cesr.lara.components.environment.LaraEnvironment;
+import de.cesr.lara.components.model.LaraModel;
 
 
 /**
@@ -37,12 +38,14 @@ public class LEnvironmentalProperty<ValueType> extends LAbstractEnvironmentalPro
 	protected ValueType	value;
 
 	/**
+	 * @param lmodel 
 	 * @param key
 	 * @param value
 	 * @param env
 	 */
-	public LEnvironmentalProperty(String key, ValueType value, LaraEnvironment env) {
-		super(key, env);
+	public LEnvironmentalProperty(LaraModel lmodel, String key,
+			ValueType value, LaraEnvironment env) {
+		super(lmodel, key, env);
 		this.value = value;
 	}
 
@@ -51,7 +54,8 @@ public class LEnvironmentalProperty<ValueType> extends LAbstractEnvironmentalPro
 	 */
 	@Override
 	public LEnvironmentalProperty<ValueType> getModifiedProperty(ValueType value) {
-		return new LEnvironmentalProperty<ValueType>(getKey(), value, environment);
+		return new LEnvironmentalProperty<ValueType>(lmodel, getKey(), value,
+				environment);
 	}
 
 	/**

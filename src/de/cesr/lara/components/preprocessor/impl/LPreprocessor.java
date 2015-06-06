@@ -75,9 +75,13 @@ public final class LPreprocessor<A extends LaraAgent<A, BO>, BO extends LaraBeha
 	static private Logger logger = Log4jLogger.getLogger(LPreprocessor.class);
 
 	private final Map<LaraDecisionConfiguration, LaraDecisionModeSelector<A, BO>> selectorMap;
+
 	private final Map<LaraDecisionConfiguration, LaraBOCollector<A, BO>> collectorMap;
+
 	private final Map<LaraDecisionConfiguration, LaraBOPreselector<A, BO>> preSelectorMap;
+
 	private final Map<LaraDecisionConfiguration, LaraBOUtilityUpdater<A, BO>> updaterMap;
+
 	private final Map<LaraDecisionConfiguration, LaraPreferenceUpdater<A, BO>> prefUpdaterMap;
 
 	private final LaraPreprocessorConfigurator<A, BO> configuration;
@@ -146,26 +150,12 @@ public final class LPreprocessor<A extends LaraAgent<A, BO>, BO extends LaraBeha
 	}
 
 	/**
-	 * Checks for equal objects. This is valid in usual cases since then there
-	 * is only one instance per configuration.
-	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object preprocessor) {
-		if (this == preprocessor) {
-			return true;
-		}
-		return false;
-	}
-
-	/**
 	 * This method returns a {@link LaraPreprocessorConfigurator} that equals
 	 * this instance apart from the configuration included in the given
 	 * {@link LaraPreprocessorConfigurator}.
 	 * 
 	 * @param changeConfiguration
-	 * @return
+	 * @return LaraPreprocessorConfigurator
 	 */
 	public LaraPreprocessorConfigurator<A, BO> getAlteredConfiguration(
 			LaraPreprocessorConfigurator<A, BO> changeConfiguration) {
@@ -268,8 +258,7 @@ public final class LPreprocessor<A extends LaraAgent<A, BO>, BO extends LaraBeha
 
 	/**
 	 * 
-	 * @see de.cesr.lara.components.preprocessor.LaraPreprocessor#preprocess(de.cesr.lara.components.preprocessor.LaraPreprocessor.Accuracy,
-	 *      de.cesr.lara.components.agents.LaraAgent)
+	 * @see de.cesr.lara.components.preprocessor.LaraPreprocessor#preprocess(LaraDecisionConfiguration, LaraAgent)
 	 */
 	@Override
 	public void preprocess(LaraDecisionConfiguration dConfig, A agent) {
@@ -331,7 +320,7 @@ public final class LPreprocessor<A extends LaraAgent<A, BO>, BO extends LaraBeha
 	 * @param changeConfiguration
 	 * @param dConfiguration
 	 */
-	private <T extends LaraPreprocessorComp<A, BO>, U extends LaraPreprocessorComp<?, ?>> void fillConfiguration(
+	private <T extends LaraPreprocessorComp<A, BO>> void fillConfiguration(
 			LaraPreprocessorConfigurator<A, BO> changeConfiguration,
 			LaraPreprocessorConfigurator<A, BO> dConfiguration,
 			Map<LaraDecisionConfiguration, T> map, Class<? super T> clazz) {

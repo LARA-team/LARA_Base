@@ -66,5 +66,5 @@ public interface LaraDecider<BO extends LaraBehaviouralOption<?, ?>> {
 	/**
 	 * @return the decision mode the decider belongs to
 	 */
-	public LaraDecisionModes getDecisionMode();
+	public LaraDecisionMode getDecisionMode();
 }

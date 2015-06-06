@@ -35,7 +35,9 @@ public enum LaraDecisionModes implements LaraDecisionMode {
 
 	HEURISTICS(20),
 	
-	HEURISTICS_EXPLORATION(21);
+	HEURISTICS_EXPLORATION(21),
+
+	IMITATION(30);
 	
 	
 	protected final int id;

@@ -65,7 +65,7 @@ public class LDeliberativeChoiceComponent_MaxLineTotalRandomAtTieTest {
 	public void setUp() throws Exception {
 		LTestUtils.initTestModel(dConfig);
 		deliberativeChoiceComp = LDeliberativeChoiceComp_MaxLineTotalRandomAtTie
-				.getInstance(null);
+				.getInstance(LModel.getModel(), null);
 		laraBoRows = new LinkedHashSet<LaraBoRow<LTestBo>>();
 		dConfig = new LDecisionConfiguration();
 
@@ -171,7 +171,7 @@ public class LDeliberativeChoiceComponent_MaxLineTotalRandomAtTieTest {
 		.registerDistribution(manipulatedDist,
 				"Manipulated Test Distribution");
 		LDeliberativeChoiceComp_MaxLineTotalRandomAtTie choiceComp = LDeliberativeChoiceComp_MaxLineTotalRandomAtTie
-				.getInstance("Manipulated Test Distribution");
+				.getInstance(LModel.getModel(), "Manipulated Test Distribution");
 		
 		Collection<LaraBoRow<LTestBo>> boRows = new ArrayList<LaraBoRow<LTestBo>>();
 		Iterator<LaraBoRow<LTestBo>> iterator = laraBoRows.iterator();

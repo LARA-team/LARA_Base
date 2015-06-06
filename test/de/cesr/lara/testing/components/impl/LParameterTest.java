@@ -58,9 +58,9 @@ public class LParameterTest {
 	 * 
 	 * @param <A>
 	 * @param <BO>
-	 *            BOs the agent class may deal with (must extends CompanyBO to
-	 *            be storable in this agent) A extends AbstractEmployee<A, ?
-	 *            super CompanyBO<A>>>
+	 *            BOs the agent class may deal with (must extend CompanyBO to be
+	 *            storable in this agent) A extends AbstractEmployee<A, ? super
+	 *            CompanyBO<A>>>
 	 */
 	static class AbstractEmployee<A extends AbstractEmployee<A, BO>, BO extends LaraBehaviouralOption<A, BO>>
 			implements LaraAgent<A, BO> {

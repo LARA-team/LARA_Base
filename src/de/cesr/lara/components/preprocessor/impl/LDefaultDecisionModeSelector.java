@@ -34,7 +34,6 @@ import de.cesr.lara.components.decision.impl.LExplorationDeciderFactory;
 import de.cesr.lara.components.decision.impl.LHabitDeciderFactory;
 import de.cesr.lara.components.eventbus.events.LaraEvent;
 import de.cesr.lara.components.eventbus.impl.LEventbus;
-import de.cesr.lara.components.model.impl.LModel;
 import de.cesr.lara.components.param.LDecisionMakingPa;
 import de.cesr.lara.components.postprocessor.impl.LSelectedBoProperty;
 import de.cesr.lara.components.preprocessor.LaraDecisionModeSelector;
@@ -138,7 +137,7 @@ public class LDefaultDecisionModeSelector<A extends LaraAgent<A, BO>, BO extends
 		if (logger.isDebugEnabled()) {
 			logger.debug(agent
 					+ ">> Time step: "
-					+ LModel.getModel().getCurrentStep()
+					+ agent.getLaraComp().getLaraModel().getCurrentStep()
 					+ " | habitTH: "
 					+ ((Integer) PmParameterManager.getParameter(LDecisionMakingPa.HABIT_THRESHOLD)).intValue()
 					+ " | Selected Mode: "
@@ -154,7 +153,7 @@ public class LDefaultDecisionModeSelector<A extends LaraAgent<A, BO>, BO extends
 	protected void tryHabit() {
 		// check habits
 		int habitTH = ((Integer) PmParameterManager.getParameter(LDecisionMakingPa.HABIT_THRESHOLD)).intValue();
-		int currStep = LModel.getModel().getCurrentStep();
+		int currStep = agent.getLaraComp().getLaraModel().getCurrentStep();
 
 		if ((currStep > habitTH && agent.getLaraComp().getGeneralMemory()
 				.contains(LSelectedBoProperty.class, dConfig.getId()))
@@ -176,7 +175,11 @@ public class LDefaultDecisionModeSelector<A extends LaraAgent<A, BO>, BO extends
 			for (int i = habitTH; i >= 1; i--) {
 				try {
 					if (!agent.getLaraComp().getGeneralMemory()
-							.recall(LSelectedBoProperty.class, dConfig.getId(), LModel.getModel().getCurrentStep() - i)
+							.recall(LSelectedBoProperty.class,
+									dConfig.getId(),
+									agent.getLaraComp().getLaraModel()
+											.getCurrentStep()
+											- i)
 							.getValue().getKey().equals(bo.getKey())) {
 						doDeliberative();
 						break;
@@ -184,7 +187,9 @@ public class LDefaultDecisionModeSelector<A extends LaraAgent<A, BO>, BO extends
 				} catch (LContainerException ex) {
 					// <- LOGGING
 					logger.error(this + "> Could not find " + LSelectedBoProperty.class + " for " + dConfig.getId()
-							+ " at time step " + (LModel.getModel().getCurrentStep() - i));
+							+ " at time step "
+							+ (agent.getLaraComp().getLaraModel()
+									.getCurrentStep() - i));
 					// LOGGING ->
 
 					throw ex;

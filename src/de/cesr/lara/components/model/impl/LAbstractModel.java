@@ -40,8 +40,10 @@ import de.cesr.lara.components.eventbus.events.LModelStepEvent;
 import de.cesr.lara.components.eventbus.events.LaraEvent;
 import de.cesr.lara.components.eventbus.impl.LEventbus;
 import de.cesr.lara.components.model.LaraModel;
+import de.cesr.lara.components.util.LaraDecisionConfigRegistry;
 import de.cesr.lara.components.util.LaraPreferenceRegistry;
 import de.cesr.lara.components.util.LaraRandom;
+import de.cesr.lara.components.util.impl.LDecisionConfigRegistry;
 import de.cesr.lara.components.util.impl.LPreferenceRegistry;
 import de.cesr.lara.components.util.impl.LRandomService;
 import de.cesr.lara.components.util.logging.impl.Log4jLogger;
@@ -70,8 +72,11 @@ public abstract class LAbstractModel implements LaraModel,
 
 	
 	protected LEventbus eventBus;
+
 	protected LaraPreferenceRegistry prefRegistry;
 	
+	protected LaraDecisionConfigRegistry dConfigRegistry;
+
 	/**
 	 * Calendar that tracks simulation step
 	 */
@@ -102,23 +107,49 @@ public abstract class LAbstractModel implements LaraModel,
 	 */
 	protected int step;
 	
+	/**
+	 * Constructor. Does nothing and requires the call of
+	 * {@link #basicInit(Object)} to register at {@link LModel} for events at
+	 * the event bus.
+	 */
+	public LAbstractModel() {
+	}
 
 	/**
 	 * Constructor. Registers for events at the event bus.
+	 * 
+	 * @param id
 	 */
-	public LAbstractModel() {
+	public LAbstractModel(Object id) {
+		basicInit(id);
+	}
+
+	/**
+	 * @param id
+	 */
+	protected void basicInit(Object id) {
 		LAbstractAgent.resetCounter();
-		LModel.setNewModel(this);
+		LModel.resetModel(id);
+		LModel.setNewModel(id, this);
 		
-		eventBus = LEventbus.getInstance();
+		eventBus = LEventbus.getInstance(id);
 		eventBus.subscribe(this, LModelInstantiatedEvent.class);
 		eventBus.subscribe(this, LModelStepEvent.class);
 
 		prefRegistry = new LPreferenceRegistry();
+		dConfigRegistry = new LDecisionConfigRegistry();
 	}
 
+	public LEventbus getLEventbus() {
+		return this.eventBus;
+	}
+		
 	public LaraPreferenceRegistry getPrefRegistry() {
 		return this.prefRegistry;
+	}
+
+	public LaraDecisionConfigRegistry getDecisionConfigRegistry() {
+		return this.dConfigRegistry;
 	}
 
 	/**
@@ -132,17 +163,10 @@ public abstract class LAbstractModel implements LaraModel,
 		calendar.add(Calendar.DAY_OF_MONTH, 1);
 	}
 
-	/**
-	 * Methods that override this method must (except you know what you are
-	 * doing) call super.init()! Triggered by ModelInstantiatedEvent.
-	 * 
-	 * 
-	 */
-	public void init() {
+	protected void internalInit() {
 		// <- LOGGING
 		logger.info("LAbstractModel: Initialising/Resetting");
 		// LOGGING ->
-		
 		this.step = 0;
 		this.randomMan = new LRandomService(0);
 		this.integerFormat = new DecimalFormat("0000");
@@ -153,6 +177,15 @@ public abstract class LAbstractModel implements LaraModel,
 		// Causes the calendar for instance to jump from May to April when adding
 		// a day to May, 31th (results in April 1st).
 		calendar.setLenient(true);
+
+		this.init();
+	}
+
+	/**
+	 * Hook method. Triggered by {@link LModelInstantiatedEvent}.
+	 */
+	public void init() {
+		// hook method
 	}
 
 	/**
@@ -164,7 +197,7 @@ public abstract class LAbstractModel implements LaraModel,
 	public void onInternalEvent(LaraEvent event) {
 
 		if (event instanceof LModelInstantiatedEvent) {
-			init();
+			internalInit();
 			eventBus.publish(new LInternalModelInitializedEvent());
 			
 		} else if (event instanceof LModelStepEvent) {

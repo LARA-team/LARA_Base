@@ -33,6 +33,7 @@ import de.cesr.lara.components.decision.LaraDeliberativeChoiceComponent;
 import de.cesr.lara.components.environment.LaraEnvironment;
 import de.cesr.lara.components.environment.LaraEnvironmentListener;
 import de.cesr.lara.components.eventbus.LaraInternalEventSubscriber;
+import de.cesr.lara.components.model.LaraModel;
 import de.cesr.lara.components.postprocessor.LaraPostprocessorComp;
 import de.cesr.lara.components.preprocessor.LaraPreprocessor;
 import de.cesr.lara.components.util.impl.LPrefEntry;
@@ -47,7 +48,6 @@ import de.cesr.lara.components.util.impl.LPrefEntry;
  *        type of behavioural options memorised in the BO-memory
  * 
  * @author Sascha Holzhauer
- * @date 17.12.2009
  */
 public interface LaraAgentComponent<A extends LaraAgent<? super A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>>
 		extends LaraEnvironmentListener, LaraInternalEventSubscriber {
@@ -157,6 +157,20 @@ public interface LaraAgentComponent<A extends LaraAgent<? super A, BO>, BO exten
 	 *****************************/
 	
 	/**
+	 * Provides the {@link LaraModel} this component('s agent) is assigned to.
+	 * 
+	 * @return lmodel LaraModel
+	 */
+	public LaraModel getLaraModel();
+
+	/**
+	 * Sets the {@link LaraModel} this component('s agent) is assigned to.
+	 * 
+	 * @param lmodel
+	 */
+	public void setLaraModel(LaraModel lmodel);
+
+	/**
 	 * Get the {@link LaraBOMemory} (for behavioural options) of this agent.
 	 * 
 	 * @return agent's behavioural option memory
@@ -176,6 +190,13 @@ public interface LaraAgentComponent<A extends LaraAgent<? super A, BO>, BO exten
 	 * @return agent's general property memory
 	 */
 	public LaraMemory<LaraProperty<?, ?>> getGeneralMemory();
+
+	/**
+	 * Get the {@link LaraPreprocessor} of this agent.
+	 * 
+	 * @return this agent's preprocessor
+	 */
+	public LaraPreprocessor<A, BO> getPreprocessor();
 
 	/**
 	 * The number of {@link LaraDecisionData} objects currently stored at the agent.
@@ -200,8 +221,10 @@ public interface LaraAgentComponent<A extends LaraAgent<? super A, BO>, BO exten
 	 * Returns the {@link LaraDeliberativeChoiceComponent} that shall be used
 	 * for the given decision configuration.
 	 * 
+	 * @param lmodel
 	 * @param dConfiguration
 	 * @return deliberative choice component
 	 */
-	public LaraDeliberativeChoiceComponent getDeliberativeChoiceComp(LaraDecisionConfiguration dConfiguration);
+	public LaraDeliberativeChoiceComponent getDeliberativeChoiceComp(
+			LaraModel lmodel, LaraDecisionConfiguration dConfiguration);
 }

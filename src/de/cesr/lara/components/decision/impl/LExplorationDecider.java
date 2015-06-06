@@ -30,8 +30,8 @@ import de.cesr.lara.components.LaraBehaviouralOption;
 import de.cesr.lara.components.agents.LaraAgent;
 import de.cesr.lara.components.decision.LaraDecider;
 import de.cesr.lara.components.decision.LaraDecisionConfiguration;
+import de.cesr.lara.components.decision.LaraDecisionMode;
 import de.cesr.lara.components.decision.LaraDecisionModes;
-import de.cesr.lara.components.model.impl.LModel;
 import de.cesr.lara.components.util.LaraRandom;
 import de.cesr.lara.components.util.logging.impl.LAgentLevel;
 import de.cesr.lara.components.util.logging.impl.Log4jLogger;
@@ -66,7 +66,7 @@ public class LExplorationDecider<A extends LaraAgent<A, BO>, BO extends LaraBeha
 		this.agent = agent;
 		this.dConfiguration = dConfiguration;
 
-		this.random = LModel.getModel().getLRandom();
+		this.random = agent.getLaraComp().getLaraModel().getLRandom();
 
 		// init agent specific logger (agent id is first part of logger name):
 		if (Log4jLogger.getLogger(agent.getAgentId() + "." + LExplorationDecider.class.getName()).isEnabledFor(
@@ -135,7 +135,7 @@ public class LExplorationDecider<A extends LaraAgent<A, BO>, BO extends LaraBeha
 	 * @see de.cesr.lara.components.decision.LaraDecider#getDecisionMode()
 	 */
 	@Override
-	public LaraDecisionModes getDecisionMode() {
+	public LaraDecisionMode getDecisionMode() {
 		return LaraDecisionModes.HEURISTICS_EXPLORATION;
 	}
 

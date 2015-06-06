@@ -25,6 +25,13 @@ package de.cesr.lara.components.container.exceptions;
  */
 public class LInvalidTimestampException extends RuntimeException {
 
+	public LInvalidTimestampException() {
+	}
+
+	public LInvalidTimestampException(String message) {
+		super(message);
+	}
+
 	/**
 	 * 
 	 */

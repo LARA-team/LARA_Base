@@ -29,6 +29,7 @@ import de.cesr.lara.components.container.LaraCapacityManageableContainer;
 import de.cesr.lara.components.container.LaraCapacityManagementView;
 import de.cesr.lara.components.container.LaraCapacityManager;
 import de.cesr.lara.components.container.exceptions.LContainerFullException;
+import de.cesr.lara.components.model.LaraModel;
 import de.cesr.lara.components.util.logging.impl.Log4jLogger;
 
 
@@ -55,41 +56,51 @@ public class LDefaultLimitedCapacityMemory<PropertyType extends LaraProperty<? e
 	private LaraCapacityManager<PropertyType>	capacityManager				= null;
 
 	/**
+	 * @param lmodel 
 	 * @param capacityManager
 	 */
-	public LDefaultLimitedCapacityMemory(LaraCapacityManager<PropertyType> capacityManager) {
-		super();
+	public LDefaultLimitedCapacityMemory(LaraModel lmodel,
+			LaraCapacityManager<PropertyType> capacityManager) {
+		super(lmodel);
 		this.capacityManager = capacityManager;
 	}
 
 	/**
+	 * @param lmodel 
 	 * @param capacityManager
 	 * @param initialCapacity
 	 */
-	public LDefaultLimitedCapacityMemory(LaraCapacityManager<PropertyType> capacityManager, int initialCapacity) {
-		this(capacityManager);
+	public LDefaultLimitedCapacityMemory(LaraModel lmodel,
+			LaraCapacityManager<PropertyType> capacityManager,
+			int initialCapacity) {
+		this(lmodel, capacityManager);
 		this.capacity = initialCapacity;
 	}
 
 	/**
+	 * @param lmodel 
 	 * @param capacityManager
 	 * @param initialCapacity
 	 * @param name
 	 *        the memory's name
 	 */
-	public LDefaultLimitedCapacityMemory(LaraCapacityManager<PropertyType> capacityManager, int initialCapacity,
+	public LDefaultLimitedCapacityMemory(LaraModel lmodel,
+			LaraCapacityManager<PropertyType> capacityManager,
+			int initialCapacity,
 			String name) {
-		this(capacityManager, name);
+		this(lmodel, capacityManager, name);
 		this.capacity = initialCapacity;
 	}
 
 	/**
+	 * @param lmodel 
 	 * @param capacityManager
 	 * @param name
 	 *        the memory's name
 	 */
-	public LDefaultLimitedCapacityMemory(LaraCapacityManager<PropertyType> capacityManager, String name) {
-		super(name);
+	public LDefaultLimitedCapacityMemory(LaraModel lmodel,
+			LaraCapacityManager<PropertyType> capacityManager, String name) {
+		super(lmodel, name);
 		this.capacityManager = capacityManager;
 	}
 
