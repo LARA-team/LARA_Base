@@ -32,6 +32,7 @@ import de.cesr.lara.components.LaraBehaviouralOption;
 import de.cesr.lara.components.LaraPreference;
 import de.cesr.lara.components.decision.LaraBoRow;
 import de.cesr.lara.components.decision.LaraDecisionConfiguration;
+import de.cesr.lara.components.decision.LaraDecisionMode;
 import de.cesr.lara.components.decision.LaraDecisionModes;
 import de.cesr.lara.components.decision.LaraDeliberativeChoiceComponent;
 import de.cesr.lara.components.decision.LaraDeliberativeDecider;
@@ -343,7 +344,7 @@ public class LDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? extends 
 	 * @see de.cesr.lara.components.decision.LaraDecider#getDecisionMode()
 	 */
 	@Override
-	public LaraDecisionModes getDecisionMode() {
+	public LaraDecisionMode getDecisionMode() {
 		return LaraDecisionModes.DELIBERATIVE;
 	}
 }

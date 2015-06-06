@@ -34,10 +34,10 @@ import de.cesr.lara.components.decision.LaraDecisionConfiguration;
  */
 public class LDecisionConfiguration implements LaraDecisionConfiguration {
 
-	@ElementList(required=true, entry="preference")
+	@ElementList(entry = "preference", inline = true, required = false)
 	protected Collection<LaraPreference> preferences = null;
 
-	@Element(required = true)
+	@Element(name = "id", required = true)
 	private final String id;
 
 	/**
@@ -55,8 +55,20 @@ public class LDecisionConfiguration implements LaraDecisionConfiguration {
 	/**
 	 * @param id
 	 */
-	public LDecisionConfiguration(String id) {
+	public LDecisionConfiguration(
+			@Element(name = "id", required = true) String id) {
 		this.id = id;
+	}
+
+	/**
+	 * @param id
+	 * @param preferences
+	 */
+	public LDecisionConfiguration(
+			@Element(name = "id", required = true) String id,
+			@ElementList(entry = "preference", inline = true, required = false) Collection<LaraPreference> preferences) {
+		this.id = id;
+		this.preferences = preferences;
 	}
 
 	/**
@@ -79,8 +91,7 @@ public class LDecisionConfiguration implements LaraDecisionConfiguration {
 	 * @see de.cesr.lara.components.decision.LaraDecisionConfiguration#setPreferences(java.util.Collection)
 	 */
 	@Override
-	public void setPreferences(
-Collection<LaraPreference> preferences) {
+	public void setPreferences(Collection<LaraPreference> preferences) {
 		this.preferences = preferences;
 	}
 

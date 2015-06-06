@@ -21,6 +21,7 @@ package de.cesr.lara.components.container.properties.impl;
 
 
 import de.cesr.lara.components.LaraProperty;
+import de.cesr.lara.components.model.LaraModel;
 
 
 /**
@@ -30,12 +31,16 @@ public class LFloatProperty extends LaraProperty<LFloatProperty, Float> {
 
 	private final Float	value;
 
+	private LaraModel lmodel;
+
 	/**
+	 * @param lmodel 
 	 * @param key
 	 * @param value
 	 */
-	public LFloatProperty(String key, float value) {
-		super(key);
+	public LFloatProperty(LaraModel lmodel, String key, float value) {
+		super(lmodel, key);
+		this.lmodel = lmodel;
 		this.value = new Float(value);
 	}
 
@@ -44,7 +49,7 @@ public class LFloatProperty extends LaraProperty<LFloatProperty, Float> {
 	 */
 	@Override
 	public LFloatProperty getModifiedProperty(Float value) {
-		return new LFloatProperty(this.getKey(), value);
+		return new LFloatProperty(this.lmodel, this.getKey(), value);
 	}
 
 	/**

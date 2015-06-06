@@ -33,6 +33,7 @@ import de.cesr.lara.components.environment.impl.LAbstractEnvironmentalProperty;
 import de.cesr.lara.components.environment.impl.LEnvironment;
 import de.cesr.lara.components.environment.impl.LEnvironmentalIntProperty;
 import de.cesr.lara.components.model.LaraModel;
+import de.cesr.lara.components.model.impl.LModel;
 
 
 /**
@@ -70,8 +71,10 @@ public class EnvironmentTest {
 		// model = LModel.getNewModel();
 
 		this.env = new LEnvironment();
-		this.prop1 = new LEnvironmentalIntProperty("Property1", 1, env);
-		this.prop2 = new LEnvironmentalIntProperty("Property2", 2, env);
+		this.prop1 = new LEnvironmentalIntProperty(LModel.getModel(),
+				"Property1", 1, env);
+		this.prop2 = new LEnvironmentalIntProperty(LModel.getModel(),
+				"Property2", 2, env);
 		this.listener1 = new LaraEnvironmentListener() {
 			@Override
 			public void envPropertyChanged(LAbstractEnvironmentalProperty<?> envProperty) {

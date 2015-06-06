@@ -29,10 +29,11 @@ import de.cesr.lara.components.util.logging.impl.Log4jLogger;
 
 /**
  * The class provides a default implementation of {@link LModel} that does not
- * depend on any MAS framework. The procedures <code>perceive()</code>,
- * <code>preProcess()</code> and <code>decide()</code> are executed for all
- * agents in (kind of) parallel. The <code>AbstractSandaloneParallelModel</code>
- * cares about agent organisation.
+ * depend on any MAS framework.
+ * 
+ * Instructions: Implement createAgents() to create your agents and call
+ * addAgent(agent) for every created agent. Fill the method getAgentIterable()
+ * that returns an Iterable over your agents.
  * 
  * @author Sascha Holzhauer
  * @date 09.11.2009
@@ -44,16 +45,20 @@ public abstract class LAbstractStandaloneSynchronisedModel extends
 	private static Logger logger = Log4jLogger
 			.getLogger(LAbstractStandaloneSynchronisedModel.class);
 
-	/**
-	 * provides access to the agents via the interface AgentToModel
-	 */
+
 	protected Collection<LaraAgent<?, ?>> agents = new ArrayList<LaraAgent<?, ?>>();
+
+	public LAbstractStandaloneSynchronisedModel() {
+		super();
+	}
 
 	/**
 	 * Constructor
+	 * 
+	 * @param id
 	 */
-	public LAbstractStandaloneSynchronisedModel() {
-		super();
+	public LAbstractStandaloneSynchronisedModel(Object id) {
+		super(id);
 	}
 
 	/**
@@ -81,58 +86,4 @@ public abstract class LAbstractStandaloneSynchronisedModel extends
 		}
 		// LOGGING ->
 	}
-
-	/**
-	 * 
-	 * @see de.cesr.lara.components.model.impl.LAbstractModel#decide(de.cesr.lara.components.decision.LaraDecisionConfiguration)
-	 */
-	// @Override
-	// public void decide(LaraDecisionConfiguration decisionBuilder) {
-	// for (LaraAgent<?,?> a : agents) {
-	// a.getLaraComp().decide(decisionBuilder);
-	// }
-	// }
-	//
-	// /**
-	// *
-	// * @see
-	// de.cesr.lara.components.model.impl.LAbstractModel#perceive(de.cesr.lara.components.decision.LaraDecisionConfiguration)
-	// */
-	// @Override
-	// protected void perceive(LaraDecisionConfiguration dConfiguration) {
-	// for (LaraAgent<?,?> a : agents) {
-	// a.laraPerceive(dConfiguration);
-	// }
-	// }
-	//
-	// /**
-	// *
-	// * @see
-	// de.cesr.lara.components.model.impl.LAbstractModel#preProcess(de.cesr.lara.components.decision.LaraDecisionConfiguration)
-	// */
-	// @Override
-	// protected void preProcess(LaraDecisionConfiguration dConfiguration) {
-	// for (LaraAgent<?,?> a : agents) {
-	// a.getLaraComp().preProcess(dConfiguration);
-	// }
-	// }
-	//
-	// /**
-	// * @see
-	// de.cesr.lara.components.model.impl.LAbstractModel#execute(de.cesr.lara.components.decision.LaraDecisionConfiguration)
-	// */
-	// @Override
-	// protected void postProcess(LaraDecisionConfiguration dConfiguration) {
-	// for (LaraAgent<?,?> a : agents) {
-	// a.laraExecute(dConfiguration);
-	// }
-	// }
-	//
-	// @Override
-	// protected void clean(LaraDecisionConfiguration dConfiguration) {
-	// for (LaraAgent<?,?> a : agents) {
-	// a.clean(dConfiguration);
-	// }
-	// }
-
 }

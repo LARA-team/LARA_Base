@@ -24,7 +24,8 @@ import de.cesr.lara.components.decision.LaraDecisionConfiguration;
 /**
  * Thrown after agents execute.
  */
-public class LAgentPostExecutionEvent implements LaraSynchronousEvent {
+public class LAgentPostExecutionEvent implements LaraSynchronousEvent,
+		LaraDcSpecificEvent {
 	private LaraDecisionConfiguration decisionConfiguration;
 
 	public LAgentPostExecutionEvent(

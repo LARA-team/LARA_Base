@@ -28,7 +28,8 @@ import org.junit.runners.Suite.SuiteClasses;
  * 
  */
 @RunWith(Suite.class)
-@SuiteClasses({ LEventbusTest.class })
+@SuiteClasses({ LEventbusTest.class, LEventbusOnceOnlyTest.class,
+		LEventbusDConfigSpecificTest.class })
 public class AllEventbusTests {
 
 }

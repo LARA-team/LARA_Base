@@ -21,7 +21,6 @@ package de.cesr.lara.testing.components;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 import org.junit.After;
 import org.junit.Before;
@@ -30,6 +29,7 @@ import org.junit.Test;
 import de.cesr.lara.components.LaraProperty;
 import de.cesr.lara.components.eventbus.events.LModelStepEvent;
 import de.cesr.lara.components.eventbus.impl.LEventbus;
+import de.cesr.lara.components.model.impl.LModel;
 import de.cesr.lara.testing.LTestUtils;
 
 /**
@@ -42,7 +42,7 @@ public class LaraPropertyTest {
 		private final int value;
 
 		public TestProperty(String key, int value) {
-			super(key);
+			super(LModel.getModel(), key);
 			this.value = value;
 		}
 
@@ -90,8 +90,8 @@ public class LaraPropertyTest {
 	@Test
 	public void testLaraProperty() {
 		assertEquals("key01", prop1.getKey());
-		assertTrue(prop1.getValue() == 1);
-		assertTrue(prop1.getTimestamp() == 1);
+		assertEquals(1, prop1.getValue().intValue());
+		assertEquals(1, prop1.getTimestamp());
 
 		assertEquals(prop1, prop1);
 		assertEquals(prop1, prop4);

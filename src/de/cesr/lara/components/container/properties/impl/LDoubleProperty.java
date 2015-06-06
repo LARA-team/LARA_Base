@@ -20,6 +20,7 @@
 package de.cesr.lara.components.container.properties.impl;
 
 import de.cesr.lara.components.LaraProperty;
+import de.cesr.lara.components.model.LaraModel;
 
 /**
  * 
@@ -28,12 +29,16 @@ public class LDoubleProperty extends LaraProperty<LDoubleProperty, Double> {
 
 	private final Double value;
 
+	private LaraModel lmodel;
+
 	/**
+	 * @param lmodel 
 	 * @param key
 	 * @param value
 	 */
-	public LDoubleProperty(String key, double value) {
-		super(key);
+	public LDoubleProperty(LaraModel lmodel, String key, double value) {
+		super(lmodel, key);
+		this.lmodel = lmodel;
 		this.value = new Double(value);
 	}
 
@@ -42,7 +47,7 @@ public class LDoubleProperty extends LaraProperty<LDoubleProperty, Double> {
 	 */
 	@Override
 	public LDoubleProperty getModifiedProperty(Double value) {
-		return new LDoubleProperty(this.getKey(), value);
+		return new LDoubleProperty(this.lmodel, this.getKey(), value);
 	}
 
 	/**

@@ -101,12 +101,15 @@ public class LDefaultBOCollectorTest {
 		utilities.put(goal2, 0.0);
 		bo3 = new LTestBo(agent, utilities);
 
-		memory = new LDefaultLimitedCapacityBOMemory<LTestBo>(LCapacityManagers.<LTestBo> makeNINO());
+		memory = new LDefaultLimitedCapacityBOMemory<LTestBo>(
+				LModel.getModel(), LCapacityManagers.<LTestBo> makeNINO());
 		agent.getLaraComp().setBOMemory(memory);
 
 		dBuilder = new LDecisionConfiguration("TestDecision");
-		LDefaultAgentComp.setDefaultDeliberativeChoiceComp(dBuilder,
-				LDeliberativeChoiceComp_MaxLineTotalRandomAtTie.getInstance(null));
+		LDefaultAgentComp.setDefaultDeliberativeChoiceComp(LModel.getModel(),
+				dBuilder,
+				LDeliberativeChoiceComp_MaxLineTotalRandomAtTie.getInstance(
+						LModel.getModel(), null));
 		List<LaraPreference> goals = new ArrayList<LaraPreference>();
 		goals.add(goal1);
 		goals.add(goal2);

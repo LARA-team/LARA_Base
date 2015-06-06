@@ -27,6 +27,7 @@ import de.cesr.lara.components.container.LaraCapacityManagementView;
 import de.cesr.lara.components.container.LaraCapacityManager;
 import de.cesr.lara.components.container.storage.LaraStorageListener;
 import de.cesr.lara.components.container.storage.LaraStorageListener.StorageEvent;
+import de.cesr.lara.components.model.LaraModel;
 
 /**
  * TODO implement observer management for other events than AUTO_REMOVED!
@@ -47,22 +48,24 @@ public class LDefaultLimitedCapacityStorage<PropertyType extends LaraProperty<Pr
 	private LaraCapacityManager<PropertyType> capacityManager = null;
 
 	/**
+	 * @param lmodel 
 	 * @param capacityManager
 	 */
-	public LDefaultLimitedCapacityStorage(
+	public LDefaultLimitedCapacityStorage(LaraModel lmodel,
 			LaraCapacityManager<PropertyType> capacityManager) {
-		super();
+		super(lmodel);
 		this.capacityManager = capacityManager;
 	}
 
 	/**
+	 * @param lmodel 
 	 * @param capacityManager
 	 * @param initialCapacity
 	 */
-	public LDefaultLimitedCapacityStorage(
+	public LDefaultLimitedCapacityStorage(LaraModel lmodel,
 			LaraCapacityManager<PropertyType> capacityManager,
 			int initialCapacity) {
-		this(capacityManager);
+		this(lmodel, capacityManager);
 		this.capacity = initialCapacity;
 	}
 

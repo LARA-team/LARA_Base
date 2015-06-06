@@ -24,7 +24,8 @@ import de.cesr.lara.components.decision.LaraDecisionConfiguration;
 /**
  * Triggers agents to decide.
  */
-public class LAgentDecideEvent implements LaraSynchronousEvent {
+public class LAgentDecideEvent implements LaraSynchronousEvent,
+		LaraDcSpecificEvent {
 	private LaraDecisionConfiguration decisionConfiguration;
 
 	public LAgentDecideEvent(LaraDecisionConfiguration decisionConfiguration) {
@@ -34,5 +35,4 @@ public class LAgentDecideEvent implements LaraSynchronousEvent {
 	public LaraDecisionConfiguration getDecisionConfiguration() {
 		return decisionConfiguration;
 	}
-
 }

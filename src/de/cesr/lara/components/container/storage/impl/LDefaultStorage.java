@@ -42,7 +42,7 @@ import de.cesr.lara.components.container.exceptions.LRetrieveException;
 import de.cesr.lara.components.container.storage.LaraStorage;
 import de.cesr.lara.components.container.storage.LaraStorageListener;
 import de.cesr.lara.components.container.storage.LaraStorageListener.StorageEvent;
-import de.cesr.lara.components.model.impl.LModel;
+import de.cesr.lara.components.model.LaraModel;
 import de.cesr.lara.components.util.logging.impl.Log4jLogger;
 
 /**
@@ -61,6 +61,8 @@ public class LDefaultStorage<PropertyType extends LaraProperty<? extends Propert
 	 */
 	static private Logger logger = Log4jLogger.getLogger(LDefaultStorage.class);
 
+	protected LaraModel lmodel;
+
 	private final Map<String, TreeMap<Integer, PropertyType>> keywise = new HashMap<String, TreeMap<Integer, PropertyType>>();
 	private final TreeMap<Integer, Map<String, PropertyType>> stepwise = new TreeMap<Integer, Map<String, PropertyType>>();
 
@@ -69,9 +71,11 @@ public class LDefaultStorage<PropertyType extends LaraProperty<? extends Propert
 	private int size;
 
 	/**
+	 * @param lmodel 
 	 * 
 	 */
-	public LDefaultStorage() {
+	public LDefaultStorage(LaraModel lmodel) {
+		this.lmodel = lmodel;
 		size = 0;
 	}
 
@@ -159,8 +163,7 @@ public class LDefaultStorage<PropertyType extends LaraProperty<? extends Propert
 	}
 
 	/**
-	 * @see de.cesr.lara.components.container.storage.LaraStorage#contains(de.cesr.lara.components.LaraProperty,
-	 *      java.lang.String, int)
+	 * @see de.cesr.lara.components.container.storage.LaraStorage#contains(Class, String, int)
 	 */
 	@Override
 	public boolean contains(Class<?> propertyType, String key, int step) {
@@ -269,18 +272,18 @@ public class LDefaultStorage<PropertyType extends LaraProperty<? extends Propert
 	@Override
 	public PropertyType fetch(String key, int step) {
 		if (isEmpty()) {
-			LRetrieveException ex = new LRetrieveException(
+			logger.error("No entry found. Memory is empty.");
+			throw new LRetrieveException(
 					"No entry found. Memory is empty.");
-			logger.error(ex.getMessage() + ex.getStackTrace());
-			throw ex;
 		}
 		if (!stepwise.containsKey(step)) {
-			LRetrieveException ex = new LRetrieveException(
+			logger.error("No entries for step " + step + ".");
+			throw new LRetrieveException(
 					"No entries for step " + step + ".");
-			logger.error(ex.getMessage() + ex.getStackTrace());
-			throw ex;
 		}
 		if (!stepwise.get(step).containsKey(key)) {
+			logger.error("No entry found with key " + key + " for step " + step
+					+ ".");
 			throw new LRetrieveException("No entry found with key " + key
 					+ " for step " + step + ".");
 
@@ -511,9 +514,12 @@ public class LDefaultStorage<PropertyType extends LaraProperty<? extends Propert
 	 */
 	@Override
 	public void store(PropertyType propertyToStore) {
-		if (propertyToStore.getTimestamp() != LModel.getModel()
+		if (propertyToStore.getTimestamp() != lmodel
 				.getCurrentStep()) {
-			throw new LInvalidTimestampException();
+			throw new LInvalidTimestampException("Property's timestamp is "
+					+ propertyToStore.getTimestamp()
+					+ ", but current timestamp is " + lmodel.getCurrentStep()
+					+ "(LaraModel: " + lmodel + ")");
 		}
 		if (isFull()) {
 			throw new LContainerFullException();
@@ -558,7 +564,7 @@ public class LDefaultStorage<PropertyType extends LaraProperty<? extends Propert
 
 	/**
 	 * @param event
-	 * @return
+	 * @return collection of {@link LaraStorageListener}
 	 */
 	protected Collection<LaraStorageListener> getPropertyListeners(
 			LaraStorageListener.StorageEvent event) {
@@ -567,7 +573,7 @@ public class LDefaultStorage<PropertyType extends LaraProperty<? extends Propert
 
 	/**
 	 * @param event
-	 * @return
+	 * @return true if the map of {@link LaraStorageListener}s contains any for the given event
 	 */
 	protected boolean propListenersContainsEventKey(StorageEvent event) {
 		return propertyListeners.containsKey(event);

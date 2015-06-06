@@ -21,12 +21,12 @@ package de.cesr.lara.components.environment.impl;
 
 
 import de.cesr.lara.components.environment.LaraEnvironment;
+import de.cesr.lara.components.model.LaraModel;
 
 
 /**
  * 
  * @author Sascha Holzhauer
- * @date 22.12.2009
  * 
  */
 public class LEnvironmentalIntProperty extends LAbstractEnvironmentalProperty<Integer> {
@@ -37,12 +37,14 @@ public class LEnvironmentalIntProperty extends LAbstractEnvironmentalProperty<In
 	protected int	intValue;
 
 	/**
+	 * @param lmodel 
 	 * @param key
 	 * @param value
 	 * @param env
 	 */
-	public LEnvironmentalIntProperty(String key, int value, LaraEnvironment env) {
-		super(key, env);
+	public LEnvironmentalIntProperty(LaraModel lmodel, String key, int value,
+			LaraEnvironment env) {
+		super(lmodel, key, env);
 		this.intValue = value;
 	}
 
@@ -70,7 +72,8 @@ public class LEnvironmentalIntProperty extends LAbstractEnvironmentalProperty<In
 
 	@Override
 	public LEnvironmentalIntProperty getModifiedProperty(Integer value) {
-		return new LEnvironmentalIntProperty(getKey(), value, environment);
+		return new LEnvironmentalIntProperty(lmodel, getKey(), value,
+				environment);
 	}
 
 	/**

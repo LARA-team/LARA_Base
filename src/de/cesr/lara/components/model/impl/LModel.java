@@ -19,15 +19,18 @@
  */
 package de.cesr.lara.components.model.impl;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 import de.cesr.lara.components.eventbus.impl.LEventbus;
 import de.cesr.lara.components.model.LaraModel;
+import de.cesr.lara.components.model.LaraModelResetObserver;
 import de.cesr.lara.components.util.impl.LVersionInfo;
 
 /**
- * Base class for models using LARA that should ensure that only one instance of
- * LaraModel is created. However, since it should be possible to create
- * subclasses of {@link LAbstractModel} it is not possible to ensure that there
- * are no more than one instances of {@link LaraModel}.
+ * Registry for LARA models.
  * 
  * @note tasks: initialise model context, initialise database, read config,
  *       setup simulation, setup agents, setup logger, simulate time stamp
@@ -39,16 +42,33 @@ public final class LModel {
 	/**
 	 * model
 	 */
-	protected static LaraModel model;
+	private static Map<Object, LaraModel> models = new HashMap<Object, LaraModel>();
+
+	private static Set<LaraModelResetObserver> resetObservers = new HashSet<LaraModelResetObserver>();
 
 	/**
 	 * @return model
 	 */
 	public static LaraModel getModel() {
-		if (model == null) {
-			throw new IllegalStateException("model was not set");
+		if (models.get(null) == null) {
+			throw new IllegalStateException("Default model was not set");
 		}
-		return model;
+		return models.get(null);
+	}
+
+	/**
+	 * @param id
+	 * @return model associated with given id
+	 */
+	public static LaraModel getModel(Object id) {
+		if (id == null)
+			return getModel();
+
+		if (models.get(id) == null) {
+			throw new IllegalStateException("Model for id " + id
+					+ " was not set");
+		}
+		return models.get(id);
 	}
 
 	/**
@@ -67,11 +87,57 @@ public final class LModel {
 	 * @return new model
 	 */
 	public static LaraModel setNewModel(LaraModel model) {
-		LEventbus.resetAll();
-		LModel.model = model;
+		LModel.models.put(null, model);
 		return getModel();
 	}
 
+	/**
+	 * @param model
+	 * @param id
+	 * @return new model
+	 */
+	public static LaraModel setNewModel(Object id, LaraModel model) {
+		if (LModel.models.containsKey(id)) {
+			throw new IllegalArgumentException(
+					"There is already a model registered with ID "
+							+ id
+							+ ". Use resetModel(id) to remove an already registered model!");
+		}
+		LModel.models.put(id, model);
+		return getModel(id);
+	}
+
+	/**
+	 * @param id
+	 */
+	public static void resetModel(Object id) {
+		LModel.models.remove(id);
+		for (LaraModelResetObserver observer : resetObservers) {
+			observer.getNotified(id);
+		}
+	}
+
+	/**
+	 * Clear map of registered models.
+	 */
+	public static void reset() {
+		LEventbus.resetAll();
+		for (LaraModelResetObserver observer : resetObservers) {
+			observer.getNotified();
+		}
+		LModel.models = new HashMap<Object, LaraModel>();
+	}
+
+	/**
+	 * Prevent instantiation.
+	 */
 	private LModel() {
+	}
+
+	/**
+	 * @param observer
+	 */
+	public static void registerResetObserver(LaraModelResetObserver observer) {
+		resetObservers.add(observer);
 	}
 }

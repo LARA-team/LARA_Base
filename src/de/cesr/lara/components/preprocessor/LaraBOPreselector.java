@@ -26,12 +26,12 @@ import de.cesr.lara.components.agents.LaraBOPreselectingAgent;
 
 
 /**
- * BOChecker
+ * BO Preselector
  * 
  * @param <A>
- *        type of agents this BO preselector is intended for
+ *            type of agents this BO preselector is intended for
  * @param <BO>
- *        type of behavioural options that are checked
+ *            type of behavioural options that are checked
  */
 public interface LaraBOPreselector<A extends LaraAgent<? super A, ?>, BO extends LaraBehaviouralOption<?, ?>> extends
 		LaraPreprocessorComp<A, BO> {

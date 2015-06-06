@@ -41,7 +41,7 @@ import de.cesr.lara.components.container.memory.LaraMemoryListener.MemoryEvent;
 import de.cesr.lara.components.container.storage.LaraStorage;
 import de.cesr.lara.components.container.storage.LaraStorageListener;
 import de.cesr.lara.components.container.storage.impl.LDefaultStorage;
-import de.cesr.lara.components.model.impl.LModel;
+import de.cesr.lara.components.model.LaraModel;
 import de.cesr.lara.components.util.logging.impl.Log4jLogger;
 
 /**
@@ -66,6 +66,8 @@ public class LDefaultMemory<PropertyType extends LaraProperty<? extends Property
 	 */
 	private static int NO_DEATH = -1;
 
+	protected LaraModel lmodel;
+
 	private LaraStorage<PropertyType> storage;
 
 	// tod = time of death
@@ -86,16 +88,19 @@ public class LDefaultMemory<PropertyType extends LaraProperty<? extends Property
 	private boolean cleaningUp = false;
 
 	/**
+	 * @param lmodel 
 	 * 
 	 */
-	public LDefaultMemory() {
-		this("memory" + counter++);
+	public LDefaultMemory(LaraModel lmodel) {
+		this(lmodel, "memory" + counter++);
 	}
 
 	/**
+	 * @param lmodel
 	 * @param defaultRetentionTime
 	 */
-	public LDefaultMemory(int defaultRetentionTime) {
+	public LDefaultMemory(LaraModel lmodel, int defaultRetentionTime) {
+		this.lmodel = lmodel;
 		this.defaultRetentionTime = defaultRetentionTime;
 		this.name = "memory" + counter++;
 		storage = createBackingStorage();
@@ -104,11 +109,14 @@ public class LDefaultMemory<PropertyType extends LaraProperty<? extends Property
 	}
 
 	/**
+	 * @param lmodel 
 	 * @param defaultRetentionTime
 	 * @param name
 	 *            the memory's name
 	 */
-	public LDefaultMemory(int defaultRetentionTime, String name) {
+	public LDefaultMemory(LaraModel lmodel, int defaultRetentionTime,
+			String name) {
+		this.lmodel = lmodel;
 		this.defaultRetentionTime = defaultRetentionTime;
 		this.name = name;
 		storage = createBackingStorage();
@@ -117,11 +125,13 @@ public class LDefaultMemory<PropertyType extends LaraProperty<? extends Property
 	}
 
 	/**
+	 * @param lmodel 
 	 * @param name
 	 *            the memory's name
 	 * 
 	 */
-	public LDefaultMemory(String name) {
+	public LDefaultMemory(LaraModel lmodel, String name) {
+		this.lmodel = lmodel;
 		this.name = name;
 		storage = createBackingStorage();
 		logger = Log4jLogger.getLogger(LDefaultMemory.class.getName() + "."
@@ -188,8 +198,7 @@ public class LDefaultMemory<PropertyType extends LaraProperty<? extends Property
 	}
 
 	/**
-	 * @see de.cesr.lara.components.container.memory.LaraMemory#contains(de.cesr.lara.components.LaraProperty,
-	 *      java.lang.String, int)
+	 * @see de.cesr.lara.components.container.memory.LaraMemory#contains(Class, String, int)
 	 */
 	@Override
 	public boolean contains(Class<?> propertyType, String key, int timestamp) {
@@ -331,7 +340,7 @@ public class LDefaultMemory<PropertyType extends LaraProperty<? extends Property
 		if (tod == null) {
 			return 0;
 		}
-		return tod - LModel.getModel().getCurrentStep();
+		return tod - lmodel.getCurrentStep();
 	}
 
 	@Override
@@ -749,9 +758,9 @@ public class LDefaultMemory<PropertyType extends LaraProperty<? extends Property
 	private void checkIfNewStep() {
 		if (!cleaningUp) {
 			cleaningUp = true;
-			if (LModel.getModel().getCurrentStep() > step) {
+			if (lmodel.getCurrentStep() > step) {
 				Set<PropertyType> propertiesToForget;
-				for (int i = step; i <= LModel.getModel().getCurrentStep(); i++) {
+				for (int i = step; i <= lmodel.getCurrentStep(); i++) {
 					propertiesToForget = tod2properties.get(i);
 					if (propertiesToForget != null) {
 						forgetAll(propertiesToForget);
@@ -764,7 +773,7 @@ public class LDefaultMemory<PropertyType extends LaraProperty<? extends Property
 							+ this.toString());
 				}
 			}
-			step = LModel.getModel().getCurrentStep();
+			step = lmodel.getCurrentStep();
 			cleaningUp = false;
 		}
 	}
@@ -832,9 +841,9 @@ public class LDefaultMemory<PropertyType extends LaraProperty<? extends Property
 	 * Overwrite this method in order to change the storage to be used by the
 	 * memory.
 	 * 
-	 * @return
+	 * @return storage
 	 */
 	protected LaraStorage<PropertyType> createBackingStorage() {
-		return new LDefaultStorage<PropertyType>();
+		return new LDefaultStorage<PropertyType>(this.lmodel);
 	}
 }

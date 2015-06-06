@@ -31,7 +31,6 @@ import org.apache.log4j.Logger;
 
 import de.cesr.lara.components.agents.LaraAgent;
 import de.cesr.lara.components.decision.LaraDecisionConfiguration;
-import de.cesr.lara.components.model.impl.LModel;
 import de.cesr.lara.components.preprocessor.LaraBOPreselector;
 import de.cesr.lara.components.util.impl.LPrefEntry;
 import de.cesr.lara.components.util.impl.LPreferenceWeightMap;
@@ -88,7 +87,8 @@ public abstract class LaraBehaviouralOption<A extends LaraAgent<? super A, ?>, B
 	/**
 	 * The BO's collection of utility values
 	 */
-	private final Map<LaraPreference, Double> preferenceUtilities;
+	final private Map<LaraPreference, Double> preferenceUtilities;
+
 
 	/**
 	 * Does not call constructor with more parameters above to prevent double
@@ -98,7 +98,7 @@ public abstract class LaraBehaviouralOption<A extends LaraAgent<? super A, ?>, B
 	 * @param agent
 	 */
 	public LaraBehaviouralOption(String key, A agent) {
-		super(key);
+		super(agent.getLaraComp().getLaraModel(), key);
 		this.agent = agent;
 		this.preferenceUtilities = new LPreferenceWeightMap();
 		this.hashCode = calculateHashCode();
@@ -120,7 +120,7 @@ public abstract class LaraBehaviouralOption<A extends LaraAgent<? super A, ?>, B
 	 *            list of {@link LPrefEntry}s
 	 */
 	public LaraBehaviouralOption(String key, A agent, LPrefEntry... prefEntry) {
-		super(key);
+		super(agent.getLaraComp().getLaraModel(), key);
 		this.agent = agent;
 		this.preferenceUtilities = new LPreferenceWeightMap(prefEntry);
 		this.hashCode = calculateHashCode();
@@ -142,7 +142,7 @@ public abstract class LaraBehaviouralOption<A extends LaraAgent<? super A, ?>, B
 	 */
 	public LaraBehaviouralOption(String key, A agent,
 			Map<LaraPreference, Double> preferenceUtilities) {
-		super(key);
+		super(agent.getLaraComp().getLaraModel(), key);
 		this.agent = agent;
 		this.preferenceUtilities = new LPreferenceWeightMap(preferenceUtilities);
 		this.hashCode = calculateHashCode();
@@ -385,7 +385,8 @@ LaraPreference arg0,
 	 */
 	@Override
 	public String toString() {
-		NumberFormat format = LModel.getModel().getFloatPointFormat();
+		NumberFormat format = agent.getLaraComp().getLaraModel()
+				.getFloatPointFormat();
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("[" + getKey() + ", ");
 		TreeSet<Map.Entry<LaraPreference, Double>> sortedSet = new TreeSet<Map.Entry<LaraPreference, Double>>(

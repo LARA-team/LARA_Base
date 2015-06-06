@@ -30,6 +30,7 @@ import de.cesr.lara.components.environment.LaraEnvironment;
 import de.cesr.lara.components.environment.LaraSuperEnvironment;
 import de.cesr.lara.components.environment.impl.LEnvironment;
 import de.cesr.lara.components.environment.impl.LEnvironmentalProperty;
+import de.cesr.lara.components.model.impl.LModel;
 import de.cesr.lara.testing.LTestUtils;
 
 /**
@@ -49,7 +50,8 @@ public class TestSuperEnvironment {
 		LTestUtils.initTestModel(LTestUtils.dConfig);
 
 		subEnv = new LEnvironment();
-		subEnv.addProperty(new LEnvironmentalProperty<Object>("Prop1",
+		subEnv.addProperty(new LEnvironmentalProperty<Object>(
+				LModel.getModel(), "Prop1",
 				new Object(), subEnv));
 
 		superEnv = new LEnvironment();
@@ -77,7 +79,8 @@ public class TestSuperEnvironment {
 		assertFalse(superEnv.removePropertySubenv(
 				LaraSuperEnvironment.ALL_CATEGORIES, "Prop1"));
 
-		subEnv.addProperty(new LEnvironmentalProperty<Object>("Prop1",
+		subEnv.addProperty(new LEnvironmentalProperty<Object>(
+				LModel.getModel(), "Prop1",
 				new Object(), subEnv));
 		assertTrue(superEnv.removePropertySubenv(null, "Prop1"));
 		assertFalse(superEnv.removePropertySubenv(null, "Prop1"));

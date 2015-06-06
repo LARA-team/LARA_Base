@@ -90,8 +90,10 @@ public class LDefaultAgentCompTest {
 		agent.getLaraComp().getBOMemory().memorize(bo1);
 
 		dConfig = new LDecisionConfiguration("TestDecision");
-		LDefaultAgentComp.setDefaultDeliberativeChoiceComp(dConfig,
-				LDeliberativeChoiceComp_MaxLineTotalRandomAtTie.getInstance(null));
+		LDefaultAgentComp.setDefaultDeliberativeChoiceComp(LModel.getModel(),
+				dConfig,
+				LDeliberativeChoiceComp_MaxLineTotalRandomAtTie.getInstance(
+						LModel.getModel(), null));
 		List<LaraPreference> goals = new ArrayList<LaraPreference>();
 		goals.add(goal1);
 		dConfig.setPreferences(goals);

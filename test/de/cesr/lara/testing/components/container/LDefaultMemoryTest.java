@@ -97,8 +97,8 @@ public class LDefaultMemoryTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		memory = new LDefaultMemory<LTestProperty>();
 		LTestUtils.initTestModel(LTestUtils.dConfig);
+		memory = new LDefaultMemory<LTestProperty>(LModel.getModel());
 		LEventbus.getInstance().publish(new LModelStepEvent());
 	}
 
@@ -217,7 +217,8 @@ public class LDefaultMemoryTest {
 	@Test
 	public void testCustomRetention() {
 		final int CUSTOM_RETENTION = 2;
-		memory = new LDefaultMemory<LTestProperty>(CUSTOM_RETENTION);
+		memory = new LDefaultMemory<LTestProperty>(LModel.getModel(),
+				CUSTOM_RETENTION);
 
 		assertTrue(memory.getDefaultRetentionTime() == CUSTOM_RETENTION);
 		assertTrue("Default retention time was set to " + CUSTOM_RETENTION,
@@ -315,7 +316,7 @@ public class LDefaultMemoryTest {
 		LTestProperty property : memory) {
 			size++;
 		}
-		assertTrue("iterator needs to iterate over 12 proeprties", size == 12);
+		assertTrue("iterator needs to iterate over 12 properties", size == 12);
 	}
 
 	/**
@@ -513,7 +514,8 @@ public class LDefaultMemoryTest {
 	public void testRecallAllByClass() {
 		LTestProperty prop1 = new LTestProperty("key01", "value01");
 		memory.memorize(prop1);
-		LSubTestProperty prop2 = new LSubTestProperty("key02", "value01");
+		LSubTestProperty prop2 = new LSubTestProperty(LModel.getModel(),
+				"key02", "value01");
 		memory.memorize(prop2);
 
 		LEventbus.getInstance().publish(new LModelStepEvent());
@@ -547,7 +549,8 @@ public class LDefaultMemoryTest {
 	public void testRecallAllByClassKey() {
 		LTestProperty prop1 = new LTestProperty("key01", "value01");
 		memory.memorize(prop1);
-		LSubTestProperty prop2 = new LSubTestProperty("key02", "value01");
+		LSubTestProperty prop2 = new LSubTestProperty(LModel.getModel(),
+				"key02", "value01");
 		memory.memorize(prop2);
 
 		LEventbus.getInstance().publish(new LModelStepEvent());
@@ -581,7 +584,8 @@ public class LDefaultMemoryTest {
 	public void testRecallByClass() {
 		LTestProperty prop1 = new LTestProperty("key01", "value01");
 		memory.memorize(prop1);
-		LSubTestProperty prop2 = new LSubTestProperty("key02", "value01");
+		LSubTestProperty prop2 = new LSubTestProperty(LModel.getModel(),
+				"key02", "value01");
 		memory.memorize(prop2);
 
 		LEventbus.getInstance().publish(new LModelStepEvent());
@@ -609,7 +613,8 @@ public class LDefaultMemoryTest {
 	public void testRecallByClassStep() {
 		LTestProperty prop1 = new LTestProperty("key01", "value01");
 		memory.memorize(prop1);
-		LSubTestProperty prop2 = new LSubTestProperty("key02", "value01");
+		LSubTestProperty prop2 = new LSubTestProperty(LModel.getModel(),
+				"key02", "value01");
 		memory.memorize(prop2);
 
 		LEventbus.getInstance().publish(new LModelStepEvent());

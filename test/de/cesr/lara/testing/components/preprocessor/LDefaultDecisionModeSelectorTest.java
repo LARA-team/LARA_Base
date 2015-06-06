@@ -136,7 +136,8 @@ public class LDefaultDecisionModeSelectorTest implements LaraEventSubscriber {
 		bo2H = new LTestBo(habitAgent, utilities);
 		utilities.put(goal1, 1.0);
 
-		memory = new LDefaultLimitedCapacityBOMemory<LTestBo>(LCapacityManagers.<LTestBo> makeNINO());
+		memory = new LDefaultLimitedCapacityBOMemory<LTestBo>(
+				LModel.getModel(), LCapacityManagers.<LTestBo> makeNINO());
 		agent.getLaraComp().setBOMemory(memory);
 		delibAgent.getLaraComp().setBOMemory(memory);
 		habitAgent.getLaraComp().setBOMemory(memory);
@@ -144,13 +145,16 @@ public class LDefaultDecisionModeSelectorTest implements LaraEventSubscriber {
 		memory.memorize(bo1);
 		memory.memorize(bo2);
 
-		iHMemory = new LDefaultLimitedCapacityBOMemory<LTestBo>(LCapacityManagers.<LTestBo> makeNINO());
+		iHMemory = new LDefaultLimitedCapacityBOMemory<LTestBo>(
+				LModel.getModel(), LCapacityManagers.<LTestBo> makeNINO());
 		iHMemory.memorize(bo1IH);
 		iHMemory.memorize(bo2);
 		initialHabitAgent.getLaraComp().setBOMemory(iHMemory);
 
-		LDefaultAgentComp.setDefaultDeliberativeChoiceComp(dConfig,
-				LDeliberativeChoiceComp_MaxLineTotalRandomAtTie.getInstance(null));
+		LDefaultAgentComp.setDefaultDeliberativeChoiceComp(LModel.getModel(),
+				dConfig,
+				LDeliberativeChoiceComp_MaxLineTotalRandomAtTie.getInstance(
+						LModel.getModel(), null));
 		List<LaraPreference> goals = new ArrayList<LaraPreference>();
 		goals.add(goal1);
 		dConfig.setPreferences(goals);
@@ -194,7 +198,9 @@ public class LDefaultDecisionModeSelectorTest implements LaraEventSubscriber {
 		initialHabitAgent
 				.getLaraComp()
 				.getGeneralMemory()
-				.memorize(new LSelectedBoProperty<LTestBo>(dConfig, bo1),
+				.memorize(
+						new LSelectedBoProperty<LTestBo>(LModel.getModel(),
+								dConfig, bo1),
 						(Integer) PmParameterManager.getParameter(LDecisionMakingPa.HABIT_THRESHOLD) + 1);
 
 		LEventbus.getInstance().publish(new LModelStepEvent());

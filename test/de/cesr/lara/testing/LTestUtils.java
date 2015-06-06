@@ -35,6 +35,7 @@ import de.cesr.lara.components.eventbus.events.LAgentExecutionEvent;
 import de.cesr.lara.components.eventbus.events.LAgentPerceptionEvent;
 import de.cesr.lara.components.eventbus.events.LAgentPostprocessEvent;
 import de.cesr.lara.components.eventbus.events.LAgentPreprocessEvent;
+import de.cesr.lara.components.eventbus.events.LModelInstantiatedEvent;
 import de.cesr.lara.components.eventbus.events.LModelStepEvent;
 import de.cesr.lara.components.eventbus.events.LModelStepFinishedEvent;
 import de.cesr.lara.components.eventbus.events.LaraEvent;
@@ -74,7 +75,7 @@ public class LTestUtils {
 		 * @param name
 		 */
 		public LTestAgent(String name) {
-			super(new LEnvironment(), name);
+			super(LModel.getModel(), new LEnvironment(), name);
 			this.id = counter++;
 		}
 
@@ -149,12 +150,41 @@ public class LTestUtils {
 	/**
 	 * Inits a {@link LaraModel} as test model.
 	 * 
+	 * @param id
+	 */
+	public static void initBareTestModel(Object id) {
+		LModel.reset();
+		LaraModel model = new LAbstractStandaloneSynchronisedModel(id) {
+			@Override
+			public void onEvent(LaraEvent event) {
+			}
+
+			@Override
+			public String toString() {
+				return "TestModel";
+			}
+		};
+		((LAbstractModel) model).init();
+
+		preg = LModel.getModel(id).getPrefRegistry();
+		preg.register("LTestPreference1");
+		preg.register("LTestPreference2");
+
+		Collection<LaraPreference> prefs = new HashSet<LaraPreference>();
+		prefs.add(preg.get("LTestPreference1"));
+		prefs.add(preg.get("LTestPreference2"));
+	}
+
+	/**
+	 * Inits a {@link LaraModel} as test model.
+	 * 
 	 * @param dConfiguration
 	 *            decision configuration
 	 */
 	public static void initTestModel(
 			final LaraDecisionConfiguration dConfiguration) {
-		LaraModel model = new LAbstractStandaloneSynchronisedModel() {
+		LModel.reset();
+		LaraModel model = new LAbstractStandaloneSynchronisedModel(null) {
 			@Override
 			public void onEvent(LaraEvent event) {
 				if (event instanceof LModelStepEvent) {
@@ -189,5 +219,6 @@ public class LTestUtils {
 		prefs.add(preg.get("LTestPreference1"));
 		prefs.add(preg.get("LTestPreference2"));
 		LTestUtils.dConfig.setPreferences(prefs);
+		model.getLEventbus().publish(new LModelInstantiatedEvent());
 	}
 }

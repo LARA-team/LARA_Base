@@ -28,6 +28,7 @@ import de.cesr.lara.components.agents.LaraAgent;
 import de.cesr.lara.components.decision.LaraDecider;
 import de.cesr.lara.components.decision.LaraDeciderFactory;
 import de.cesr.lara.components.decision.LaraDecisionConfiguration;
+import de.cesr.lara.components.decision.LaraDecisionModes;
 import de.cesr.lara.components.decision.LaraDeliberativeDecider;
 import de.cesr.lara.components.util.logging.impl.Log4jLogger;
 
@@ -110,7 +111,8 @@ public class LDeliberativeDeciderFactory<A extends LaraAgent<? super A, BO>, BO 
 			decider.setSelectableBos(agent.getLaraComp()
 					.getDecisionData(dConfiguration).getBos());
 
-			if (agent.getLaraComp().getDeliberativeChoiceComp(dConfiguration) == null) {
+			if (agent.getLaraComp().getDeliberativeChoiceComp(
+					agent.getLaraComp().getLaraModel(), dConfiguration) == null) {
 				// <- LOGGING
 				logger.error("Deliberative Choice component has not been set for LaraDecisionConfiguration "
 						+ dConfiguration + " at the agent " + agent);
@@ -121,7 +123,8 @@ public class LDeliberativeDeciderFactory<A extends LaraAgent<? super A, BO>, BO 
 			}
 
 			decider.setDeliberativeChoiceComponent(agent.getLaraComp()
-					.getDeliberativeChoiceComp(dConfiguration));
+					.getDeliberativeChoiceComp(
+							agent.getLaraComp().getLaraModel(), dConfiguration));
 
 			// send only preferenceWeights that are considered during the
 			// decision process:
@@ -139,9 +142,8 @@ public class LDeliberativeDeciderFactory<A extends LaraAgent<? super A, BO>, BO 
 			logger.warn(agent.getAgentId() + "> Decision process for "
 					+ dConfiguration.getId()
 					+ " cancelled because of empty set of BOs");
-			// TODO
 
-			return null;
+			return new LNoOptionDecider<BO>(LaraDecisionModes.DELIBERATIVE);
 		}
 	}
 }

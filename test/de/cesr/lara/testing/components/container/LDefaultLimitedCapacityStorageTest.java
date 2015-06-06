@@ -32,6 +32,7 @@ import de.cesr.lara.components.container.storage.LaraStorage;
 import de.cesr.lara.components.container.storage.impl.LDefaultLimitedCapacityStorage;
 import de.cesr.lara.components.eventbus.events.LModelStepEvent;
 import de.cesr.lara.components.eventbus.impl.LEventbus;
+import de.cesr.lara.components.model.impl.LModel;
 import de.cesr.lara.components.util.impl.LCapacityManagers;
 import de.cesr.lara.testing.components.container.LContainerTestUtils.LTestProperty;
 
@@ -42,6 +43,7 @@ public class LDefaultLimitedCapacityStorageTest {
 	@Before
 	public void setUp() throws Exception {
 		storage = new LDefaultLimitedCapacityStorage<LTestProperty>(
+				LModel.getModel(),
 				LCapacityManagers.<LTestProperty> makeFIFO(), 7);
 	}
 
@@ -62,10 +64,10 @@ public class LDefaultLimitedCapacityStorageTest {
 
 		LEventbus.getInstance().publish(new LModelStepEvent());
 
-		storage.store(new LTestProperty("key07", "value07"));
+		storage.store(new LTestProperty(LModel.getModel(), "key07", "value07"));
 		assertTrue(storage.getSize() == 7);
 
-		storage.store(new LTestProperty("key08", "value08"));
+		storage.store(new LTestProperty(LModel.getModel(), "key08", "value08"));
 		assertTrue(storage.getSize() == 7);
 
 		try {
@@ -111,17 +113,20 @@ public class LDefaultLimitedCapacityStorageTest {
 				.<LTestProperty> makeFIFO());
 		cmStorage.setCapacity(2);
 
-		LTestProperty property01 = new LTestProperty("key01", "value01");
+		LTestProperty property01 = new LTestProperty(LModel.getModel(),
+				"key01", "value01");
 		storage.store(property01);
 
 		LEventbus.getInstance().publish(new LModelStepEvent());
 
-		LTestProperty property02 = new LTestProperty("key02", "value02");
+		LTestProperty property02 = new LTestProperty(LModel.getModel(),
+				"key02", "value02");
 		storage.store(property02);
 
 		LEventbus.getInstance().publish(new LModelStepEvent());
 
-		LTestProperty property03 = new LTestProperty("key03", "value03");
+		LTestProperty property03 = new LTestProperty(LModel.getModel(),
+				"key03", "value03");
 		storage.store(property03);
 
 		try {
@@ -156,17 +161,20 @@ public class LDefaultLimitedCapacityStorageTest {
 				.<LTestProperty> makeFILO());
 		cmStorage.setCapacity(2);
 
-		LTestProperty property01 = new LTestProperty("key01", "value01");
+		LTestProperty property01 = new LTestProperty(LModel.getModel(),
+				"key01", "value01");
 		storage.store(property01);
 
 		LEventbus.getInstance().publish(new LModelStepEvent());
 
-		LTestProperty property02 = new LTestProperty("key02", "value02");
+		LTestProperty property02 = new LTestProperty(LModel.getModel(),
+				"key02", "value02");
 		storage.store(property02);
 
 		LEventbus.getInstance().publish(new LModelStepEvent());
 
-		LTestProperty property03 = new LTestProperty("key03", "value03");
+		LTestProperty property03 = new LTestProperty(LModel.getModel(),
+				"key03", "value03");
 		storage.store(property03);
 
 		try {
@@ -201,17 +209,20 @@ public class LDefaultLimitedCapacityStorageTest {
 				.<LTestProperty> makeNINO());
 		cmStorage.setCapacity(2);
 
-		LTestProperty property01 = new LTestProperty("key01", "value01");
+		LTestProperty property01 = new LTestProperty(LModel.getModel(),
+				"key01", "value01");
 		storage.store(property01);
 
 		LEventbus.getInstance().publish(new LModelStepEvent());
 
-		LTestProperty property02 = new LTestProperty("key02", "value02");
+		LTestProperty property02 = new LTestProperty(LModel.getModel(),
+				"key02", "value02");
 		storage.store(property02);
 
 		LEventbus.getInstance().publish(new LModelStepEvent());
 
-		LTestProperty property03 = new LTestProperty("key03", "value03");
+		LTestProperty property03 = new LTestProperty(LModel.getModel(),
+				"key03", "value03");
 		storage.store(property03);
 
 		try {

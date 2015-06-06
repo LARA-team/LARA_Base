@@ -39,7 +39,7 @@ import de.cesr.lara.components.LaraBehaviouralOption;
 import de.cesr.lara.components.decision.LaraBoRow;
 import de.cesr.lara.components.decision.LaraDecisionConfiguration;
 import de.cesr.lara.components.decision.LaraDeliberativeChoiceComponent;
-import de.cesr.lara.components.model.impl.LModel;
+import de.cesr.lara.components.model.LaraModel;
 import de.cesr.lara.components.util.LaraRandom;
 import de.cesr.lara.components.util.logging.impl.Log4jLogger;
 
@@ -61,12 +61,14 @@ public class LDeliberativeChoiceComp_MaxLineTotalRandomAtTie
 
 	/**
 	 * Null is translated to LaraRandom.UNIFORM_DEFAULT.
+	 * @param lmodel 
 	 * 
-	 * @param distribution
-	 * @return
+	 * @param distname
+	 * @return LDeliberativeChoiceComp_MaxLineTotalRandomAtTie instance
 	 */
 	static public LDeliberativeChoiceComp_MaxLineTotalRandomAtTie getInstance(
-			String distribution) {
+			LaraModel lmodel, String distname) {
+		String distribution = distname;
 		if (distribution == null) {
 			distribution = LaraRandom.UNIFORM_DEFAULT;
 		}
@@ -74,8 +76,8 @@ public class LDeliberativeChoiceComp_MaxLineTotalRandomAtTie
 				.get(distribution) == null) {
 			instances
 					.put(distribution,
-							new LDeliberativeChoiceComp_MaxLineTotalRandomAtTie(
-									distribution));
+					new LDeliberativeChoiceComp_MaxLineTotalRandomAtTie(lmodel,
+							distribution));
 		}
 		return instances
 				.get(distribution);
@@ -89,11 +91,9 @@ public class LDeliberativeChoiceComp_MaxLineTotalRandomAtTie
 	 * @param distribution
 	 *        the distribution name to draw random numbers from
 	 */
-	private LDeliberativeChoiceComp_MaxLineTotalRandomAtTie(
+	private LDeliberativeChoiceComp_MaxLineTotalRandomAtTie(LaraModel lmodel,
 			String distribution) {
-		this.rand = LModel
-				.getModel()
-				.getLRandom()
+		this.rand = lmodel.getLRandom()
 				.getDistribution(
 						distribution);
 		if (!(rand instanceof Uniform)) {
@@ -104,14 +104,15 @@ public class LDeliberativeChoiceComp_MaxLineTotalRandomAtTie
 	}
 
 	/**
-	 * Return the k BOs with the highest sum of preference fulfillment.
+	 * Return the k BOs with the highest sum of preference fulfilment.
 	 * 
-	 * Tie Rule: In case there are more than one BOs with the highest score, a random one is chosen among these.
+	 * Tie Rule: In case there are more than one BOs with the highest score, a
+	 * random one is chosen among these.
 	 * 
 	 * @param boRows
-	 *        collection of {@link LaraBoRow}s to select from
+	 *            collection of {@link LaraBoRow}s to select from
 	 * @param k
-	 *        number of (best) BOs to select
+	 *            number of (best) BOs to select
 	 * @return a set of k best behavioural option (regarding row sum)
 	 */
 	@Override
@@ -306,11 +307,11 @@ public class LDeliberativeChoiceComp_MaxLineTotalRandomAtTie
 	}
 
 	/**
-	 * Return the BO with the highest sum of preference fulfillment.
+	 * Return the BO with the highest sum of preference fulfilment.
 	 * 
 	 * Tie Rule: In case there are more than one BOs with the highest score, a random one is chosen among these.
 	 * 
-	 * @see de.cesr.lara.components.decision.LaraDeliberativeChoiceComponent#getBestBehaviouralOption(de.cesr.lara.components.decision.LaraUtilityMatrix)
+	 * @see de.cesr.lara.components.decision.LaraDeliberativeChoiceComponent#getSelectedBo(LaraDecisionConfiguration, Collection)
 	 */
 	@Override
 	public <BO extends LaraBehaviouralOption<?, ? extends BO>> BO getSelectedBo(

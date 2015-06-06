@@ -100,6 +100,7 @@ public class LDeliberativeChoiceComp_ProbabilisticTest {
 
 		agent = new LTestAgent("TestAgent");
 		choiceComp = new LDeliberativeChoiceComp_Probabilistic(
+				LModel.getModel(),
 				"Manipulated Test Distribution");
 	}
 

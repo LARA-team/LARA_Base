@@ -56,6 +56,9 @@ import de.cesr.parma.core.PmParameterManager;
  * specific eventbuses per agent.
  * 
  * GOAL: Loose coupling of components, Event driven initialization.
+ * 
+ * NOTE: Decision configuration specific subscription is only supported for
+ * non-internal events!
  */
 public class LEventbus {
 
@@ -66,31 +69,90 @@ public class LEventbus {
 	/**
 	 * Returns a reference to the global eventbus
 	 * 
+	 * TODO make available from LaraModel (would enable parallel computation
+	 * with several model instances)
+	 * 
 	 * @return global eventbus
 	 */
 	public static LEventbus getInstance() {
-		if (instance == null) {
-			instance = new LEventbus();
-			Log4jLogger.init();
-			logger.debug("LaraEventbus instantiated");
-		}
-		return instance;
+		return getInstance(null);
 	}
 
 	/**
-	 * returns a reference to a special eventbus
+	 * Returns a reference to a specific eventbus
 	 * 
 	 * @param id
+	 *            the id is also applied to acquire the
+	 *            {@link PmParameterManager}.
 	 * @return eventbus
 	 */
 	public static LEventbus getInstance(Object id) {
 		LEventbus theInstance = instances.get(id);
 		if (theInstance == null) {
-			theInstance = new LEventbus();
+			theInstance = new LEventbus(id);
+			Log4jLogger.init();
 			instances.put(id, theInstance);
 			logger.debug("LaraEventbus '" + id + "' instantiated");
 		}
 		return theInstance;
+	}
+
+	/**
+	 * Creates a new instance of {@link LEventbus}. Also registers the new
+	 * instance and possibly overwrites previously registered eventbus at the
+	 * given id.
+	 * 
+	 * @param id
+	 * @param pm
+	 * @return eventbus
+	 */
+	public static LEventbus getNewInstance(Object id, PmParameterManager pm) {
+		LEventbus theInstance = new LEventbus(id, pm);
+		Log4jLogger.init();
+		instances.put(id, theInstance);
+		logger.debug("LaraEventbus '" + id + "' instantiated");
+
+		return theInstance;
+	}
+
+	public static LDcSpecificEventbus getDcSpecificInstance(Object id) {
+		LEventbus theInstance = instances.get(id);
+		if (theInstance == null) {
+			theInstance = new LDcSpecificEventbus(id);
+			Log4jLogger.init();
+			instances.put(id, theInstance);
+			logger.debug("LaraEventbus '" + id + "' instantiated");
+		} else if (!(theInstance instanceof LDcSpecificEventbus)) {
+			throw new IllegalStateException(
+					"The registered eventbus instance for id "
+							+ id
+							+ " is not of decision configuration specific! "
+							+ "Use resetInstance(id) to remove it!");
+		}
+		return (LDcSpecificEventbus) theInstance;
+	}
+	/**
+	 * @param id
+	 * @return true if an instance of Eventbus exists for the given id
+	 */
+	public static boolean isInstanceRegistered(Object id) {
+		return instances.containsKey(id);
+	}
+
+	/**
+	 * Calls {@link LEventbus#resetInstance()} at the instance of the given id
+	 * and removes it from the map of registered instances. Clears collection of
+	 * instances.
+	 * 
+	 * @param id
+	 */
+	public static void reset(Object id) {
+		// <- LOGGING
+		logger.info("Reset instance for id " + id);
+		// LOGGING ->
+
+		instances.get(id).resetInstance();
+		instances.remove(id);
 	}
 
 	/**
@@ -112,23 +174,34 @@ public class LEventbus {
 		instances.clear();
 	}
 
-	private boolean forceSequential;
+	protected boolean forceSequential;
 
-	private volatile Set<Class<? extends LaraEvent>> eventsThisTimestep = new HashSet<Class<? extends LaraEvent>>();
+	protected volatile Set<Class<? extends LaraEvent>> eventsThisTimestep = new HashSet<Class<? extends LaraEvent>>();
 
-	private volatile Map<Class<? extends LaraEvent>, Set<LaraAbstractEventSubscriber>> eventSubscriberMap = new HashMap<Class<? extends LaraEvent>, Set<LaraAbstractEventSubscriber>>();
+	protected volatile Map<Class<? extends LaraEvent>, Set<LaraAbstractEventSubscriber>> eventSubscriberMap = new HashMap<Class<? extends LaraEvent>, Set<LaraAbstractEventSubscriber>>();
 
-	private volatile Map<LaraEvent, Integer> eventWaitingCounters = new HashMap<LaraEvent, Integer>();
+	protected volatile Map<Class<? extends LaraEvent>, Set<LaraAbstractEventSubscriber>> eventSubscriberOnceMap = new HashMap<Class<? extends LaraEvent>, Set<LaraAbstractEventSubscriber>>();
 
-	private final Map<Class<? extends LaraEvent>, Long> statistics = new HashMap<Class<? extends LaraEvent>, Long>();
+	protected volatile Map<LaraEvent, Integer> eventWaitingCounters = new HashMap<LaraEvent, Integer>();
 
+	protected final Map<Class<? extends LaraEvent>, Long> statistics = new HashMap<Class<? extends LaraEvent>, Long>();
+
+	protected PmParameterManager pm;
+
+	protected LEventbus(Object id) {
+		this(id, PmParameterManager.getInstance(id));
+	}
 	/**
 	 * This is a singleton. Use of constructor is permitted. Use getInstance()
 	 * to obtain a reference to the event bus.
 	 */
-	protected LEventbus() {
-		this.forceSequential = (Boolean) PmParameterManager
-				.getParameter(LBasicPa.EVENTBUS_FORCE_SEQUENTIAL);
+	protected LEventbus(Object id, PmParameterManager pm) {
+		this.pm = pm;
+		if (this.pm == null) {
+			this.pm = PmParameterManager.getInstance(null);
+		}
+		this.forceSequential = (Boolean) this.pm
+				.getParam(LBasicPa.EVENTBUS_FORCE_SEQUENTIAL);
 
 		// <- LOGGING
 		logger.info("EventBus runs in FORCE_SEQUENTIAL mode? "
@@ -142,9 +215,8 @@ public class LEventbus {
 	 * stops waiting.
 	 * 
 	 * @param event
-	 * @param monitor
 	 */
-	private void decrementWaitingCounter(LaraEvent event) {
+	protected void decrementWaitingCounter(LaraEvent event) {
 		synchronized (event) {
 			Integer oldValue = getWaitingCounter(event);
 			if (oldValue == null) {
@@ -174,7 +246,7 @@ public class LEventbus {
 	 * 
 	 * @param event
 	 */
-	private Integer getWaitingCounter(LaraEvent event) {
+	protected Integer getWaitingCounter(LaraEvent event) {
 		synchronized (event) {
 			return eventWaitingCounters.get(event);
 		}
@@ -186,7 +258,7 @@ public class LEventbus {
 	 * 
 	 * @param event
 	 */
-	private void incrementWaitingCounter(LaraEvent event) {
+	protected void incrementWaitingCounter(LaraEvent event) {
 		synchronized (event) {
 			Integer oldValue = getWaitingCounter(event);
 			if (oldValue == null) {
@@ -214,7 +286,7 @@ public class LEventbus {
 	 * @param subscribers
 	 * @param event
 	 */
-	private void logSubscribers(
+	protected void logSubscribers(
 			Collection<LaraAbstractEventSubscriber> subscribers, LaraEvent event) {
 		// <- LOGGING
 		if (logger.isDebugEnabled()) {
@@ -230,13 +302,13 @@ public class LEventbus {
 	}
 
 	/**
-	 * Notifies internat subscriber sequential. Subscribers will execute their
+	 * Notifies internal subscriber sequential. Subscribers will execute their
 	 * related code sequential. Method finishes after last subscriber finishes.
 	 * 
 	 * @param subscribers
 	 * @param event
 	 */
-	private void notifyInternalSubscribersSequential(
+	protected void notifyInternalSubscribersSequential(
 			Set<LaraAbstractEventSubscriber> subscribers, LaraEvent event) {
 		// <- LOGGING
 		logger.info("Notifying " + subscribers.size()
@@ -259,15 +331,16 @@ public class LEventbus {
 	}
 
 	/**
-	 * Notifies noninternal subscriber sequential. Subscribers will execute
+	 * Notifies non-internal subscriber sequential. Subscribers will execute
 	 * their related code sequential. Method finishes after last subscriber
 	 * finishes.
 	 * 
 	 * @param subscribers
 	 * @param event
 	 */
-	private void notifyNoninternalSubscribersSequential(
+	protected void notifyNoninternalSubscribersSequential(
 			Set<LaraAbstractEventSubscriber> subscribers, LaraEvent event) {
+		// TODO DC where referenced?
 		// <- LOGGING
 		logger.info("Notifying " + subscribers.size()
 				+ " noninternal subscribers sequentially ("
@@ -294,20 +367,35 @@ public class LEventbus {
 	 * 
 	 * @param event
 	 */
-	protected void notifySubscribers(LaraEvent event) {
-		// notify all subscribers
+	protected boolean notifySubscribers(LaraEvent event, boolean hasSubscriberFlag) {
+		boolean hasSubscribers = hasSubscriberFlag;
+		// notify only once subscribers according to event type
+		Set<LaraAbstractEventSubscriber> subscribers = null;
+
+		if (eventSubscriberOnceMap.containsKey(event.getClass())) {
+			// get subscribers set
+			subscribers = eventSubscriberOnceMap.get(event.getClass());
+			eventSubscriberOnceMap.remove(event.getClass());
+		}
+
 		if (eventSubscriberMap.containsKey(event.getClass())) {
 			// get subscribers set
-			Set<LaraAbstractEventSubscriber> subscribers = eventSubscriberMap
-					.get(event.getClass());
+			if (subscribers != null) {
+				subscribers.addAll(eventSubscriberMap.get(event.getClass()));
+			} else {
+				subscribers = eventSubscriberMap.get(event.getClass());
+			}
+		}
 
+		if (subscribers != null) {
+			hasSubscribers = true;
 			logSubscribers(subscribers, event);
 
 			logger.debug("Notifying " + subscribers.size()
 					+ " subscriber(s) of event of type "
 					+ event.getClass().getSimpleName());
 
-			// notify subscriber according to event type
+			// notify subscribers according to event type
 			if (event instanceof LaraSynchronousEvent) {
 				if (this.forceSequential) {
 					notifySubscribersSequential(subscribers, event);
@@ -321,7 +409,7 @@ public class LEventbus {
 			} else {
 				notifySubscribersSequential(subscribers, event);
 			}
-		} else {
+		} else if (!hasSubscribers) {
 			// no subscribers - log this
 			logger.warn("Event of type "
 					+ event.getClass().getSimpleName()
@@ -331,6 +419,7 @@ public class LEventbus {
 		if (event instanceof LaraHasConsecutiveEvent) {
 			publish(((LaraHasConsecutiveEvent) event).getConsecutiveEvent());
 		}
+		return hasSubscribers;
 	}
 
 	/**
@@ -341,7 +430,7 @@ public class LEventbus {
 	 * @param subscribers
 	 * @param event
 	 */
-	private void notifySubscribersAsynchronous(
+	protected void notifySubscribersAsynchronous(
 			Set<LaraAbstractEventSubscriber> subscribers, final LaraEvent event) {
 		// <- LOGGING
 		logger.info("Notifying " + subscribers.size()
@@ -388,7 +477,7 @@ public class LEventbus {
 	 * @param subscribers
 	 * @param event
 	 */
-	private void notifySubscribersSequential(
+	protected void notifySubscribersSequential(
 			Set<LaraAbstractEventSubscriber> subscribers, LaraEvent event) {
 		// <- LOGGING
 		logger.info("Notifying " + subscribers.size()
@@ -433,7 +522,7 @@ public class LEventbus {
 	 * @param subscribers
 	 * @param event
 	 */
-	private void notifySubscribersSynchronous(
+	protected void notifySubscribersSynchronous(
 			Set<LaraAbstractEventSubscriber> subscribers, final LaraEvent event) {
 		// too much threads at once is highly ineffective. so we use
 		// taskgroups to reduce max number of concurrent threads
@@ -535,7 +624,7 @@ public class LEventbus {
 		logger.info(event.getClass().getName() + " published");
 
 		if (logger.isDebugEnabled()) {
-			logger.error("Publisher: ", new LIdentifyCallerException(2, 1));
+			logger.debug("Publisher: ", new LIdentifyCallerException(2, 1));
 		}
 		// LOGGING ->
 
@@ -552,7 +641,7 @@ public class LEventbus {
 			if (eventsThisTimestep
 					.contains(((LaraRequiresPrecedingEvent) event)
 							.getRequiredPrecedingEventClass())) {
-				notifySubscribers(event);
+				notifySubscribers(event, false);
 			} else {
 				// no subscribers - log this
 				logger.warn("Event of type "
@@ -563,7 +652,7 @@ public class LEventbus {
 						+ " to have occured before - which did not happen.");
 			}
 		} else {
-			notifySubscribers(event);
+			notifySubscribers(event, false);
 		}
 	}
 
@@ -578,6 +667,7 @@ public class LEventbus {
 
 		eventsThisTimestep.clear();
 		eventSubscriberMap.clear();
+		eventSubscriberOnceMap.clear();
 		eventWaitingCounters.clear();
 		statistics.clear();
 	}
@@ -635,6 +725,42 @@ public class LEventbus {
 				+ eventClass.getName());
 
 		if (logger.isDebugEnabled()) {
+			logger.debug("Subscriber: ", new LIdentifyCallerException(2, 1));
+		}
+		// LOGGING ->
+	}
+
+	/**
+	 * Subscribes the given {@link LaraEventSubscriber} to be notified only once
+	 * for the next event.
+	 * 
+	 * NOTE: If the same subscriber is subscribed to the event continuously (via
+	 * {@link #subscribe(LaraAbstractEventSubscriber, Class)} it is notified
+	 * only once!
+	 * 
+	 * @param subscriber
+	 * @param eventClass
+	 */
+	public void subscribeOnce(LaraAbstractEventSubscriber subscriber,
+			Class<? extends LaraEvent> eventClass) {
+		if (eventSubscriberOnceMap.containsKey(eventClass)) {
+			// add to existing set
+			Set<LaraAbstractEventSubscriber> subscribers = eventSubscriberOnceMap
+					.get(eventClass);
+			subscribers.add(subscriber);
+		} else {
+			// add to new set
+			Set<LaraAbstractEventSubscriber> subscribers = new LinkedHashSet<LaraAbstractEventSubscriber>();
+			subscribers.add(subscriber);
+			// add to event-subscriber mapping
+			eventSubscriberOnceMap.put(eventClass, subscribers);
+		}
+
+		// <- LOGGING
+		logger.info("Subscribed " + subscriber + " to event "
+				+ eventClass.getName());
+
+		if (logger.isDebugEnabled()) {
 			logger.error("Subscriber: ", new LIdentifyCallerException(2, 1));
 		}
 		// LOGGING ->
@@ -648,6 +774,7 @@ public class LEventbus {
 	 */
 	public void unsubscribe(Class<? extends LaraEvent> eventClass) {
 		eventSubscriberMap.remove(eventClass);
+		eventSubscriberOnceMap.remove(eventClass);
 
 		// <- LOGGING
 		logger.info("Unsubscribed all subscribers from event " + eventClass
@@ -663,6 +790,11 @@ public class LEventbus {
 	 */
 	public void unsubscribe(LaraAbstractEventSubscriber subscriber) {
 		for (Set<LaraAbstractEventSubscriber> subscribers : eventSubscriberMap
+				.values()) {
+			subscribers.remove(subscriber);
+		}
+
+		for (Set<LaraAbstractEventSubscriber> subscribers : eventSubscriberOnceMap
 				.values()) {
 			subscribers.remove(subscriber);
 		}
@@ -692,6 +824,18 @@ public class LEventbus {
 					+ " but is not a subscriber at the moment");
 		}
 
+		if (eventSubscriberOnceMap.containsKey(eventClass)) {
+			// get existing set of subscribers
+			Set<LaraAbstractEventSubscriber> subscribers = eventSubscriberOnceMap
+					.get(eventClass);
+			subscribers.remove(subscriber);
+		} else {
+			logger.debug("instance of " + subscriber.getClass().getSimpleName()
+					+ " wants to unsubscribe from event of type "
+					+ eventClass.getSimpleName()
+					+ " but is not a subscriber at the moment");
+		}
+
 		// <- LOGGING
 		logger.info("Unsubscribed " + subscriber + " from event "
 				+ eventClass.getName());
@@ -707,6 +851,7 @@ public class LEventbus {
 	 */
 	public void unsubscribe(LaraEvent event) {
 		eventSubscriberMap.remove(event.getClass());
+		eventSubscriberOnceMap.remove(event.getClass());
 
 		// <- LOGGING
 		logger.info("Unsubscribed all subscribers from event "
@@ -718,9 +863,8 @@ public class LEventbus {
 	 * Wait for worker threads to finish. The last thread that finishes will
 	 * notify the monitor.
 	 * 
-	 * @param monitor
 	 */
-	private void waitUntilWorkDone(final LaraEvent event) {
+	protected void waitUntilWorkDone(final LaraEvent event) {
 		synchronized (event) {
 			try {
 				logger.debug("waiting for worker threads to finish for event "

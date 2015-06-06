@@ -28,6 +28,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import de.cesr.lara.components.LaraBehaviouralOption;
+import de.cesr.lara.components.LaraPerformableBo;
 import de.cesr.lara.components.LaraPreference;
 import de.cesr.lara.components.LaraProperty;
 import de.cesr.lara.components.agents.LaraAgent;
@@ -44,12 +45,14 @@ import de.cesr.lara.components.decision.impl.LDeliberativeChoiceComp_MaxLineTota
 import de.cesr.lara.components.environment.LaraEnvironment;
 import de.cesr.lara.components.environment.impl.LAbstractEnvironmentalProperty;
 import de.cesr.lara.components.eventbus.events.LAgentDecideEvent;
+import de.cesr.lara.components.eventbus.events.LAgentExecutionEvent;
 import de.cesr.lara.components.eventbus.events.LAgentPerceptionEvent;
 import de.cesr.lara.components.eventbus.events.LAgentPostExecutionEvent;
 import de.cesr.lara.components.eventbus.events.LAgentPostprocessEvent;
 import de.cesr.lara.components.eventbus.events.LAgentPreprocessEvent;
 import de.cesr.lara.components.eventbus.events.LaraEvent;
 import de.cesr.lara.components.eventbus.impl.LEventbus;
+import de.cesr.lara.components.model.LaraModel;
 import de.cesr.lara.components.param.LDecisionMakingPa;
 import de.cesr.lara.components.postprocessor.LaraPostprocessorComp;
 import de.cesr.lara.components.postprocessor.impl.LDefaultPostProcessorComp;
@@ -85,38 +88,57 @@ public class LDefaultAgentComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 	/**
 	 * Deliberative choice components according to {@link LaraDecisionConfiguration}. Contains default for key NULL.
 	 */
-	protected static Map<LaraDecisionConfiguration, LaraDeliberativeChoiceComponent> defaultDeliberativeChoiceComponents =
-			null;
+	protected static Map<LaraModel, Map<LaraDecisionConfiguration, LaraDeliberativeChoiceComponent>> defaultDeliberativeChoiceComponents = new HashMap<LaraModel, Map<LaraDecisionConfiguration, LaraDeliberativeChoiceComponent>>();
 
-	/**
-	 * Init deliberative choice components.
-	 */
-	static {
-		defaultDeliberativeChoiceComponents = new HashMap<LaraDecisionConfiguration, LaraDeliberativeChoiceComponent>();
-		defaultDeliberativeChoiceComponents
-				.put(null, LDeliberativeChoiceComp_MaxLineTotalRandomAtTie.getInstance(null));
-	}
 
 	// //
 	// Static Methods
 	// //
 
 	/**
+	 * @param lmodel 
 	 * @param dConfiguration
 	 * @return deliberative choice component
 	 */
 	static public LaraDeliberativeChoiceComponent getDefaultDeliberativeChoiceComp(
+			LaraModel lmodel,
 			LaraDecisionConfiguration dConfiguration) {
-		return defaultDeliberativeChoiceComponents.get(dConfiguration);
+		if (!defaultDeliberativeChoiceComponents.containsKey(lmodel)) {
+			defaultDeliberativeChoiceComponents
+					.put(lmodel,
+							new HashMap<LaraDecisionConfiguration, LaraDeliberativeChoiceComponent>());
+		}
+		if (defaultDeliberativeChoiceComponents.get(lmodel).containsKey(
+				dConfiguration)) {
+			return defaultDeliberativeChoiceComponents.get(lmodel).get(
+					dConfiguration);
+		} else {
+			if (!defaultDeliberativeChoiceComponents.get(lmodel).containsKey(
+					null)) {
+				defaultDeliberativeChoiceComponents.get(lmodel).put(
+						null,
+						LDeliberativeChoiceComp_MaxLineTotalRandomAtTie
+								.getInstance(lmodel, null));
+			}
+			return defaultDeliberativeChoiceComponents.get(lmodel).get(null);
+		}
 	}
 
 	/**
+	 * @param lmodel
 	 * @param dConfiguration
 	 * @param comp
 	 */
-	static public void setDefaultDeliberativeChoiceComp(LaraDecisionConfiguration dConfiguration,
+	static public void setDefaultDeliberativeChoiceComp(LaraModel lmodel,
+			LaraDecisionConfiguration dConfiguration,
 			LaraDeliberativeChoiceComponent comp) {
-		defaultDeliberativeChoiceComponents.put(dConfiguration, comp);
+		if (!defaultDeliberativeChoiceComponents.containsKey(lmodel)) {
+			defaultDeliberativeChoiceComponents
+					.put(lmodel,
+							new HashMap<LaraDecisionConfiguration, LaraDeliberativeChoiceComponent>());
+		}
+		defaultDeliberativeChoiceComponents.get(lmodel).put(dConfiguration,
+				comp);
 	}
 
 	// //
@@ -128,7 +150,9 @@ public class LDefaultAgentComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 	 */
 	protected A agent;
 
-	protected LEventbus eventBus = LEventbus.getInstance();
+	protected LaraModel lmodel = null;
+
+	protected LEventbus eventBus;
 
 	/**
 	 * memory for behavioural options
@@ -187,12 +211,13 @@ public class LDefaultAgentComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 
 
 	/**
-	 * Simplest Constructor (e.g. social environment, geographical environment)
+	 * Constructor
+	 * @param laraModel 
 	 * 
 	 * @param agent
 	 * @param env
 	 */
-	public LDefaultAgentComp(A agent, LaraEnvironment env) {
+	public LDefaultAgentComp(LaraModel laraModel, A agent, LaraEnvironment env) {
 
 		// init agent specific logger (agent id is first part of logger name):
 		if (Log4jLogger.getLogger(agent.getAgentId() + "." + LDefaultAgentComp.class.getName()).isEnabledFor(
@@ -200,26 +225,33 @@ public class LDefaultAgentComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 			agentLogger = Log4jLogger.getLogger(agent.getAgentId() + "." + LDefaultAgentComp.class.getName());
 		}
 
+		this.setLaraModel(laraModel);
 		this.agent = agent;
 		this.environment = env;
 
 		memory =
-				new LDefaultLimitedCapacityMemory<LaraProperty<?, ?>>(LCapacityManagers.<LaraProperty<?, ?>> makeFIFO());
+ new LDefaultLimitedCapacityMemory<LaraProperty<?, ?>>(
+				laraModel, LCapacityManagers.<LaraProperty<?, ?>> makeFIFO());
 
 		checkMemoryCapacityForHabitSelection();
 
-		boMemory = new LDefaultLimitedCapacityBOMemory<BO>(LCapacityManagers.<BO> makeFIFO());
+		boMemory = new LDefaultLimitedCapacityBOMemory<BO>(laraModel,
+				LCapacityManagers.<BO> makeFIFO());
 		preferenceWeights = new LPreferenceWeightMap();
 		decisionData = new HashMap<LaraDecisionConfiguration, LaraDecisionData<A, BO>>();
 		deliberativeChoiceCompents = new HashMap<LaraDecisionConfiguration, LaraDeliberativeChoiceComponent>();
 
 		this.postProcessorComp = new LDefaultPostProcessorComp<A, BO>();
+	}
 
-		eventBus.subscribe(this, LAgentPerceptionEvent.class);
-		eventBus.subscribe(this, LAgentPreprocessEvent.class);
-		eventBus.subscribe(this, LAgentDecideEvent.class);
-		eventBus.subscribe(this, LAgentPostprocessEvent.class);
-		eventBus.subscribe(this, LAgentPostExecutionEvent.class);
+	/**
+	 * Constructor
+	 * 
+	 * @param agent
+	 * @param env
+	 */
+	public LDefaultAgentComp(A agent, LaraEnvironment env) {
+		this(null, agent, env);
 	}
 
 	// //
@@ -324,8 +356,32 @@ public class LDefaultAgentComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 			postProcessorComp.postProcess(agent, ((LAgentPostprocessEvent) event).getDecisionConfiguration());
 			logDecision(((LAgentPostprocessEvent) event).getDecisionConfiguration());
 
+		} else if (event instanceof LAgentExecutionEvent) {
+			perform(event);
+
 		} else if (event instanceof LAgentPostExecutionEvent) {
 			removeDecisionData(((LAgentPostExecutionEvent) event).getDecisionConfiguration());
+		}
+	}
+
+	/**
+	 * @param event
+	 */
+	protected void perform(LaraEvent event) {
+		LaraDecider<BO> decider = this
+				.getDecisionData(
+				((LAgentExecutionEvent) event)
+								.getDecisionConfiguration()).getDecider();
+		if (decider.getNumSelectableBOs() > 1) {
+			for (BO selectedBo : decider.getKSelectedBos(decider.getNumSelectableBOs())) {
+				if (selectedBo instanceof LaraPerformableBo) {
+					((LaraPerformableBo) selectedBo).perform();
+				}
+			}
+		} else {
+			if (decider.getSelectedBo() instanceof LaraPerformableBo) {
+				((LaraPerformableBo) decider.getSelectedBo()).perform();
+			}
 		}
 	}
 
@@ -370,6 +426,29 @@ public class LDefaultAgentComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 	// Instance GETTER and SETTER
 	// //
 
+	@Override
+	public LaraModel getLaraModel() {
+		return this.lmodel;
+	}
+
+	@Override
+	public void setLaraModel(LaraModel lmodel) {
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			logger.info("Set new id object (renew eventbus and subscirbe events subsequently)");
+		}
+		// LOGGING ->
+
+		this.lmodel = lmodel;
+		this.eventBus = this.lmodel.getLEventbus();
+		eventBus.subscribe(this, LAgentPerceptionEvent.class);
+		eventBus.subscribe(this, LAgentPreprocessEvent.class);
+		eventBus.subscribe(this, LAgentDecideEvent.class);
+		eventBus.subscribe(this, LAgentPostprocessEvent.class);
+		eventBus.subscribe(this, LAgentExecutionEvent.class);
+		eventBus.subscribe(this, LAgentPostExecutionEvent.class);
+	}
+
 	/**
 	 * @see de.cesr.lara.components.agents.LaraAgentComponent#getGeneralMemory()
 	 */
@@ -401,19 +480,18 @@ public class LDefaultAgentComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 		return decisionData.values();
 	}
 
-	/**
-	 * @see de.cesr.lara.components.agents.LaraAgentComponent#getDeliberativeChoiceComp(de.cesr.lara.components.decision.LaraDecisionConfiguration)
+
+		/**
+	 * @see de.cesr.lara.components.agents.LaraAgentComponent#getDeliberativeChoiceComp(de.cesr.lara.components.model.LaraModel,
+	 *      de.cesr.lara.components.decision.LaraDecisionConfiguration)
 	 */
 	@Override
-	public LaraDeliberativeChoiceComponent getDeliberativeChoiceComp(LaraDecisionConfiguration dConfiguration) {
+	public LaraDeliberativeChoiceComponent getDeliberativeChoiceComp(
+			LaraModel lmodel, LaraDecisionConfiguration dConfiguration) {
 		if (deliberativeChoiceCompents.containsKey(dConfiguration)) {
 			return deliberativeChoiceCompents.get(dConfiguration);
-		} else if (defaultDeliberativeChoiceComponents.containsKey(dConfiguration)) {
-			return defaultDeliberativeChoiceComponents.get(dConfiguration);
-		} else if (deliberativeChoiceCompents.containsKey(null)) {
-			return deliberativeChoiceCompents.get(null);
 		} else {
-			return defaultDeliberativeChoiceComponents.get(null);
+			return getDefaultDeliberativeChoiceComp(lmodel, dConfiguration);
 		}
 	}
 
@@ -496,4 +574,12 @@ public class LDefaultAgentComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 		this.preprocessor = preprocessor;
 	}
 
+
+	/**
+	 * @see de.cesr.lara.components.agents.LaraAgentComponent#getPreprocessor()
+	 */
+	@Override
+	public LaraPreprocessor<A, BO> getPreprocessor() {
+		return this.preprocessor;
+	}
 }

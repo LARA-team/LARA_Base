@@ -50,6 +50,9 @@ import de.cesr.lara.components.util.logging.impl.Log4jLogger;
  * 
  * TODO Test sub-environments
  * 
+ * TODO consider Composite Design Pattern for property provision from
+ * sub-environments
+ * 
  * @author Sascha Holzhauer
  * @date 22.12.2009
  * 
@@ -62,9 +65,6 @@ public class LEnvironment implements LaraSuperEnvironment {
 	static private Logger logger = Log4jLogger.getLogger(LEnvironment.class);
 	
 	/**
-	 * @uml.property name="abstractProperty"
-	 * @uml.associationEnd multiplicity="(0 -1)" inverse=
-	 *                     "abstractEnvironment:de.cesr.sesam.suaam.model.environment.AbstractProperty"
 	 */
 	protected Map<String, LAbstractEnvironmentalProperty<?>> abstractProperties;
 
@@ -302,7 +302,7 @@ public class LEnvironment implements LaraSuperEnvironment {
 	}
 
 	/**
-	 * @see de.cesr.lara.components.environment.LaraSuperEnvironment#removePropertySubenv(java.lang.String)
+	 * @see de.cesr.lara.components.environment.LaraSuperEnvironment#removePropertySubenv(Object, String)
 	 */
 	@Override
 	public boolean removePropertySubenv(Object category, String name) {

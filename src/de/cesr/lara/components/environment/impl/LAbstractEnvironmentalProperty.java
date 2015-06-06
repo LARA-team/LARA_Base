@@ -22,6 +22,7 @@ package de.cesr.lara.components.environment.impl;
 
 import de.cesr.lara.components.LaraProperty;
 import de.cesr.lara.components.environment.LaraEnvironment;
+import de.cesr.lara.components.model.LaraModel;
 
 
 /**
@@ -42,14 +43,19 @@ public abstract class LAbstractEnvironmentalProperty<V> extends LaraProperty<LAb
 	 */
 	protected LaraEnvironment	environment;
 
+	protected LaraModel lmodel;
+
 	/**
+	 * @param lmodel 
 	 * @param key
 	 *        the <code>LEnvironmentalProperty</code>'s name
 	 * @param env
 	 *        the {@link LaraEnvironment} the property belongs to
 	 */
-	public LAbstractEnvironmentalProperty(String key, LaraEnvironment env) {
-		super(key);
+	public LAbstractEnvironmentalProperty(LaraModel lmodel, String key,
+			LaraEnvironment env) {
+		super(lmodel, key);
+		this.lmodel = lmodel;
 		this.environment = env;
 	}
 
