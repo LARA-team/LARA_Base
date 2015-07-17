@@ -329,9 +329,11 @@ public class LDefaultAgentComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 		if (event instanceof LAgentPreprocessEvent) {
 			// <- LOGGING
 			if (logger.isDebugEnabled()) {
-				logger.debug(this.agent + "> preprocess DB "
-						+ ((LAgentPreprocessEvent) event).getDecisionConfiguration().getId());
-				logger.debug("(Preprocessor Builder: " + this.preprocessor + ")");
+				logger.debug(this.agent
+						+ "> preprocess "
+						+ ((LAgentPreprocessEvent) event)
+								.getDecisionConfiguration());
+				logger.debug("(Preprocessor: " + this.preprocessor + ")");
 			}
 			// LOGGING ->
 
@@ -372,7 +374,9 @@ public class LDefaultAgentComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 				.getDecisionData(
 				((LAgentExecutionEvent) event)
 								.getDecisionConfiguration()).getDecider();
-		if (decider.getNumSelectableBOs() > 1) {
+		if (decider.getNumSelectableBOs() > 1
+				&& !((LAgentExecutionEvent) event).getDecisionConfiguration()
+						.singleSelectedBoExpected()) {
 			for (BO selectedBo : decider.getKSelectedBos(decider.getNumSelectableBOs())) {
 				if (selectedBo instanceof LaraPerformableBo) {
 					((LaraPerformableBo) selectedBo).perform();
@@ -571,6 +575,16 @@ public class LDefaultAgentComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 	 */
 	@Override
 	public void setPreprocessor(LaraPreprocessor<A, BO> preprocessor) {
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			logger.debug(this + "> Set pre-processor: " + preprocessor);
+			for (LaraDecisionConfiguration dConfig : this.getLaraModel()
+					.getDecisionConfigRegistry().getAll()) {
+				logger.debug(preprocessor.getConfigurationString(dConfig));
+			}
+		}
+		// LOGGING ->
+
 		this.preprocessor = preprocessor;
 	}
 

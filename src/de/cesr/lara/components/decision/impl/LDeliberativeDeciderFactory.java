@@ -22,6 +22,7 @@ package de.cesr.lara.components.decision.impl;
 import java.util.Collection;
 
 import org.apache.log4j.Logger;
+import org.simpleframework.xml.Element;
 
 import de.cesr.lara.components.LaraBehaviouralOption;
 import de.cesr.lara.components.agents.LaraAgent;
@@ -49,6 +50,9 @@ public class LDeliberativeDeciderFactory<A extends LaraAgent<? super A, BO>, BO 
 
 	static LaraDeciderFactory<?, ?> factory = null;
 	static Class<?> clazz;
+
+	@Element(required = false)
+	protected boolean singleSelectedBoExpected = false;
 
 	/**
 	 * The problem: in java, non-static class AgentT (parameter) cannot be

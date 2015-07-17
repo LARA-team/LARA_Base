@@ -89,6 +89,11 @@ public class LPreprocessorTest {
 			@Override
 			public void setPreferences(Collection<LaraPreference> goals) {
 			}
+
+			@Override
+			public boolean singleSelectedBoExpected() {
+				return false;
+			}
 		};
 
 		decision2 = new LaraDecisionConfiguration() {
@@ -105,6 +110,11 @@ public class LPreprocessorTest {
 
 			@Override
 			public void setPreferences(Collection<LaraPreference> goals) {
+			}
+
+			@Override
+			public boolean singleSelectedBoExpected() {
+				return false;
 			}
 		};
 

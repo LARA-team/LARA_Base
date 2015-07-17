@@ -52,4 +52,9 @@ public interface LaraDecisionConfiguration {
 	 * @param preferences
 	 */
 	public void setPreferences(Collection<LaraPreference> preferences);
+
+	/**
+	 * @return true if the decision making process should select a single BO.
+	 */
+	public boolean singleSelectedBoExpected();
 }

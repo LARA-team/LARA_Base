@@ -54,7 +54,6 @@ import de.cesr.lara.components.util.impl.LPrefEntry;
 public class LTestUtils {
 
 	static LaraPreferenceRegistry preg;
-	static public LaraDecisionConfiguration dConfig;
 
 	static {
 	}
@@ -137,16 +136,6 @@ public class LTestUtils {
 		}
 	};
 
-	static public class LTestDecisionConfig extends LDecisionConfiguration {
-		public LTestDecisionConfig() {
-			Collection<LaraPreference> prefs = new HashSet<LaraPreference>();
-			prefs.add(preg.get("LTestPreference1"));
-			prefs.add(preg.get("LTestPreference2"));
-
-			this.setPreferences(prefs);
-		}
-	}
-
 	/**
 	 * Inits a {@link LaraModel} as test model.
 	 * 
@@ -214,11 +203,27 @@ public class LTestUtils {
 		preg.register("LTestPreference1");
 		preg.register("LTestPreference2");
 
-		LTestUtils.dConfig = new LTestDecisionConfig();
+		model.getLEventbus().publish(new LModelInstantiatedEvent());
+	}
+
+	public static LaraDecisionConfiguration initTestModel() {
+		LaraDecisionConfiguration dConfig = new LDecisionConfiguration();
+		LTestUtils.initTestModel(dConfig);
+		LTestUtils.initDConfig(dConfig);
+		return dConfig;
+	}
+
+	/**
+	 * Intended for applications when a specific
+	 * {@link LaraDecisionConfiguration} is required. This needs to be
+	 * instantiated before and initialised (set preferences) thereafter.
+	 * 
+	 * @param dConfig
+	 */
+	public static void initDConfig(LaraDecisionConfiguration dConfig) {
 		Collection<LaraPreference> prefs = new HashSet<LaraPreference>();
 		prefs.add(preg.get("LTestPreference1"));
 		prefs.add(preg.get("LTestPreference2"));
-		LTestUtils.dConfig.setPreferences(prefs);
-		model.getLEventbus().publish(new LModelInstantiatedEvent());
+		dConfig.setPreferences(prefs);
 	}
 }

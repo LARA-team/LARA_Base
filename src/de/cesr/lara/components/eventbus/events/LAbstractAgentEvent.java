@@ -17,46 +17,35 @@
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.cesr.lara.components.util.impl;
+package de.cesr.lara.components.eventbus.events;
 
-import de.cesr.lara.components.LaraPreference;
+import de.cesr.lara.components.decision.LaraDecisionConfiguration;
 
 /**
  * @author Sascha Holzhauer
  *
  */
-public class LPreference implements LaraPreference {
+public class LAbstractAgentEvent implements LaraSynchronousEvent,
+		LaraDcSpecificEvent {
 
-	private String id;
+	protected LaraDecisionConfiguration decisionConfiguration;
 
-	private String description = "NOT GIVEN";
-
-	LPreference(String id, String desription) {
-		this.id = id;
-		this.description = desription;
-	}
-
-	LPreference(String id) {
-		this.id = id;
+	/**
+	 * @param dconfig
+	 */
+	public LAbstractAgentEvent(LaraDecisionConfiguration dconfig) {
+		this.decisionConfiguration = dconfig;
 	}
 
 	/**
-	 * @see de.cesr.lara.components.LaraPreference#getId()
+	 * @see de.cesr.lara.components.eventbus.events.LaraDcSpecificEvent#getDecisionConfiguration()
 	 */
 	@Override
-	public String getId() {
-		return this.id;
-	}
-
-	/**
-	 * @see de.cesr.lara.components.LaraPreference#getDescription()
-	 */
-	@Override
-	public String getDescription() {
-		return this.description;
+	public LaraDecisionConfiguration getDecisionConfiguration() {
+		return this.decisionConfiguration;
 	}
 
 	public String toString() {
-		return "LPreference(" + this.id + ")";
+		return "AgentEvent for " + decisionConfiguration;
 	}
 }

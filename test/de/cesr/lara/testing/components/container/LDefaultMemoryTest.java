@@ -45,6 +45,8 @@ import de.cesr.lara.components.container.exceptions.LRetrieveException;
 import de.cesr.lara.components.container.memory.LaraMemory;
 import de.cesr.lara.components.container.memory.LaraMemoryListener;
 import de.cesr.lara.components.container.memory.impl.LDefaultMemory;
+import de.cesr.lara.components.decision.LaraDecisionConfiguration;
+import de.cesr.lara.components.decision.impl.LDecisionConfiguration;
 import de.cesr.lara.components.eventbus.events.LModelStepEvent;
 import de.cesr.lara.components.eventbus.impl.LEventbus;
 import de.cesr.lara.components.model.impl.LModel;
@@ -97,7 +99,10 @@ public class LDefaultMemoryTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		LTestUtils.initTestModel(LTestUtils.dConfig);
+		LaraDecisionConfiguration dConfig = new LDecisionConfiguration();
+		LTestUtils.initTestModel(dConfig);
+		LTestUtils.initDConfig(dConfig);
+
 		memory = new LDefaultMemory<LTestProperty>(LModel.getModel());
 		LEventbus.getInstance().publish(new LModelStepEvent());
 	}

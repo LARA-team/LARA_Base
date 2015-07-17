@@ -24,8 +24,11 @@ package de.cesr.lara.components.eventbus.events;
  */
 public class LUpdateEnvironmentEvent implements LaraSynchronousEvent {
 
-	public LUpdateEnvironmentEvent() {
-
+	/**
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return "NN";
 	}
 
 }

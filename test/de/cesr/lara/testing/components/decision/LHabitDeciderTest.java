@@ -58,7 +58,7 @@ public class LHabitDeciderTest {
 	LTestBo one;
 	LTestBo two;
 
-	LaraDecisionConfiguration dConfig = LTestUtils.dConfig;
+	LaraDecisionConfiguration dConfig;
 
 	LaraPreferenceRegistry preg;
 
@@ -68,7 +68,7 @@ public class LHabitDeciderTest {
 	@Before
 	public void setUp() throws Exception {
 		PmParameterManager.setParameter(LBasicPa.EVENTBUS_FORCE_SEQUENTIAL, true);
-		LTestUtils.initTestModel(dConfig);
+		dConfig = LTestUtils.initTestModel();
 
 		agent = new LTestAgent("TestAgent");
 

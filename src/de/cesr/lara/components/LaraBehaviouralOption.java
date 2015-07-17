@@ -411,6 +411,16 @@ Entry<LaraPreference, Double> o1,
 	}
 
 	/**
+	 * Get a shorter representation of this BO than
+	 * {@link LaraBehaviouralOption#toString()}.
+	 * 
+	 * @return short description
+	 */
+	public String toShortString() {
+		return this.getClass().getSimpleName() + "(" + getKey() + ")";
+	}
+
+	/**
 	 * calculate hash code:
 	 * 
 	 * @return the hash code

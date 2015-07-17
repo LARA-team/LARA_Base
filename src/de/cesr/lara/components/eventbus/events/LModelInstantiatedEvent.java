@@ -25,4 +25,10 @@ package de.cesr.lara.components.eventbus.events;
  */
 public class LModelInstantiatedEvent implements LaraSynchronousEvent {
 
+	/**
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return "NN";
+	}
 }

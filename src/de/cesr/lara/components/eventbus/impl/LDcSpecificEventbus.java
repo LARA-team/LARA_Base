@@ -286,4 +286,16 @@ public class LDcSpecificEventbus extends LEventbus {
 		eventSubscriberOnceMapDc.clear();
 		super.resetInstance();
 	}
+
+	/**
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		if (instances.containsValue(this)) {
+			return "LDcSpecificEventbus (" + instances.getKey(this) + ")";
+		} else {
+			return "LDcSpecificLEventbus";
+		}
+	}
 }

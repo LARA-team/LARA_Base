@@ -57,7 +57,8 @@ public class LTreeDecider<A extends LaraAgent<? super A, ? super BO>, BO extends
 	 * @param agent
 	 * @param parameter
 	 */
-	public LTreeDecider(LaraDecisionTree<A, BO, P> decisionTree, A agent, P parameter) {
+	public LTreeDecider(LaraDecisionTree<A, BO, P> decisionTree, A agent,
+			P parameter) {
 		this.decisionTree = decisionTree;
 		this.agent = agent;
 		this.parameter = parameter;

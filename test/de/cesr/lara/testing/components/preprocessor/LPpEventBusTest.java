@@ -141,16 +141,14 @@ public class LPpEventBusTest {
 
 	protected LTestAgent agent1, agent2, agent3;
 
-	protected LaraDecisionConfiguration dConfig = LTestUtils.dConfig;
+	protected LaraDecisionConfiguration dConfig;
 
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@Before
 	public void setUp() throws Exception {
-		LEventbus.resetAll();
-
-		LTestUtils.initTestModel(dConfig);
+		dConfig = LTestUtils.initTestModel();
 
 		// init two agents with different properties to trigger different PP
 		// behaviours

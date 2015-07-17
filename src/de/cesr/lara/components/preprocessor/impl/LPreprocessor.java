@@ -289,6 +289,7 @@ public final class LPreprocessor<A extends LaraAgent<A, BO>, BO extends LaraBeha
 						.get(dConfig) : prefUpdaterMap.get(null),
 				LPpPreferenceUpdaterEvent.class);
 
+		// TODO substitute by 'once' events!
 		eBus.subscribe(this, LPpUnsubscribeEvent.class);
 
 		eBus.publish(new LPpModeSelectorEvent(agent, dConfig));
@@ -404,6 +405,28 @@ public final class LPreprocessor<A extends LaraAgent<A, BO>, BO extends LaraBeha
 			}
 		}
 		return true;
+	}
+
+	public String getConfigurationString(LaraDecisionConfiguration dConfig) {
+		StringBuffer buffer = new StringBuffer("Configuration for " + dConfig
+				+ ":");
+		buffer.append("\n\tMode selector:\t");
+		buffer.append(this.selectorMap.containsKey(dConfig) ? this.selectorMap
+				.get(dConfig) : this.selectorMap.get(null));
+		buffer.append("\n\tBO collector:\t");
+		buffer.append(this.collectorMap.containsKey(dConfig) ? this.collectorMap
+				.get(dConfig) : this.collectorMap.get(null));
+		buffer.append("\n\tBO selector:\t");
+		buffer.append(this.preSelectorMap.containsKey(dConfig) ? this.preSelectorMap
+				.get(dConfig) : this.preSelectorMap.get(null));
+		buffer.append("\n\tBO updater:\t");
+		buffer.append(this.updaterMap.containsKey(dConfig) ? this.updaterMap
+				.get(dConfig) : this.updaterMap.get(null));
+		buffer.append("\n\tPref updater:\t");
+		buffer.append(this.prefUpdaterMap.containsKey(dConfig) ? this.prefUpdaterMap
+				.get(dConfig) : this.prefUpdaterMap.get(null));
+
+		return buffer.toString();
 	}
 
 	/**

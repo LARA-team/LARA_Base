@@ -62,8 +62,8 @@ import de.cesr.parma.core.PmParameterManager;
  */
 public class LEventbus {
 
-	private static LEventbus instance = null;
-	private static BidiMap<Object, LEventbus>	instances	= new DualHashBidiMap<Object, LEventbus>();
+	protected static LEventbus instance = null;
+	protected static BidiMap<Object, LEventbus> instances = new DualHashBidiMap<Object, LEventbus>();
 	private static Logger logger = Log4jLogger.getLogger(LEventbus.class);
 
 	/**
@@ -411,7 +411,9 @@ public class LEventbus {
 			}
 		} else if (!hasSubscribers) {
 			// no subscribers - log this
-			logger.warn("Event of type "
+			logger.warn("Event ("
+					+ event
+					+ ") of type "
 					+ event.getClass().getSimpleName()
 					+ " published, but has no subscribers. Maybe you should check if this was intended.");
 		}
@@ -621,7 +623,9 @@ public class LEventbus {
 	 */
 	public void publish(LaraEvent event) {
 		// <- LOGGING
-		logger.info(event.getClass().getName() + " published");
+		logger.info(this + "> Event (" + event + ") of "
+				+ event.getClass().getName()
+				+ " published");
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("Publisher: ", new LIdentifyCallerException(2, 1));
@@ -721,7 +725,7 @@ public class LEventbus {
 		}
 
 		// <- LOGGING
-		logger.info("Subscribed " + subscriber + " to event "
+		logger.info(this + "> Subscribed " + subscriber + " to event "
 				+ eventClass.getName());
 
 		if (logger.isDebugEnabled()) {
@@ -757,7 +761,7 @@ public class LEventbus {
 		}
 
 		// <- LOGGING
-		logger.info("Subscribed " + subscriber + " to event "
+		logger.info(this + "> Subscribed " + subscriber + " to event "
 				+ eventClass.getName());
 
 		if (logger.isDebugEnabled()) {
@@ -918,10 +922,10 @@ public class LEventbus {
 	@Override
 	public String toString() {
 		if (instances
-				.containsKey(this)) {
-			return "LEventbus-"
+.containsValue(this)) {
+			return "LEventbus ("
 					+ instances
-							.getKey(this);
+.getKey(this) + ")";
 		} else {
 			return "LEventbus";
 		}

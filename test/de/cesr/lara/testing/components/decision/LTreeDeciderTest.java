@@ -135,14 +135,14 @@ public class LTreeDeciderTest {
 
 	LTestBo two;
 
-	LaraDecisionConfiguration dConfig = LTestUtils.dConfig;
+	LaraDecisionConfiguration dConfig;
 
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@Before
 	public void setUp() throws Exception {
-		LTestUtils.initTestModel(dConfig);
+		dConfig = LTestUtils.initTestModel();
 		agent = new LTestAgent("TestAgent");
 
 		LModel.getModel().getPrefRegistry().register("TestPreference1");

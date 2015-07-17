@@ -34,4 +34,11 @@ public class LInternalModelInitializedEvent implements LaraSynchronousEvent,
 	public Class<? extends LaraEvent> getRequiredPrecedingEventClass() {
 		return LModelInstantiatedEvent.class;
 	}
+
+	/**
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return "NN";
+	}
 }

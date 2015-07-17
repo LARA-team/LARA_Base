@@ -52,14 +52,14 @@ public class LDeliberativeChoiceComp_MaxLineTotalTest {
 	LaraDeliberativeChoiceComponent deliberativeChoiceComp;
 	Collection<LaraBoRow<LTestBo>> laraBoRows;
 	LTestBo[] bos;
-	LaraDecisionConfiguration dConfig = LTestUtils.dConfig;
+	LaraDecisionConfiguration dConfig;
 
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@Before
 	public void setUp() throws Exception {
-		LTestUtils.initTestModel(LTestUtils.dConfig);
+		dConfig = LTestUtils.initTestModel();
 		deliberativeChoiceComp = LDeliberativeChoiceComp_MaxLineTotal
 				.getInstance();
 		laraBoRows = new LinkedHashSet<LaraBoRow<LTestBo>>();
