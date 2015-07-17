@@ -77,6 +77,11 @@ public class DefaultConfiguratorTest {
 			public void setPreferences(Collection<LaraPreference> goals) {
 				// nothing to do
 			}
+
+			@Override
+			public boolean singleSelectedBoExpected() {
+				return false;
+			}
 		};
 
 		configurator1
@@ -114,7 +119,7 @@ public class DefaultConfiguratorTest {
 
 	/**
 	 * Test method for
-	 * {@link de.cesr.lara.components.preprocessor.impl.LPreprocessor.DefaultConfigurator#get(de.cesr.lara.components.decision.LaraDecisionConfiguration, java.lang.Class)}
+	 * {@link de.cesr.lara.components.preprocessor.impl.LPreprocessorConfigurator#get(LaraDecisionConfiguration, Class)}
 	 * .
 	 */
 	@Test
@@ -125,8 +130,7 @@ public class DefaultConfiguratorTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link de.cesr.lara.components.preprocessor.impl.LPreprocessor.DefaultConfigurator#getMap(java.lang.Class)} .
+	 * Test method for {@link LPreprocessorConfigurator#getMap(Class)} .
 	 */
 	@Test
 	public final void testGetMap() {
@@ -144,7 +148,7 @@ public class DefaultConfiguratorTest {
 
 	/**
 	 * Test method for
-	 * {@link de.cesr.lara.components.preprocessor.impl.LPreprocessor.DefaultConfigurator#set(de.cesr.lara.components.decision.LaraDecisionConfiguration, java.lang.Class, LaraPreprocessorComp)}
+	 * {@link LPreprocessorConfigurator#set(LaraDecisionConfiguration, Class, LaraPreprocessorComp)}
 	 * .
 	 */
 	@Test

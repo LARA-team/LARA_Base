@@ -66,7 +66,7 @@ public class LDefaultAgentCompTest {
 	 */
 	LTestBo bo1;
 
-	LaraDecisionConfiguration dConfig = LTestUtils.dConfig;
+	LaraDecisionConfiguration dConfig;
 	LaraPreferenceRegistry preg;
 	
 	/**
@@ -75,7 +75,7 @@ public class LDefaultAgentCompTest {
 	@Before
 	public void setUp() throws Exception {
 
-		LTestUtils.initTestModel(dConfig);
+		dConfig = LTestUtils.initTestModel();
 
 		preg = LModel.getModel().getPrefRegistry();
 		preg.register("TestGoal1");

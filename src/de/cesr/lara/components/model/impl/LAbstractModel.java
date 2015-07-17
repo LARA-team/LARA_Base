@@ -70,6 +70,7 @@ public abstract class LAbstractModel implements LaraModel,
 
 	private static final Logger logger = Log4jLogger.getLogger(LAbstractModel.class);
 
+	protected Object id;
 	
 	protected LEventbus eventBus;
 
@@ -121,6 +122,7 @@ public abstract class LAbstractModel implements LaraModel,
 	 * @param id
 	 */
 	public LAbstractModel(Object id) {
+		this.id = id;
 		basicInit(id);
 	}
 
@@ -128,6 +130,7 @@ public abstract class LAbstractModel implements LaraModel,
 	 * @param id
 	 */
 	protected void basicInit(Object id) {
+		this.id = id;
 		LAbstractAgent.resetCounter();
 		LModel.resetModel(id);
 		LModel.setNewModel(id, this);
@@ -258,7 +261,8 @@ public abstract class LAbstractModel implements LaraModel,
 		this.advanceCalender();
 
 		// <- LOGGING
-		logger.info(">>>>> Simulating timestep " + getCurrentStep() + " <<<<<<");
+		logger.info("(ID: " + id + ") >>>>> Simulating timestep "
+				+ getCurrentStep() + " <<<<<<");
 		// LOGGING ->
 	}
 

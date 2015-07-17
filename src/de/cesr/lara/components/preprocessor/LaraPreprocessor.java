@@ -39,11 +39,21 @@ import de.cesr.lara.components.decision.LaraDecisionConfiguration;
 public interface LaraPreprocessor<A extends LaraAgent<? super A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>> {
 
 	/**
-	 * Lists all preprocessor components defined in this preprocessor.
+	 * Lists all preprocessor components defined in this preprocessor per
+	 * component.
 	 * 
 	 * @return String
 	 */
 	public String getComponentsString();
+
+	/**
+	 * Lists components defined for the given {@link LaraDecisionConfiguration
+	 * dConfig}.
+	 * 
+	 * @param dConfig
+	 * @return string representation
+	 */
+	public String getConfigurationString(LaraDecisionConfiguration dConfig);
 
 	/**
 	 * @param configuration
@@ -53,7 +63,8 @@ public interface LaraPreprocessor<A extends LaraAgent<? super A, BO>, BO extends
 			LaraPreprocessorConfigurator<A, BO> configuration);
 
 	/**
-	 * @param accuracy
+	 * @param dConfig
+	 *            decision configuration
 	 * @param agent
 	 */
 	public abstract void preprocess(LaraDecisionConfiguration dConfig, A agent);

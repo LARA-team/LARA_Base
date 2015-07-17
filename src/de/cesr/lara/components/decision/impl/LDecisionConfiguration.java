@@ -40,6 +40,10 @@ public class LDecisionConfiguration implements LaraDecisionConfiguration {
 	@Element(name = "id", required = true)
 	private final String id;
 
+
+	@Element(required = false)
+	protected boolean singleSelectedBoExpected = false;
+
 	/**
 	 * The default id string
 	 */
@@ -100,6 +104,11 @@ public class LDecisionConfiguration implements LaraDecisionConfiguration {
 	 */
 	@Override
 	public String toString() {
-		return "LaraDecisionConfiguration " + id;
+		return "LaraDecisionConfiguration(" + id + ")";
+	}
+
+	@Override
+	public boolean singleSelectedBoExpected() {
+		return this.singleSelectedBoExpected;
 	}
 }

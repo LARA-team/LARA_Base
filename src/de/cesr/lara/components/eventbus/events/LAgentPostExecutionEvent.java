@@ -24,17 +24,10 @@ import de.cesr.lara.components.decision.LaraDecisionConfiguration;
 /**
  * Thrown after agents execute.
  */
-public class LAgentPostExecutionEvent implements LaraSynchronousEvent,
-		LaraDcSpecificEvent {
-	private LaraDecisionConfiguration decisionConfiguration;
+public class LAgentPostExecutionEvent extends LAbstractAgentEvent {
 
 	public LAgentPostExecutionEvent(
 			LaraDecisionConfiguration decisionConfiguration) {
-		this.decisionConfiguration = decisionConfiguration;
+		super(decisionConfiguration);
 	}
-
-	public LaraDecisionConfiguration getDecisionConfiguration() {
-		return decisionConfiguration;
-	}
-
 }

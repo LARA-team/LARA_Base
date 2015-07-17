@@ -26,22 +26,13 @@ import de.cesr.lara.components.decision.LaraDecisionConfiguration;
 /**
  * Triggers agents to postprocess.
  */
-public class LAgentPostprocessEvent implements LaraSynchronousEvent,
-		LaraDcSpecificEvent {
-	private LaraDecisionConfiguration decisionConfiguration;
+public class LAgentPostprocessEvent extends LAbstractAgentEvent {
 
 	/**
 	 * Sets the {@link LaraDecisionConfiguration} of this event
 	 * @param decisionConfiguration
 	 */
 	public LAgentPostprocessEvent(LaraDecisionConfiguration decisionConfiguration) {
-		this.decisionConfiguration = decisionConfiguration;
-	}
-
-	/**
-	 * @return {@link LaraDecisionConfiguration} of this event
-	 */
-	public LaraDecisionConfiguration getDecisionConfiguration() {
-		return decisionConfiguration;
+		super(decisionConfiguration);
 	}
 }

@@ -60,7 +60,7 @@ public class LDefaultStorageTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		LTestUtils.initTestModel(LTestUtils.dConfig);
+		LTestUtils.initTestModel();
 		LEventbus.getInstance().publish(new LModelStepEvent());
 		storage = new LDefaultStorage<LTestProperty>(LModel.getModel());
 	}

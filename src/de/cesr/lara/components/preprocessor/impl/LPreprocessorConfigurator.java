@@ -69,20 +69,20 @@ public class LPreprocessorConfigurator<A extends LaraAgent<A, BO>, BO extends La
 		return new LPreprocessorConfigurator<A, BO>();
 	}
 
-	@ElementMap(entry = "selectorEntry", key = "dConfig", value = "selector", attribute = false, inline = true)
-	private Map<LaraDecisionConfiguration, LaraDecisionModeSelector<A, BO>> selectorMap;
+	@ElementMap(entry = "selectorEntry", key = "dConfig", value = "selector", attribute = false, inline = true, required = false)
+	private Map<LaraDecisionConfiguration, LaraDecisionModeSelector<A, BO>> selectorMap = new HashMap<LaraDecisionConfiguration, LaraDecisionModeSelector<A, BO>>();
 
-	@ElementMap(entry = "collectorEntry", key = "dConfig", value = "collector", attribute = false, inline = true)
-	private Map<LaraDecisionConfiguration, LaraBOCollector<A, ? extends BO>> scannerMap;
+	@ElementMap(entry = "collectorEntry", key = "dConfig", value = "collector", attribute = false, inline = true, required = false)
+	private Map<LaraDecisionConfiguration, LaraBOCollector<A, ? extends BO>> scannerMap = new HashMap<LaraDecisionConfiguration, LaraBOCollector<A, ? extends BO>>();
 
-	@ElementMap(entry = "checkerEntry", key = "dConfig", value = "checker", attribute = false, inline = true)
-	private Map<LaraDecisionConfiguration, LaraBOPreselector<A, ? extends BO>> checkerMap;
+	@ElementMap(entry = "checkerEntry", key = "dConfig", value = "checker", attribute = false, inline = true, required = false)
+	private Map<LaraDecisionConfiguration, LaraBOPreselector<A, ? extends BO>> checkerMap = new HashMap<LaraDecisionConfiguration, LaraBOPreselector<A, ? extends BO>>();
 
-	@ElementMap(entry = "boUpdaterEntry", key = "dConfig", value = "updater", attribute = false, inline = true)
-	private Map<LaraDecisionConfiguration, LaraBOUtilityUpdater<A, BO>> adapterMap;
+	@ElementMap(entry = "boUpdaterEntry", key = "dConfig", value = "updater", attribute = false, inline = true, required = false)
+	private Map<LaraDecisionConfiguration, LaraBOUtilityUpdater<A, BO>> adapterMap = new HashMap<LaraDecisionConfiguration, LaraBOUtilityUpdater<A, BO>>();
 
-	@ElementMap(entry = "prefUpdaterEntry", key = "dConfig", value = "updater", attribute = false, inline = true)
-	private Map<LaraDecisionConfiguration, LaraPreferenceUpdater<? extends A, BO>> prefUpdaterMap;
+	@ElementMap(entry = "prefUpdaterEntry", key = "dConfig", value = "updater", attribute = false, inline = true, required = false)
+	private Map<LaraDecisionConfiguration, LaraPreferenceUpdater<? extends A, BO>> prefUpdaterMap = new HashMap<LaraDecisionConfiguration, LaraPreferenceUpdater<? extends A, BO>>();
 
 	private LaraPreprocessor<A, BO> preprocessor = null;
 	private static LaraPreprocessor<?, ?> defaultPreprocessor = null;
@@ -114,11 +114,6 @@ public class LPreprocessorConfigurator<A extends LaraAgent<A, BO>, BO extends La
 	 * constructor
 	 */
 	private LPreprocessorConfigurator() {
-		selectorMap = new HashMap<LaraDecisionConfiguration, LaraDecisionModeSelector<A, BO>>();
-		scannerMap = new HashMap<LaraDecisionConfiguration, LaraBOCollector<A, ? extends BO>>();
-		checkerMap = new HashMap<LaraDecisionConfiguration, LaraBOPreselector<A, ? extends BO>>();
-		adapterMap = new HashMap<LaraDecisionConfiguration, LaraBOUtilityUpdater<A, BO>>();
-		prefUpdaterMap = new HashMap<LaraDecisionConfiguration, LaraPreferenceUpdater<? extends A, BO>>();
 	}
 
 	/**

@@ -26,23 +26,13 @@ import de.cesr.lara.components.decision.LaraDecisionConfiguration;
 /**
  * Triggers agents to perceive.
  */
-public class LAgentPerceptionEvent implements LaraSynchronousEvent,
-		LaraDcSpecificEvent {
-	private LaraDecisionConfiguration	decisionConfiguration;
+public class LAgentPerceptionEvent extends LAbstractAgentEvent {
 
 	/**
 	 * Sets the {@link LaraDecisionConfiguration} of this event
 	 * @param decisionConfiguration
 	 */
 	public LAgentPerceptionEvent(LaraDecisionConfiguration decisionConfiguration) {
-		this.decisionConfiguration = decisionConfiguration;
+		super(decisionConfiguration);
 	}
-
-	/**
-	 * @return {@link LaraDecisionConfiguration} of this event
-	 */
-	public LaraDecisionConfiguration getDecisionConfiguration() {
-		return decisionConfiguration;
-	}
-
 }

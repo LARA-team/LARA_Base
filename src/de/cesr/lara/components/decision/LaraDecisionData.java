@@ -134,7 +134,7 @@ public final class LaraDecisionData<A extends LaraAgent<? super A, BO>, BO exten
 	}
 
 	/**
-	 * @param bo
+	 * @param bos
 	 *            list of BOs to set
 	 */
 	public void setBos(BO... bos) {

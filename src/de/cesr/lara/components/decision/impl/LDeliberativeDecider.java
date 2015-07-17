@@ -22,6 +22,9 @@ package de.cesr.lara.components.decision.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -83,7 +86,7 @@ public class LDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? extends 
 
 	/**
 	 * @param dConfiguration
-	 *        the decision configuration of the current decision process
+	 *            the decision configuration of the current decision process
 	 */
 	public LDeliberativeDecider(LaraDecisionConfiguration dConfiguration) {
 		// <- LOGGING
@@ -108,20 +111,25 @@ public class LDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? extends 
 
 		situationalUtilityMatrixRows = new ArrayList<LaraBoRow<BO>>();
 
-		// // Facilitate comparison of rows:
-		// Collections.<LaraBehaviouralOption>sort((ArrayList<LaraBehaviouralOption>)
-		// selectableBOs,
-		// new Comparator<LaraBehaviouralOption>() {
-		// @Override
-		// public int compare(LaraBehaviouralOption arg0, LaraBehaviouralOption
-		// arg1) {
-		// return arg0.getKey().compareTo(arg1.getKey());
-		// }
-		// });
-
 		// <- LOGGING
+		// Facilitate comparison of rows:
 		if (logger.isDebugEnabled()) {
-			logger.debug("Selectable BOs: " + selectableBOs);
+			Collections.<BO> sort(new ArrayList<BO>(selectableBOs),
+					new Comparator<BO>() {
+						@Override
+						public int compare(BO arg0, BO arg1) {
+							return arg0.getKey().compareTo(arg1.getKey());
+						}
+					});
+		}
+
+		if (logger.isDebugEnabled()) {
+			StringBuffer buffer = new StringBuffer();
+			for (BO bo : selectableBOs) {
+				buffer.append(System.getProperty("line.separator") + "\t");
+				buffer.append(bo);
+			}
+			logger.debug("Selectable BOs: " + buffer);
 		}
 		// LOGGING ->
 
@@ -139,7 +147,8 @@ public class LDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? extends 
 
 				// <- LOGGING
 				if (logger.isDebugEnabled()) {
-					logger.debug("Calculate BoRow for utility " + utility);
+					logger.debug("Calculate matrix value for utility "
+							+ utility);
 				}
 				// LOGGING ->
 
@@ -178,7 +187,8 @@ public class LDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? extends 
 
 					// <- LOGGING
 					if (logger.isDebugEnabled()) {
-						logger.debug("Add situaltional value for " + utility.getKey() + ": " + utility.getValue()
+						logger.debug("Multiply situational value for "
+								+ utility.getKey() + ": " + utility.getValue()
 								+ " = " + utility.getValue() * getPreferenceForGoal(utility.getKey()));
 					}
 					// LOGGING ->
@@ -188,8 +198,10 @@ public class LDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? extends 
 		}
 
 		selectedBo = getDeliberativeChoiceComp().getSelectedBo(dConfiguration, situationalUtilityMatrixRows);
+
 		// <- LOGGING
-		logger.info("Post decide: SitautionalMatrix: " + situationalUtilityMatrixRows);
+		logger.info("Post decide > SitautionalMatrix: "
+				+ situationalUtilityMatrixRows);
 		// LOGGING ->
 	}
 
@@ -198,11 +210,15 @@ public class LDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? extends 
 	 ******************************************************************************/
 
 	/**
+	 * Even if singleSelectedBoExpected = true this may return values > 1 to
+	 * provide the opportunity to collect the x best BOs for post-processing.
+	 * 
 	 * @see de.cesr.lara.components.decision.LaraDeliberativeDecider#getNumSelectableBOs()
 	 */
 	@Override
 	public int getNumSelectableBOs() {
-		return situationalUtilityMatrixRows.size();
+		return situationalUtilityMatrixRows
+				.size();
 	}
 
 	/******************************************************************************
@@ -268,14 +284,20 @@ public class LDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? extends 
 	 * @see de.cesr.lara.components.decision.LaraDeliberativeDecider#setPreferenceWeights(java.util.Map)
 	 */
 	@Override
-	public void setPreferenceWeights(Map<LaraPreference, Double> preference) {
-		this.preferenceWeights = preference;
+	public void setPreferenceWeights(Map<LaraPreference, Double> preferences) {
+		this.preferenceWeights = new LinkedHashMap<LaraPreference, Double>();
+		for (Entry<LaraPreference, Double> entry : preferences.entrySet()) {
+			if (this.dConfiguration.getPreferences().contains(entry.getKey())) {
+				this.preferenceWeights.put(entry.getKey(), entry.getValue());
+			}
+		}
 
 		// <- LOGGING
 		if (logger.isDebugEnabled()) {
-			logger.debug("Received Preferences: " + preferenceWeights);
+			logger.debug("Set Preferences: " + preferenceWeights);
 		}
-		logger.info("Received " + preference.size() + " preferenceWeights");
+		logger.info("Received " + this.preferenceWeights.size()
+				+ " relevant preference weights");
 		// LOGGING ->
 	}
 

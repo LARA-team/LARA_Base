@@ -47,7 +47,7 @@ public class TestSuperEnvironment {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		LTestUtils.initTestModel(LTestUtils.dConfig);
+		LTestUtils.initTestModel();
 
 		subEnv = new LEnvironment();
 		subEnv.addProperty(new LEnvironmentalProperty<Object>(
@@ -68,7 +68,7 @@ public class TestSuperEnvironment {
 
 	/**
 	 * Test method for
-	 * {@link de.cesr.lara.components.environment.impl.LEnvironment#removePropertySubenv(java.lang.String)}
+	 * {@link de.cesr.lara.components.environment.impl.LEnvironment#removePropertySubenv(Object, String)}
 	 * .
 	 */
 	@Test

@@ -24,16 +24,8 @@ import de.cesr.lara.components.decision.LaraDecisionConfiguration;
 /**
  * Triggers agents to execute.
  */
-public class LAgentExecutionEvent implements LaraSynchronousEvent,
-		LaraDcSpecificEvent {
-	private LaraDecisionConfiguration decisionConfiguration;
-
+public class LAgentExecutionEvent extends LAbstractAgentEvent {
 	public LAgentExecutionEvent(LaraDecisionConfiguration decisionConfiguration) {
-		this.decisionConfiguration = decisionConfiguration;
+		super(decisionConfiguration);
 	}
-
-	public LaraDecisionConfiguration getDecisionConfiguration() {
-		return decisionConfiguration;
-	}
-
 }

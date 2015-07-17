@@ -43,7 +43,7 @@ public interface LaraDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? e
 	public Map<LaraPreference, Double> getPreferenceWeights();
 
 	/**
-	 * @return Returns the behaviouralOption.
+	 * @return Returns a collection of all considered BOs.
 	 */
 	public Collection<BO> getSelectableBos();
 

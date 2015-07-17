@@ -64,7 +64,7 @@ public class LaraPropertyTest {
 	 */
 	@Before
 	public void setUp() {
-		LTestUtils.initTestModel(LTestUtils.dConfig);
+		LTestUtils.initTestModel();
 		LEventbus.getInstance().publish(new LModelStepEvent());
 
 		prop1 = new TestProperty("key01", 1);

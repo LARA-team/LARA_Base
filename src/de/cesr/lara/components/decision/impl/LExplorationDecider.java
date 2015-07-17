@@ -62,7 +62,8 @@ public class LExplorationDecider<A extends LaraAgent<A, BO>, BO extends LaraBeha
 	 * @param agent
 	 * @param dConfiguration
 	 */
-	public LExplorationDecider(A agent, LaraDecisionConfiguration dConfiguration) {
+	public LExplorationDecider(A agent,
+ LaraDecisionConfiguration dConfiguration) {
 		this.agent = agent;
 		this.dConfiguration = dConfiguration;
 
@@ -148,5 +149,4 @@ public class LExplorationDecider<A extends LaraAgent<A, BO>, BO extends LaraBeha
 	public String toString() {
 		return "LExplorationDecider for " + dConfiguration;
 	}
-
 }

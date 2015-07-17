@@ -55,7 +55,7 @@ public class LDeliberativeChoiceComponent_MaxLineTotalRandomAtTieTest {
 	LDeliberativeChoiceComp_MaxLineTotalRandomAtTie deliberativeChoiceComp;
 	Collection<LaraBoRow<LTestBo>> laraBoRows;
 	LTestBo[] bos;
-	LaraDecisionConfiguration dConfig = LTestUtils.dConfig;
+	LaraDecisionConfiguration dConfig;
 	LTestAgent agent;
 
 	/**
@@ -63,7 +63,7 @@ public class LDeliberativeChoiceComponent_MaxLineTotalRandomAtTieTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		LTestUtils.initTestModel(dConfig);
+		dConfig = LTestUtils.initTestModel();
 		deliberativeChoiceComp = LDeliberativeChoiceComp_MaxLineTotalRandomAtTie
 				.getInstance(LModel.getModel(), null);
 		laraBoRows = new LinkedHashSet<LaraBoRow<LTestBo>>();
