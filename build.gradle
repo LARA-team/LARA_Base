@@ -19,5 +19,5 @@ dependencies {
 
 jar {
 	baseName = 'LARA_Base'
-	version =  '0.3.1'
+	version =  '0.3.2'
 }
