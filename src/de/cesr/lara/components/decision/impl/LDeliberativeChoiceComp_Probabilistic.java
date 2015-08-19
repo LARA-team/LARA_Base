@@ -231,31 +231,54 @@ public class LDeliberativeChoiceComp_Probabilistic implements
 
 		double overall_utility = 0.0f;
 
-		boolean containsNonZero = false;
+		boolean containsAllZero = true;
+		boolean sameNegative = true;
+
 		double minValue = 0.0d;
+		double lastValue = Double.NaN;
 
 		Map<LaraBoRow<BO>, Double> roulette_wheel = new LinkedHashMap<LaraBoRow<BO>, Double>();
 
-		// check for negative utiltiy sums:
+		// check for negative utility sums:
 		for (LaraBoRow<BO> r : boRows) {
 			overall_utility = r.getSum();
 			minValue = minValue > overall_utility ? overall_utility : minValue;
 			if (overall_utility != 0.0) {
-				containsNonZero = true;
+				containsAllZero = false;
+				if (!Double.isNaN(lastValue) && (lastValue >= 0 || lastValue != overall_utility)) {
+					sameNegative = false;
+				}
 			}
+			lastValue = overall_utility;
 		}
 
 		// select a BO at random in case all BO's have utility 0:
-		if (!containsNonZero) {
+		if (containsAllZero || sameNegative) {
+			// <- LOGGING
+			if (logger.isDebugEnabled() && containsAllZero) {
+				logger.debug("All utility sums equal 0.0! Select random BO.");
+			}
+			if (logger.isDebugEnabled() && sameNegative) {
+				logger.debug("All utility sums are of the same negative value! Select random BO.");
+			}
+			// LOGGING ->
+
 			double randomNum = rand.nextDouble();
 			if (randomNum < 0.0 || randomNum > 1.0) {
 				throw new IllegalStateException(rand
 						+ "> Make sure min = 0.0 and max = 1.0");
 			}
-
+			
 			// <- LOGGING
+			if (agentLogger != null) {
+				agentLogger.debug(agent + "> selected: "
+						+ new ArrayList<LaraBoRow<BO>>(boRows).get((int) (boRows.size() * randomNum)) + 
+						" (Index:" + (int) (boRows.size() * randomNum) + ")");
+			}
 			if (logger.isDebugEnabled()) {
-				logger.debug("All utility sums equal 0.0! Select random BO.");
+				logger.debug(agent + "> selected: "
+						+ new ArrayList<LaraBoRow<BO>>(boRows).get((int) (boRows.size() * randomNum)) +
+						" (Index:" + (int) (boRows.size() * randomNum) + ")");
 			}
 			// LOGGING ->
 
@@ -297,6 +320,8 @@ public class LDeliberativeChoiceComp_Probabilistic implements
 		// LOGGING ->
 
 		randFloat *= u_eta_sum;
+
+		// TODO check double/float?
 		float pointer = 0.0f;
 
 		// NOTE: For of BO's hash code that does not depend on an internal

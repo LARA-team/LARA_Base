@@ -60,8 +60,6 @@ public class LDeliberativeChoiceComp_ProbabilisticTest {
 
 	LTestAgent agent;
 
-	static int counter = 0;
-
 	LaraDeliberativeChoiceComponent choiceComp;
 
 	/**
@@ -74,14 +72,9 @@ public class LDeliberativeChoiceComp_ProbabilisticTest {
 		// set up manipulated random number distribution
 		AbstractDistribution manipulatedDist = new AbstractDistribution() {
 
-			double[] randomNumbers = {0.7, 0.1, 0.4, 0.48, 0.6, 0.4,
-					
-					//0.7, 0.4, 0.3, 0.01, 0.99, 0.1,
-					//0.01, 0.35, 0.8, 0.4,
-
-					//0.99, 0.1, 0.4, 0.1, 0.01, 0.4, 0.5, 0.33 };
-					
-					0.5, 0.6, 0.34, 0.33, 0.4, 0.6, 0.1, 0.01, 0.38, 0.42, 0.4};
+			double[] randomNumbers = { 0.7, 0.1, 0.4, 0.3, 0.6, 0.4,
+ 0.5, 0.6, 0.33, 0.41, 0.3 };
+			int counter = 0;
 
 			private static final long serialVersionUID = -6074066644642361799L;
 
@@ -115,6 +108,8 @@ public class LDeliberativeChoiceComp_ProbabilisticTest {
 	 * Test method for
 	 * {@link de.cesr.lara.components.decision.impl.LDeliberativeChoiceComp_Probabilistic#getKSelectedBos(de.cesr.lara.components.decision.LaraDecisionConfiguration, java.util.Collection, int)}
 	 * .
+	 * 
+	 * NOTE: Different tests are all in one test method because of the defined sequence of random numbers.
 	 */
 	@Test
 	public void testGetKSelectedBos() {
@@ -147,7 +142,7 @@ public class LDeliberativeChoiceComp_ProbabilisticTest {
 		boRows.add(new LLightBoRow<LTestBo>(bo2, 1.0));
 		resultSet = choiceComp.getKSelectedBos(dConfig, boRows, 1);
 		assertEquals(1, resultSet.size());
-		assertFalse(resultSet.contains(bo1));  // rand > 0.5
+		assertFalse(resultSet.contains(bo1)); // rand1 > 0.5
 		assertTrue(resultSet.contains(bo2));
 
 		boRows.clear();
@@ -159,8 +154,8 @@ public class LDeliberativeChoiceComp_ProbabilisticTest {
 		logger.info("Request 2 BOs (3 available).");
 		resultSet = choiceComp.getKSelectedBos(dConfig, boRows, 2);
 		assertEquals(2, resultSet.size());
-		assertTrue(resultSet.contains(bo1)); // rand <= 1/6
-		assertTrue(resultSet.contains(bo2)); // rand <= 2/5
+		assertTrue(resultSet.contains(bo1)); // rand2 <= 1/6
+		assertTrue(resultSet.contains(bo2)); // rand3 <= 2/5
 		assertFalse(resultSet.contains(bo3));
 
 		// multiple BOs with utility 0.0 only
@@ -177,7 +172,7 @@ public class LDeliberativeChoiceComp_ProbabilisticTest {
 		logger.info("Request 1 BO (2 available with 0.0).");
 		resultSet = choiceComp.getKSelectedBos(dConfig, boRows, 1);
 		assertEquals(1, resultSet.size());
-		assertTrue(resultSet.contains(bo1));  // rand <= 0.5
+		assertTrue(resultSet.contains(bo1)); // rand4 <= 0.5
 		assertFalse(resultSet.contains(bo2));
 
 		// BOs with negative utility
@@ -189,7 +184,7 @@ public class LDeliberativeChoiceComp_ProbabilisticTest {
 		resultSet = choiceComp.getKSelectedBos(dConfig, boRows, 1);
 		assertEquals(1, resultSet.size());
 		assertFalse(resultSet.contains(bo1));
-		assertTrue(resultSet.contains(bo2));  // rand > 0.5
+		assertTrue(resultSet.contains(bo2)); // rand5 > 0.5
 
 		boRows.clear();
 		boRows.add(new LLightBoRow<LTestBo>(bo1, -1.0));
@@ -200,7 +195,7 @@ public class LDeliberativeChoiceComp_ProbabilisticTest {
 		resultSet = choiceComp.getKSelectedBos(dConfig, boRows, 1);
 		assertEquals(1, resultSet.size());
 		assertFalse(resultSet.contains(bo1));
-		assertTrue(resultSet.contains(bo2)); // rand < 0.5
+		assertTrue(resultSet.contains(bo2)); // rand6 < 0.5
 		assertFalse(resultSet.contains(bo3));
 
 		// empty list of LaraRows (exception!)
@@ -210,6 +205,23 @@ public class LDeliberativeChoiceComp_ProbabilisticTest {
 			fail("This should have raised an exception.");
 		} catch (IllegalStateException lre) {
 		}
+	}
+
+	@Test
+	public void testGetKSelectedBosSameNegative() {
+		LTestBo bo1 = new LTestBo("BO1", agent);
+		LTestBo bo2 = new LTestBo("BO2", agent);
+
+		Collection<LaraBoRow<LTestBo>> boRows = new ArrayList<LaraBoRow<LTestBo>>();
+
+		boRows.add(new LLightBoRow<LTestBo>(bo1, -1.0));
+		boRows.add(new LLightBoRow<LTestBo>(bo2, -1.0));
+		logger.info("Request one BO.");
+
+		Set<? extends LTestBo> resultSet = choiceComp.getKSelectedBos(dConfig, boRows, 1);
+		assertEquals(1, resultSet.size());
+		assertFalse(resultSet.contains(bo1));
+		assertTrue(resultSet.contains(bo2)); // rand1 > 0.5
 	}
 
 	/**
@@ -224,33 +236,33 @@ public class LDeliberativeChoiceComp_ProbabilisticTest {
 		Collection<LaraBoRow<LTestBo>> boRows = new ArrayList<LaraBoRow<LTestBo>>();
 		boRows.add(new LLightBoRow<LTestBo>(bo1, 1.0));
 
-		assertEquals(bo1, choiceComp.getSelectedBo(dConfig, boRows));  // no rand
+		assertEquals(bo1, choiceComp.getSelectedBo(dConfig, boRows));
 
 		// Test "normal" BOs
 		LTestBo bo2 = new LTestBo(agent);
 		boRows.add(new LLightBoRow<LTestBo>(bo2, 1.0));
 		logger.info("1st selection for one BO.");
-		assertEquals(bo1, choiceComp.getSelectedBo(dConfig, boRows));  // rand <= 0.5
+		assertEquals(bo2, choiceComp.getSelectedBo(dConfig, boRows)); // rand1 > 0.5
 
 		logger.info("2nd selection for one BO.");
-		assertEquals(bo2, choiceComp.getSelectedBo(dConfig, boRows)); // rand > 0.5
+		assertEquals(bo1, choiceComp.getSelectedBo(dConfig, boRows)); // rand2 <= 0.5
 
 		logger.info("2 Bos passed.");
 		boRows.clear();
 		boRows.add(new LLightBoRow<LTestBo>(bo1, 1.0));
 		boRows.add(new LLightBoRow<LTestBo>(bo2, 2.0));
 
-		assertEquals(bo2, choiceComp.getSelectedBo(dConfig, boRows)); // rand > 0.33
+		assertEquals(bo2, choiceComp.getSelectedBo(dConfig, boRows)); // rand3 > 0.33
 
-		assertEquals(bo1, choiceComp.getSelectedBo(dConfig, boRows)); // rand <= 0.33
+		assertEquals(bo1, choiceComp.getSelectedBo(dConfig, boRows)); // rand4 <= 0.33
 
 		// multiple BOs with utility 0.0 only
 		boRows.clear();
 		boRows.add(new LLightBoRow<LTestBo>(bo1, 0.0));
 		boRows.add(new LLightBoRow<LTestBo>(bo2, 0.0));
 		logger.info("2 BoRows with utility sum 0.0 passed.");
-		assertEquals(bo1, choiceComp.getSelectedBo(dConfig, boRows)); // rand <= 0.5
-		assertEquals(bo2, choiceComp.getSelectedBo(dConfig, boRows)); // rand > 0.5
+		assertEquals(bo2, choiceComp.getSelectedBo(dConfig, boRows)); // rand5 > 0.5
+		assertEquals(bo1, choiceComp.getSelectedBo(dConfig, boRows)); // rand6 <= 0.5
 
 		// BOs with negative utility
 		boRows.clear();
@@ -258,8 +270,8 @@ public class LDeliberativeChoiceComp_ProbabilisticTest {
 		boRows.add(new LLightBoRow<LTestBo>(bo1, -1.0));
 		boRows.add(new LLightBoRow<LTestBo>(bo2, 0.0));
 
-		assertEquals(bo2, choiceComp.getSelectedBo(dConfig, boRows));  // rand > 0
-		assertEquals(bo2, choiceComp.getSelectedBo(dConfig, boRows));  // rand > 0
+		assertEquals(bo2, choiceComp.getSelectedBo(dConfig, boRows)); // rand7 > 0
+		assertEquals(bo2, choiceComp.getSelectedBo(dConfig, boRows)); // rand8 > 0
 
 		boRows.clear();
 		logger.info("One BoRow with utility sum 0.0, one with -1.0, one with 0.5 passed.");
@@ -268,9 +280,9 @@ public class LDeliberativeChoiceComp_ProbabilisticTest {
 		LTestBo bo3 = new LTestBo(agent);
 		boRows.add(new LLightBoRow<LTestBo>(bo3, 0.5));
 
-		assertEquals(bo2, choiceComp.getSelectedBo(dConfig, boRows)); // rand <= 2/5
-		assertEquals(bo3, choiceComp.getSelectedBo(dConfig, boRows)); // rand > 2/5
-		assertEquals(bo2, choiceComp.getSelectedBo(dConfig, boRows)); // rand <= 2/5
+		assertEquals(bo2, choiceComp.getSelectedBo(dConfig, boRows)); // rand9 <= 2/5
+		assertEquals(bo3, choiceComp.getSelectedBo(dConfig, boRows)); // rand10 > 2/5
+		assertEquals(bo2, choiceComp.getSelectedBo(dConfig, boRows)); // rand11 <= 2/5
 
 		// empty list of LaraRows (exception!)
 		try {
@@ -280,5 +292,4 @@ public class LDeliberativeChoiceComp_ProbabilisticTest {
 		} catch (IllegalStateException lre) {
 		}
 	}
-
 }
