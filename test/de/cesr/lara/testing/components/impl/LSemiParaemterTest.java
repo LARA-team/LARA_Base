@@ -79,7 +79,7 @@ public class LSemiParaemterTest {
 		}
 
 		@Override
-		public int compareTo(LaraBehaviouralOption<A, BO> o) {
+		public int compareTo(LaraBehaviouralOption<?, ?> o) {
 			return 0;
 		}
 

@@ -34,7 +34,7 @@ import de.cesr.lara.components.decision.LaraBoRow;
  *            behavioural option
  * 
  */
-public class LLightBoRow<BO extends LaraBehaviouralOption<?, ?>> implements
+public class LLightBoRow<BO extends LaraBehaviouralOption<?, ? extends BO>> implements
 		LaraBoRow<BO> {
 
 	protected BO bo = null;

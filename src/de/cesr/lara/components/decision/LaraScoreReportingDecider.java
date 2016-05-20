@@ -17,21 +17,19 @@
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.cesr.lara.components.eventbus.events;
+package de.cesr.lara.components.decision;
 
-import de.cesr.lara.components.decision.LaraDecisionConfiguration;
-import de.cesr.lara.components.eventbus.impl.LDcSpecificEventbus;
+
+import de.cesr.lara.components.LaraBehaviouralOption;
+
 
 /**
- * Used for {@link LDcSpecificEventbus}.
- * 
  * @author Sascha Holzhauer
+ * @param <BO>
  * 
  */
-public interface LaraDcSpecificEvent extends LaraEvent {
+public interface LaraScoreReportingDecider<BO extends LaraBehaviouralOption<?, ?>> extends LaraDecider<BO> {
 
-	public LaraDecisionConfiguration getDecisionConfiguration();
-
-	public void exchangeDecisionConfiguration(LaraDecisionConfiguration dConfig);
+	public double getScore(BO bo);
 
 }

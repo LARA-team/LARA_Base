@@ -20,6 +20,7 @@
 package de.cesr.lara.components.decision;
 
 
+import java.util.Collection;
 import java.util.Set;
 
 import de.cesr.lara.components.LaraBehaviouralOption;
@@ -37,6 +38,11 @@ public interface LaraDecider<BO extends LaraBehaviouralOption<?, ?>> {
 	 * Executes the decision! That is, select a {@link LaraBehaviouralOption}.
 	 */
 	public void decide();
+
+	/**
+	 * @return Returns a collection of all considered BOs.
+	 */
+	public Collection<BO> getSelectableBos();
 
 	/**
 	 * Return the {@link LaraBehaviouralOption}s that were selected in {@link LaraDecider#decide()}.

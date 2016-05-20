@@ -19,6 +19,7 @@
  */
 package de.cesr.lara.components.eventbus.impl;
 
+
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -37,9 +38,9 @@ import de.cesr.lara.components.eventbus.events.LaraHasConsecutiveEvent;
 import de.cesr.lara.components.eventbus.events.LaraSynchronousEvent;
 import de.cesr.lara.components.util.exceptions.LIdentifyCallerException;
 
+
 /**
- * Enables subscribers to subscribe for specific
- * {@link LaraDecisionConfiguration}s only.
+ * Enables subscribers to subscribe for specific {@link LaraDecisionConfiguration}s only.
  * 
  * @author Sascha Holzhauer
  * 
@@ -51,9 +52,14 @@ public class LDcSpecificEventbus extends LEventbus {
 	 */
 	static private Logger logger = Logger.getLogger(LDcSpecificEventbus.class);
 
-	protected volatile Map<Class<? extends LaraEvent>, Map<LaraDecisionConfiguration, Set<LaraAbstractEventSubscriber>>> eventSubscriberMapDc = new HashMap<Class<? extends LaraEvent>, Map<LaraDecisionConfiguration, Set<LaraAbstractEventSubscriber>>>();
+	protected volatile Map<Class<? extends LaraEvent>, Map<LaraDecisionConfiguration, Set<LaraAbstractEventSubscriber>>> eventSubscriberMapDc =
+			new HashMap<>();
 
-	protected volatile Map<Class<? extends LaraEvent>, Map<LaraDecisionConfiguration, Set<LaraAbstractEventSubscriber>>> eventSubscriberOnceMapDc = new HashMap<Class<? extends LaraEvent>, Map<LaraDecisionConfiguration, Set<LaraAbstractEventSubscriber>>>();
+	protected volatile Map<Class<? extends LaraEvent>, Map<LaraDecisionConfiguration, Set<LaraAbstractEventSubscriber>>> eventSubscriberOnceMapDc =
+			new HashMap<>();
+
+	protected volatile Map<Class<? extends LaraEvent>, Map<LaraDecisionConfiguration, Set<LaraAbstractEventSubscriber>>> eventSubscriberOnceMapDcNotified =
+			new HashMap<>();
 
 	protected LDcSpecificEventbus(Object id) {
 		super(id);
@@ -63,38 +69,38 @@ public class LDcSpecificEventbus extends LEventbus {
 			Map<Class<? extends LaraEvent>, Map<LaraDecisionConfiguration, Set<LaraAbstractEventSubscriber>>> eventSubscriberMap,
 			Class<? extends LaraEvent> eventClass, LaraDecisionConfiguration dc) {
 		if (!eventSubscriberMap.containsKey(eventClass)) {
-			eventSubscriberMap.put(eventClass, new HashMap<LaraDecisionConfiguration, Set<LaraAbstractEventSubscriber>>());
+			eventSubscriberMap.put(eventClass,
+					new HashMap<LaraDecisionConfiguration, Set<LaraAbstractEventSubscriber>>());
 		}
-		
+
 		if (!eventSubscriberMap.get(eventClass).containsKey(dc)) {
-			Set<LaraAbstractEventSubscriber> subscribers = new LinkedHashSet<LaraAbstractEventSubscriber>();
+			Set<LaraAbstractEventSubscriber> subscribers = new LinkedHashSet<>();
 			eventSubscriberMap.get(eventClass).put(dc, subscribers);
 		}
 	}
 
 	/**
-	 * Subscribes the given {@link LaraEventSubscriber} to be notified only once
-	 * for the next event.
+	 * Subscribes the given {@link LaraEventSubscriber} to be notified only once for the next event.
 	 * 
 	 * NOTE: If the same subscriber is subscribed to the event continuously (via
-	 * {@link #subscribe(LaraAbstractEventSubscriber, Class)} it is notified
-	 * only once!
+	 * {@link #subscribe(LaraAbstractEventSubscriber, Class)} it is notified only once!
 	 * 
 	 * @param subscriber
 	 * @param eventClass
 	 * @param dc
 	 */
-	public void subscribeOnce(LaraAbstractEventSubscriber subscriber,
-			Class<? extends LaraEvent> eventClass, LaraDecisionConfiguration dc) {
+	public void subscribeOnce(LaraAbstractEventSubscriber subscriber, Class<? extends LaraEvent> eventClass,
+			LaraDecisionConfiguration dc) {
 		checkSubscriberMapDc(eventSubscriberOnceMapDc, eventClass, dc);
 		eventSubscriberOnceMapDc.get(eventClass).get(dc).add(subscriber);
 
 		// <- LOGGING
-		logger.info("Subscribed " + subscriber + " to event "
-				+ eventClass.getName() + " for decision configuration " + dc);
+		logger.info(this + "> Subscribed " + subscriber + " to event " + eventClass.getName()
+				+ " for decision configuration "
+				+ dc);
 
 		if (logger.isDebugEnabled()) {
-			logger.error("Subscriber: ", new LIdentifyCallerException(2, 1));
+			logger.error(this + "> Subscriber: ", new LIdentifyCallerException(2, 1));
 		}
 		// LOGGING ->
 	}
@@ -105,42 +111,46 @@ public class LDcSpecificEventbus extends LEventbus {
 			LaraDcSpecificEvent e = (LaraDcSpecificEvent) event;
 			Set<LaraAbstractEventSubscriber> subscribers = null;
 
+			LaraDecisionConfiguration dConfig = e.getDecisionConfiguration();
+
 			if (eventSubscriberOnceMapDc.containsKey(e.getClass())
-					&& eventSubscriberOnceMapDc.get(e.getClass())
-							.containsKey(e.getDecisionConfiguration())) {
+					&& eventSubscriberOnceMapDc.get(e.getClass()).containsKey(dConfig)) {
 				// get subscribers set
-				subscribers = eventSubscriberOnceMapDc.get(e.getClass())
-						.get(e.getDecisionConfiguration());
-				eventSubscriberOnceMapDc.get(e.getClass()).remove(
-						e.getDecisionConfiguration());
+				subscribers = eventSubscriberOnceMapDc.get(e.getClass()).get(dConfig);
+
+
+				if (!eventSubscriberOnceMapDcNotified.containsKey(e.getClass())) {
+					eventSubscriberOnceMapDcNotified.put(e.getClass(),
+							new HashMap<LaraDecisionConfiguration, Set<LaraAbstractEventSubscriber>>());
+				}
+				eventSubscriberOnceMapDcNotified.get(e.getClass()).put(dConfig,
+						eventSubscriberOnceMapDc.get(e.getClass()).get(dConfig));
+				eventSubscriberOnceMapDc.get(e.getClass()).remove(dConfig);
+
 			}
 
 			if (eventSubscriberMapDc.containsKey(e.getClass())
-					&& eventSubscriberMapDc.get(e.getClass()).containsKey(
-							e.getDecisionConfiguration())) {
+					&& eventSubscriberMapDc.get(e.getClass()).containsKey(dConfig)) {
 				// get subscribers set
 				if (subscribers != null) {
-					subscribers.addAll(eventSubscriberMapDc.get(e.getClass())
-							.get(e.getDecisionConfiguration()));
+					subscribers.addAll(eventSubscriberMapDc.get(e.getClass()).get(dConfig));
 				} else {
-					subscribers = eventSubscriberMapDc.get(e.getClass()).get(
-							e.getDecisionConfiguration());
+					subscribers = eventSubscriberMapDc.get(e.getClass()).get(dConfig);
 				}
 			}
 
 			if (subscribers != null) {
 				hasSubscribersHere = true;
 				logSubscribers(subscribers, event);
-				
+
 				// check whether the subscriber is already considered because it is registered
 				// for the event independent from decision configuration.
-				
-				Set<LaraAbstractEventSubscriber> filteredSubscribers = new LinkedHashSet<LaraAbstractEventSubscriber>(
-						subscribers);
+
+				Set<LaraAbstractEventSubscriber> filteredSubscribers =
+ new LinkedHashSet<>(subscribers);
 				if (eventSubscriberMap.containsKey(event.getClass())) {
 					for (LaraAbstractEventSubscriber subscriber : subscribers) {
-						if (eventSubscriberMap.get(event.getClass()).contains(
-								subscriber)) {
+						if (eventSubscriberMap.get(event.getClass()).contains(subscriber)) {
 							filteredSubscribers.remove(subscriber);
 						}
 					}
@@ -148,16 +158,13 @@ public class LDcSpecificEventbus extends LEventbus {
 
 				if (eventSubscriberOnceMap.containsKey(event.getClass())) {
 					for (LaraAbstractEventSubscriber subscriber : subscribers) {
-						if (eventSubscriberOnceMap.get(event.getClass())
-								.contains(
-								subscriber)) {
+						if (eventSubscriberOnceMap.get(event.getClass()).contains(subscriber)) {
 							filteredSubscribers.remove(subscriber);
 						}
 					}
 				}
 
-				logger.debug("Notifying " + filteredSubscribers.size()
-						+ " subscriber(s) of event of type "
+				logger.debug(this + "> Notifying " + filteredSubscribers.size() + " subscriber(s) of event of type "
 						+ event.getClass().getSimpleName());
 
 				// notify subscribers according to event type
@@ -175,19 +182,19 @@ public class LDcSpecificEventbus extends LEventbus {
 					notifySubscribersSequential(filteredSubscribers, event);
 				}
 			}
+
 			// if event has consecutive event fire this
 			if (event instanceof LaraHasConsecutiveEvent) {
 				publish(((LaraHasConsecutiveEvent) event).getConsecutiveEvent());
 			}
 		}
 
-		return super.notifySubscribers(event, hasSubscribers
-				|| hasSubscribersHere);
+		return super.notifySubscribers(event, hasSubscribers || hasSubscribersHere);
 	}
 
 	/**
-	 * Unsubscribes all subscribers from the given event class. Note: This
-	 * method is inefficient since it iterates over all registered events.
+	 * Unsubscribes all subscribers from the given event class. Note: This method is inefficient since it iterates over
+	 * all registered events.
 	 * 
 	 * @param eventClass
 	 */
@@ -198,11 +205,10 @@ public class LDcSpecificEventbus extends LEventbus {
 	}
 
 	/**
-	 * Unsubscribes all subscribers from the event class the given event belongs
-	 * to.
+	 * Unsubscribes all subscribers from the event class the given event belongs to.
 	 * 
 	 * @param event
-	 *            to unsubscribe
+	 *        to unsubscribe
 	 */
 	public void unsubscribe(LaraEvent event) {
 		eventSubscriberMapDc.remove(event.getClass());
@@ -211,14 +217,13 @@ public class LDcSpecificEventbus extends LEventbus {
 	}
 
 	/**
-	 * Unsubscribe the given subscriber from all events. NOTE: This method is
-	 * inefficient since it iterates over all registered events!
+	 * Unsubscribe the given subscriber from all events. NOTE: This method is inefficient since it iterates over all
+	 * registered events!
 	 * 
 	 * @param subscriber
 	 */
 	public void unsubscribe(LaraAbstractEventSubscriber subscriber) {
-		for (Map<LaraDecisionConfiguration, Set<LaraAbstractEventSubscriber>> sets : eventSubscriberMapDc
-				.values()) {
+		for (Map<LaraDecisionConfiguration, Set<LaraAbstractEventSubscriber>> sets : eventSubscriberMapDc.values()) {
 			for (Set<LaraAbstractEventSubscriber> subscribers : sets.values()) {
 				subscribers.remove(subscriber);
 			}
@@ -234,17 +239,14 @@ public class LDcSpecificEventbus extends LEventbus {
 	}
 
 	/**
-	 * Unsubscribe the given subscriber from all events for the given decision
-	 * configuration. NOTE: This method is inefficient since it iterates over
-	 * all registered events!
+	 * Unsubscribe the given subscriber from all events for the given decision configuration. NOTE: This method is
+	 * inefficient since it iterates over all registered events!
 	 * 
 	 * @param subscriber
 	 * @param dc
 	 */
-	public void unsubscribe(LaraAbstractEventSubscriber subscriber,
-			LaraDecisionConfiguration dc) {
-		for (Map<LaraDecisionConfiguration, Set<LaraAbstractEventSubscriber>> sets : eventSubscriberMapDc
-				.values()) {
+	public void unsubscribe(LaraAbstractEventSubscriber subscriber, LaraDecisionConfiguration dc) {
+		for (Map<LaraDecisionConfiguration, Set<LaraAbstractEventSubscriber>> sets : eventSubscriberMapDc.values()) {
 			sets.get(dc).remove(subscriber);
 		}
 
@@ -261,31 +263,65 @@ public class LDcSpecificEventbus extends LEventbus {
 	 * @param subscriber
 	 * @param eventClass
 	 */
-	public void unsubscribe(LaraAbstractEventSubscriber subscriber,
-			Class<? extends LaraEvent> eventClass) {
-		if (eventSubscriberMapDc.containsKey(eventClass) ) {
-			for (Entry<LaraDecisionConfiguration, Set<LaraAbstractEventSubscriber>> dcs : eventSubscriberMapDc
-					.get(eventClass).entrySet())
+	public void unsubscribe(LaraAbstractEventSubscriber subscriber, Class<? extends LaraEvent> eventClass) {
+		if (eventSubscriberMapDc.containsKey(eventClass)) {
+			for (Entry<LaraDecisionConfiguration, Set<LaraAbstractEventSubscriber>> dcs : eventSubscriberMapDc.get(
+					eventClass).entrySet())
 				dcs.getValue().remove(subscriber);
-			}
+		}
 
-		if (eventSubscriberOnceMapDc.containsKey(eventClass) ) {
-			for (Entry<LaraDecisionConfiguration, Set<LaraAbstractEventSubscriber>> dcs : eventSubscriberOnceMapDc
-					.get(eventClass).entrySet())
+		if (eventSubscriberOnceMapDc.containsKey(eventClass)) {
+			for (Entry<LaraDecisionConfiguration, Set<LaraAbstractEventSubscriber>> dcs : eventSubscriberOnceMapDc.get(
+					eventClass).entrySet())
 				dcs.getValue().remove(subscriber);
-			}
+		}
 		super.unsubscribe(subscriber, eventClass);
 	}
 
 	/**
-	 * Clears eventsThisTimestamp, event subscriber map, event-waiting counters,
-	 * and statistics.
+	 * Clears eventsThisTimestamp, event subscriber map, event-waiting counters, and statistics.
 	 */
 	public void resetInstance() {
 		eventSubscriberMapDc.clear();
 		eventSubscriberOnceMapDc.clear();
 		super.resetInstance();
 	}
+
+	/**
+	 * 
+	 */
+	protected void resetTimeStep() {
+		super.resetTimeStep();
+		eventSubscriberOnceMapDcNotified.clear();
+	}
+
+	public Set<Class<? extends LaraEvent>> getAllConsideredEvents() {
+		Set<Class<? extends LaraEvent>> events = super.getAllConsideredEvents();
+		if (!this.eventSubscriberMapDc.isEmpty())
+			events.addAll(this.eventSubscriberMapDc.keySet());
+		if (!this.eventSubscriberOnceMapDc.isEmpty())
+			events.addAll(this.eventSubscriberOnceMapDc.keySet());
+		return events;
+	}
+
+	public Map<LaraDecisionConfiguration, Set<LaraAbstractEventSubscriber>> getRegularSubscribersDc(
+			Class<? extends LaraEvent> eventClass) {
+		Map<LaraDecisionConfiguration, Set<LaraAbstractEventSubscriber>> map = new HashMap<>();
+		if (this.eventSubscriberMapDc.containsKey(eventClass))
+			map.putAll(this.eventSubscriberMapDc.get(eventClass));
+
+		return map;
+	}
+
+	public Map<LaraDecisionConfiguration, Set<LaraAbstractEventSubscriber>> getSingularSubscribersDc(
+			Class<? extends LaraEvent> eventClass) {
+		Map<LaraDecisionConfiguration, Set<LaraAbstractEventSubscriber>> map = new HashMap<>();
+		if (this.eventSubscriberOnceMapDcNotified.containsKey(eventClass))
+			map.putAll(this.eventSubscriberOnceMapDcNotified.get(eventClass));
+
+		return map;
+	}
+
 
 	/**
 	 * @see java.lang.Object#toString()

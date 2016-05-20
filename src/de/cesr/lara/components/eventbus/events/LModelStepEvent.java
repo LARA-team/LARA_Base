@@ -24,6 +24,6 @@ package de.cesr.lara.components.eventbus.events;
  */
 public class LModelStepEvent implements LaraSequentialEvent {
 	public String toString() {
-		return "NN";
+		return "ModelStepEvent";
 	}
 }

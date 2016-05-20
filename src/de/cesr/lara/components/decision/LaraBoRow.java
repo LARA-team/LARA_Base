@@ -28,7 +28,7 @@ import de.cesr.lara.components.LaraPreference;
  * 
  * @param <BO>
  */
-public interface LaraBoRow<BO extends LaraBehaviouralOption<?, ?>> {
+public interface LaraBoRow<BO extends LaraBehaviouralOption<?, ? extends BO>> {
 
 	/**
 	 * @return the behavioural option this row represents

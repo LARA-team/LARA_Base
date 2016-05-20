@@ -32,10 +32,9 @@ import de.cesr.lara.components.util.logging.impl.Log4jLogger;
 
 
 /**
- * This decider factory creates a {@link LExplorationDecider}.
+ * This decider factory creates a {@link LNoOptionDecider}.
  * 
- * @author Friedrich Krebs, Sascha Holzhauer
- * @date 17.09.2010
+ * @author Sascha Holzhauer
  * 
  * @param <A>
  *        type of agent

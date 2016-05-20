@@ -25,7 +25,7 @@ import de.cesr.lara.components.decision.LaraDecisionConfiguration;
  * @author Sascha Holzhauer
  *
  */
-public class LAbstractAgentEvent implements LaraSynchronousEvent,
+public abstract class LAbstractAgentEvent implements LaraSynchronousEvent,
 		LaraDcSpecificEvent {
 
 	protected LaraDecisionConfiguration decisionConfiguration;
@@ -47,5 +47,10 @@ public class LAbstractAgentEvent implements LaraSynchronousEvent,
 
 	public String toString() {
 		return "AgentEvent for " + decisionConfiguration;
+	}
+
+	@Override
+	public void exchangeDecisionConfiguration(LaraDecisionConfiguration dConfig) {
+		this.decisionConfiguration = dConfig;
 	}
 }

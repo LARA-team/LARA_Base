@@ -88,7 +88,8 @@ public class LDefaultAgentComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 	/**
 	 * Deliberative choice components according to {@link LaraDecisionConfiguration}. Contains default for key NULL.
 	 */
-	protected static Map<LaraModel, Map<LaraDecisionConfiguration, LaraDeliberativeChoiceComponent>> defaultDeliberativeChoiceComponents = new HashMap<LaraModel, Map<LaraDecisionConfiguration, LaraDeliberativeChoiceComponent>>();
+	protected static Map<LaraModel, Map<LaraDecisionConfiguration, LaraDeliberativeChoiceComponent>> defaultDeliberativeChoiceComponents =
+			new HashMap<>();
 
 
 	// //
@@ -230,18 +231,18 @@ public class LDefaultAgentComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 		this.environment = env;
 
 		memory =
- new LDefaultLimitedCapacityMemory<LaraProperty<?, ?>>(
+ new LDefaultLimitedCapacityMemory<>(
 				laraModel, LCapacityManagers.<LaraProperty<?, ?>> makeFIFO());
 
 		checkMemoryCapacityForHabitSelection();
 
-		boMemory = new LDefaultLimitedCapacityBOMemory<BO>(laraModel,
+		boMemory = new LDefaultLimitedCapacityBOMemory<>(laraModel,
 				LCapacityManagers.<BO> makeFIFO());
 		preferenceWeights = new LPreferenceWeightMap();
-		decisionData = new HashMap<LaraDecisionConfiguration, LaraDecisionData<A, BO>>();
-		deliberativeChoiceCompents = new HashMap<LaraDecisionConfiguration, LaraDeliberativeChoiceComponent>();
+		decisionData = new HashMap<>();
+		deliberativeChoiceCompents = new HashMap<>();
 
-		this.postProcessorComp = new LDefaultPostProcessorComp<A, BO>();
+		this.postProcessorComp = new LDefaultPostProcessorComp<>();
 	}
 
 	/**
@@ -261,7 +262,7 @@ public class LDefaultAgentComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 	@Override
 	public void addPreferenceWeights(LPrefEntry... prefEntry) {
 		if (this.preferenceWeights == null) {
-			this.preferenceWeights = new HashMap<LaraPreference, Double>();
+			this.preferenceWeights = new HashMap<>();
 		}
 		for (LPrefEntry e : prefEntry) {
 			this.preferenceWeights.put(e.getKey(), e.getValue());
@@ -281,7 +282,7 @@ public class LDefaultAgentComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 	public void addPreferenceWeights(
 			Map<LaraPreference, Double> preferenceWeights) {
 		if (this.preferenceWeights == null) {
-			this.preferenceWeights = new HashMap<LaraPreference, Double>();
+			this.preferenceWeights = new HashMap<>();
 		}
 		this.preferenceWeights.putAll(preferenceWeights);
 
@@ -464,7 +465,7 @@ public class LDefaultAgentComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 	@Override
 	public LaraDecisionData<A, BO> getDecisionData(LaraDecisionConfiguration dConfiguration) {
 		if (!decisionData.containsKey(dConfiguration)) {
-			decisionData.put(dConfiguration, new LaraDecisionData<A, BO>(dConfiguration, agent));
+			decisionData.put(dConfiguration, new LaraDecisionData<>(dConfiguration, agent));
 
 			// <- LOGGING
 			if (logger.isDebugEnabled()) {
@@ -533,7 +534,7 @@ public class LDefaultAgentComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 	 */
 	@Override
 	public Map<LaraPreference, Double> getPreferenceWeights() {
-		return new LinkedHashMap<LaraPreference, Double>(preferenceWeights);
+		return new LinkedHashMap<>(preferenceWeights);
 	}
 
 	/**

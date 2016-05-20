@@ -80,6 +80,6 @@ public class LHabitDeciderFactory<A extends LaraAgent<A, BO>, BO extends LaraBeh
 	 */
 	@Override
 	public LaraDecider<BO> getDecider(A agent, LaraDecisionConfiguration dConfiguration) {
-		return new LHabitDecider<A, BO>(agent, dConfiguration);
+		return new LHabitDecider<>(agent, dConfiguration);
 	}
 }

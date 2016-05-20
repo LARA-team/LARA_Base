@@ -28,7 +28,7 @@ public class LUpdateEnvironmentEvent implements LaraSynchronousEvent {
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		return "NN";
+		return "UpdateEnvironmentEvent";
 	}
 
 }

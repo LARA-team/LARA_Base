@@ -19,20 +19,32 @@
  */
 package de.cesr.lara.components.decision.impl;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+
+import org.apache.log4j.Logger;
 
 import de.cesr.lara.components.LaraBehaviouralOption;
 import de.cesr.lara.components.decision.LaraDecider;
 import de.cesr.lara.components.decision.LaraDecisionMode;
 
+
 /**
+ * Kind of pseudo decider when there is no {@link LaraBehaviouralOption} to choose from.
+ * 
  * @author Sascha Holzhauer
  * @param <BO>
  * 
  */
 public class LNoOptionDecider<BO extends LaraBehaviouralOption<?, ? extends BO>>
 		implements LaraDecider<BO> {
+
+	/**
+	 * Logger
+	 */
+	static private Logger logger = Logger.getLogger(LNoOptionDecider.class);
 
 	LaraDecisionMode mode;
 
@@ -57,11 +69,17 @@ public class LNoOptionDecider<BO extends LaraBehaviouralOption<?, ? extends BO>>
 
 	@Override
 	public BO getSelectedBo() {
+		logger.warn("The LNoOptionDecider has no BO available and returns null!");
 		return null;
 	}
 
 	@Override
 	public LaraDecisionMode getDecisionMode() {
 		return this.mode;
+	}
+
+	@Override
+	public Collection<BO> getSelectableBos() {
+		return new ArrayList<>();
 	}
 }

@@ -21,6 +21,7 @@ package de.cesr.lara.components.decision.impl;
 
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -148,5 +149,10 @@ public class LExplorationDecider<A extends LaraAgent<A, BO>, BO extends LaraBeha
 	@Override
 	public String toString() {
 		return "LExplorationDecider for " + dConfiguration;
+	}
+
+	@Override
+	public Collection<BO> getSelectableBos() {
+		return agent.getLaraComp().getDecisionData(dConfiguration).getBos();
 	}
 }
