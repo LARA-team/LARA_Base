@@ -29,6 +29,6 @@ public class LModelFinishEvent implements LaraSequentialEvent {
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		return "NN";
+		return "ModelFinishEvent";
 	}
 }

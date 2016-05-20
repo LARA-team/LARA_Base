@@ -67,8 +67,8 @@ import de.cesr.lara.components.util.logging.impl.Log4jLogger;
  * @date 12.02.2010
  */
 public abstract class LaraBehaviouralOption<A extends LaraAgent<? super A, ?>, BO extends LaraBehaviouralOption<?, ?>>
-		extends LaraProperty<BO, Map<LaraPreference, Double>>
-		implements Comparable<LaraBehaviouralOption<A, BO>> {
+		extends LaraProperty<BO, Map<LaraPreference, Double>> implements
+ Comparable<LaraBehaviouralOption<?, ?>> {
 
 	/**
 	 * Logger
@@ -161,7 +161,7 @@ public abstract class LaraBehaviouralOption<A extends LaraAgent<? super A, ?>, B
 	 *         given BO is smaller and 0 otherwise
 	 */
 	@Override
-	public int compareTo(LaraBehaviouralOption<A, BO> bo1) {
+	public int compareTo(LaraBehaviouralOption<?, ?> bo1) {
 		return !getKey().equals(bo1.getKey()) ? getKey()
 				.compareTo(bo1.getKey()) : !(getTimestamp() == bo1
 				.getTimestamp()) ? getTimestamp() - bo1.getTimestamp()

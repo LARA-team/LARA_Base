@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -39,6 +40,7 @@ import de.cesr.lara.components.decision.LaraDecisionMode;
 import de.cesr.lara.components.decision.LaraDecisionModes;
 import de.cesr.lara.components.decision.LaraDeliberativeChoiceComponent;
 import de.cesr.lara.components.decision.LaraDeliberativeDecider;
+import de.cesr.lara.components.decision.LaraScoreReportingDecider;
 import de.cesr.lara.components.util.logging.impl.Log4jLogger;
 
 
@@ -50,7 +52,7 @@ import de.cesr.lara.components.util.logging.impl.Log4jLogger;
  *        type of behavioural option
  */
 public class LDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? extends BO>> implements
-		LaraDeliberativeDecider<BO> {
+		LaraDeliberativeDecider<BO>, LaraScoreReportingDecider<BO> {
 
 	/**
 	 * logger
@@ -82,7 +84,7 @@ public class LDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? extends 
 	 */
 	protected BO selectedBo = null;
 
-	protected Collection<LaraBoRow<BO>> situationalUtilityMatrixRows;
+	protected List<LaraBoRow<BO>> situationalUtilityMatrixRows;
 
 	/**
 	 * @param dConfiguration
@@ -200,7 +202,7 @@ public class LDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? extends 
 		selectedBo = getDeliberativeChoiceComp().getSelectedBo(dConfiguration, situationalUtilityMatrixRows);
 
 		// <- LOGGING
-		logger.info("Post decide > SitautionalMatrix: "
+		logger.info("Post decide > SituationalMatrix: "
 				+ situationalUtilityMatrixRows);
 		// LOGGING ->
 	}
@@ -368,5 +370,13 @@ public class LDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? extends 
 	@Override
 	public LaraDecisionMode getDecisionMode() {
 		return LaraDecisionModes.DELIBERATIVE;
+	}
+
+	public double getScore(BO bo) {
+		for (LaraBoRow<BO> r : this.situationalUtilityMatrixRows) {
+			if (r.getBehaviouralOption().equals(bo))
+				return r.getSum();
+		}
+		return Double.NaN;
 	}
 }

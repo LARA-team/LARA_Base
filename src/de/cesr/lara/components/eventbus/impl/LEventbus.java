@@ -174,6 +174,8 @@ public class LEventbus {
 		instances.clear();
 	}
 
+	protected Object id = null;
+
 	protected boolean forceSequential;
 
 	protected volatile Set<Class<? extends LaraEvent>> eventsThisTimestep = new HashSet<Class<? extends LaraEvent>>();
@@ -184,6 +186,7 @@ public class LEventbus {
 
 	protected volatile Map<LaraEvent, Integer> eventWaitingCounters = new HashMap<LaraEvent, Integer>();
 
+	// TODO apply
 	protected final Map<Class<? extends LaraEvent>, Long> statistics = new HashMap<Class<? extends LaraEvent>, Long>();
 
 	protected PmParameterManager pm;
@@ -196,6 +199,7 @@ public class LEventbus {
 	 * to obtain a reference to the event bus.
 	 */
 	protected LEventbus(Object id, PmParameterManager pm) {
+		this.id = id;
 		this.pm = pm;
 		if (this.pm == null) {
 			this.pm = PmParameterManager.getInstance(null);
@@ -204,7 +208,7 @@ public class LEventbus {
 				.getParam(LBasicPa.EVENTBUS_FORCE_SEQUENTIAL);
 
 		// <- LOGGING
-		logger.info("EventBus runs in FORCE_SEQUENTIAL mode? "
+		logger.info(this + "> Runs in FORCE_SEQUENTIAL mode? "
 				+ this.forceSequential);
 		// LOGGING ->
 	}
@@ -220,11 +224,11 @@ public class LEventbus {
 		synchronized (event) {
 			Integer oldValue = getWaitingCounter(event);
 			if (oldValue == null) {
-				logger.error("Something went wrong during synchronized event notification of event "
+				logger.error(this + "> Something went wrong during synchronized event notification of event "
 						+ event.getClass().getSimpleName());
 			} else {
 				Integer newValue = new Integer(oldValue.intValue() - 1);
-				logger.debug("Number of worker threads for event "
+				logger.debug(this + "> Number of worker threads for event "
 						+ event.getClass().getSimpleName() + ": "
 						+ newValue.intValue());
 				if (newValue.intValue() > 0) {
@@ -265,7 +269,7 @@ public class LEventbus {
 				oldValue = new Integer(0);
 			}
 			Integer newValue = new Integer(oldValue.intValue() + 1);
-			logger.debug("Number of worker threads for event "
+			logger.debug(this + "> Number of worker threads for event "
 					+ event.getClass().getSimpleName() + ": "
 					+ newValue.intValue());
 			eventWaitingCounters.put(event, newValue);
@@ -291,7 +295,7 @@ public class LEventbus {
 		// <- LOGGING
 		if (logger.isDebugEnabled()) {
 			StringBuffer buffer = new StringBuffer();
-			buffer.append("Notifying subscribers for event "
+			buffer.append(this + "> Notifying subscribers for event "
 					+ event.getClass().getName() + "\n");
 			for (LaraAbstractEventSubscriber subscriber : subscribers) {
 				buffer.append("\t" + subscriber + "\n");
@@ -311,7 +315,7 @@ public class LEventbus {
 	protected void notifyInternalSubscribersSequential(
 			Set<LaraAbstractEventSubscriber> subscribers, LaraEvent event) {
 		// <- LOGGING
-		logger.info("Notifying " + subscribers.size()
+		logger.info(this + "> Notifying " + subscribers.size()
 				+ " internal subscriber(s) sequentially ("
 				+ event.getClass().getSimpleName() + ")");
 		// LOGGING ->
@@ -324,7 +328,7 @@ public class LEventbus {
 		}
 
 		// <- LOGGING
-		logger.debug("Notified " + subscribers.size()
+		logger.debug(this + "> Notified " + subscribers.size()
 				+ " internal subscribers sequentially ("
 				+ event.getClass().getSimpleName() + ")");
 		// LOGGING ->
@@ -342,7 +346,7 @@ public class LEventbus {
 			Set<LaraAbstractEventSubscriber> subscribers, LaraEvent event) {
 		// TODO DC where referenced?
 		// <- LOGGING
-		logger.info("Notifying " + subscribers.size()
+		logger.info(this + "> Notifying " + subscribers.size()
 				+ " noninternal subscribers sequentially ("
 				+ event.getClass().getSimpleName() + ")");
 		// LOGGING ->
@@ -354,7 +358,7 @@ public class LEventbus {
 		}
 
 		// <- LOGGING
-		logger.debug("Notified " + subscribers.size()
+		logger.debug(this + "> Notified " + subscribers.size()
 				+ " noninternal subscribers sequentially ("
 				+ event.getClass().getSimpleName() + ")");
 		// LOGGING ->
@@ -391,7 +395,7 @@ public class LEventbus {
 			hasSubscribers = true;
 			logSubscribers(subscribers, event);
 
-			logger.debug("Notifying " + subscribers.size()
+			logger.debug(this + "> Notifying " + subscribers.size()
 					+ " subscriber(s) of event of type "
 					+ event.getClass().getSimpleName());
 
@@ -411,7 +415,7 @@ public class LEventbus {
 			}
 		} else if (!hasSubscribers) {
 			// no subscribers - log this
-			logger.warn("Event ("
+			logger.warn(this + "> Event ("
 					+ event
 					+ ") of type "
 					+ event.getClass().getSimpleName()
@@ -435,7 +439,7 @@ public class LEventbus {
 	protected void notifySubscribersAsynchronous(
 			Set<LaraAbstractEventSubscriber> subscribers, final LaraEvent event) {
 		// <- LOGGING
-		logger.info("Notifying " + subscribers.size()
+		logger.info(this + "> Notifying " + subscribers.size()
 				+ " subscribers assynchonously ("
 				+ event.getClass().getSimpleName() + ")");
 		// LOGGING ->
@@ -466,7 +470,7 @@ public class LEventbus {
 		}
 
 		// <- LOGGING
-		logger.info("Notified " + subscribers.size()
+		logger.info(this + "> Notified " + subscribers.size()
 				+ " subscribers assynchonously ("
 				+ event.getClass().getSimpleName() + ")");
 		// LOGGING ->
@@ -482,7 +486,7 @@ public class LEventbus {
 	protected void notifySubscribersSequential(
 			Set<LaraAbstractEventSubscriber> subscribers, LaraEvent event) {
 		// <- LOGGING
-		logger.info("Notifying " + subscribers.size()
+		logger.info(this + "> Notifying " + subscribers.size()
 				+ " subscriber(s) sequentially ("
 				+ event.getClass().getSimpleName() + ")");
 		// LOGGING ->
@@ -492,7 +496,7 @@ public class LEventbus {
 			if (s instanceof LaraInternalEventSubscriber) {
 				// <- LOGGING
 				if (logger.isDebugEnabled()) {
-					logger.debug("Notified subscriber (internal): " + s);
+					logger.debug(this + "> Notified subscriber (internal): " + s);
 				}
 				// LOGGING ->
 				((LaraInternalEventSubscriber) s).onInternalEvent(event);
@@ -502,7 +506,7 @@ public class LEventbus {
 			if (s instanceof LaraEventSubscriber) {
 				// <- LOGGING
 				if (logger.isDebugEnabled()) {
-					logger.debug("Notified subscriber (external): " + s);
+					logger.debug(this + "> Notified subscriber (external): " + s);
 				}
 				// LOGGING ->
 
@@ -511,7 +515,7 @@ public class LEventbus {
 		}
 
 		// <- LOGGING
-		logger.info("Notified " + subscribers.size()
+		logger.info(this + "> Notified " + subscribers.size()
 				+ " subscriber(s) sequentially ("
 				+ event.getClass().getSimpleName() + ")");
 		// LOGGING ->
@@ -531,7 +535,7 @@ public class LEventbus {
 		// we have to make sure ALL internal subscribers are notified before ALL
 		// the others.
 		// <- LOGGING
-		logger.info("Notifying " + subscribers.size()
+		logger.info(this + "> Notifying " + subscribers.size()
 				+ " subscriber(s) synchronously ("
 				+ event.getClass().getSimpleName() + ")");
 		// LOGGING ->
@@ -541,7 +545,7 @@ public class LEventbus {
 		// TODO SH
 		int numberOfWorkerGroups = numberOfCores * 4;
 		if (logger.isDebugEnabled()) {
-			logger.debug("Number of Worker Groups for event "
+			logger.debug(this + "> Number of Worker Groups for event "
 					+ event.getClass().getSimpleName() + ": "
 					+ numberOfWorkerGroups);
 		}
@@ -598,17 +602,17 @@ public class LEventbus {
 		waitUntilWorkDone(event);
 
 		// <- LOGGING
-		logger.info("Notified " + subscribers.size()
+		logger.info(this + "> Notified " + subscribers.size()
 				+ " subscribers synchronously ("
 				+ event.getClass().getSimpleName() + ")");
 		// LOGGING ->
 	}
 
 	/**
-	 * Checks whether the given LaraEvent has occurred during the current tick.
+	 * Checks whether the given LaraEvent has occurred during the current tick. Checks for the class of the given event.
 	 * 
 	 * @param event
-	 *            to check
+	 *        to check
 	 * @return true if the given event has occurred
 	 */
 	public boolean occured(LaraEvent event) {
@@ -616,8 +620,18 @@ public class LEventbus {
 	}
 
 	/**
-	 * Publish / fire event - this will notify subscribers of this event about
-	 * occurrence of this event
+	 * Checks whether the given LaraEvent class has occurred during the current tick.
+	 * 
+	 * @param eventClass
+	 *        to check
+	 * @return true if the given event class has occurred
+	 */
+	public boolean occured(Class<? extends LaraEvent> eventClass) {
+		return eventsThisTimestep.contains(eventClass);
+	}
+
+	/**
+	 * Publish / fire event - this will notify subscribers of this event about occurrence of this event
 	 * 
 	 * @param event
 	 */
@@ -635,7 +649,7 @@ public class LEventbus {
 		// reset set of events which occurred this timestep if new timestep
 		// begins. otherwise store event type.
 		if (event instanceof LModelStepEvent) {
-			eventsThisTimestep.clear();
+			resetTimeStep();
 		}
 		eventsThisTimestep.add(event.getClass());
 		// check precondition
@@ -648,7 +662,7 @@ public class LEventbus {
 				notifySubscribers(event, false);
 			} else {
 				// no subscribers - log this
-				logger.warn("Event of type "
+				logger.warn(this + "> Event of type "
 						+ event.getClass().getSimpleName()
 						+ " requires event of type "
 						+ ((LaraRequiresPrecedingEvent) event)
@@ -661,15 +675,22 @@ public class LEventbus {
 	}
 
 	/**
+	 * 
+	 */
+	protected void resetTimeStep() {
+		eventsThisTimestep.clear();
+	}
+
+	/**
 	 * Clears eventsThisTimestamp, event subscriber map, event-waiting counters,
 	 * and statistics.
 	 */
 	public void resetInstance() {
 		// <- LOGGING
-		logger.info("Reset eventbus " + instance);
+		logger.info(this + "> Reset");
 		// LOGGING ->
 
-		eventsThisTimestep.clear();
+		resetTimeStep();
 		eventSubscriberMap.clear();
 		eventSubscriberOnceMap.clear();
 		eventWaitingCounters.clear();
@@ -781,7 +802,7 @@ public class LEventbus {
 		eventSubscriberOnceMap.remove(eventClass);
 
 		// <- LOGGING
-		logger.info("Unsubscribed all subscribers from event " + eventClass
+		logger.info(this + "> Unsubscribed all subscribers from event " + eventClass
 				+ ".");
 		// LOGGING ->
 	}
@@ -804,7 +825,7 @@ public class LEventbus {
 		}
 
 		// <- LOGGING
-		logger.info("Unsubscribed " + subscriber + " from all events.");
+		logger.info(this + "> Unsubscribed " + subscriber + " from all events.");
 		// LOGGING ->
 	}
 
@@ -822,7 +843,7 @@ public class LEventbus {
 					.get(eventClass);
 			subscribers.remove(subscriber);
 		} else {
-			logger.debug("instance of " + subscriber.getClass().getSimpleName()
+			logger.debug(this + "> Instance of " + subscriber.getClass().getSimpleName()
 					+ " wants to unsubscribe from event of type "
 					+ eventClass.getSimpleName()
 					+ " but is not a subscriber at the moment");
@@ -834,14 +855,14 @@ public class LEventbus {
 					.get(eventClass);
 			subscribers.remove(subscriber);
 		} else {
-			logger.debug("instance of " + subscriber.getClass().getSimpleName()
+			logger.debug(this + "> Instance of " + subscriber.getClass().getSimpleName()
 					+ " wants to unsubscribe from event of type "
 					+ eventClass.getSimpleName()
 					+ " but is not a subscriber at the moment");
 		}
 
 		// <- LOGGING
-		logger.info("Unsubscribed " + subscriber + " from event "
+		logger.info(this + "> Unsubscribed " + subscriber + " from event "
 				+ eventClass.getName());
 		// LOGGING ->
 	}
@@ -858,7 +879,7 @@ public class LEventbus {
 		eventSubscriberOnceMap.remove(event.getClass());
 
 		// <- LOGGING
-		logger.info("Unsubscribed all subscribers from event "
+		logger.info(this + "> Unsubscribed all subscribers from event "
 				+ event.getClass() + ".");
 		// LOGGING ->
 	}
@@ -871,7 +892,7 @@ public class LEventbus {
 	protected void waitUntilWorkDone(final LaraEvent event) {
 		synchronized (event) {
 			try {
-				logger.debug("waiting for worker threads to finish for event "
+				logger.debug(this + "> Waiting for worker threads to finish for event "
 						+ event.getClass().getSimpleName());
 				Thread infothread = new Thread(new Runnable() {
 
@@ -882,7 +903,7 @@ public class LEventbus {
 								Thread.sleep(1000);
 							} catch (InterruptedException e) {
 							}
-							logger.info("Waiting counter for event "
+							logger.info(this + "> Waiting counter for event "
 									+ event.getClass().getSimpleName()
 									+ ": "
 									+ getWaitingCounter(event)
@@ -916,19 +937,42 @@ public class LEventbus {
 		}
 	}
 
+	public Set<Class<? extends LaraEvent>> getAllConsideredEvents() {
+		Set<Class<? extends LaraEvent>> events = new HashSet<>();
+		if (!this.eventSubscriberMap.isEmpty())
+			events.addAll(this.eventSubscriberMap.keySet());
+		if (!this.eventSubscriberOnceMap.isEmpty())
+			events.addAll(this.eventSubscriberOnceMap.keySet());
+		return events;
+	}
+
+	public Set<LaraAbstractEventSubscriber> getRegularSubscribers(Class<? extends LaraEvent> eventClass) {
+		Set<LaraAbstractEventSubscriber> subscribers = new HashSet<>();
+		if (this.eventSubscriberMap.containsKey(eventClass))
+			subscribers.addAll(this.eventSubscriberMap.get(eventClass));
+		return subscribers;
+	}
+
+	public Set<LaraAbstractEventSubscriber> getSingularSubscribers(Class<? extends LaraEvent> eventClass) {
+		Set<LaraAbstractEventSubscriber> subscribers = new HashSet<>();
+		if (this.eventSubscriberOnceMap.containsKey(eventClass))
+			subscribers.addAll(this.eventSubscriberOnceMap.get(eventClass));
+		return subscribers;
+	}
+
+	public Object getId() {
+		return this.id;
+	}
+
 	/**
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		if (instances
-.containsValue(this)) {
-			return "LEventbus ("
-					+ instances
-.getKey(this) + ")";
+		if (instances.containsValue(this)) {
+			return "LEventbus (" + instances.getKey(this) + ")";
 		} else {
 			return "LEventbus";
 		}
 	}
-
 }

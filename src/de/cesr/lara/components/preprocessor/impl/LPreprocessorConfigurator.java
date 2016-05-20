@@ -36,14 +36,16 @@ import de.cesr.lara.components.preprocessor.LaraPreprocessor;
 import de.cesr.lara.components.preprocessor.LaraPreprocessorComp;
 import de.cesr.lara.components.preprocessor.LaraPreprocessorConfigurator;
 
+
 /**
  * default configurator
  * 
  * @param <A>
- *            the type of agents the according preprocessor builder is intended
- *            for
+ *        the type of agents the according preprocessor builder is intended for
  * @param <BO>
- *            the type of behavioural options the preprocessor shall manage
+ *        the type of behavioural options the preprocessor shall manage
+ * 
+ *        TODO why can't A be A extends LaraAgent<? super A, BO>
  */
 public class LPreprocessorConfigurator<A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>>
 		implements LaraPreprocessorConfigurator<A, BO> {
@@ -82,7 +84,7 @@ public class LPreprocessorConfigurator<A extends LaraAgent<A, BO>, BO extends La
 	private Map<LaraDecisionConfiguration, LaraBOUtilityUpdater<A, BO>> adapterMap = new HashMap<LaraDecisionConfiguration, LaraBOUtilityUpdater<A, BO>>();
 
 	@ElementMap(entry = "prefUpdaterEntry", key = "dConfig", value = "updater", attribute = false, inline = true, required = false)
-	private Map<LaraDecisionConfiguration, LaraPreferenceUpdater<? extends A, BO>> prefUpdaterMap = new HashMap<LaraDecisionConfiguration, LaraPreferenceUpdater<? extends A, BO>>();
+	private Map<LaraDecisionConfiguration, LaraPreferenceUpdater<? extends A, BO>> prefUpdaterMap = new HashMap<>();
 
 	private LaraPreprocessor<A, BO> preprocessor = null;
 	private static LaraPreprocessor<?, ?> defaultPreprocessor = null;

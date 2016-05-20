@@ -195,8 +195,6 @@ public class LDefaultDecisionModeSelector<A extends LaraAgent<A, BO>, BO extends
 					throw ex;
 				}
 			}
-			@SuppressWarnings("unchecked")
-			// unchecked cast
 			LaraDeciderFactory<A, BO> factory = LHabitDeciderFactory.getFactory(agent.getClass());
 			agent.getLaraComp().getDecisionData(dConfig).setDeciderFactory(factory);
 		} else {

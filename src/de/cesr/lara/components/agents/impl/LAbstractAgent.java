@@ -98,7 +98,7 @@ public abstract class LAbstractAgent<A extends LaraAgent<A, BO>, BO extends Lara
 		super();
 		this.lmodel = lmodel;
 		this.id = id;
-		agentComp = new LDefaultAgentComp<A, BO>(this.lmodel, getThis(), env);
+		agentComp = new LDefaultAgentComp<>(this.lmodel, getThis(), env);
 
 		// init agent specific logger (agent id is first part of logger name):
 		if (Log4jLogger.getLogger(getAgentId() + "." + LAbstractAgent.class.getName()).isEnabledFor(LAgentLevel.AGENT)) {

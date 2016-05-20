@@ -1,3 +1,5 @@
 
 syntax: regexp
 ^build$
+syntax: regexp
+^config/ant/Create_JarFile_CRAFTY-CoBRA\.xml$

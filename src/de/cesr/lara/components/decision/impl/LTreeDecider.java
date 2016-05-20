@@ -20,6 +20,7 @@
 package de.cesr.lara.components.decision.impl;
 
 
+import java.util.Collection;
 import java.util.Set;
 
 import de.cesr.lara.components.LaraBehaviouralOption;
@@ -111,5 +112,15 @@ public class LTreeDecider<A extends LaraAgent<? super A, ? super BO>, BO extends
 	@Override
 	public String toString() {
 		return "LTreeDecider";
+	}
+
+	/**
+	 * Return bos collection returned by the decision tree.
+	 * 
+	 * @see de.cesr.lara.components.decision.LaraDecider#getSelectableBos()
+	 */
+	@Override
+	public Collection<BO> getSelectableBos() {
+		return bos;
 	}
 }

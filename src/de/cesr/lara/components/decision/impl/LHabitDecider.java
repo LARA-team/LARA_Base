@@ -20,6 +20,8 @@
 package de.cesr.lara.components.decision.impl;
 
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -131,6 +133,16 @@ public class LHabitDecider<A extends LaraAgent<A, BO>, BO extends LaraBehavioura
 	@Override
 	public String toString() {
 		return "LHabitDecider for " + dConfiguration;
+	}
+
+	/**
+	 * Return the same BO as {@link LHabitDecider#getSelectedBo()}.
+	 * 
+	 * @see de.cesr.lara.components.decision.LaraDecider#getSelectableBos()
+	 */
+	@Override
+	public Collection<BO> getSelectableBos() {
+		return Arrays.asList(bo);
 	}
 
 }
