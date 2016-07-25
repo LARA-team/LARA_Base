@@ -251,11 +251,9 @@ public class LDefaultStorage<PropertyType extends LaraProperty<? extends Propert
 				stepwise.keySet()).descendingSet();
 		PropertyType property = null;
 		for (Integer step : stepsDescendingOrder) {
-			try {
+			if (this.contains(key, step)) {
 				property = fetch(key, step);
 				return property;
-			} catch (LRetrieveException lre) {
-				// ignore exception
 			}
 		}
 		// These lines should never be reached!

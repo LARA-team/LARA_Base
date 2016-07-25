@@ -35,6 +35,8 @@ public interface LaraDecisionModeProvidingAgent {
 	 * only a suggestion since the {@link LaraDecisionModeSelector} may be forced to select e.g. deliberative decision
 	 * mode if habit is suggested but its preconditions are not fulfilled.
 	 * 
+	 * This method may return <code>null</code>, and the decision falls back to the {@link LaraDecisionModeSelector}.
+	 * 
 	 * @return decision mode
 	 */
 	public LaraDecisionModes getDecisionModeSuggestion();
