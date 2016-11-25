@@ -19,53 +19,36 @@
  */
 package de.cesr.lara.components.decision.impl;
 
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import de.cesr.lara.components.LaraBehaviouralOption;
 import de.cesr.lara.components.LaraPreference;
 import de.cesr.lara.components.decision.LaraBoRow;
 
+
 /**
- * This implementation of {@link LaraBoRow} does not store values for every
- * preference but only the sum. Therefore, it may not be suitable for any
- * comprehensive deliberative choice component or post-processing.
+ * This implementation of {@link LaraBoRow} does store values for every preference
  * 
- * @author Daniel Klemm
+ * TODO test
+ * 
  * @author Sascha Holzhauer
  * @param <BO>
- *            behavioural option
+ *        behavioural option
  * 
  */
-public class LLightBoRow<BO extends LaraBehaviouralOption<?, ? extends BO>> implements
-		LaraBoRow<BO> {
+public class LInspectionBoRow<BO extends LaraBehaviouralOption<?, ? extends BO>> extends LLightBoRow<BO> {
 
-	protected BO bo = null;
+	protected Map<LaraPreference, Double> utilities = new HashMap<>();
 
-	protected double utilitySum = 0.0;
-
-	/**
-	 * @param bo
-	 *            behavioural option
-	 */
-	public LLightBoRow(BO bo) {
-		this.bo = bo;
+	public LInspectionBoRow(BO bo) {
+		super(bo);
 	}
 
-	/**
-	 * @param bo
-	 *            behavioural option
-	 * @param utilitySum
-	 *            sum of all individual utility values
-	 */
-	public LLightBoRow(BO bo, double utilitySum) {
-		this.bo = bo;
-		this.utilitySum = utilitySum;
-	}
-
-	/**
-	 * @see de.cesr.lara.components.decision.LaraBoRow#getBehaviouralOption()
-	 */
-	@Override
-	public BO getBehaviouralOption() {
-		return bo;
+	public LInspectionBoRow(BO bo, double utilitySum) {
+		super(bo, utilitySum);
 	}
 
 	/**
@@ -73,38 +56,29 @@ public class LLightBoRow<BO extends LaraBehaviouralOption<?, ? extends BO>> impl
 	 */
 	@Override
 	public double getIndividualUtilityValue(LaraPreference preference) {
-		throw new UnsupportedOperationException(
-				"This implementation of LaraBoRow "
-				+ "stores only the sum of individual utility values");
+		return this.utilities.containsKey(preference) ? this.utilities.get(preference) : Double.NaN;
 	}
 
 	/**
-	 * @see de.cesr.lara.components.decision.LaraBoRow#getSum()
-	 */
-	@Override
-	public double getSum() {
-		return utilitySum;
-	}
-
-	/**
-	 * May only be called once per preference!
-	 * 
 	 * @see de.cesr.lara.components.decision.LaraBoRow#setIndividualUtilityValue(LaraPreference, double)
 	 */
 	@Override
-	public void setIndividualUtilityValue(LaraPreference preference,
-			double value) {
+	public void setIndividualUtilityValue(LaraPreference preference, double value) {
+		if (this.utilities.containsKey(preference)) {
+			this.utilitySum -= this.utilities.get(preference);
+		}
+		this.utilities.put(preference, value);
 		this.utilitySum += value;
 	}
 
-	@Override
-	public String toString() {
-		return "BO: " + bo.toString() + "(utility sum: " + this.utilitySum
-				+ ")";
-	}
-
+	/**
+	 * @see de.cesr.lara.components.decision.impl.LLightBoRow#neutralisePreferenceWeights(double)
+	 */
 	@Override
 	public void neutralisePreferenceWeights(double averageWeight) {
 		this.utilitySum /= averageWeight;
+		for (Entry<LaraPreference, Double> entry : utilities.entrySet()) {
+			entry.setValue(entry.getValue() / averageWeight);
+		}
 	}
 }

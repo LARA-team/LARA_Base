@@ -183,12 +183,12 @@ public final class LPreprocessor<A extends LaraAgent<A, BO>, BO extends LaraBeha
 	@Override
 	public String getComponentsString() {
 		StringBuffer text = new StringBuffer();
-		text.append("Preprocessor:\n");
-		text.append("\t ModeSelector:  " + selectorMap.toString() + "\n");
-		text.append("\t BOCollector:   " + collectorMap.toString() + "\n");
-		text.append("\t BOPreSelector: " + preSelectorMap.toString() + "\n");
-		text.append("\t BOUpdater:     " + updaterMap.toString() + "\n");
-		text.append("\t PrefUpdater:   " + prefUpdaterMap.toString() + "\n");
+		text.append("\tPreprocessor:" + System.getProperty("line.separator"));
+		text.append("\tModeSelector:  " + selectorMap.toString() + System.getProperty("line.separator"));
+		text.append("\tBOCollector:   " + collectorMap.toString() + System.getProperty("line.separator"));
+		text.append("\tBOPreSelector: " + preSelectorMap.toString() + System.getProperty("line.separator"));
+		text.append("\tBOUpdater:     " + updaterMap.toString() + System.getProperty("line.separator"));
+		text.append("\tPrefUpdater:   " + prefUpdaterMap.toString() + System.getProperty("line.separator"));
 		return text.toString();
 	}
 

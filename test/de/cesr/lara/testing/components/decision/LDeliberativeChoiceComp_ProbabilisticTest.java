@@ -26,7 +26,7 @@ import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Set;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.junit.After;
@@ -130,7 +130,7 @@ public class LDeliberativeChoiceComp_ProbabilisticTest {
 		boRows.add(new LLightBoRow<LTestBo>(bo2, 1.0));
 
 		logger.info("Request 2 BOs (2 available).");
-		Set<? extends LTestBo> resultSet = choiceComp.getKSelectedBos(dConfig,
+		List<? extends LTestBo> resultSet = choiceComp.getKSelectedBos(dConfig,
 				boRows, 2);
 		assertEquals(2, resultSet.size());
 		assertTrue(resultSet.contains(bo1));   // no rand
@@ -218,7 +218,7 @@ public class LDeliberativeChoiceComp_ProbabilisticTest {
 		boRows.add(new LLightBoRow<LTestBo>(bo2, -1.0));
 		logger.info("Request one BO.");
 
-		Set<? extends LTestBo> resultSet = choiceComp.getKSelectedBos(dConfig, boRows, 1);
+		List<? extends LTestBo> resultSet = choiceComp.getKSelectedBos(dConfig, boRows, 1);
 		assertEquals(1, resultSet.size());
 		assertFalse(resultSet.contains(bo1));
 		assertTrue(resultSet.contains(bo2)); // rand1 > 0.5
@@ -226,7 +226,7 @@ public class LDeliberativeChoiceComp_ProbabilisticTest {
 
 	/**
 	 * Test method for
-	 * {@link de.cesr.lara.components.decision.impl.LDeliberativeChoiceComp_Probabilistic#getSelectedBo(de.cesr.lara.components.decision.LaraDecisionConfiguration, java.util.Collection)}
+	 * {@link de.cesr.lara.components.decision.impl.LDeliberativeChoiceComp_Probabilistic#getSelectedBos(de.cesr.lara.components.decision.LaraDecisionConfiguration, java.util.Collection)}
 	 * .
 	 */
 	@Test

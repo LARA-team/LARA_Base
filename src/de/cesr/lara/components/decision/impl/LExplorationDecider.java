@@ -22,8 +22,7 @@ package de.cesr.lara.components.decision.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
@@ -55,7 +54,7 @@ public class LExplorationDecider<A extends LaraAgent<A, BO>, BO extends LaraBeha
 	private Logger agentLogger = null;
 
 	A agent = null;
-	BO bo = null;
+	List<BO> bos = new ArrayList<>();
 	LaraDecisionConfiguration dConfiguration;
 	LaraRandom random;
 
@@ -82,11 +81,13 @@ public class LExplorationDecider<A extends LaraAgent<A, BO>, BO extends LaraBeha
 	 */
 	@Override
 	public void decide() {
+		this.bos.clear();
+
 		int randomBOnum =
 				random.getUniform().nextIntFromTo(0,
 						agent.getLaraComp().getDecisionData(dConfiguration).getBos().size() - 1);
 		// TODO switch to BO lists
-		this.bo = new ArrayList<BO>(agent.getLaraComp().getDecisionData(dConfiguration).getBos()).get(randomBOnum);
+		this.bos.add(new ArrayList<BO>(agent.getLaraComp().getDecisionData(dConfiguration).getBos()).get(randomBOnum));
 
 		// <- LOGGING
 		if (logger.isDebugEnabled()) {
@@ -96,25 +97,11 @@ public class LExplorationDecider<A extends LaraAgent<A, BO>, BO extends LaraBeha
 			}
 			logger.debug("BOs to explore: " + buffer.toString());
 		}
-		logger.info(agent + "> Explored BO: " + bo);
+		logger.info(agent + "> Explored BO: " + bos.get(0));
 		if (agentLogger != null) {
-			agentLogger.debug(agent + "> Explored BO:\n" + bo);
+			agentLogger.debug(agent + "> Explored BO:\n" + bos.get(0));
 		}
 		// LOGGING ->
-	}
-
-	/**
-	 * @see de.cesr.lara.components.decision.LaraDecider#getKSelectedBos(int)
-	 */
-	@Override
-	public Set<BO> getKSelectedBos(int k) {
-		if ((k != Integer.MAX_VALUE) && (k != 1)) {
-			throw new IllegalStateException("The number of requested BOs (" + k
-					+ ") is larger than the number of available BOs (1)!");
-		}
-		Set<BO> bos = new HashSet<BO>(1);
-		bos.add(this.bo);
-		return bos;
 	}
 
 	/**
@@ -129,8 +116,16 @@ public class LExplorationDecider<A extends LaraAgent<A, BO>, BO extends LaraBeha
 	 * @see de.cesr.lara.components.decision.LaraDecider#getSelectedBo()
 	 */
 	@Override
+	public List<BO> getSelectedBos() {
+		return this.bos;
+	}
+
+	/**
+	 * @see de.cesr.lara.components.decision.LaraDecider#getSelectedBo()
+	 */
+	@Override
 	public BO getSelectedBo() {
-		return this.bo;
+		return this.bos.get(0);
 	}
 
 	/**
@@ -154,5 +149,11 @@ public class LExplorationDecider<A extends LaraAgent<A, BO>, BO extends LaraBeha
 	@Override
 	public Collection<BO> getSelectableBos() {
 		return agent.getLaraComp().getDecisionData(dConfiguration).getBos();
+	}
+
+
+	@Override
+	public void setSelectedBos(List<BO> selectedBos) {
+		this.bos = selectedBos;
 	}
 }

@@ -21,7 +21,7 @@ package de.cesr.lara.components.decision;
 
 
 import java.util.Collection;
-import java.util.Set;
+import java.util.List;
 
 import de.cesr.lara.components.LaraBehaviouralOption;
 
@@ -45,20 +45,25 @@ public interface LaraDecider<BO extends LaraBehaviouralOption<?, ?>> {
 	public Collection<BO> getSelectableBos();
 
 	/**
-	 * Return the {@link LaraBehaviouralOption}s that were selected in {@link LaraDecider#decide()}.
-	 * 
-	 * Note: Do not perform the actual selection here since this method might be called more than once!
-	 * 
-	 * @param k
-	 *        the size of the returned set - Integer.MAX_VALUE if all BOs shall be returned
-	 * @return a set of {@link LaraBehaviouralOption}s as result of the decision process
-	 */
-	public Set<? extends BO> getKSelectedBos(int k);
-
-	/**
 	 * @return the number of rows in the decision's laraBoRows
 	 */
 	public int getNumSelectableBOs();
+
+	/**
+	 * Return the {@link LaraBehaviouralOption}s that were selected in {@link LaraDecider#decide()}.
+	 * 
+	 * Note for implementers: Do not perform the actual selection here since this method might be called more than once!
+	 * 
+	 * @return a list of selected {@link LaraBehaviouralOption} as result of the decision process
+	 */
+	public List<BO> getSelectedBos();
+
+	/**
+	 * Intended for post-processing to change the list of selected {@link LaraBehaviouralOption}s
+	 * 
+	 * @param selectedBos
+	 */
+	public void setSelectedBos(List<BO> selectedBos);
 
 	/**
 	 * Return the {@link LaraBehaviouralOption} that was selected in {@link LaraDecider#decide()}.
@@ -66,6 +71,7 @@ public interface LaraDecider<BO extends LaraBehaviouralOption<?, ?>> {
 	 * Note: Do not perform the actual selection here since this method might be called more than once!
 	 * 
 	 * @return a {@link LaraBehaviouralOption} as result of the decision process
+	 * @deprecated
 	 */
 	public BO getSelectedBo();
 

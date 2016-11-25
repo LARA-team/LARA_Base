@@ -19,7 +19,8 @@
  */
 package de.cesr.lara.components.decision;
 
-import java.util.Set;
+
+import java.util.List;
 
 import de.cesr.lara.components.LaraBehaviouralOption;
 import de.cesr.lara.components.agents.LaraAgent;
@@ -46,6 +47,6 @@ public interface LaraDecisionTree<A extends LaraAgent<? super A, ? extends LaraB
 	 *            the parameter object (decisionBuilder, for instance)
 	 * @return a set of {@link LaraBehaviouralOption}s
 	 */
-	public Set<R> getBos(A agent, P parameter);
+	public List<R> getBos(A agent, P parameter);
 
 }

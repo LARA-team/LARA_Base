@@ -17,21 +17,38 @@
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.cesr.lara.components.decision;
+package de.cesr.lara.components.util.impl;
 
-
-import de.cesr.lara.components.LaraBehaviouralOption;
-import de.cesr.lara.components.LaraPreference;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 
 /**
  * @author Sascha Holzhauer
- * @param <BO>
+ * @param <E>
+ *        element type
  * 
  */
-public interface LaraScoreReportingDecider<BO extends LaraBehaviouralOption<?, ?>> extends LaraDecider<BO> {
+public class LList<E> extends ArrayList<E> {
 
-	public double getScore(BO bo);
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3352389427999578243L;
 
-	public double getScore(BO bo, LaraPreference pref);
+	/**
+	 * @param entries
+	 */
+	public LList(E... entries) {
+		super();
+		addAll(Arrays.asList(entries));
+	}
+
+	/**
+	 * @param entry
+	 */
+	public LList(E entry) {
+		super();
+		add(entry);
+	}
 }

@@ -21,8 +21,7 @@ package de.cesr.lara.components.decision.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
@@ -57,10 +56,6 @@ public class LNoOptionDecider<BO extends LaraBehaviouralOption<?, ? extends BO>>
 		// nothing to do
 	}
 
-	@Override
-	public Set<? extends BO> getKSelectedBos(int k) {
-		return new HashSet<BO>();
-	}
 
 	@Override
 	public int getNumSelectableBOs() {
@@ -81,5 +76,15 @@ public class LNoOptionDecider<BO extends LaraBehaviouralOption<?, ? extends BO>>
 	@Override
 	public Collection<BO> getSelectableBos() {
 		return new ArrayList<>();
+	}
+
+	@Override
+	public List<BO> getSelectedBos() {
+		return new ArrayList<>();
+	}
+
+	@Override
+	public void setSelectedBos(List<BO> selectedBos) {
+		// nothing to do
 	}
 }

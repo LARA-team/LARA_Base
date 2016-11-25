@@ -21,7 +21,7 @@ package de.cesr.lara.components.decision.impl;
 
 
 import java.util.Collection;
-import java.util.Set;
+import java.util.List;
 
 import de.cesr.lara.components.LaraBehaviouralOption;
 import de.cesr.lara.components.agents.LaraAgent;
@@ -49,7 +49,7 @@ public class LTreeDecider<A extends LaraAgent<? super A, ? super BO>, BO extends
 		LaraDecider<BO> {
 
 	A agent;
-	Set<BO> bos;
+	List<BO> bos;
 	LaraDecisionTree<A, BO, P> decisionTree;
 	P parameter;
 
@@ -68,15 +68,6 @@ public class LTreeDecider<A extends LaraAgent<? super A, ? super BO>, BO extends
 	@Override
 	public void decide() {
 		bos = decisionTree.getBos(agent, parameter);
-	}
-
-	@Override
-	public Set<BO> getKSelectedBos(int k) {
-		if (bos.size() <= k) {
-			return bos;
-		} else {
-			throw new IllegalStateException("Number of Bos retrieved from dections tree exeeds k!");
-		}
 	}
 
 	@Override
@@ -122,5 +113,16 @@ public class LTreeDecider<A extends LaraAgent<? super A, ? super BO>, BO extends
 	@Override
 	public Collection<BO> getSelectableBos() {
 		return bos;
+	}
+
+	@Override
+	public List<BO> getSelectedBos() {
+		return bos;
+	}
+
+	@Override
+	public void setSelectedBos(List<BO> selectedBos) {
+		// TODO Auto-generated method stub
+
 	}
 }

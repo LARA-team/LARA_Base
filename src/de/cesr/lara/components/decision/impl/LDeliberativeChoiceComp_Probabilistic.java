@@ -21,11 +21,10 @@ package de.cesr.lara.components.decision.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -40,18 +39,17 @@ import de.cesr.lara.components.model.impl.LModel;
 import de.cesr.lara.components.util.logging.impl.LAgentLevel;
 import de.cesr.lara.components.util.logging.impl.Log4jLogger;
 
+
 /**
  * Selects behavioural options based on a probabilistic choice mechanism.
  * 
- * BOs are placed on a roulette wheel with the range according to their utility.
- * The BO is selected in whose range the random number falls. IN case of
- * negative utility sums all utility sums are shifted right by the lowest value.
+ * BOs are placed on a roulette wheel with the range according to their utility score. The BO is selected in whose range
+ * the random number falls. IN case of negative utility sums all utility score sums are shifted right by the lowest
+ * value.
  * 
- * Eta is used as an exponent to the BO's utility that influenced the range on
- * the roulette wheel.
+ * Parameter Eta is used as an exponent to the BO's utility score that influenced the range on the roulette wheel.
  * 
- * In case of a single BO or if (k == number of available BOs) the process is
- * accelerated by directly choosing this BO.
+ * In case of a single BO or if (k == number of available BOs) the process is accelerated by directly choosing this BO.
  * 
  * @author Daniel Klemm
  * @author Sascha Holzhauer
@@ -108,7 +106,7 @@ public class LDeliberativeChoiceComp_Probabilistic implements
 	 *      java.util.Collection, int)
 	 */
 	@Override
-	public <BO extends LaraBehaviouralOption<?, ? extends BO>> Set<? extends BO> getKSelectedBos(
+	public <BO extends LaraBehaviouralOption<?, ? extends BO>> List<? extends BO> getKSelectedBos(
 			LaraDecisionConfiguration dConfig,
 			Collection<LaraBoRow<BO>> boRows, int k) {
 
@@ -142,7 +140,7 @@ public class LDeliberativeChoiceComp_Probabilistic implements
 		}
 		// LOGGING ->
 
-		Set<BO> selectedBos = new HashSet<BO>();
+		List<BO> selectedBos = new ArrayList<>();
 
 		if (k == boRows.size()) {
 			for (LaraBoRow<BO> row : boRows) {

@@ -227,4 +227,9 @@ public interface LaraAgentComponent<A extends LaraAgent<? super A, BO>, BO exten
 	 */
 	public LaraDeliberativeChoiceComponent getDeliberativeChoiceComp(
 			LaraModel lmodel, LaraDecisionConfiguration dConfiguration);
+
+	/**
+	 * @return information on decision making components
+	 */
+	public String decisionComponentsInfo();
 }

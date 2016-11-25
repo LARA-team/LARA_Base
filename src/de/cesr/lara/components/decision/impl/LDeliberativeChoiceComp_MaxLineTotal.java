@@ -20,11 +20,11 @@
 package de.cesr.lara.components.decision.impl;
 
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
+import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -80,7 +80,7 @@ public class LDeliberativeChoiceComp_MaxLineTotal
 	 *      getKSelectedBos(de.cesr.lara.components.decision.LaraDecisionConfiguration, java.util.Collection, int)
 	 */
 	@Override
-	public <BO extends LaraBehaviouralOption<?, ? extends BO>> Set<BO> getKSelectedBos(
+	public <BO extends LaraBehaviouralOption<?, ? extends BO>> List<BO> getKSelectedBos(
 			LaraDecisionConfiguration dConfiguration,
 			Collection<LaraBoRow<BO>> boRows,
 			int k) {
@@ -90,7 +90,7 @@ public class LDeliberativeChoiceComp_MaxLineTotal
 					"The number of rows in the laraBoRows is below the number of requested behavioural options");
 		}
 
-		Set<BO> bos = new HashSet<>();
+		List<BO> bos = new ArrayList<>();
 
 		if (k == boRows
 				.size()) {
@@ -98,6 +98,11 @@ public class LDeliberativeChoiceComp_MaxLineTotal
 				bos.add(row
 						.getBehaviouralOption());
 			}
+			return bos;
+		}
+
+		if (k == 1) {
+			bos.add((this.getSelectedBo(dConfiguration, boRows)));
 			return bos;
 		}
 

@@ -54,6 +54,9 @@ public class LDeliberativeDeciderFactory<A extends LaraAgent<? super A, BO>, BO 
 	@Element(required = false)
 	protected boolean singleSelectedBoExpected = false;
 
+	@Element(required = false)
+	protected boolean neutralisePreferenceWeights = false;
+
 	/**
 	 * The problem: in java, non-static class AgentT (parameter) cannot be
 	 * referenced from a static context, since there is only one class per class
@@ -111,7 +114,7 @@ public class LDeliberativeDeciderFactory<A extends LaraAgent<? super A, BO>, BO 
 			// LOGGING ->
 
 			LaraDeliberativeDecider<BO> decider = new LDeliberativeDecider<BO>(
-					dConfiguration);
+dConfiguration, this.neutralisePreferenceWeights);
 			decider.setSelectableBos(agent.getLaraComp()
 					.getDecisionData(dConfiguration).getBos());
 
