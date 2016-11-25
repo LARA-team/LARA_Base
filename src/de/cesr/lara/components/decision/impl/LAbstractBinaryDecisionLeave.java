@@ -19,7 +19,8 @@
  */
 package de.cesr.lara.components.decision.impl;
 
-import java.util.Set;
+
+import java.util.List;
 
 import de.cesr.lara.components.LaraBehaviouralOption;
 import de.cesr.lara.components.agents.LaraAgent;
@@ -45,5 +46,5 @@ public abstract class LAbstractBinaryDecisionLeave<A extends LaraAgent<A, ? exte
 	 *      java.lang.Object)
 	 */
 	@Override
-	abstract public Set<R> getBos(A agent, P parameter);
+	abstract public List<R> getBos(A agent, P parameter);
 }

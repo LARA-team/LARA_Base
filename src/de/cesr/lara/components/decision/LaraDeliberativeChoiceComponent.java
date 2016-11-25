@@ -20,7 +20,7 @@
 package de.cesr.lara.components.decision;
 
 import java.util.Collection;
-import java.util.Set;
+import java.util.List;
 
 import de.cesr.lara.components.LaraBehaviouralOption;
 
@@ -43,7 +43,7 @@ public interface LaraDeliberativeChoiceComponent {
 	 *            number of BOs to select
 	 * @return k best behavioural options
 	 */
-	public <BO extends LaraBehaviouralOption<?, ? extends BO>> Set<? extends BO> getKSelectedBos(
+	public <BO extends LaraBehaviouralOption<?, ? extends BO>> List<? extends BO> getKSelectedBos(
 			LaraDecisionConfiguration dConfig,
 			Collection<LaraBoRow<BO>> boRows, int k);
 
@@ -51,9 +51,9 @@ public interface LaraDeliberativeChoiceComponent {
 	 * Provides the selected BO for the given decision configuration
 	 * 
 	 * @param dConfig
-	 *            the decision configuration of this decision process
+	 *        the decision configuration of this decision process
 	 * @param boRows
-	 *            collection of {@link LaraBoRow}s
+	 *        collection of {@link LaraBoRow}s
 	 * @return selected behavioural option
 	 */
 	public <BO extends LaraBehaviouralOption<?, ? extends BO>> BO getSelectedBo(

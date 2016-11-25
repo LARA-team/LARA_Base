@@ -20,10 +20,9 @@
 package de.cesr.lara.components.decision.impl;
 
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
@@ -53,7 +52,7 @@ public class LHabitDecider<A extends LaraAgent<A, BO>, BO extends LaraBehavioura
 	static private Logger logger = Log4jLogger.getLogger(LHabitDecider.class);
 
 	A agent = null;
-	BO bo = null;
+	List<BO> bos = new ArrayList<>();
 	LaraDecisionConfiguration dConfiguration;
 
 	/**
@@ -73,6 +72,8 @@ public class LHabitDecider<A extends LaraAgent<A, BO>, BO extends LaraBehavioura
 	// BO
 	@Override
 	public void decide() {
+		bos.clear();
+
 		// <- LOGGING
 		if (logger.isDebugEnabled()) {
 			logger.debug(agent + ">> Memory: " + agent.getLaraComp().getGeneralMemory().toString());
@@ -80,25 +81,14 @@ public class LHabitDecider<A extends LaraAgent<A, BO>, BO extends LaraBehavioura
 		// LOGGING ->
 
 		if (agent.getLaraComp().getGeneralMemory().contains(dConfiguration.getId())) {
-			bo =
-					(BO) agent.getLaraComp().getGeneralMemory()
-							.recall(LSelectedBoProperty.class, dConfiguration.getId()).getValue();
+			bos.add((BO) agent.getLaraComp().getGeneralMemory()
+					.recall(LSelectedBoProperty.class, dConfiguration.getId()).getValue());
 		} else {
 			// <- LOGGING
 			logger.warn("Habitual behaviour could not select a behavioural option since the "
 					+ "(general) memory does not contain information about previously selected BO!");
 			// LOGGING ->
 		}
-	}
-
-	/**
-	 * @see de.cesr.lara.components.decision.LaraDecider#getKSelectedBos(int)
-	 */
-	@Override
-	public Set<BO> getKSelectedBos(int k) {
-		Set<BO> bos = new HashSet<BO>(1);
-		bos.add(bo);
-		return bos;
 	}
 
 	/**
@@ -114,7 +104,7 @@ public class LHabitDecider<A extends LaraAgent<A, BO>, BO extends LaraBehavioura
 	 */
 	@Override
 	public BO getSelectedBo() {
-		return bo;
+		return bos.get(0);
 	}
 
 	/**
@@ -142,7 +132,17 @@ public class LHabitDecider<A extends LaraAgent<A, BO>, BO extends LaraBehavioura
 	 */
 	@Override
 	public Collection<BO> getSelectableBos() {
-		return Arrays.asList(bo);
+		return bos;
+	}
+
+	@Override
+	public List<BO> getSelectedBos() {
+		return bos;
+	}
+
+	@Override
+	public void setSelectedBos(List<BO> selectedBos) {
+		this.bos = selectedBos;
 	}
 
 }

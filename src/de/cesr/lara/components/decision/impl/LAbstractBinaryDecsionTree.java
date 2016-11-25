@@ -19,7 +19,8 @@
  */
 package de.cesr.lara.components.decision.impl;
 
-import java.util.Set;
+
+import java.util.List;
 
 import de.cesr.lara.components.LaraBehaviouralOption;
 import de.cesr.lara.components.agents.LaraAgent;
@@ -73,7 +74,7 @@ public abstract class LAbstractBinaryDecsionTree<A extends LaraAgent<A, ? extend
 	}
 
 	@Override
-	public Set<R> getBos(A agent, P parameter) {
+	public List<R> getBos(A agent, P parameter) {
 		if (evaluate(agent, parameter)) {
 			if (trueTree != null) {
 				return trueTree.getBos(agent, parameter);

@@ -26,7 +26,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
@@ -91,50 +91,51 @@ public class LDeliberativeChoiceComp_MaxLineTotalTest {
 	 */
 	@Test
 	public void testGetKSelectedBos() {
-		Set<? extends LaraBehaviouralOption<LTestAgent, LTestBo>> bosSet = deliberativeChoiceComp
+		List<? extends LaraBehaviouralOption<LTestAgent, LTestBo>> bosList =
+				deliberativeChoiceComp
 				.getKSelectedBos(dConfig, laraBoRows, 3);
-		assertEquals(3, bosSet.size());
-		assertFalse(bosSet.contains(bos[0]));
-		assertFalse(bosSet.contains(bos[1]));
-		assertFalse(bosSet.contains(bos[2]));
-		assertFalse(bosSet.contains(bos[3]));
-		assertFalse(bosSet.contains(bos[4]));
-		assertFalse(bosSet.contains(bos[5]));
-		assertFalse(bosSet.contains(bos[6]));
-		assertTrue(bosSet.contains(bos[7]));
-		assertTrue(bosSet.contains(bos[8]));
-		assertTrue(bosSet.contains(bos[9]));
+		assertEquals(3, bosList.size());
+		assertFalse(bosList.contains(bos[0]));
+		assertFalse(bosList.contains(bos[1]));
+		assertFalse(bosList.contains(bos[2]));
+		assertFalse(bosList.contains(bos[3]));
+		assertFalse(bosList.contains(bos[4]));
+		assertFalse(bosList.contains(bos[5]));
+		assertFalse(bosList.contains(bos[6]));
+		assertTrue(bosList.contains(bos[7]));
+		assertTrue(bosList.contains(bos[8]));
+		assertTrue(bosList.contains(bos[9]));
 
-		bosSet = deliberativeChoiceComp.getKSelectedBos(dConfig, laraBoRows, 6);
-		assertEquals(6, bosSet.size());
-		assertFalse(bosSet.contains(bos[0]));
-		assertFalse(bosSet.contains(bos[1]));
-		assertFalse(bosSet.contains(bos[2]));
-		assertFalse(bosSet.contains(bos[3]));
-		assertTrue(bosSet.contains(bos[4]));
-		assertTrue(bosSet.contains(bos[5]));
-		assertTrue(bosSet.contains(bos[6]));
-		assertTrue(bosSet.contains(bos[7]));
-		assertTrue(bosSet.contains(bos[8]));
-		assertTrue(bosSet.contains(bos[9]));
+		bosList = deliberativeChoiceComp.getKSelectedBos(dConfig, laraBoRows, 6);
+		assertEquals(6, bosList.size());
+		assertFalse(bosList.contains(bos[0]));
+		assertFalse(bosList.contains(bos[1]));
+		assertFalse(bosList.contains(bos[2]));
+		assertFalse(bosList.contains(bos[3]));
+		assertTrue(bosList.contains(bos[4]));
+		assertTrue(bosList.contains(bos[5]));
+		assertTrue(bosList.contains(bos[6]));
+		assertTrue(bosList.contains(bos[7]));
+		assertTrue(bosList.contains(bos[8]));
+		assertTrue(bosList.contains(bos[9]));
 
-		bosSet = deliberativeChoiceComp.getKSelectedBos(dConfig, laraBoRows, 5);
-		assertEquals(5, bosSet.size());
-		assertFalse(bosSet.contains(bos[0]));
-		assertFalse(bosSet.contains(bos[1]));
-		assertFalse(bosSet.contains(bos[2]));
-		assertFalse(bosSet.contains(bos[3]));
-		assertFalse(bosSet.contains(bos[4]));
-		assertTrue(bosSet.contains(bos[5]));
-		assertTrue(bosSet.contains(bos[6]));
-		assertTrue(bosSet.contains(bos[7]));
-		assertTrue(bosSet.contains(bos[8]));
-		assertTrue(bosSet.contains(bos[9]));
+		bosList = deliberativeChoiceComp.getKSelectedBos(dConfig, laraBoRows, 5);
+		assertEquals(5, bosList.size());
+		assertFalse(bosList.contains(bos[0]));
+		assertFalse(bosList.contains(bos[1]));
+		assertFalse(bosList.contains(bos[2]));
+		assertFalse(bosList.contains(bos[3]));
+		assertFalse(bosList.contains(bos[4]));
+		assertTrue(bosList.contains(bos[5]));
+		assertTrue(bosList.contains(bos[6]));
+		assertTrue(bosList.contains(bos[7]));
+		assertTrue(bosList.contains(bos[8]));
+		assertTrue(bosList.contains(bos[9]));
 	}
 
 	/**
 	 * Test method for
-	 * {@link de.cesr.lara.components.decision.impl.LDeliberativeChoiceComp_MaxLineTotal#getSelectedBo(de.cesr.lara.components.decision.LaraDecisionConfiguration, java.util.Collection)}
+	 * {@link de.cesr.lara.components.decision.impl.LDeliberativeChoiceComp_MaxLineTotal#getSelectedBos(de.cesr.lara.components.decision.LaraDecisionConfiguration, java.util.Collection)}
 	 * .
 	 */
 	@Test

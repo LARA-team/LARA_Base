@@ -4,7 +4,9 @@
 	
 	<property name="dir_target" value="${basedir}/../../../../../../LURG/workspace/CRAFTY_Social/lib" />
 	<property name="svn_infos" value="358" />
-		
+	
+	<property file="../../project.properties"/>
+	
 	<!-- ================================= 
           target: Fetch SVN Revision Number        
               	
@@ -35,7 +37,7 @@
     		
        <manifest>
             <attribute name="Built-By" value="Sascha Holzhauer"/>
-            <attribute name="Implementation-Version"  value="${svn.info.rev}"/>
+            <attribute name="Implementation-Version"  value="${release} (revision ${svn.info.rev})"/>
             <attribute name="Built-Date" value="${TODAY}"/>
         </manifest>
     </jar>

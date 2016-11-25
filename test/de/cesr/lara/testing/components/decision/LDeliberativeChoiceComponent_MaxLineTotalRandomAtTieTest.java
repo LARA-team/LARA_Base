@@ -28,7 +28,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
@@ -107,7 +107,8 @@ public class LDeliberativeChoiceComponent_MaxLineTotalRandomAtTieTest {
 	 */
 	@Test
 	public final void testGetKBestBehaviouralOptions() {
-		Set<? extends LaraBehaviouralOption<LTestAgent, LTestBo>> bosSet = deliberativeChoiceComp
+		List<? extends LaraBehaviouralOption<LTestAgent, LTestBo>> bosSet =
+				deliberativeChoiceComp
 				.getKSelectedBos(dConfig, laraBoRows, 3);
 		assertEquals(3, bosSet.size());
 		assertFalse(bosSet.contains(bos[0]));

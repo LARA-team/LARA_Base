@@ -21,7 +21,7 @@ package de.cesr.lara.testing.components.decision;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.Set;
+import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
@@ -42,8 +42,8 @@ import de.cesr.lara.components.preprocessor.LaraDecisionModeSelector;
 import de.cesr.lara.components.preprocessor.event.LPpModeSelectorEvent;
 import de.cesr.lara.components.preprocessor.impl.LAbstractPpComp;
 import de.cesr.lara.components.preprocessor.impl.LPreprocessorConfigurator;
+import de.cesr.lara.components.util.impl.LList;
 import de.cesr.lara.components.util.impl.LPrefEntry;
-import de.cesr.lara.components.util.impl.LSet;
 import de.cesr.lara.testing.LTestUtils;
 import de.cesr.lara.testing.LTestUtils.LTestAgent;
 import de.cesr.lara.testing.LTestUtils.LTestBo;
@@ -74,10 +74,10 @@ public class LTreeDeciderTest {
 									new LAbstractBinaryDecisionLeave<LTestAgent, LTestBo, LaraDecisionConfiguration>() {
 
 										@Override
-										public Set<LTestBo> getBos(
+										public List<LTestBo> getBos(
 												LTestAgent agent,
 												LaraDecisionConfiguration parameter) {
-											return new LSet<LTestBo>(
+											return new LList<LTestBo>(
 													new LTestBo(
 															"Bo1",
 															agent,
@@ -93,10 +93,10 @@ public class LTreeDeciderTest {
 									new LAbstractBinaryDecisionLeave<LTestAgent, LTestBo, LaraDecisionConfiguration>() {
 
 										@Override
-										public Set<LTestBo> getBos(
+										public List<LTestBo> getBos(
 												LTestAgent agent,
 												LaraDecisionConfiguration parameter) {
-											return new LSet<LTestBo>(
+											return new LList<LTestBo>(
 													new LTestBo(
 															"Bo2",
 															agent,

@@ -28,7 +28,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -48,6 +47,9 @@ import de.cesr.lara.components.util.logging.impl.Log4jLogger;
  * 
  * the agents decision module
  * 
+ * To apply {@link LInspectionBoRow}s, set the logger
+ * de.cesr.lara.components.decision.impl.LDeliberativeDecider.RowInspection at least to DEBUG level!
+ * 
  * @param <BO>
  *        type of behavioural option
  */
@@ -58,6 +60,8 @@ public class LDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? extends 
 	 * logger
 	 */
 	protected Logger logger = Log4jLogger.getLogger(LDeliberativeDecider.class);
+
+	protected Logger rowLogger = Log4jLogger.getLogger(LDeliberativeDecider.class.getName() + ".RowInspection");
 
 	/**
 	 * According {@link LaraDecisionConfiguration}
@@ -77,14 +81,18 @@ public class LDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? extends 
 	/**
 	 * behavioural options
 	 */
-	protected Collection<BO> selectableBOs = new ArrayList<BO>();
+	protected Collection<BO> selectableBOs = new ArrayList<>();
 
 	/**
 	 * BO selected by decision
 	 */
-	protected BO selectedBo = null;
+	protected List<BO> selectedBos = new ArrayList<>();
 
 	protected List<LaraBoRow<BO>> situationalUtilityMatrixRows;
+
+	protected int numToSelect = 1;
+
+	protected boolean neutralisePeferenceWeights = false;
 
 	/**
 	 * @param dConfiguration
@@ -99,10 +107,21 @@ public class LDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? extends 
 	}
 
 	/**
+	 * @param dConfiguration
+	 *        the decision configuration of the current decision process
+	 */
+	public LDeliberativeDecider(LaraDecisionConfiguration dConfiguration, boolean neutralisePreferenceWeights) {
+		this(dConfiguration);
+		this.neutralisePeferenceWeights = neutralisePreferenceWeights;
+	}
+
+	/**
 	 * @see de.cesr.lara.components.decision.LaraDecider#decide()
 	 */
 	@Override
 	public void decide() {
+		selectedBos.clear();
+
 		// <-- LOGGING
 		if (selectableBOs.size() > 0) {
 			logger.info(selectableBOs.iterator().next().getAgent() + "> decide()");
@@ -135,15 +154,29 @@ public class LDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? extends 
 		}
 		// LOGGING ->
 
+		double averageWeight = 0.0;
+		if (this.neutralisePeferenceWeights) {
+			for (Entry<LaraPreference, Double> entry : this.preferenceWeights.entrySet()) {
+				averageWeight += entry.getValue();
+			}
+			averageWeight /= this.preferenceWeights.size();
+		}
+
 		for (BO bo : selectableBOs) {
 
 			// <- LOGGING
 			if (logger.isDebugEnabled()) {
-				logger.debug("Handle BO: " + bo.getValue().entrySet());
+				logger.debug("Handle BO " + bo.toShortString() + ": " + bo.getValue().entrySet());
 			}
 			// LOGGING ->
 
-			LaraBoRow<BO> boRow = new LLightBoRow<BO>(bo);
+			LaraBoRow<BO> boRow;
+			if (rowLogger.isDebugEnabled()) {
+				boRow = new LInspectionBoRow<>(bo);
+			} else {
+				boRow = new LLightBoRow<>(bo);
+			}
+
 			for (Entry<LaraPreference, Double> utility : bo.getValue()
 					.entrySet()) {
 
@@ -196,10 +229,16 @@ public class LDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? extends 
 					// LOGGING ->
 				}
 			}
+			if (this.neutralisePeferenceWeights) {
+				boRow.neutralisePreferenceWeights(averageWeight);
+			}
+
 			situationalUtilityMatrixRows.add(boRow);
 		}
 
-		selectedBo = getDeliberativeChoiceComp().getSelectedBo(dConfiguration, situationalUtilityMatrixRows);
+		assert selectedBos.size() == 0;
+		selectedBos.addAll(getDeliberativeChoiceComp().getKSelectedBos(dConfiguration, situationalUtilityMatrixRows,
+				numToSelect));
 
 		// <- LOGGING
 		logger.info("Post decide > SituationalMatrix: "
@@ -212,8 +251,6 @@ public class LDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? extends 
 	 ******************************************************************************/
 
 	/**
-	 * Even if singleSelectedBoExpected = true this may return values > 1 to
-	 * provide the opportunity to collect the x best BOs for post-processing.
 	 * 
 	 * @see de.cesr.lara.components.decision.LaraDeliberativeDecider#getNumSelectableBOs()
 	 */
@@ -245,33 +282,17 @@ public class LDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? extends 
 
 	/**
 	 * @see de.cesr.lara.components.decision.LaraDecider#getSelectedBo()
+	 * @deprecated
 	 */
 	@Override
 	public BO getSelectedBo() {
-		if (selectedBo == null) {
+		if (selectedBos.size() == 0) {
 			// <- LOGGING
 			logger.error((selectableBOs.size() > 0 ? selectableBOs.iterator().next().getAgent() : "")
 					+ "decide() has not been called for decision '" + dConfiguration.getId() + "'");
 			// LOGGING ->
 		}
-		return selectedBo;
-	}
-
-	/**
-	 * This method delegates to the deliberative choice component since bos may not be stored in this class because k is
-	 * not finitely defined.
-	 * 
-	 * NOTE: It can not be guaranteed that several calls of this method yields identical sets of BOs!
-	 * 
-	 * @see de.cesr.lara.components.decision.LaraDecider#getKSelectedBos(int)
-	 */
-	@Override
-	public Set<? extends BO> getKSelectedBos(int k) {
-		if ((k != Integer.MAX_VALUE) && (k > getNumSelectableBOs())) {
-			throw new IllegalStateException("The number of requested BOs (" + k
-					+ ") is larger than the number of available BOs" + getNumSelectableBOs() + ")!");
-		}
-		return getDeliberativeChoiceComp().getKSelectedBos(dConfiguration, situationalUtilityMatrixRows, k);
+		return selectedBos.get(0);
 	}
 
 	/**
@@ -372,11 +393,48 @@ public class LDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? extends 
 		return LaraDecisionModes.DELIBERATIVE;
 	}
 
+	/**
+	 * @see de.cesr.lara.components.decision.LaraScoreReportingDecider#getScore(de.cesr.lara.components.LaraBehaviouralOption)
+	 */
 	public double getScore(BO bo) {
 		for (LaraBoRow<BO> r : this.situationalUtilityMatrixRows) {
 			if (r.getBehaviouralOption().equals(bo))
 				return r.getSum();
 		}
 		return Double.NaN;
+	}
+
+	/**
+	 * @see de.cesr.lara.components.decision.LaraScoreReportingDecider#getScore(de.cesr.lara.components.LaraBehaviouralOption,
+	 *      de.cesr.lara.components.LaraPreference)
+	 */
+	public double getScore(BO bo, LaraPreference pref) {
+		for (LaraBoRow<BO> r : this.situationalUtilityMatrixRows) {
+			if (r.getBehaviouralOption().equals(bo))
+				return r.getIndividualUtilityValue(pref);
+		}
+		return Double.NaN;
+	}
+
+	/**
+	 * @see de.cesr.lara.components.decision.LaraDecider#getSelectedBos()
+	 */
+	@Override
+	public List<BO> getSelectedBos() {
+		if (selectedBos.size() == 0) {
+			// <- LOGGING
+			logger.error((selectableBOs.size() > 0 ? selectableBOs.iterator().next().getAgent() : "")
+					+ "decide() has not been called for decision '" + dConfiguration.getId() + "' or yielded no result");
+			// LOGGING ->
+		}
+		return selectedBos;
+	}
+
+	/**
+	 * @see de.cesr.lara.components.decision.LaraDecider#setSelectedBos(java.util.List)
+	 */
+	@Override
+	public void setSelectedBos(List<BO> selectedBos) {
+		this.selectedBos = selectedBos;
 	}
 }

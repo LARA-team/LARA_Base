@@ -49,6 +49,11 @@ public interface LaraBoRow<BO extends LaraBehaviouralOption<?, ? extends BO>> {
 	public double getSum();
 
 	/**
+	 * Divides single utility values and total score by the average preference weight.
+	 */
+	public void neutralisePreferenceWeights(double averageWeight);
+
+	/**
 	 * Adds a individual utility values regarding a given preference.
 	 * 
 	 * @param preference

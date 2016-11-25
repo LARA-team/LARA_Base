@@ -375,17 +375,9 @@ public class LDefaultAgentComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 				.getDecisionData(
 				((LAgentExecutionEvent) event)
 								.getDecisionConfiguration()).getDecider();
-		if (decider.getNumSelectableBOs() > 1
-				&& !((LAgentExecutionEvent) event).getDecisionConfiguration()
-						.singleSelectedBoExpected()) {
-			for (BO selectedBo : decider.getKSelectedBos(decider.getNumSelectableBOs())) {
-				if (selectedBo instanceof LaraPerformableBo) {
-					((LaraPerformableBo) selectedBo).perform();
-				}
-			}
-		} else {
-			if (decider.getSelectedBo() instanceof LaraPerformableBo) {
-				((LaraPerformableBo) decider.getSelectedBo()).perform();
+		for (BO selectedBo : decider.getSelectedBos()) {
+			if (selectedBo instanceof LaraPerformableBo) {
+				((LaraPerformableBo) selectedBo).perform();
 			}
 		}
 	}
@@ -407,6 +399,26 @@ public class LDefaultAgentComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 	@Override
 	public String toString() {
 		return this.getClass().getName() + " (" + this.agent + ")";
+	}
+
+	public String decisionComponentsInfo() {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("Decision Components for agent " + this.agent + System.getProperty("line.separator"));
+		buffer.append(this.getPreprocessor().getComponentsString() + System.getProperty("line.separator"));
+		buffer.append("\t" + "Deliberative choice component:" + System.getProperty("line.separator"));
+		if (!this.deliberativeChoiceCompents.isEmpty()) {
+			for (LaraDecisionConfiguration dConfig : this.deliberativeChoiceCompents.keySet()) {
+				if (deliberativeChoiceCompents.containsKey(dConfig)) {
+					buffer.append(deliberativeChoiceCompents.get(dConfig).toString());
+				} else {
+					buffer.append(getDefaultDeliberativeChoiceComp(lmodel, dConfig));
+				}
+			}
+		} else {
+			buffer.append(getDefaultDeliberativeChoiceComp(lmodel, null));
+		}
+
+		return buffer.toString();
 	}
 
 	/**
@@ -440,7 +452,7 @@ public class LDefaultAgentComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 	public void setLaraModel(LaraModel lmodel) {
 		// <- LOGGING
 		if (logger.isDebugEnabled()) {
-			logger.info("Set new id object (renew eventbus and subscirbe events subsequently)");
+			logger.info("Set new id object (renew eventbus and subscribe events subsequently)");
 		}
 		// LOGGING ->
 

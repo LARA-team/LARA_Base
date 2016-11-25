@@ -25,7 +25,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -42,9 +41,11 @@ import de.cesr.lara.components.model.LaraModel;
 import de.cesr.lara.components.util.LaraRandom;
 import de.cesr.lara.components.util.logging.impl.Log4jLogger;
 
+
 /**
- * Tie Rule: In case there are more than one BOs with the highest score, a
- * random one is chosen among these.
+ * Selects the behavioural option(s) with maximal line total(s).
+ * 
+ * Tie Rule: In case there are more than one BOs with the highest score, a random one is chosen among these.
  */
 public class LDeliberativeChoiceComp_MaxLineTotalRandomAtTie implements
 		LaraDeliberativeChoiceComponent {
@@ -110,7 +111,7 @@ public class LDeliberativeChoiceComp_MaxLineTotalRandomAtTie implements
 	 * @return a set of k best behavioural option (regarding row sum)
 	 */
 	@Override
-	public <BO extends LaraBehaviouralOption<?, ? extends BO>> Set<? extends BO> getKSelectedBos(
+	public <BO extends LaraBehaviouralOption<?, ? extends BO>> List<? extends BO> getKSelectedBos(
 			LaraDecisionConfiguration dConfiguration,
 			Collection<LaraBoRow<BO>> boRows, int k) {
 		// <- LOGGING
@@ -133,10 +134,15 @@ public class LDeliberativeChoiceComp_MaxLineTotalRandomAtTie implements
 					"The number of rows in the laraBoRows is below the number of requested BOs");
 		}
 
-		Set<BO> bos = new TreeSet<BO>();
+		List<BO> bos = new ArrayList<>();
+
+		if (k == 1) {
+			bos.add((this.getSelectedBo(dConfiguration, boRows)));
+			return bos;
+		}
 
 		// add rows to a sorted set:
-		SortedSet<LaraBoRow<BO>> rows = new TreeSet<LaraBoRow<BO>>(
+		SortedSet<LaraBoRow<BO>> rows = new TreeSet<>(
 				new Comparator<LaraBoRow<BO>>() {
 					@Override
 					public int compare(LaraBoRow<BO> row1, LaraBoRow<BO> row2) {
