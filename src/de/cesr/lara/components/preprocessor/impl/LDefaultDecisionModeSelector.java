@@ -53,7 +53,8 @@ import de.cesr.parma.core.PmParameterManager;
  * 
  * Otherwise, it selects habit mode if last
  * {@link LDecisionMakingPa#HABIT_THRESHOLD} BOs are equal and deliberative mode
- * otherwise.
+ * otherwise. In case there is no selected BO in memory for a relevant tick, it selects
+ * deliberative decision making mode.
  * 
  * This default implementation is used in {@link LPreprocessor}.
  * 
@@ -175,12 +176,16 @@ public class LDefaultDecisionModeSelector<A extends LaraAgent<A, BO>, BO extends
 			for (int i = habitTH; i >= 1; i--) {
 				try {
 					if (!agent.getLaraComp().getGeneralMemory()
+							.contains(LSelectedBoProperty.class, dConfig.getId(),
+									agent.getLaraComp().getLaraModel().getCurrentStep() - i)
+							||
+
+							(!agent.getLaraComp()
+									.getGeneralMemory()
 							.recall(LSelectedBoProperty.class,
 									dConfig.getId(),
-									agent.getLaraComp().getLaraModel()
-											.getCurrentStep()
-											- i)
-							.getValue().getKey().equals(bo.getKey())) {
+											agent.getLaraComp().getLaraModel().getCurrentStep() - i).getValue()
+									.getKey().equals(bo.getKey()))) {
 						doDeliberative();
 						break;
 					}

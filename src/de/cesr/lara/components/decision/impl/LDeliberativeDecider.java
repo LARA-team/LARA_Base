@@ -288,11 +288,13 @@ public class LDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? extends 
 	public BO getSelectedBo() {
 		if (selectedBos.size() == 0) {
 			// <- LOGGING
-			logger.error((selectableBOs.size() > 0 ? selectableBOs.iterator().next().getAgent() : "")
-					+ "decide() has not been called for decision '" + dConfiguration.getId() + "'");
+			logger.warn((selectableBOs.size() > 0 ? selectableBOs.iterator().next().getAgent() : "")
+					+ "decide() has not been called for decision '" + dConfiguration.getId() + "' or yielded no result");
 			// LOGGING ->
+			return null;
+		} else {
+			return selectedBos.get(0);
 		}
-		return selectedBos.get(0);
 	}
 
 	/**
@@ -320,7 +322,7 @@ public class LDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? extends 
 			logger.debug("Set Preferences: " + preferenceWeights);
 		}
 		logger.info("Received " + this.preferenceWeights.size()
-				+ " relevant preference weights");
+ + " relevant preference weight(s)");
 		// LOGGING ->
 	}
 
@@ -332,7 +334,7 @@ public class LDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? extends 
 		this.selectableBOs = behaviouralOptions;
 
 		// <- LOGGING
-		logger.info(behaviouralOptions != null ? "Received " + behaviouralOptions.size() + " behavioural options"
+		logger.info(behaviouralOptions != null ? "Received " + behaviouralOptions.size() + " behavioural option(s)"
 				: "Received set of BOs is empty!");
 		// LOGGING ->
 	}
@@ -423,7 +425,7 @@ public class LDeliberativeDecider<BO extends LaraBehaviouralOption<?, ? extends 
 	public List<BO> getSelectedBos() {
 		if (selectedBos.size() == 0) {
 			// <- LOGGING
-			logger.error((selectableBOs.size() > 0 ? selectableBOs.iterator().next().getAgent() : "")
+			logger.warn((selectableBOs.size() > 0 ? selectableBOs.iterator().next().getAgent() : "")
 					+ "decide() has not been called for decision '" + dConfiguration.getId() + "' or yielded no result");
 			// LOGGING ->
 		}

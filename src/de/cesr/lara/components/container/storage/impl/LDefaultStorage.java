@@ -184,7 +184,7 @@ public class LDefaultStorage<PropertyType extends LaraProperty<? extends Propert
 		if (isEmpty()) {
 			LRetrieveException ex = new LRetrieveException(
 					"No entry found. Memory is empty.");
-			logger.error(ex.getMessage() + ex.getStackTrace());
+			logger.error(ex.getMessage());
 			throw ex;
 		}
 
@@ -210,13 +210,13 @@ public class LDefaultStorage<PropertyType extends LaraProperty<? extends Propert
 		if (isEmpty()) {
 			LRetrieveException ex = new LRetrieveException(
 					"No entry found. Memory is empty.");
-			logger.error(ex.getMessage() + ex.getStackTrace());
+			logger.error(ex.getMessage());
 			throw ex;
 		}
 		if (!stepwise.containsKey(step)) {
 			LRetrieveException ex = new LRetrieveException(
 					"No entries for step " + step + ".");
-			logger.error(ex.getMessage() + ex.getStackTrace());
+			logger.error(ex.getMessage());
 			throw ex;
 		}
 		if (!stepwise.get(step).containsKey(key)) {
