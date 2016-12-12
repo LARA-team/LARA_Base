@@ -5,3 +5,5 @@ syntax: regexp
 ^config/ant/Create_JarFile_CRAFTY-CoBRA\.xml$
 syntax: regexp
 ^config/ant/Create_JarFile_CRAFTY-CoBRA-Demo\.xml$
+syntax: regexp
+^config/ant/Create_JarFile_CRAFTY-Sweden\.xml$

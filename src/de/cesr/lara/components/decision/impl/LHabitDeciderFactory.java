@@ -31,7 +31,7 @@ import de.cesr.lara.components.decision.LaraDecisionConfiguration;
  * This decider factory creates a decider that just fetches the agent's preceding behavioural action and chooses it as
  * new action.
  * 
- * TODO when the model selector is able to define/alter the course of decision making, this steps of the factory and
+ * TODO when the model selector is able to define/alter the course of decision making, this step of the factory and
  * decider might be omitted. However, it could be useful to evaluate not only the last but the k last actions...
  * 
  * @date 16.08.2010
