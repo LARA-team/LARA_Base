@@ -24,10 +24,13 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
 import de.cesr.lara.components.eventbus.impl.LEventbus;
 import de.cesr.lara.components.model.LaraModel;
 import de.cesr.lara.components.model.LaraModelResetObserver;
 import de.cesr.lara.components.util.impl.LVersionInfo;
+import de.cesr.lara.components.util.logging.impl.Log4jLogger;
 
 /**
  * Registry for LARA models.
@@ -38,6 +41,11 @@ import de.cesr.lara.components.util.impl.LVersionInfo;
  * @author Sascha Holzhauer
  */
 public final class LModel {
+
+	/**
+	 * Logger
+	 */
+	static private Logger logger = Log4jLogger.getLogger(LModel.class);
 
 	/**
 	 * model
@@ -87,6 +95,7 @@ public final class LModel {
 	 * @return new model
 	 */
 	public static LaraModel setNewModel(LaraModel model) {
+		logger.info("Set new default model...");
 		LModel.models.put(null, model);
 		return getModel();
 	}
@@ -97,6 +106,7 @@ public final class LModel {
 	 * @return new model
 	 */
 	public static LaraModel setNewModel(Object id, LaraModel model) {
+		logger.info("Set new model for id " + id + "...");
 		if (LModel.models.containsKey(id)) {
 			throw new IllegalArgumentException(
 					"There is already a model registered with ID "
@@ -111,6 +121,7 @@ public final class LModel {
 	 * @param id
 	 */
 	public static void resetModel(Object id) {
+		logger.info("Reset LModel for ID " + id + "...");
 		LModel.models.remove(id);
 		for (LaraModelResetObserver observer : resetObservers) {
 			observer.getNotified(id);
@@ -121,6 +132,7 @@ public final class LModel {
 	 * Clear map of registered models.
 	 */
 	public static void reset() {
+		logger.info("Reset LModel...");
 		LEventbus.resetAll();
 		for (LaraModelResetObserver observer : resetObservers) {
 			observer.getNotified();
