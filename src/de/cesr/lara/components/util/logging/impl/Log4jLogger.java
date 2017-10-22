@@ -64,7 +64,7 @@ public final class Log4jLogger {
 	 * If {@link LBasicPa#LOG_PATH} is null, no logging is performed.
 	 */
 	public static void init() {
-		if (!initialised) {
+		if (false) { // if (!initialised) { not compatible with log4j2
 			if (PmParameterManager
 								.getParameter(LBasicPa.LOG_PATH) != null) {
 				try {

@@ -57,6 +57,7 @@ public class LDefaultMemory<PropertyType extends LaraProperty<? extends Property
 	 * Logger
 	 */
 	private Logger logger;
+	static private boolean logindividual = Log4jLogger.getLogger(LDefaultMemory.class + ".individual").isDebugEnabled();
 
 	private int defaultRetentionTime = UNLIMITED_RETENTION;
 
@@ -104,8 +105,7 @@ public class LDefaultMemory<PropertyType extends LaraProperty<? extends Property
 		this.defaultRetentionTime = defaultRetentionTime;
 		this.name = "memory" + counter++;
 		storage = createBackingStorage();
-		logger = Log4jLogger.getLogger(LDefaultMemory.class.getName() + "."
-				+ getName());
+		logger = Log4jLogger.getLogger(LDefaultMemory.class.getName() + (logindividual ? "." + getName() : ""));
 	}
 
 	/**
@@ -120,8 +120,7 @@ public class LDefaultMemory<PropertyType extends LaraProperty<? extends Property
 		this.defaultRetentionTime = defaultRetentionTime;
 		this.name = name;
 		storage = createBackingStorage();
-		logger = Log4jLogger.getLogger(LDefaultMemory.class.getName() + "."
-				+ getName());
+		logger = Log4jLogger.getLogger(LDefaultMemory.class.getName() + (logindividual ? "." + getName() : ""));
 	}
 
 	/**
@@ -134,8 +133,8 @@ public class LDefaultMemory<PropertyType extends LaraProperty<? extends Property
 		this.lmodel = lmodel;
 		this.name = name;
 		storage = createBackingStorage();
-		logger = Log4jLogger.getLogger(LDefaultMemory.class.getName() + "."
-				+ getName());
+		logger = Log4jLogger.getLogger(LDefaultMemory.class.getName() +
+				(logindividual ? "." + getName() : ""));
 	}
 
 	// observer Management:

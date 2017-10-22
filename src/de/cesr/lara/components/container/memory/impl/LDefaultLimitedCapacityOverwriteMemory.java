@@ -73,6 +73,9 @@ public class LDefaultLimitedCapacityOverwriteMemory<PropertyType extends LaraPro
 	 * Logger
 	 */
 	private Logger logger;
+	static private boolean logindividual =
+			Log4jLogger.getLogger(LDefaultLimitedCapacityOverwriteMemory.class + ".individual").isDebugEnabled();
+
 	private String name;
 
 	// observer management:
@@ -117,8 +120,7 @@ public class LDefaultLimitedCapacityOverwriteMemory<PropertyType extends LaraPro
 		this.name = name;
 		this.capacity = capacity;
 		this.logger = Log4jLogger
-				.getLogger(LDefaultLimitedCapacityOverwriteMemory.class
-						.getName() + "." + getName());
+				.getLogger(LDefaultLimitedCapacityOverwriteMemory.class + (logindividual ? "." + getName() : ""));
 		this.storage = createBackingStorage(capacityManager);
 	}
 
